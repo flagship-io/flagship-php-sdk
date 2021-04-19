@@ -1,0 +1,17 @@
+FROM php:5.4-cli as php-5-4
+COPY . /home/app
+WORKDIR /home/app
+
+RUN ls
+
+RUN apt-get update
+
+RUN pecl install xdebug-2.2.3 && docker-php-ext-enable xdebug
+
+RUN apt-get install -y libzip-dev zlib1g-dev
+
+RUN docker-php-ext-install zip
+
+RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
+
+RUN composer install

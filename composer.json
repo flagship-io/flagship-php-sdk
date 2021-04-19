@@ -1,0 +1,27 @@
+{
+    "name": "abtasty/flagship-php-sdk",
+    "type": "library",
+    "description": "",
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.6",
+        "phpunit/phpunit": "4.8.36"
+    },
+    "autoload": {
+        "psr-4": {
+            "Abtasty\\FlagshipPhpSdk\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Abtasty\\FlagshipPhpSdk\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "check-style": "phpcs src tests",
+        "fix-style": "phpcbf src tests"
+    }
+}

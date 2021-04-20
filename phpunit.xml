@@ -14,6 +14,10 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <ini name="display_errors" value="On" />
+        <ini name="display_startup_errors" value="On" />
+    </php>
     <filter>
         <whitelist>
             <directory suffix=".php">src/</directory>
@@ -27,7 +31,7 @@
             <clover outputFile="clover.xml" />
         </report>
     </coverage>
-<!--    <logging>-->
-<!--        <log type="coverage-html" target="build/coverage"/>-->
-<!--    </logging>-->
+    <logging>
+        <log type="coverage-html" target="build/coverage"/>
+    </logging>
 </phpunit>

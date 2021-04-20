@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class FlagshipConfigTest extends TestCase
 {
-
     function configData()
     {
         return [[['envId' => 'env_value','apiKey' => 'key_value']]];
@@ -77,7 +76,7 @@ class FlagshipConfigTest extends TestCase
      * @dataProvider configData
      * @param array $configData
      */
-    public function test__construct($configData)
+    public function testConstruct($configData)
     {
         $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
         $this->assertInstanceOf("Abtasty\FlagshipPhpSdk\FlagshipConfig", $config);

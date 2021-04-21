@@ -2,6 +2,10 @@
 
 namespace Flagship;
 
+use Flagship\Interfaces\ApiManagerInterface;
+use Flagship\Decision\ApiManager;
+use Flagship\utils\HttpClient;
+
 /**
  * Flagship visitor representation.
  * @package Flagship
@@ -27,6 +31,16 @@ class Visitor
     private $modifications;
 
     /**
+     * @var ApiManagerInterface
+     */
+    private $decisionAPi;
+
+    /**
+     * @var array|mixed
+     */
+    private $campaigns;
+
+    /**
      * Create a new visitor.
      * @param FlagshipConfig $config : configuration used when the visitor has been created.
      * @param string $visitorId : visitor unique identifier.
@@ -34,6 +48,7 @@ class Visitor
      */
     public function __construct($config, $visitorId, $context)
     {
+        $this->decisionAPi = ApiManager::getInstance($config);
         $this->config = $config;
         $this->setVisitorId($visitorId);
         $this->updateContextCollection($context);
@@ -131,10 +146,14 @@ class Visitor
         }
     }
 
+    /**
+     * This function will call the decision api and update all the campaigns modifications
+     * from the server according to the visitor context.
+     */
     public function synchronizedModications()
     {
+        $this->campaigns = $this->decisionAPi->getCampaigns($this, HttpClient::create());
     }
-
 
     /**
      * Return true if a context key is not null and is a string, otherwise return false
@@ -161,11 +180,11 @@ class Visitor
         return false;
     }
 
-    private function log($message = "Visitor")
+    private function log($message = "Visitor", $context = null)
     {
         $logManger = $this->config->getLogManager();
         if (!is_null($logManger)) {
-            $logManger->log($message);
+            $logManger->error($message, $context);
         }
     }
 }

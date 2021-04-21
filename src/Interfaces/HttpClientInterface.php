@@ -2,18 +2,47 @@
 
 namespace Flagship\Interfaces;
 
+use Flagship\Enum\FlagshipConstant;
+
+/**
+ * Interface HttpClientInterface
+ * @package Flagship\Interfaces
+ */
 interface HttpClientInterface
 {
-    public function setHeaders($headers);
+    /**
+     * Add extra headers to include in the request.
+     * @param array $headers : Collection key, value of http header
+     * @return HttpClientInterface
+     */
+    public function setHeaders(array $headers);
 
-    public function setTimeout($seconds);
+    /**
+     * set the Timeout
+     * @param $seconds
+     * @return HttpClientInterface
+     */
+    public function setTimeout($seconds = FlagshipConstant::REQUEST_TIME_OUT);
 
-    public function get($url, $data = []);
+    /**
+     * send a http get request
+     * @param $url
+     * @param array $params Collection key, value of http params
+     * @return mixed
+     */
+    public function get($url, array $params = []);
 
+    /**
+     * send a http post request
+     * @param $url
+     * @param array $params Collection key, value of http params
+     * @param array $data Collection key, value of http post body
+     * @return mixed
+     */
     public function post($url, array $params = [], array $data = []);
 
     /**
-     * Return new Curl instance
+     * Return new HttpClient instance
      * @return HttpClientInterface
      */
     public static function create();

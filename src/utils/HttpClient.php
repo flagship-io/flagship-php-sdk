@@ -64,15 +64,9 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * Set Headers
-     *
-     * Add extra headers to include in the request.
-     *
-     * @access public
-     * @param  $headers
-     * @return HttpClientInterface
+     * @inheritDoc
      */
-    public function setHeaders($headers)
+    public function setHeaders(array $headers)
     {
         foreach ($headers as $key => $value) {
             $key = trim($key);
@@ -89,12 +83,9 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * Set Timeout
-     *
-     * @param  $seconds
-     * @return HttpClientInterface
+     * @inheritDoc
      */
-    public function setTimeout($seconds)
+    public function setTimeout($seconds = FlagshipConstant::REQUEST_TIME_OUT)
     {
         $this->setOpt(CURLOPT_TIMEOUT, $seconds);
         return $this;
@@ -146,14 +137,14 @@ class HttpClient implements HttpClientInterface
      * Get
      *
      * @param  $url
-     * @param array $data
+     * @param array $params
      *
      * @return mixed value provided by exec.
      * @throws Exception
      */
-    public function get($url, $data = [])
+    public function get($url, array $params = [])
     {
-        $this->setUrl($url, $data);
+        $this->setUrl($url, $params);
         $this->setOpt(CURLOPT_CUSTOMREQUEST, 'GET');
         $this->setOpt(CURLOPT_HTTPGET, true);
         return  $this->exec();

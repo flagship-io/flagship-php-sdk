@@ -3,7 +3,7 @@
 namespace Flagship;
 
 use Flagship\Enum\DecisionMode;
-use Flagship\Enum\FlagShipConstant;
+use Flagship\Enum\FlagshipConstant;
 use PHPUnit\Framework\TestCase;
 
 class FlagshipConfigTest extends TestCase
@@ -22,7 +22,7 @@ class FlagshipConfigTest extends TestCase
         $timeOut = 5000;
         $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
 
-        $this->assertEquals(FlagShipConstant::REQUEST_TIME_OUT, $config->getTimeOut());
+        $this->assertEquals(FlagshipConstant::REQUEST_TIME_OUT, $config->getTimeOut());
 
         $config->setTimeOut($timeOut);
         $this->assertEquals($timeOut, $config->getTimeOut());

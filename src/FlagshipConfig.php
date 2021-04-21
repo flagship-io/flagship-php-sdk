@@ -3,7 +3,7 @@
 namespace Flagship;
 
 use Flagship\Enum\DecisionMode;
-use Flagship\Enum\FlagShipConstant;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Interfaces\LogManagerInterface;
 
 /**
@@ -27,7 +27,7 @@ class FlagshipConfig
     /**
      * @var int
      */
-    private $timeOut = FlagShipConstant::REQUEST_TIME_OUT;
+    private $timeOut = FlagshipConstant::REQUEST_TIME_OUT;
     /**
      * @var LogManagerInterface
      */

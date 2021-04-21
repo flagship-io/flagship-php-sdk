@@ -1,10 +1,10 @@
 <?php
 
-namespace Abtasty\FlagshipPhpSdk;
+namespace Flagship;
 
 /**
  * Flagship visitor representation.
- * @package Abtasty\FlagshipPhpSdk
+ * @package Flagship
  */
 class Visitor
 {
@@ -129,6 +129,10 @@ class Visitor
         foreach ($Context as $itemKey => $item) {
             $this->updateContext($itemKey, $item);
         }
+    }
+
+    public function synchronizedModications()
+    {
     }
 
 

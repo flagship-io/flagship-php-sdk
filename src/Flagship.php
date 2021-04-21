@@ -1,6 +1,6 @@
 <?php
 
-namespace Abtasty\FlagshipPhpSdk;
+namespace Flagship;
 
 class Flagship
 {

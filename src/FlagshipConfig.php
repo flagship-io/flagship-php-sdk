@@ -1,14 +1,14 @@
 <?php
 
-namespace Abtasty\FlagshipPhpSdk;
+namespace Flagship;
 
-use Abtasty\FlagshipPhpSdk\Enum\DecisionMode;
-use Abtasty\FlagshipPhpSdk\Enum\FlagShipConstant;
-use Abtasty\FlagshipPhpSdk\Interfaces\LogManagerInterface;
+use Flagship\Enum\DecisionMode;
+use Flagship\Enum\FlagShipConstant;
+use Flagship\Interfaces\LogManagerInterface;
 
 /**
  * Flagship SDK configuration class to provide at initialization.
- * @package Abtasty\FlagshipPhpSdk
+ * @package Flagship
  */
 class FlagshipConfig
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Abtasty\FlagshipPhpSdk;
+namespace Flagship;
 
-use Abtasty\FlagshipPhpSdk\Enum\DecisionMode;
-use Abtasty\FlagshipPhpSdk\Enum\FlagShipConstant;
+use Flagship\Enum\DecisionMode;
+use Flagship\Enum\FlagShipConstant;
 use PHPUnit\Framework\TestCase;
 
 class FlagshipConfigTest extends TestCase
@@ -79,7 +79,7 @@ class FlagshipConfigTest extends TestCase
     public function testConstruct($configData)
     {
         $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
-        $this->assertInstanceOf("Abtasty\FlagshipPhpSdk\FlagshipConfig", $config);
+        $this->assertInstanceOf("Flagship\FlagshipConfig", $config);
         $this->assertEquals($config->getEnvId(), $configData['envId']);
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
     }

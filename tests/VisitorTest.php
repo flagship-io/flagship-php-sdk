@@ -1,6 +1,6 @@
 <?php
 
-namespace Abtasty\FlagshipPhpSdk;
+namespace Flagship;
 
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +22,7 @@ class VisitorTest extends TestCase
             'age' => 25
         ];
         $visitor = new Visitor($config, $visitorId, $visitorContext);
-        $this->assertInstanceOf("Abtasty\FlagshipPhpSdk\FlagshipConfig", $visitor->getConfig());
+        $this->assertInstanceOf("Flagship\FlagshipConfig", $visitor->getConfig());
         $this->assertEquals($visitorId, $visitor->getVisitorId());
 
         //Test new visitorId
@@ -39,7 +39,7 @@ class VisitorTest extends TestCase
 
         $config2 = new FlagshipConfig($newVisitorId, $configData['apiKey']);
         $visitor->setConfig($config2);
-        $this->assertInstanceOf("Abtasty\FlagshipPhpSdk\FlagshipConfig", $visitor->getConfig());
+        $this->assertInstanceOf("Flagship\FlagshipConfig", $visitor->getConfig());
         $this->assertSame($config2, $visitor->getConfig());
         return $visitor;
     }

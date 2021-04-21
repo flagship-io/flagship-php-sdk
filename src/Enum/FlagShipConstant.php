@@ -1,10 +1,10 @@
 <?php
 
-namespace Abtasty\FlagshipPhpSdk\Enum;
+namespace Flagship\Enum;
 
 /**
  * Global SDK constants
- * @package Abtasty\FlagshipPhpSdk\Enum
+ * @package Flagship\Enum
  */
 class FlagShipConstant
 {

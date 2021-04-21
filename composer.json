@@ -11,12 +11,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Abtasty\\FlagshipPhpSdk\\": "src"
+            "Flagship\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Abtasty\\FlagshipPhpSdk\\": "tests"
+            "Flagship\\": "tests"
         }
     },
     "scripts": {

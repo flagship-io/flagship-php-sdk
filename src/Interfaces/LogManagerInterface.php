@@ -1,10 +1,10 @@
 <?php
 
-namespace Abtasty\FlagshipPhpSdk\Interfaces;
+namespace Flagship\Interfaces;
 
 /**
  * Interface LogManagerInterface
- * @package Abtasty\FlagshipPhpSdk\Interfaces
+ * @package Flagship\Interfaces
  */
 interface LogManagerInterface
 {

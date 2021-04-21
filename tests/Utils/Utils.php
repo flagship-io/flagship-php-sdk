@@ -1,6 +1,6 @@
 <?php
 
-namespace Abtasty\FlagshipPhpSdk\Utils;
+namespace Flagship\Utils;
 
 use ReflectionClass;
 use ReflectionException;
@@ -8,7 +8,7 @@ use ReflectionMethod;
 
 /**
  * Class Utils
- * @package Abtasty\FlagshipPhpSdk\Utils
+ * @package Flagship\Utils
  */
 class Utils
 {

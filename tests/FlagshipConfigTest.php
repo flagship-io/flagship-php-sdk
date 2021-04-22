@@ -4,11 +4,12 @@ namespace Flagship;
 
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
 class FlagshipConfigTest extends TestCase
 {
-    function configData()
+    public function configData()
     {
         return [[['envId' => 'env_value','apiKey' => 'key_value']]];
     }
@@ -82,5 +83,19 @@ class FlagshipConfigTest extends TestCase
         $this->assertInstanceOf("Flagship\FlagshipConfig", $config);
         $this->assertEquals($config->getEnvId(), $configData['envId']);
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
+    }
+
+    /**
+     * @dataProvider configData
+     * @param array $configData
+     */
+    public function testSetDecisionMode($configData)
+    {
+        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $setDecisionMode = Utils::getMethod($config, 'setDecisionMode');
+        $setDecisionMode->invokeArgs($config, [DecisionMode::DECISION_API]);
+        $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
+        $setDecisionMode->invokeArgs($config, [5]);
+        $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
     }
 }

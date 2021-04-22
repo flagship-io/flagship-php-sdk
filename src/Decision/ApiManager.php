@@ -4,9 +4,12 @@ namespace Flagship\Decision;
 
 use Exception;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipField;
 use Flagship\FlagshipConfig;
 use Flagship\Interfaces\ApiManagerInterface;
 use Flagship\Interfaces\HttpClientInterface;
+use Flagship\Model\Modification;
+use Flagship\Utils\Validator;
 use Flagship\Visitor;
 
 /**
@@ -52,22 +55,110 @@ class ApiManager implements ApiManagerInterface
     /**
      * @inheritDoc
      */
-    public function getCampaigns(Visitor $visitor, HttpClientInterface $curl)
+    public function getCampaigns(Visitor $visitor, HttpClientInterface $httpClient)
     {
         try {
             $headers = $this->buildHeader();
-            $curl->setHeaders($headers);
-            $curl->setTimeout($this->config->getTimeOut());
+            $httpClient->setHeaders($headers);
+            $httpClient->setTimeout($this->config->getTimeOut());
             $url = $this->buildDecisionApiUrl();
             $postData = $this->buildPostData($visitor);
-            $response = $curl->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
-            return $response['campaigns'];
+            $response = $httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
+            return $response[FlagshipField::FIELD_CAMPAIGNS];
         } catch (Exception $e) {
             $this->log($e->getMessage());
             return [];
         }
     }
 
+    /**
+     * @param Visitor $visitor
+     * @param HttpClientInterface $httpClient
+     * @return Modification[]
+     */
+    public function getCampaignsModifications(Visitor $visitor, HttpClientInterface $httpClient)
+    {
+        $campaigns = $this->getCampaigns($visitor, $httpClient);
+        return $this->getAllModifications($campaigns);
+    }
+
+    /**
+     * @param array $campaigns
+     * @return Modification[]
+     */
+    public function getAllModifications(array $campaigns)
+    {
+        $modifications = [];
+        foreach ($campaigns as $campaign) {
+            if (isset($campaign[FlagshipField::FIELD_VARIATION])) {
+                if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS])) {
+                    if (
+                        isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
+                        [FlagshipField::FIELD_VALUE])
+                    ) {
+                        $modificationValues = $campaign[FlagshipField::FIELD_VARIATION]
+                        [FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE];
+
+                        foreach ($modificationValues as $key => $modificationValue) {
+                            if (Validator::isKeyValid($key)) {
+                                //check if the key is already used
+                                $modification = $this->checkKeyExist($modifications, $key);
+                                $isKeyUsed = true;
+
+                                if (is_null($modification)) {
+                                    $modification = new Modification();
+                                    $isKeyUsed = false;
+                                }
+
+                                $modification->setKey($key);
+                                $modification->setValue($modificationValue);
+
+                                if (isset($campaign[FlagshipField::FIELD_ID])) {
+                                    $modification->setCampaignId($campaign[FlagshipField::FIELD_ID]);
+                                }
+
+                                if (isset($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID])) {
+                                    $modification
+                                        ->setVariationGroupId($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]);
+                                }
+
+                                if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_ID])) {
+                                    $modification
+                                        ->setVariationId($campaign[FlagshipField::FIELD_VARIATION]
+                                        [FlagshipField::FIELD_ID]);
+                                }
+
+                                if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_REFERENCE])) {
+                                    $modification->setIsReference($campaign[FlagshipField::FIELD_VARIATION]
+                                    [FlagshipField::FIELD_REFERENCE]);
+                                }
+
+                                if (!$isKeyUsed) {
+                                    $modifications[] = $modification;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return  $modifications;
+    }
+
+    /**
+     * @param Modification[] $modifications
+     * @param $key
+     * @return Modification|null
+     */
+    private function checkKeyExist($modifications, $key)
+    {
+        foreach ($modifications as $modification) {
+            if ($modification->getKey() === $key) {
+                return $modification;
+            }
+        }
+        return null;
+    }
 
     /**
      * Build http request header

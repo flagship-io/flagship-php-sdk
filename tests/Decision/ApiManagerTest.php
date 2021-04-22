@@ -132,7 +132,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetCampaigns()
     {
-        $stub = $this->getMockBuilder('Flagship\utils\HttpClient')->setMethods(['post'])->getMock();
+        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post']);
         $visitorId = 'visitor_id';
         $campaigns = [
             [

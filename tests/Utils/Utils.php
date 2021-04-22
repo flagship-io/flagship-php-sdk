@@ -26,4 +26,13 @@ class Utils
         $method->setAccessible(true);
         return $method;
     }
+
+    public static function setPrivateProperty($objet, $propertyName, $value)
+    {
+        $class = new ReflectionClass($objet);
+        $property = $class->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($objet, $value);
+        $property->setAccessible(false);
+    }
 }

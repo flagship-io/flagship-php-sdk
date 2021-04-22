@@ -37,7 +37,9 @@ class VisitorTest extends TestCase
         //Begin Test visitor null
 
         //Mock logManger
-        $logManagerStub = $this->getMockBuilder('Flagship\utils\LogManager')->getMock();
+        $logManagerStub = $this->getMockBuilder('Flagship\utils\LogManager')
+            ->setMethods(['error'])
+            ->getMock();
         $logManagerStub->expects($this->exactly(2))->method('error');
 
         $visitor->getConfig()->setLogManager($logManagerStub);
@@ -219,6 +221,7 @@ class VisitorTest extends TestCase
     public function testSynchronizedModifications($modifications)
     {
         $apiManagerStub = $this->getMockBuilder('Flagship\Decision\ApiManager')
+            ->setMethods(['getCampaignsModifications'])
             ->disableOriginalConstructor()
             ->getMock();
         $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
@@ -309,6 +312,7 @@ class VisitorTest extends TestCase
     public function testGetModificationInfo($modifications)
     {
         $apiManagerStub = $this->getMockBuilder('Flagship\Decision\ApiManager')
+            ->setMethods(['getCampaignsModifications'])
             ->disableOriginalConstructor()
             ->getMock();
         $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);

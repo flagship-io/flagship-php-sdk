@@ -37,7 +37,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetAllModifications()
     {
-        $stub = $this->getMockBuilder('Flagship\utils\HttpClient')->getMock();
+        $stub = $this->getMockBuilder('Flagship\utils\HttpClient')->setMethods(['post'])->getMock();
         $visitorId = 'visitor_id';
         $modificationValue1 = [
             "background" => "bleu ciel",
@@ -132,7 +132,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetCampaigns()
     {
-        $stub = $this->getMockBuilder('Flagship\utils\HttpClient')->getMock();
+        $stub = $this->getMockBuilder('Flagship\utils\HttpClient')->setMethods(['post'])->getMock();
         $visitorId = 'visitor_id';
         $campaigns = [
             [
@@ -165,10 +165,10 @@ class ApiManagerTest extends TestCase
     public function testGetCampaignThrowException()
     {
         //Mock logManger
-        $logManagerStub = $this->getMockBuilder('Flagship\utils\LogManager')->getMock();
+        $logManagerStub = $this->getMockBuilder('Flagship\utils\LogManager')->setMethods(['error'])->getMock();
 
         //Mock class Curl
-        $curlStub = $this->getMockBuilder('Flagship\utils\HttpClient')->getMock();
+        $curlStub = $this->getMockBuilder('Flagship\utils\HttpClient')->setMethods(['post'])->getMock();
 
         //Mock method curl->post to throw Exception
         $errorMessage = '{"message": "Forbidden"}';

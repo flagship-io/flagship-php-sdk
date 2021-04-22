@@ -4,6 +4,7 @@ namespace Flagship\Model;
 
 /**
  * This class is representation of modification to display
+ *
  * @package Flagship\Model
  */
 class Modification
@@ -42,7 +43,7 @@ class Modification
     }
 
     /**
-     * @param string $key
+     * @param  string $key
      * @return Modification
      */
     public function setKey($key)
@@ -60,7 +61,7 @@ class Modification
     }
 
     /**
-     * @param string $campaignId
+     * @param  string $campaignId
      * @return Modification
      */
     public function setCampaignId($campaignId)
@@ -78,7 +79,7 @@ class Modification
     }
 
     /**
-     * @param string $variationGroupId
+     * @param  string $variationGroupId
      * @return Modification
      */
     public function setVariationGroupId($variationGroupId)
@@ -96,7 +97,7 @@ class Modification
     }
 
     /**
-     * @param string $variationId
+     * @param  string $variationId
      * @return Modification
      */
     public function setVariationId($variationId)
@@ -114,7 +115,7 @@ class Modification
     }
 
     /**
-     * @param string $isReference
+     * @param  string $isReference
      * @return Modification
      */
     public function setIsReference($isReference)
@@ -132,7 +133,7 @@ class Modification
     }
 
     /**
-     * @param string|bool|numeric $value
+     * @param  string|bool|numeric $value
      * @return Modification
      */
     public function setValue($value)

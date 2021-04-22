@@ -4,6 +4,7 @@ namespace Flagship\Enum;
 
 /**
  * Class DecisionMode
+ *
  * @package Flagship\Enum
  */
 class DecisionMode
@@ -12,7 +13,8 @@ class DecisionMode
 
     /**
      * return true if a value is valid Decision mode, otherwise false
-     * @param mixed $value value to check
+     *
+     * @param  mixed $value value to check
      * @return bool
      */
     public static function isDecisionMode($value)

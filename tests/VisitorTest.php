@@ -66,7 +66,7 @@ class VisitorTest extends TestCase
 
     /**
      * @depends testConstruct
-     * @param $visitor
+     * @param   $visitor
      */
     public function testUpdateContext($visitor)
     {
@@ -214,7 +214,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testSynchronizedModifications($modifications)
     {
@@ -304,7 +304,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testGetModificationInfo($modifications)
     {

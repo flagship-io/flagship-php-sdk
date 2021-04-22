@@ -12,6 +12,7 @@ use Flagship\Utils\Validator;
 
 /**
  * Flagship visitor representation.
+ *
  * @package Flagship
  */
 class Visitor
@@ -44,9 +45,10 @@ class Visitor
 
     /**
      * Create a new visitor.
-     * @param FlagshipConfig $config : configuration used when the visitor has been created.
-     * @param string $visitorId : visitor unique identifier.
-     * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+     *
+     * @param FlagshipConfig $config    : configuration used when the visitor has been created.
+     * @param string         $visitorId : visitor unique identifier.
+     * @param array          $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      */
     public function __construct($config, $visitorId, $context = [])
     {
@@ -65,7 +67,7 @@ class Visitor
     }
 
     /**
-     * @param FlagshipConfig $config
+     * @param  FlagshipConfig $config
      * @return Visitor
      */
     public function setConfig($config)
@@ -83,7 +85,7 @@ class Visitor
     }
 
     /**
-     * @param string $visitorId
+     * @param  string $visitorId
      * @return Visitor
      */
     public function setVisitorId($visitorId)
@@ -106,7 +108,8 @@ class Visitor
 
     /**
      * Clear the current context and set a new context value
-     * @param array $context : collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+     *
+     * @param  array $context : collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      * @return Visitor
      */
     public function setContext($context)
@@ -121,7 +124,7 @@ class Visitor
      * A new context value associated with this key will be created if there is no previous matching value.
      * Context key must be String, and value type must be one of the following : Number, Boolean, String.
      *
-     * @param string $key : context key.
+     * @param string                $key   : context key.
      * @param int|float|string|bool $value : context value.
      */
     public function updateContext($key, $value)
@@ -139,7 +142,7 @@ class Visitor
      * A new context value associated with this key will be created if there is no previous matching value.
      * Context keys must be String, and values types must be one of the following : Number, Boolean, String.
      *
-     * @param array $Context  collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+     * @param array $Context collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      */
     public function updateContextCollection(array $Context)
     {
@@ -159,10 +162,12 @@ class Visitor
     /**
      * Retrieve a modification value by its key. If no modification match the given
      * key or if the stored value type and default value type do not match, default value will be returned.
-     * @param string $key : key associated to the modification.
-     * @param string|bool|numeric $defaultValue : default value to return.
-     * @param bool $activate : Set this parameter to true to automatically report on our server that the
-     * current visitor has seen this modification. It is possible to call activateModification() later.
+     *
+     * @param  string              $key          : key associated to the modification.
+     * @param  string|bool|numeric $defaultValue : default value to return.
+     * @param  bool                $activate     : Set this parameter to true to automatically report on our server that the
+     *                                           current visitor has seen this modification. It is possible to call
+     *                                           activateModification() later.
      * @return string|bool|numeric : modification value or default value.
      */
     public function getModification($key, $defaultValue, $activate = false)
@@ -171,9 +176,8 @@ class Visitor
             return $defaultValue;
         }
         foreach ($this->modifications as $modification) {
-            if (
-                $modification->getKey() === $key &&
-                gettype($modification->getValue()) === gettype($defaultValue)
+            if ($modification->getKey() === $key 
+                && gettype($modification->getValue()) === gettype($defaultValue)
             ) {
                 return $modification->getValue();
             }
@@ -183,7 +187,8 @@ class Visitor
 
     /**
      * Get the campaign modification information value matching the given key.
-     * @param $key : key which identify the modification.
+     *
+     * @param  $key : key which identify the modification.
      * @return string|null JSON encoded string containing the modification information.
      */
     public function getModificationInfo($key)
@@ -201,7 +206,8 @@ class Visitor
 
     /**
      * Return a JSON encoded string of Campaign from modification
-     * @param Modification $modification Modification containing information
+     *
+     * @param  Modification $modification Modification containing information
      * @return string JSON encoded string
      */
     private function parseCampaignToJson(Modification $modification)
@@ -226,7 +232,8 @@ class Visitor
 
     /**
      * Return true if the key is not null and is a string, otherwise return false
-     * @param mixed $key Context key
+     *
+     * @param  mixed $key Context key
      * @return bool
      */
     private function isKeyValid($key)
@@ -242,7 +249,8 @@ class Visitor
     /**
      * Return true if the value is not null and is a number or a boolean or a string,
      * otherwise return false
-     * @param $value
+     *
+     * @param  $value
      * @return bool
      */
     private function isValueValid($value)

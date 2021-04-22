@@ -7,7 +7,8 @@ class Validator
 
     /**
      * Return true if key is not empty and is a string, otherwise return false
-     * @param mixed $key Context key
+     *
+     * @param  mixed $key Context key
      * @return bool
      */
     public static function isKeyValid($key)
@@ -18,7 +19,8 @@ class Validator
     /**
      * Return true if value is not empty and is a number or a boolean or a string,
      * otherwise return false
-     * @param $value
+     *
+     * @param  $value
      * @return bool
      */
     public static function isValueValid($value)

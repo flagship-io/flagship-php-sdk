@@ -4,6 +4,7 @@ namespace Flagship\Enum;
 
 /**
  * A set of constant of Decision api item
+ *
  * @package Flagship\Enum
  */
 class FlagshipField

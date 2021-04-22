@@ -4,6 +4,7 @@ namespace Flagship\Enum;
 
 /**
  * Global SDK constants
+ *
  * @package Flagship\Enum
  */
 class FlagshipConstant

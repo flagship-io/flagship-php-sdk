@@ -8,14 +8,16 @@ use ReflectionMethod;
 
 /**
  * Class Utils
+ *
  * @package Flagship\Utils
  */
 class Utils
 {
     /**
      * Get a class protect or private method
-     * @param string $class the name of class
-     * @param string $name the method's name to reflect
+     *
+     * @param  string $class the name of class
+     * @param  string $name  the method's name to reflect
      * @return ReflectionMethod
      * @throws ReflectionException
      */

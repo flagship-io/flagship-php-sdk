@@ -9,7 +9,7 @@ trait LogTrait
     /**
      * @param LogManagerInterface $logManager
      * @param $message
-     * @param array $context
+     * @param array               $context
      */
     public function logError($logManager, $message, $context = [])
     {

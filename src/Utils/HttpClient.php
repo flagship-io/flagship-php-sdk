@@ -49,8 +49,8 @@ class HttpClient implements HttpClientInterface
     /**
      * Set Opt
      *
-     * @param  $option
-     * @param  $value
+     * @param $option
+     * @param $value
      *
      * @return boolean
      */
@@ -136,7 +136,7 @@ class HttpClient implements HttpClientInterface
     /**
      * Get
      *
-     * @param  $url
+     * @param $url
      * @param array $params
      *
      * @return mixed value provided by exec.
@@ -151,9 +151,9 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * @param $url
-     * @param array $params
-     * @param array $data
+     * @param  $url
+     * @param  array $params
+     * @param  array $data
      * @return mixed
      * @throws Exception
      */

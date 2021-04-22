@@ -14,6 +14,7 @@ use Flagship\Visitor;
 
 /**
  * This class manage all http calls to Decision api
+ *
  * @package Flagship\Decision
  */
 class ApiManager implements ApiManagerInterface
@@ -28,7 +29,8 @@ class ApiManager implements ApiManagerInterface
 
     /**
      * Return ApiManager singleton instance
-     * @param FlagshipConfig $config
+     *
+     * @param  FlagshipConfig $config
      * @return ApiManager
      */
     public static function getInstance(FlagshipConfig $config)
@@ -41,6 +43,7 @@ class ApiManager implements ApiManagerInterface
 
     /**
      * ApiManager constructor.
+     *
      * @param FlagshipConfig $config
      */
     private function __construct(FlagshipConfig $config)
@@ -72,8 +75,8 @@ class ApiManager implements ApiManagerInterface
     }
 
     /**
-     * @param Visitor $visitor
-     * @param HttpClientInterface $httpClient
+     * @param  Visitor             $visitor
+     * @param  HttpClientInterface $httpClient
      * @return Modification[]
      */
     public function getCampaignsModifications(Visitor $visitor, HttpClientInterface $httpClient)
@@ -83,7 +86,7 @@ class ApiManager implements ApiManagerInterface
     }
 
     /**
-     * @param array $campaigns
+     * @param  array $campaigns
      * @return Modification[]
      */
     public function getAllModifications(array $campaigns)
@@ -92,9 +95,7 @@ class ApiManager implements ApiManagerInterface
         foreach ($campaigns as $campaign) {
             if (isset($campaign[FlagshipField::FIELD_VARIATION])) {
                 if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS])) {
-                    if (
-                        isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
-                        [FlagshipField::FIELD_VALUE])
+                    if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE])
                     ) {
                         $modificationValues = $campaign[FlagshipField::FIELD_VARIATION]
                         [FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE];
@@ -124,13 +125,17 @@ class ApiManager implements ApiManagerInterface
 
                                 if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_ID])) {
                                     $modification
-                                        ->setVariationId($campaign[FlagshipField::FIELD_VARIATION]
-                                        [FlagshipField::FIELD_ID]);
+                                        ->setVariationId(
+                                            $campaign[FlagshipField::FIELD_VARIATION]
+                                            [FlagshipField::FIELD_ID]
+                                        );
                                 }
 
                                 if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_REFERENCE])) {
-                                    $modification->setIsReference($campaign[FlagshipField::FIELD_VARIATION]
-                                    [FlagshipField::FIELD_REFERENCE]);
+                                    $modification->setIsReference(
+                                        $campaign[FlagshipField::FIELD_VARIATION]
+                                        [FlagshipField::FIELD_REFERENCE]
+                                    );
                                 }
 
                                 if (!$isKeyUsed) {
@@ -146,8 +151,8 @@ class ApiManager implements ApiManagerInterface
     }
 
     /**
-     * @param Modification[] $modifications
-     * @param $key
+     * @param  Modification[] $modifications
+     * @param  $key
      * @return Modification|null
      */
     private function checkKeyExist($modifications, $key)
@@ -162,6 +167,7 @@ class ApiManager implements ApiManagerInterface
 
     /**
      * Build http request header
+     *
      * @return array
      */
     private function buildHeader()
@@ -176,6 +182,7 @@ class ApiManager implements ApiManagerInterface
 
     /**
      * Build and return the Decision Api url
+     *
      * @return string
      */
     private function buildDecisionApiUrl()
@@ -185,7 +192,8 @@ class ApiManager implements ApiManagerInterface
 
     /**
      * Build and return the http Post body according to visitor
-     * @param Visitor $visitor
+     *
+     * @param  Visitor $visitor
      * @return array
      */
     private function buildPostData(Visitor $visitor)
@@ -199,8 +207,9 @@ class ApiManager implements ApiManagerInterface
 
     /**
      * Report ApiManager Error
+     *
      * @param string $message
-     * @param null $context
+     * @param null   $context
      */
     private function log($message = "Decision manager", $context = null)
     {

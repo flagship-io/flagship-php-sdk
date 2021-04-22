@@ -16,7 +16,7 @@ class FlagshipConfigTest extends TestCase
 
     /**
      * @dataProvider configData
-     * @param array $configData
+     * @param        array $configData
      */
     public function testSetTimeOut($configData)
     {
@@ -41,7 +41,7 @@ class FlagshipConfigTest extends TestCase
 
     /**
      * @dataProvider configData
-     * @param array $configData
+     * @param        array $configData
      */
     public function testSetApiKey($configData)
     {
@@ -53,7 +53,7 @@ class FlagshipConfigTest extends TestCase
 
     /**
      * @dataProvider configData
-     * @param array $configData
+     * @param        array $configData
      */
     public function testSetEnvId($configData)
     {
@@ -65,7 +65,7 @@ class FlagshipConfigTest extends TestCase
 
     /**
      * @dataProvider configData
-     * @param array $configData
+     * @param        array $configData
      */
     public function testDecisionMode($configData)
     {
@@ -75,7 +75,7 @@ class FlagshipConfigTest extends TestCase
 
     /**
      * @dataProvider configData
-     * @param array $configData
+     * @param        array $configData
      */
     public function testConstruct($configData)
     {
@@ -87,7 +87,7 @@ class FlagshipConfigTest extends TestCase
 
     /**
      * @dataProvider configData
-     * @param array $configData
+     * @param        array $configData
      */
     public function testSetDecisionMode($configData)
     {

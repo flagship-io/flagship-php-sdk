@@ -4,6 +4,7 @@ namespace Flagship\Interfaces;
 
 /**
  * Interface LogManagerInterface
+ *
  * @package Flagship\Interfaces
  */
 interface LogManagerInterface
@@ -11,8 +12,8 @@ interface LogManagerInterface
     /**
      * System is unusable.
      *
-     * @param string $message
-     * @param array $context
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function emergency($message, array $context = array());
@@ -23,8 +24,8 @@ interface LogManagerInterface
      * Example: Entire website down, database unavailable, etc. This should
      * trigger the SMS alerts and wake you up.
      *
-     * @param string $message
-     * @param array $context
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function alert($message, $context = null);
@@ -34,8 +35,8 @@ interface LogManagerInterface
      *
      * Example: Application component unavailable, unexpected exception.
      *
-     * @param string $message
-     * @param array $context
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function critical($message, array $context = array());
@@ -44,8 +45,8 @@ interface LogManagerInterface
      * Runtime errors that do not require immediate action but should typically
      * be logged and monitored.
      *
-     * @param string $message
-     * @param array $context
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function error($message, $context = null);
@@ -56,8 +57,8 @@ interface LogManagerInterface
      * Example: Use of deprecated APIs, poor use of an API, undesirable things
      * that are not necessarily wrong.
      *
-     * @param string $message
-     * @param array $context
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function warning($message, $context = null);
@@ -65,8 +66,8 @@ interface LogManagerInterface
     /**
      * Normal but significant events.
      *
-     * @param string $message
-     * @param array $context
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function notice($message, $context = []);
@@ -76,8 +77,8 @@ interface LogManagerInterface
      *
      * Example: User logs in, SQL logs.
      *
-     * @param string $message
-     * @param array $context
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function info($message, $context = []);
@@ -85,8 +86,8 @@ interface LogManagerInterface
     /**
      * Detailed debug information.
      *
-     * @param string $message
-     * @param array $context
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function debug($message, $context = []);
@@ -94,9 +95,9 @@ interface LogManagerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed $level
-     * @param string $message
-     * @param array $context
+     * @param  mixed  $level
+     * @param  string $message
+     * @param  array  $context
      * @return void
      */
     public function log($level, $message, array $context = array());

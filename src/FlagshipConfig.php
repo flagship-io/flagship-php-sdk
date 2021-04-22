@@ -8,6 +8,7 @@ use Flagship\Interfaces\LogManagerInterface;
 
 /**
  * Flagship SDK configuration class to provide at initialization.
+ *
  * @package Flagship
  */
 class FlagshipConfig
@@ -35,7 +36,8 @@ class FlagshipConfig
 
     /**
      * Create a new FlagshipConfig configuration.
-     * @param string $envId : Environment id provided by Flagship.
+     *
+     * @param string $envId  : Environment id provided by Flagship.
      * @param string $apiKey : Secure api key provided by Flagship.
      */
     public function __construct($envId, $apiKey)
@@ -54,7 +56,8 @@ class FlagshipConfig
 
     /**
      * Specify the environment id provided by Flagship, to use.
-     * @param string $envId environment id.
+     *
+     * @param  string $envId environment id.
      * @return FlagshipConfig
      */
     public function setEnvId($envId)
@@ -73,7 +76,8 @@ class FlagshipConfig
 
     /**
      * Specify the secure api key provided by Flagship, to use.
-     * @param string $apiKey secure api key.
+     *
+     * @param  string $apiKey secure api key.
      * @return FlagshipConfig
      */
     public function setApiKey($apiKey)
@@ -92,7 +96,8 @@ class FlagshipConfig
 
     /**
      * Specify the SDK running mode.
-     * @param int $decisionMode decision mode value e.g DecisionMode::DECISION_API
+     *
+     * @param  int $decisionMode decision mode value e.g DecisionMode::DECISION_API
      * @return FlagshipConfig
      */
     private function setDecisionMode($decisionMode)
@@ -113,7 +118,8 @@ class FlagshipConfig
 
     /**
      * Specify timeout for api request.
-     * @param int $timeOut milliseconds for connect and read timeouts. Default is 2000.
+     *
+     * @param  int $timeOut milliseconds for connect and read timeouts. Default is 2000.
      * @return FlagshipConfig
      */
     public function setTimeOut($timeOut)
@@ -134,7 +140,8 @@ class FlagshipConfig
 
     /**
      * Specify a custom implementation of LogManager in order to receive logs from the SDK.
-     * @param LogManagerInterface $logManager custom implementation of LogManager.
+     *
+     * @param  LogManagerInterface $logManager custom implementation of LogManager.
      * @return FlagshipConfig
      */
     public function setLogManager($logManager)

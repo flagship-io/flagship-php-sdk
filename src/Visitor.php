@@ -86,7 +86,7 @@ class Visitor
      */
     public function setVisitorId($visitorId)
     {
-        if (!is_null($visitorId)) {
+        if (!empty($visitorId)) {
             $this->visitorId = $visitorId;
         } else {
             $this->log(); //Log visitorId empty
@@ -162,7 +162,7 @@ class Visitor
      */
     private function isContextKeyValid($key)
     {
-        return !is_null($key) && is_string($key);
+        return !empty($key) && is_string($key);
     }
 
 
@@ -174,7 +174,7 @@ class Visitor
      */
     private function isContextValueValid($value)
     {
-        if (!is_null($value) && (is_numeric($value) || is_bool($value) || is_string($value))) {
+        if (!empty($value) && (is_numeric($value) || is_bool($value) || is_string($value))) {
             return true;
         }
         return false;

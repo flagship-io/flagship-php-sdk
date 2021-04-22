@@ -31,6 +31,23 @@ class VisitorTest extends TestCase
         $visitor->setVisitorId($newVisitorId);
         $this->assertEquals($newVisitorId, $visitor->getVisitorId());
 
+        //Begin Test visitor null
+
+        //Mock logManger
+        $logManagerStub = $this->getMockBuilder('Flagship\utils\LogManager')->getMock();
+        $logManagerStub->expects($this->exactly(2))->method('error');
+
+        $visitor->getConfig()->setLogManager($logManagerStub);
+        $visitor->setVisitorId(null);
+        $this->assertEquals($newVisitorId, $visitor->getVisitorId());
+
+        //Test visitor is empty
+        $visitor->setVisitorId("");
+        $this->assertEquals($newVisitorId, $visitor->getVisitorId());
+
+
+        //End Test visitor null
+
         //Test context
         $this->assertEquals($visitorContext['name'], $visitor->getContext()['name']);
         $this->assertEquals($visitorContext[$ageKey], $visitor->getContext()[$ageKey]);
@@ -98,6 +115,18 @@ class VisitorTest extends TestCase
         //Test key=null and value==null
         $visitor->updateContext(null, null);
         $this->assertCount(0, $visitor->getContext());
+
+        //Test key is empty
+        $visitor->updateContext("", "Hp");
+        $this->assertCount(0, $visitor->getContext());
+
+        //Test value is empty
+        $visitor->updateContext("computer", "");
+        $this->assertCount(0, $visitor->getContext());
+
+        //Test value and key are empty
+        $visitor->updateContext("", "");
+        $this->assertCount(0, $visitor->getContext());
     }
 
 
@@ -118,5 +147,15 @@ class VisitorTest extends TestCase
         ];
         $visitor->updateContextCollection($newVisitorContext);
         $this->assertCount(4, $visitor->getContext());
+
+        //Test without Key
+
+        $newVisitorContext = [
+            'vip'
+        ];
+
+        $visitor->updateContextCollection($newVisitorContext);
+        $this->assertCount(4, $visitor->getContext());
+
     }
 }

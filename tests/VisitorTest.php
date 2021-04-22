@@ -220,10 +220,12 @@ class VisitorTest extends TestCase
      */
     public function testSynchronizedModifications($modifications)
     {
-        $apiManagerStub = $this->getMockBuilder('Flagship\Decision\ApiManager')
-            ->setMethods(['getCampaignsModifications'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $apiManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Interfaces\ApiManagerInterface',
+            ['getCampaignsModifications'],
+            'ApiManagerInterface',
+            false
+        );
         $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
         $config = new FlagshipConfig("EnvId", 'ApiKey');
         $visitor = new Visitor($config, "visitorId", []);
@@ -311,10 +313,12 @@ class VisitorTest extends TestCase
      */
     public function testGetModificationInfo($modifications)
     {
-        $apiManagerStub = $this->getMockBuilder('Flagship\Decision\ApiManager')
-            ->setMethods(['getCampaignsModifications'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $apiManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Interfaces\ApiManagerInterface',
+            ['getCampaignsModifications'],
+            'ApiManagerInterface',
+            false
+        );
         $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
         $config = new FlagshipConfig("EnvId", 'ApiKey');
         $visitor = new Visitor($config, "visitorId", []);

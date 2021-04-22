@@ -2,9 +2,13 @@
 
 namespace Flagship;
 
-use Flagship\Interfaces\ApiManagerInterface;
 use Flagship\Decision\ApiManager;
-use Flagship\utils\HttpClient;
+use Flagship\Enum\FlagshipField;
+use Flagship\Interfaces\ApiManagerInterface;
+use Flagship\Model\Modification;
+use Flagship\Traits\LogTrait;
+use Flagship\Utils\HttpClient;
+use Flagship\Utils\Validator;
 
 /**
  * Flagship visitor representation.
@@ -12,6 +16,8 @@ use Flagship\utils\HttpClient;
  */
 class Visitor
 {
+    use LogTrait;
+
     /**
      * @var FlagshipConfig
      */
@@ -26,7 +32,7 @@ class Visitor
     private $context;
 
     /**
-     * @var array
+     * @var Modification[]
      */
     private $modifications;
 
@@ -35,10 +41,6 @@ class Visitor
      */
     private $decisionAPi;
 
-    /**
-     * @var array|mixed
-     */
-    private $campaigns;
 
     /**
      * Create a new visitor.
@@ -46,7 +48,7 @@ class Visitor
      * @param string $visitorId : visitor unique identifier.
      * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      */
-    public function __construct($config, $visitorId, $context)
+    public function __construct($config, $visitorId, $context = [])
     {
         $this->decisionAPi = ApiManager::getInstance($config);
         $this->config = $config;
@@ -89,7 +91,7 @@ class Visitor
         if (!empty($visitorId)) {
             $this->visitorId = $visitorId;
         } else {
-            $this->log(); //Log visitorId empty
+            $this->logError($this->config->getLogManager(), "");  //Log visitorId empty
         }
         return $this;
     }
@@ -124,8 +126,8 @@ class Visitor
      */
     public function updateContext($key, $value)
     {
-        if (!$this->isContextKeyValid($key) || !$this->isContextValueValid($value)) {
-            $this->log();
+        if (!$this->isKeyValid($key) || !$this->isValueValid($value)) {
+            $this->logError($this->config->getLogManager(), ""); // Error
             return;
         }
         $this->context[$key] = $value;
@@ -147,44 +149,108 @@ class Visitor
     }
 
     /**
+     * @return array
+     */
+    public function getModifications()
+    {
+        return $this->modifications;
+    }
+
+    /**
+     * Retrieve a modification value by its key. If no modification match the given
+     * key or if the stored value type and default value type do not match, default value will be returned.
+     * @param string $key : key associated to the modification.
+     * @param string|bool|numeric $defaultValue : default value to return.
+     * @param bool $activate : Set this parameter to true to automatically report on our server that the
+     * current visitor has seen this modification. It is possible to call activateModification() later.
+     * @return string|bool|numeric : modification value or default value.
+     */
+    public function getModification($key, $defaultValue, $activate = false)
+    {
+        if (!$this->isKeyValid($key)) {
+            return $defaultValue;
+        }
+        foreach ($this->modifications as $modification) {
+            if (
+                $modification->getKey() === $key &&
+                gettype($modification->getValue()) === gettype($defaultValue)
+            ) {
+                return $modification->getValue();
+            }
+        }
+        return  $defaultValue;
+    }
+
+    /**
+     * Get the campaign modification information value matching the given key.
+     * @param $key : key which identify the modification.
+     * @return string|null JSON encoded string containing the modification information.
+     */
+    public function getModificationInfo($key)
+    {
+        if (!$this->isKeyValid($key)) {
+            return null;
+        }
+        foreach ($this->modifications as $modification) {
+            if ($modification->getKey() === $key) {
+                return $this->parseCampaignToJson($modification);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return a JSON encoded string of Campaign from modification
+     * @param Modification $modification Modification containing information
+     * @return string JSON encoded string
+     */
+    private function parseCampaignToJson(Modification $modification)
+    {
+        $campaign = [
+            FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
+            FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
+            FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
+            FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference()
+        ];
+        return json_encode($campaign);
+    }
+
+    /**
      * This function will call the decision api and update all the campaigns modifications
      * from the server according to the visitor context.
      */
-    public function synchronizedModications()
+    public function synchronizedModifications()
     {
-        $this->campaigns = $this->decisionAPi->getCampaigns($this, HttpClient::create());
+        $this->modifications = $this->decisionAPi->getCampaignsModifications($this, HttpClient::create());
     }
 
     /**
-     * Return true if a context key is not null and is a string, otherwise return false
+     * Return true if the key is not null and is a string, otherwise return false
      * @param mixed $key Context key
      * @return bool
      */
-    private function isContextKeyValid($key)
+    private function isKeyValid($key)
     {
-        return !empty($key) && is_string($key);
+        $check = Validator::isKeyValid($key);
+        if (!$check) {
+            $this->logError($this->config->getLogManager(), ''); // Log
+        }
+        return $check;
     }
 
 
     /**
-     * Return true if a context value is not null and is a number or a boolean or a string,
+     * Return true if the value is not null and is a number or a boolean or a string,
      * otherwise return false
      * @param $value
      * @return bool
      */
-    private function isContextValueValid($value)
+    private function isValueValid($value)
     {
-        if (!empty($value) && (is_numeric($value) || is_bool($value) || is_string($value))) {
-            return true;
+        $check = Validator::isValueValid($value);
+        if (!$check) {
+            $this->logError($this->config->getLogManager(), '');// log
         }
-        return false;
-    }
-
-    private function log($message = "Visitor", $context = null)
-    {
-        $logManger = $this->config->getLogManager();
-        if (!is_null($logManger)) {
-            $logManger->error($message, $context);
-        }
+        return $check;
     }
 }

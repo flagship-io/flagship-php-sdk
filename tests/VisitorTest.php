@@ -2,6 +2,9 @@
 
 namespace Flagship;
 
+use Flagship\Enum\FlagshipField;
+use Flagship\Model\Modification;
+use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
 class VisitorTest extends TestCase
@@ -156,6 +159,185 @@ class VisitorTest extends TestCase
 
         $visitor->updateContextCollection($newVisitorContext);
         $this->assertCount(4, $visitor->getContext());
+    }
 
+    /**
+     * @return \array[][]|Modification[]
+     */
+    public function modifications()
+    {
+        return [[[
+            (new Modification())
+                ->setKey('background')
+                ->setValue('EE3300')
+                ->setIsReference(false)
+                ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
+                ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
+                ->setVariationId('c1e3t1nvfu1ncqfcdcq0'),
+            (new Modification())
+                ->setKey('borderColor')
+                ->setValue('blue')
+                ->setIsReference(false)
+                ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
+                ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
+                ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
+            (new Modification())
+                ->setKey('Null')
+                ->setValue(null)
+                ->setIsReference(false)
+                ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
+                ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
+                ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
+            (new Modification())
+                ->setKey('Empty')
+                ->setValue("")
+                ->setIsReference(false)
+                ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
+                ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
+                ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
+            (new Modification())
+                ->setKey('isBool')
+                ->setValue(false)
+                ->setIsReference(false)
+                ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
+                ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
+                ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
+            (new Modification())
+                ->setKey('Number')
+                ->setValue(5)
+                ->setIsReference(false)
+                ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
+                ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
+                ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
+        ]]];
+    }
+
+    /**
+     * @dataProvider modifications
+     * @param Modification[] $modifications
+     */
+    public function testSynchronizedModifications($modifications)
+    {
+        $apiManagerStub = $this->getMockBuilder('Flagship\Decision\ApiManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
+        $config = new FlagshipConfig("EnvId", 'ApiKey');
+        $visitor = new Visitor($config, "visitorId", []);
+        Utils::setPrivateProperty($visitor, 'decisionAPi', $apiManagerStub);
+        $visitor->synchronizedModifications();
+        $this->assertSame($modifications, $visitor->getModifications());
+
+        //Test getModification keyValue is string and DefaultValue is string
+        //Return KeyValue
+
+        $key = $modifications[0]->getKey();
+        $keyValue = $modifications[0]->getValue();
+        $defaultValue = "red";
+        $modificationValue = $visitor->getModification($key, $defaultValue);
+        $this->assertSame($keyValue, $modificationValue);
+
+        //Test getModification keyValue is boolean and DefaultValue is boolean
+        //Return KeyValue
+
+        $key = $modifications[4]->getKey();
+        $keyValue = $modifications[4]->getValue();
+        $defaultValue = false;
+        $modificationValue = $visitor->getModification($key, $defaultValue);
+        $this->assertSame($keyValue, $modificationValue);
+
+        //Test getModification keyValue is numeric and DefaultValue is numeric
+        //Return KeyValue
+
+        $key = $modifications[5]->getKey();
+        $keyValue = $modifications[5]->getValue();
+        $defaultValue = 14;
+        $modificationValue = $visitor->getModification($key, $defaultValue);
+        $this->assertSame($keyValue, $modificationValue);
+
+        //Test getModification keyValue is string and DefaultValue is not string
+        //Return DefaultValue
+
+        $key = $modifications[0]->getKey();
+        $keyValue = $modifications[0]->getValue();
+        $defaultValue = 25; // default is numeric
+        $modificationValue = $visitor->getModification($key, $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
+
+        $defaultValue = true; // default is boolean
+        $modificationValue = $visitor->getModification($key, $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
+
+        $defaultValue = []; // is not numeric and bool and string
+        $modificationValue = $visitor->getModification($key, $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
+
+        //Test getModification key is not string or is empty
+        //Return DefaultValue
+
+        $defaultValue = true;
+        $modificationValue = $visitor->getModification(null, $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
+
+        $defaultValue = 58;
+        $modificationValue = $visitor->getModification('', $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
+
+        //Test getModification keyValue is null
+        //Return DefaultValue
+
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
+        $defaultValue = 14;
+        $modificationValue = $visitor->getModification($key, $defaultValue);
+        $this->assertSame($defaultValue, $defaultValue);
+
+        //Test getModification keyValue is empty
+        //Return DefaultValue
+
+        $key = $modifications[3]->getKey();
+        $keyValue = $modifications[3]->getValue();
+        $defaultValue = "blue-border";
+        $modificationValue = $visitor->getModification($key, $defaultValue);
+        $this->assertSame($keyValue, $modificationValue);
+    }
+
+    /**
+     * @dataProvider modifications
+     * @param Modification[] $modifications
+     */
+    public function testGetModificationInfo($modifications)
+    {
+        $apiManagerStub = $this->getMockBuilder('Flagship\Decision\ApiManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
+        $config = new FlagshipConfig("EnvId", 'ApiKey');
+        $visitor = new Visitor($config, "visitorId", []);
+        Utils::setPrivateProperty($visitor, 'decisionAPi', $apiManagerStub);
+        $visitor->synchronizedModifications();
+
+        $modification = $modifications[0];
+
+        $campaign = [
+            FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
+            FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
+            FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
+            FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference()
+        ];
+        $campaignJsonExpected = json_encode($campaign);
+
+        //Test key exist in modifications set
+
+        $campaignJson = $visitor->getModificationInfo($modification->getKey());
+        $this->assertJsonStringEqualsJsonString($campaignJsonExpected, $campaignJson);
+
+        //Test key doesn't exist in modifications set
+        $campaignJson = $visitor->getModificationInfo('notExistKey');
+        $this->assertNull($campaignJson);
+
+        //Test Key is null
+        $campaignJson = $visitor->getModificationInfo(null);
+        $this->assertNull($campaignJson);
     }
 }

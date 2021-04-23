@@ -95,7 +95,9 @@ class ApiManager implements ApiManagerInterface
         foreach ($campaigns as $campaign) {
             if (isset($campaign[FlagshipField::FIELD_VARIATION])) {
                 if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS])) {
-                    if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE])
+                    if (
+                        isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
+                        [FlagshipField::FIELD_VALUE])
                     ) {
                         $modificationValues = $campaign[FlagshipField::FIELD_VARIATION]
                         [FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE];

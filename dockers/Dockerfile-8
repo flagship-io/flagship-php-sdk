@@ -3,11 +3,15 @@ COPY . /home/app
 WORKDIR /home/app
 
 RUN apk --no-cache add pcre-dev ${PHPIZE_DEPS} \ 
-  && pecl install xdebug-2.5.5 \
+  && pecl install xdebug \
   && docker-php-ext-enable xdebug \
   && apk del pcre-dev ${PHPIZE_DEPS}
 
 RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
 
 RUN composer install
+
+RUN composer remove phpunit/phpunit --dev
+
+RUN composer require phpunit/phpunit --dev
 

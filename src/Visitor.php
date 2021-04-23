@@ -176,7 +176,8 @@ class Visitor
             return $defaultValue;
         }
         foreach ($this->modifications as $modification) {
-            if ($modification->getKey() === $key 
+            if (
+                $modification->getKey() === $key
                 && gettype($modification->getValue()) === gettype($defaultValue)
             ) {
                 return $modification->getValue();

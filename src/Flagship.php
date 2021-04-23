@@ -138,4 +138,18 @@ class Flagship
         $this->status = $status;
         return $this;
     }
+
+    /**
+     * Create a new visitor with a context.
+     * @param $visitorId : Unique visitor identifier.
+     * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
+     * @return Visitor|null
+     */
+    public static function newVisitor($visitorId, $context = [])
+    {
+        if (!empty($visitorId) && self::isReady()) {
+            return new Visitor(self::getConfig(), $visitorId, $context);
+        }
+        return null;
+    }
 }

@@ -176,4 +176,41 @@ class FlagshipTest extends TestCase
         //Test Flagship instance is null
         $this->assertFalse(Flagship::isReady());
     }
+
+    public function testNewVisitor()
+    {
+        //Test Start Flagship
+        $envId = "end_id";
+        $apiKey = "apiKey";
+        $config = new FlagshipConfig($envId, $apiKey);
+        Flagship::start($envId, $apiKey, $config);
+
+        $context = ['age' => 20];
+        $visitorId = "visitorId";
+        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $this->assertInstanceOf("Flagship\Visitor", $visitor1);
+        $this->assertSame($context['age'], $visitor1->getContext()['age']);
+    }
+
+    public function testNewVisitorFailed()
+    {
+        //Test Start Flagship
+        $envId = "";
+        $apiKey = "apiKey";
+        $config = new FlagshipConfig($envId, $apiKey);
+        Flagship::start($envId, $apiKey, $config);
+        $context = ['age' => 20];
+        $visitorId = "visitorId";
+        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $this->assertSame(null, $visitor1);
+    }
+
+    public function testNewVisitorFailedWithoutStart()
+    {
+        //Test Start Flagship
+        $context = ['age' => 20];
+        $visitorId = "visitorId";
+        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $this->assertSame(null, $visitor1);
+    }
 }

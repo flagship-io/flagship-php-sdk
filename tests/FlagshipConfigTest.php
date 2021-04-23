@@ -35,10 +35,6 @@ class FlagshipConfigTest extends TestCase
         $this->assertEquals($timeOut, $config->getTimeOut());
     }
 
-    public function testSetLogManager()
-    {
-    }
-
     /**
      * @dataProvider configData
      * @param        array $configData

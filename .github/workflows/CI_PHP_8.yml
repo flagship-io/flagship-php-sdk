@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         php-versions: ['8']
-        phpunit-versions: ['5.7']
+        phpunit-versions: ['9']
 
     steps:
     - uses: actions/checkout@v2
@@ -46,7 +46,7 @@ jobs:
 
 
     - name: Run test suite
-      run: composer run-script test
+      run: composer run-script test -- -c phpunit.8.xml
 
     - name: Generate test coverage badge
       uses: timkrase/phpunit-coverage-badge@v1.2.0

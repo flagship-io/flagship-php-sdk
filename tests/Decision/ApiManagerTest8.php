@@ -8,12 +8,12 @@ use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-class ApiManagerTest extends TestCase
+class ApiManagerTest8 extends TestCase
 {
 
-    public function tearDown()
+
+    public function tearDown(): void
     {
-        parent::tearDown();
         $config = new FlagshipConfig("env_id", "api_key");
         $singleton = ApiManager::getInstance($config);
         $reflection = new ReflectionClass($singleton);
@@ -21,10 +21,6 @@ class ApiManagerTest extends TestCase
         $instance->setAccessible(true);
         $instance->setValue(null, null);
         $instance->setAccessible(false);
-    }
-
-    public function testParseCampaigns()
-    {
     }
 
     public function testGetInstance()
@@ -37,7 +33,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetAllModifications()
     {
-        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post']);
+        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], "", false);
         $visitorId = 'visitor_id';
         $modificationValue1 = [
             "background" => "bleu ciel",
@@ -132,7 +128,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetCampaigns()
     {
-        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post']);
+        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], '', false);
         $visitorId = 'visitor_id';
         $campaigns = [
             [
@@ -165,10 +161,15 @@ class ApiManagerTest extends TestCase
     public function testGetCampaignThrowException()
     {
         //Mock logManger
-        $logManagerStub = $this->getMockForAbstractClass('Flagship\Interfaces\LogManagerInterface', ['error']);
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Interfaces\LogManagerInterface',
+            ['error'],
+            '',
+            false
+        );
 
         //Mock class Curl
-        $curlStub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post']);
+        $curlStub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], '', false);
         ;
 
         //Mock method curl->post to throw Exception
@@ -188,9 +189,5 @@ class ApiManagerTest extends TestCase
         $visitor = new Visitor($config, 'visitor_id', ['age' => 15]);
         $value = $manager->getCampaigns($visitor, $curlStub);
         $this->assertSame([], $value);
-    }
-
-    public function testGetCampaignsModifications()
-    {
     }
 }

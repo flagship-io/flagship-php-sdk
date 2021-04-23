@@ -7,9 +7,9 @@ use Flagship\Enum\FlagshipStatus;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
-class FlagshipTest extends TestCase
+class FlagshipTest8 extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

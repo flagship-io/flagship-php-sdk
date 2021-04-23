@@ -12,8 +12,8 @@
     <testsuites>
         <testsuite name="my test">
             <directory>tests</directory>
-            <exclude>tests/Decision/ApiManagerTest8.php</exclude>
-            <exclude>tests/FlagshipTest8.php</exclude>
+            <exclude>tests/Decision/ApiManagerTest5.php</exclude>
+            <exclude>tests/FlagshipTest5.php</exclude>
         </testsuite>
     </testsuites>
     <php>
@@ -23,11 +23,6 @@
         <ini name="display_errors" value="On" />
         <ini name="display_startup_errors" value="On" />
     </php>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src/</directory>
-        </whitelist>
-    </filter>
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">src</directory>
@@ -37,8 +32,4 @@
             <html outputDirectory="reports/coverage"/>
         </report>
     </coverage>
-    <logging>
-        <log type="coverage-html" target="reports/coverage"/>
-        <log type="coverage-clover" target="clover.xml"/>
-    </logging>
 </phpunit>

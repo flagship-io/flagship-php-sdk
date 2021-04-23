@@ -4,6 +4,14 @@ namespace Flagship\Enum;
 
 class FlagshipStatus
 {
-    const READY = true;
-    const NOT_READY = false;
+
+    /**
+     * Flagship SDK is ready to use.
+     */
+    const READY = 1;
+
+    /**
+     * Flagship SDK has not been started or initialized successfully.
+     */
+    const NOT_READY = 0;
 }

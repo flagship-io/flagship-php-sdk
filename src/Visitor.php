@@ -3,6 +3,7 @@
 namespace Flagship;
 
 use Flagship\Decision\ApiManager;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Interfaces\ApiManagerInterface;
 use Flagship\Model\Modification;
@@ -129,8 +130,13 @@ class Visitor
      */
     public function updateContext($key, $value)
     {
-        if (!$this->isKeyValid($key) || !$this->isValueValid($value)) {
-            $this->logError($this->config->getLogManager(), ""); // Error
+        if (!Validator::isKeyValid($key) || !Validator::isValueValid($value)) {
+            $this->logError(
+                $this->config->getLogManager(),
+                FlagshipConstant::CONTEXT_PARAM_ERROR,
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_UPDATE_CONTEXT]
+            );
+
             return;
         }
         $this->context[$key] = $value;
@@ -165,23 +171,43 @@ class Visitor
      *
      * @param  string              $key          : key associated to the modification.
      * @param  string|bool|numeric $defaultValue : default value to return.
-     * @param  bool                $activate     : Set this parameter to true to automatically report on our server that the
+     * @param  bool                $activate     : Set this parameter to true
+     * to automatically report on our server that the
      *                                           current visitor has seen this modification. It is possible to call
      *                                           activateModification() later.
      * @return string|bool|numeric : modification value or default value.
      */
     public function getModification($key, $defaultValue, $activate = false)
     {
-        if (!$this->isKeyValid($key)) {
+        if (!Validator::isKeyValid($key)) {
+            $this->logError(
+                $this->config->getLogManager(),
+                sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+            );
             return $defaultValue;
         }
+        $foundKey = false;
         foreach ($this->modifications as $modification) {
-            if (
-                $modification->getKey() === $key
-                && gettype($modification->getValue()) === gettype($defaultValue)
-            ) {
-                return $modification->getValue();
+            if ($modification->getKey() === $key) {
+                $foundKey = true;
+                if (gettype($modification->getValue()) === gettype($defaultValue)) {
+                    return $modification->getValue();
+                } else {
+                    $this->logError(
+                        $this->config->getLogManager(),
+                        sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
+                        [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+                    );
+                }
             }
+        }
+        if (!$foundKey) {
+            $this->logError(
+                $this->config->getLogManager(),
+                sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+            );
         }
         return  $defaultValue;
     }
@@ -194,7 +220,12 @@ class Visitor
      */
     public function getModificationInfo($key)
     {
-        if (!$this->isKeyValid($key)) {
+        if (!Validator::isKeyValid($key)) {
+            $this->logError(
+                $this->config->getLogManager(),
+                sprintf(FlagshipConstant::GET_MODIFICATION_INFO_ERROR, $key),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]
+            );
             return null;
         }
         foreach ($this->modifications as $modification) {
@@ -202,6 +233,11 @@ class Visitor
                 return $this->parseCampaignToJson($modification);
             }
         }
+        $this->logError(
+            $this->config->getLogManager(),
+            sprintf(FlagshipConstant::GET_MODIFICATION_INFO_ERROR, $key),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]
+        );
         return null;
     }
 
@@ -229,37 +265,5 @@ class Visitor
     public function synchronizedModifications()
     {
         $this->modifications = $this->decisionAPi->getCampaignsModifications($this, HttpClient::create());
-    }
-
-    /**
-     * Return true if the key is not null and is a string, otherwise return false
-     *
-     * @param  mixed $key Context key
-     * @return bool
-     */
-    private function isKeyValid($key)
-    {
-        $check = Validator::isKeyValid($key);
-        if (!$check) {
-            $this->logError($this->config->getLogManager(), ''); // Log
-        }
-        return $check;
-    }
-
-
-    /**
-     * Return true if the value is not null and is a number or a boolean or a string,
-     * otherwise return false
-     *
-     * @param  $value
-     * @return bool
-     */
-    private function isValueValid($value)
-    {
-        $check = Validator::isValueValid($value);
-        if (!$check) {
-            $this->logError($this->config->getLogManager(), '');// log
-        }
-        return $check;
     }
 }

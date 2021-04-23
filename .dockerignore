@@ -1,7 +1,8 @@
-.dockerignore
 .git
 .gitignore
 composer.lock
 dockers
 .idea
 vendor
+reports
+build

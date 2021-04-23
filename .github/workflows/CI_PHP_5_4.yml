@@ -1,8 +1,8 @@
-name: PHP Composer
+name: CI PHP 5.4
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/flaship_class]
   pull_request:
     branches: [ main ]
 
@@ -46,4 +46,11 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test
+
+    - name: Generate test coverage badge
+      uses: timkrase/phpunit-coverage-badge@v1.2.0
+      with:
+        coverage_badge_path: 'badge_php_5_4.svg'
+        push_badge: true
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
 

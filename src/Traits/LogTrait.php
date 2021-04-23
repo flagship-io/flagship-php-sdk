@@ -11,10 +11,23 @@ trait LogTrait
      * @param $message
      * @param array               $context
      */
-    public function logError($logManager, $message, $context = [])
+    protected function logError($logManager, $message, $context = [])
     {
         if (!is_null($logManager)) {
             $logManager->error($message, $context);
         }
     }
+
+    /**
+     * @param LogManagerInterface $logManager
+     * @param $message
+     * @param array               $context
+     */
+    protected function logInfo($logManager, $message, $context = [])
+    {
+        if (!is_null($logManager)) {
+            $logManager->info($message, $context);
+        }
+    }
+
 }

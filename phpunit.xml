@@ -11,13 +11,14 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="my test">
+            <exclude>tests/Decision/Version8/ApiManagerTest.php</exclude>
+            <exclude>tests/Version8/FlagshipTest.php</exclude>
             <directory>tests</directory>
-            <exclude>tests/Decision/ApiManagerTest8.php</exclude>
-            <exclude>tests/FlagshipTest8.php</exclude>
+
         </testsuite>
     </testsuites>
     <php>
-        <ini name="error_reporting" value="-1" />
+<!--        <ini name="error_reporting" value="-1" />-->
         <ini name="xdebug.mode" value="coverage" />
         <env name="XDEBUG_MODE" value="coverage" />
         <ini name="display_errors" value="On" />
@@ -28,15 +29,7 @@
             <directory suffix=".php">src/</directory>
         </whitelist>
     </filter>
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-        <report>
-            <clover outputFile="clover.xml" />
-            <html outputDirectory="reports/coverage"/>
-        </report>
-    </coverage>
+
     <logging>
         <log type="coverage-html" target="reports/coverage"/>
         <log type="coverage-clover" target="clover.xml"/>

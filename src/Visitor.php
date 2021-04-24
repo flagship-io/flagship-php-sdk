@@ -202,7 +202,7 @@ class Visitor
                 }
             }
         }
-        if (!$foundKey) {
+        if ($foundKey) {
             $this->logError(
                 $this->config->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),

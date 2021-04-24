@@ -1,18 +1,19 @@
 <?php
 
-namespace Flagship\Decision;
+namespace Flagship\Decision\Version8;
 
 use Exception;
+use Flagship\Decision\ApiManager;
 use Flagship\FlagshipConfig;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-class ApiManagerTest5 extends TestCase
+class ApiManagerTest extends TestCase
 {
 
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $config = new FlagshipConfig("env_id", "api_key");
         $singleton = ApiManager::getInstance($config);

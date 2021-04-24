@@ -1,13 +1,15 @@
 <?php
 
-namespace Flagship;
+namespace Flagship\Version8;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Flagship;
+use Flagship\FlagshipConfig;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
-class FlagshipTest8 extends TestCase
+class FlagshipTest extends TestCase
 {
     public function setUp(): void
     {

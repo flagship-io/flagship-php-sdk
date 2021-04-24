@@ -7,7 +7,7 @@ use Flagship\Enum\FlagshipStatus;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
-class FlagshipTest5 extends TestCase
+class FlagshipTest extends TestCase
 {
     public function setUp()
     {

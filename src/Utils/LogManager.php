@@ -2,6 +2,7 @@
 
 namespace Flagship\Utils;
 
+use Flagship\Enum\LogLevel;
 use Flagship\Interfaces\LogManagerInterface;
 
 class LogManager implements LogManagerInterface
@@ -12,7 +13,7 @@ class LogManager implements LogManagerInterface
      */
     public function emergency($message, array $context = array())
     {
-        // TODO: Implement emergency() method.
+        $this->log(LogLevel::EMERGENCY, $message, $context);
     }
 
     /**
@@ -20,7 +21,7 @@ class LogManager implements LogManagerInterface
      */
     public function alert($message, $context = null)
     {
-        // TODO: Implement alert() method.
+        $this->log(LogLevel::ALERT, $message, $context);
     }
 
     /**
@@ -28,7 +29,7 @@ class LogManager implements LogManagerInterface
      */
     public function critical($message, array $context = array())
     {
-        // TODO: Implement critical() method.
+        $this->log(LogLevel::CRITICAL, $message, $context);
     }
 
     /**
@@ -36,7 +37,7 @@ class LogManager implements LogManagerInterface
      */
     public function error($message, $context = null)
     {
-        // TODO: Implement error() method.
+        $this->log(LogLevel::ERROR, $message, $context);
     }
 
     /**
@@ -44,7 +45,7 @@ class LogManager implements LogManagerInterface
      */
     public function warning($message, $context = null)
     {
-        // TODO: Implement warning() method.
+        $this->log(LogLevel::WARNING, $message, $context);
     }
 
     /**
@@ -52,7 +53,7 @@ class LogManager implements LogManagerInterface
      */
     public function notice($message, $context = [])
     {
-        // TODO: Implement notice() method.
+        $this->log(LogLevel::NOTICE, $message, $context);
     }
 
     /**
@@ -60,7 +61,7 @@ class LogManager implements LogManagerInterface
      */
     public function info($message, $context = [])
     {
-        // TODO: Implement info() method.
+        $this->log(LogLevel::INFO, $message, $context);
     }
 
     /**
@@ -68,7 +69,7 @@ class LogManager implements LogManagerInterface
      */
     public function debug($message, $context = [])
     {
-        // TODO: Implement debug() method.
+        $this->log(LogLevel::DEBUG, $message, $context);
     }
 
     /**
@@ -76,6 +77,27 @@ class LogManager implements LogManagerInterface
      */
     public function log($level, $message, array $context = array())
     {
-        // TODO: Implement log() method.
+        $customMessage = "[{$level}] {$message} ";
+        $contextString = $this->parseContextToString($context);
+        error_log($customMessage . $contextString);
+    }
+
+    private function parseContextToString($context)
+    {
+        $contextToString = "";
+
+        if (count($context) > 0) {
+            $contextToString .= '[';
+        }
+        foreach ($context as $key => $item) {
+            $contextToString .= "$key => $item, ";
+        }
+
+        $contextToString = substr($contextToString, 0, -2);
+
+        if (count($context) > 0) {
+            $contextToString .= ']';
+        }
+        return $contextToString;
     }
 }

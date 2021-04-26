@@ -1,8 +1,8 @@
 <?php
 
-namespace Flagship\Utils;
+namespace Flagship\Traits;
 
-class Validator
+trait ValidatorTrait
 {
 
     /**

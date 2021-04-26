@@ -9,7 +9,7 @@ use Flagship\FlagshipConfig;
 use Flagship\Interfaces\ApiManagerInterface;
 use Flagship\Interfaces\HttpClientInterface;
 use Flagship\Model\Modification;
-use Flagship\Utils\Validator;
+use Flagship\Traits\ValidatorTrait;
 use Flagship\Visitor;
 
 /**
@@ -19,6 +19,8 @@ use Flagship\Visitor;
  */
 class ApiManager implements ApiManagerInterface
 {
+    use ValidatorTrait;
+
     private static $instance;
 
     /**
@@ -105,7 +107,7 @@ class ApiManager implements ApiManagerInterface
                         [FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE];
 
                         foreach ($modificationValues as $key => $modificationValue) {
-                            if (Validator::isKeyValid($key)) {
+                            if ($this->isKeyValid($key)) {
                                 //check if the key is already used
                                 $modification = $this->checkKeyExist($modifications, $key);
                                 $isKeyUsed = true;

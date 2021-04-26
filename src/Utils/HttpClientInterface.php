@@ -1,6 +1,6 @@
 <?php
 
-namespace Flagship\Interfaces;
+namespace Flagship\Utils;
 
 use Flagship\Enum\FlagshipConstant;
 
@@ -45,11 +45,4 @@ interface HttpClientInterface
      * @return mixed
      */
     public function post($url, array $params = [], array $data = []);
-
-    /**
-     * Return new HttpClient instance
-     *
-     * @return HttpClientInterface
-     */
-    public static function create();
 }

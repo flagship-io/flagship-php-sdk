@@ -1,6 +1,6 @@
 <?php
 
-namespace Flagship\Interfaces;
+namespace Flagship\Utils;
 
 /**
  * Interface LogManagerInterface

@@ -39,7 +39,7 @@ class VisitorTest extends TestCase
 
         //Mock logManger
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Interfaces\LogManagerInterface',
+            'Flagship\Utils\LogManagerInterface',
             [],
             "",
             true,
@@ -228,7 +228,7 @@ class VisitorTest extends TestCase
     public function testSynchronizedModifications($modifications)
     {
         $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Interfaces\ApiManagerInterface',
+            'Flagship\Decision\ApiManagerInterface',
             ['getCampaignsModifications'],
             'ApiManagerInterface',
             false
@@ -327,7 +327,7 @@ class VisitorTest extends TestCase
     public function testGetModificationLog($modifications)
     {
         $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Interfaces\ApiManagerInterface',
+            'Flagship\Decision\ApiManagerInterface',
             ['getCampaignsModifications'],
             'ApiManagerInterface',
             false
@@ -393,7 +393,7 @@ class VisitorTest extends TestCase
     public function testGetModificationInfo($modifications)
     {
         $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Interfaces\ApiManagerInterface',
+            'Flagship\Decision\ApiManagerInterface',
             ['getCampaignsModifications'],
             'ApiManagerInterface',
             false

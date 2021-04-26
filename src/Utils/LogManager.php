@@ -3,7 +3,6 @@
 namespace Flagship\Utils;
 
 use Flagship\Enum\LogLevel;
-use Flagship\Interfaces\LogManagerInterface;
 
 class LogManager implements LogManagerInterface
 {

@@ -5,7 +5,6 @@ namespace Flagship\Utils;
 use ErrorException;
 use Exception;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Interfaces\HttpClientInterface;
 
 class HttpClient implements HttpClientInterface
 {
@@ -18,15 +17,10 @@ class HttpClient implements HttpClientInterface
      * @var array
      */
     private $headers = [];
-    /**
-     * @var int
-     */
-    private $attempts;
 
     /**
      * Construct
      *
-     * @access public
      * @throws ErrorException
      */
     public function __construct()
@@ -35,17 +29,8 @@ class HttpClient implements HttpClientInterface
             throw new ErrorException('cURL library is not loaded');
         }
         $this->curl = curl_init();
-        $this->initialize();
-    }
 
-    /**
-     * Initialize
-     *
-     * @access private
-     */
-    private function initialize()
-    {
-        $this->setTimeout(FlagshipConstant::REQUEST_TIME_OUT);
+        $this->setTimeout();
         $this->setOpt(CURLOPT_RETURNTRANSFER, true);
     }
 
@@ -105,14 +90,13 @@ class HttpClient implements HttpClientInterface
     /**
      * Set Url
      *
-     * @access public
      * @param  $url
-     * @param  $mixed_data
+     * @param  $mixedData
      * @return HttpClientInterface
      */
-    private function setUrl($url, $mixed_data = '')
+    private function setUrl($url, $mixedData = '')
     {
-        $built_url = $this->buildUrl($url, $mixed_data);
+        $built_url = $this->buildUrl($url, $mixedData);
         $this->setOpt(CURLOPT_URL, $built_url);
         return $this;
     }
@@ -120,14 +104,11 @@ class HttpClient implements HttpClientInterface
     /**
      * Exec
      *
-     * @access public
      * @return mixed Returns the value provided by parseResponse.
      * @throws Exception
      */
     public function exec()
     {
-        $this->attempts += 1;
-
         $rawResponse = curl_exec($this->curl);
         $curlErrorCode = curl_errno($this->curl);
         $curlErrorMessage = curl_error($this->curl);
@@ -137,6 +118,7 @@ class HttpClient implements HttpClientInterface
 
         $response = $this->parseResponse($rawResponse);
         curl_close($this->curl);
+
         if ($httpError) {
             throw new Exception($curlErrorMessage, $curlErrorCode);
         } else {
@@ -187,19 +169,12 @@ class HttpClient implements HttpClientInterface
      */
     private function getInfo($opt = null)
     {
-        $args = [];
-        $args[] = $this->curl;
-
-        if (func_num_args()) {
-            $args[] = $opt;
-        }
-
-        return call_user_func_array('curl_getinfo', $args);
+        return curl_getinfo($this->curl, $opt);
     }
 
-    private function parseResponse($raw_response)
+    private function parseResponse($rawResponse)
     {
-        return json_decode($raw_response, true);
+        return json_decode($rawResponse, true);
     }
 
     /**
@@ -207,29 +182,21 @@ class HttpClient implements HttpClientInterface
      *
      * @access public
      * @param  $url
-     * @param  $mixed_data
+     * @param  $mixedData
      *
      * @return string
      */
-    private function buildUrl($url, $mixed_data = '')
+    private function buildUrl($url, $mixedData = '')
     {
-        $query_string = '';
-        if (!empty($mixed_data)) {
-            $query_mark = strpos($url, '?') > 0 ? '&' : '?';
-            if (is_string($mixed_data)) {
-                $query_string .= $query_mark . $mixed_data;
-            } elseif (is_array($mixed_data)) {
-                $query_string .= $query_mark . http_build_query($mixed_data, '', '&');
+        $queryString = '';
+        if (!empty($mixedData)) {
+            $queryMark = strpos($url, '?') > 0 ? '&' : '?';
+            if (is_string($mixedData)) {
+                $queryString .= $queryMark . $mixedData;
+            } elseif (is_array($mixedData)) {
+                $queryString .= $queryMark . http_build_query($mixedData, '', '&');
             }
         }
-        return $url . $query_string;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function create()
-    {
-        return new HttpClient();
+        return $url . $queryString;
     }
 }

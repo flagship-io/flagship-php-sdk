@@ -18,7 +18,7 @@ class LogTraitTest extends TestCase
             true
         );
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Interfaces\LogManagerInterface',
+            'Flagship\Utils\LogManagerInterface',
             [],
             "",
             false,
@@ -49,7 +49,7 @@ class LogTraitTest extends TestCase
             true
         );
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Interfaces\LogManagerInterface',
+            'Flagship\Utils\LogManagerInterface',
             [],
             "",
             false,

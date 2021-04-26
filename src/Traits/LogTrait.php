@@ -2,7 +2,7 @@
 
 namespace Flagship\Traits;
 
-use Flagship\Interfaces\LogManagerInterface;
+use Flagship\Utils\LogManagerInterface;
 
 trait LogTrait
 {

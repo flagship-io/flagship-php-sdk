@@ -3,9 +3,9 @@
 namespace Flagship;
 
 use Flagship\Decision\ApiManager;
+use Flagship\Decision\ApiManagerInterface;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
-use Flagship\Interfaces\ApiManagerInterface;
 use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClient;
@@ -54,7 +54,7 @@ class Visitor
      */
     public function __construct($config, $visitorId, $context = [])
     {
-        $this->decisionAPi = ApiManager::getInstance($config);
+        $this->decisionAPi = new ApiManager($config); // May be a dependency injection or from DI container
         $this->config = $config;
         $this->setVisitorId($visitorId);
         $this->updateContextCollection($context);
@@ -264,6 +264,6 @@ class Visitor
      */
     public function synchronizedModifications()
     {
-        $this->modifications = $this->decisionAPi->getCampaignsModifications($this, HttpClient::create());
+        $this->modifications = $this->decisionAPi->getCampaignsModifications($this, new HttpClient());
     }
 }

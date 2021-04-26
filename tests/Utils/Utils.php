@@ -29,12 +29,20 @@ class Utils
         return $method;
     }
 
-    public static function setPrivateProperty($objet, $propertyName, $value)
+    public static function setPrivateProperty($objet, $propertyName, $value, $className = null)
     {
-        $class = new ReflectionClass($objet);
+        $class = new ReflectionClass($className ?: $objet);
         $property = $class->getProperty($propertyName);
         $property->setAccessible(true);
         $property->setValue($objet, $value);
         $property->setAccessible(false);
+    }
+
+    public static function getProperty($class, $name)
+    {
+        $class = new ReflectionClass($class);
+        $property = $class->getProperty($name);
+        $property->setAccessible(true);
+        return $property;
     }
 }

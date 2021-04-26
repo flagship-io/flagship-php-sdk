@@ -14,7 +14,10 @@ class HttpClient implements HttpClientInterface
 
     private $options;
 
-    private $headers;
+    /**
+     * @var array
+     */
+    private $headers = [];
     /**
      * @var int
      */
@@ -80,6 +83,14 @@ class HttpClient implements HttpClientInterface
         }
         $this->setOpt(CURLOPT_HTTPHEADER, $headers);
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
     }
 
     /**

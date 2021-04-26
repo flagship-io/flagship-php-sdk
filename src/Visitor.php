@@ -9,7 +9,7 @@ use Flagship\Interfaces\ApiManagerInterface;
 use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClient;
-use Flagship\Utils\Validator;
+use Flagship\Traits\ValidatorTrait;
 
 /**
  * Flagship visitor representation.
@@ -19,6 +19,7 @@ use Flagship\Utils\Validator;
 class Visitor
 {
     use LogTrait;
+    use ValidatorTrait;
 
     /**
      * @var FlagshipConfig
@@ -130,7 +131,7 @@ class Visitor
      */
     public function updateContext($key, $value)
     {
-        if (!Validator::isKeyValid($key) || !Validator::isValueValid($value)) {
+        if (!$this->isKeyValid($key) || !$this->isValueValid($value)) {
             $this->logError(
                 $this->config->getLogManager(),
                 FlagshipConstant::CONTEXT_PARAM_ERROR,
@@ -179,7 +180,7 @@ class Visitor
      */
     public function getModification($key, $defaultValue, $activate = false)
     {
-        if (!Validator::isKeyValid($key)) {
+        if (!$this->isKeyValid($key)) {
             $this->logError(
                 $this->config->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
@@ -220,7 +221,7 @@ class Visitor
      */
     public function getModificationInfo($key)
     {
-        if (!Validator::isKeyValid($key)) {
+        if (!$this->isKeyValid($key)) {
             $this->logError(
                 $this->config->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_INFO_ERROR, $key),

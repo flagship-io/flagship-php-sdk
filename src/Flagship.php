@@ -9,6 +9,8 @@ use Flagship\Traits\LogTrait;
 /**
  * Flagship main singleton.
  */
+
+ // trop de static methods je pense ?
 class Flagship
 {
     use LogTrait;
@@ -17,10 +19,12 @@ class Flagship
      * @var Flagship
      */
     private static $instance;
+
     /**
      * @var FlagshipConfig
      */
     private $config;
+
     /**
      * @var int
      */
@@ -43,6 +47,8 @@ class Flagship
      * @return Flagship
      */
     protected static function instance()
+    // singleton ?
+    // si oui, getInstance pour uniformiser avec les autres singletons
     {
         if (!self::$instance) {
             self::$instance = new Flagship();
@@ -60,6 +66,7 @@ class Flagship
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
     {
+        // static method
         $flagship = self::instance();
         if (!$config) {
             $config = new FlagshipConfig($envId, $apiKey);
@@ -96,12 +103,15 @@ class Flagship
      */
     public static function isReady()
     {
+        // static method
         if (self::$instance && self::$instance->config) {
             $envId = self::$instance->config->getEnvId();
             $apiKey = self::$instance->config->getApiKey();
             return !empty($envId) && !empty($apiKey);
         }
         return false;
+
+        // exception case return first
     }
 
     /**
@@ -111,6 +121,7 @@ class Flagship
      */
     public static function getConfig()
     {
+        // static
         return self::instance()->config;
     }
 
@@ -132,6 +143,7 @@ class Flagship
      */
     public static function getStatus()
     {
+        // static
         return self::instance()->status;
     }
 
@@ -154,6 +166,7 @@ class Flagship
      */
     public static function newVisitor($visitorId, $context = [])
     {
+        // static method
         if (!empty($visitorId) && self::isReady()) {
             return new Visitor(self::getConfig(), $visitorId, $context);
         }

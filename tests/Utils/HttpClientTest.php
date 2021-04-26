@@ -14,6 +14,7 @@ class HttpClientTest extends TestCase
     public function testSetHeaders()
     {
         $client = HttpClient::create();
+        // why not new HttpClient() ?
         $this->assertCount(0, $client->getHeaders());
         $client->setHeaders(['x-sdk-client' => 'PHP']);
         $this->assertCount(1, $client->getHeaders());

@@ -24,10 +24,12 @@ class Visitor
      * @var FlagshipConfig
      */
     private $config;
+
     /**
      * @var string
      */
     private $visitorId;
+    
     /**
      * @var array
      */
@@ -52,8 +54,12 @@ class Visitor
      * @param array          $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      */
     public function __construct($config, $visitorId, $context = [])
+    // every context[] in the code should be a class I think, a simple array is a bit harder to understrand
+    // imo, we can create a Context class with methods (add, get, contains...) like this ? https://github.com/wcomnisky/flagship-php-sdk/blob/develop/src/Context/Context.php
+    // more, this class can extend a trait ContextAware to handle some automatic logic
     {
         $this->decisionAPi = ApiManager::getInstance($config);
+        // dependancy injection is better than singleton pattern in 2021, what do you think ?
         $this->config = $config;
         $this->setVisitorId($visitorId);
         $this->updateContextCollection($context);
@@ -129,6 +135,7 @@ class Visitor
      * @param int|float|string|bool $value : context value.
      */
     public function updateContext($key, $value)
+    // if you have a Context class instead of an array I think we don't need this method ?
     {
         if (!Validator::isKeyValid($key) || !Validator::isValueValid($value)) {
             $this->logError(

@@ -16,6 +16,14 @@ trait LogTrait
         if (!is_null($logManager)) {
             $logManager->error($message, $context);
         }
+
+        // what do you think of this implem instead ?
+        //
+        // if (is_null($logManager)) {
+        //     return;
+        // }
+
+        // $logManager->error($message, $context);
     }
 
     /**
@@ -28,6 +36,7 @@ trait LogTrait
         if (!is_null($logManager)) {
             $logManager->info($message, $context);
         }
+        // same
     }
 
 }

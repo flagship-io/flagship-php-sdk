@@ -17,18 +17,22 @@ class FlagshipConfig
      * @var string
      */
     private $envId;
+
     /**
      * @var string
      */
     private $apiKey;
+
     /**
      * @var int
      */
     private $decisionMode = DecisionMode::DECISION_API;
+
     /**
      * @var int
      */
     private $timeOut = FlagshipConstant::REQUEST_TIME_OUT;
+    
     /**
      * @var LogManagerInterface
      */

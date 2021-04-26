@@ -20,6 +20,8 @@ use Flagship\Visitor;
 class ApiManager implements ApiManagerInterface
 {
     private static $instance;
+    // singleton pattern, do you think we can improve it ? i causes lot of non testability 
+    // it can be managed by a dependancy injection object
 
     /**
      * @var FlagshipConfig
@@ -34,6 +36,7 @@ class ApiManager implements ApiManagerInterface
      * @return ApiManager
      */
     public static function getInstance(FlagshipConfig $config)
+    // could be removed with other system than singleton
     {
         if (is_null(self::$instance)) {
             self::$instance = new ApiManager($config);
@@ -55,6 +58,7 @@ class ApiManager implements ApiManagerInterface
      * @codeCoverageIgnore
      */
     private function __clone()
+    // to implement of remove, I don't know if it is needed ? :) 
     {
     }
 
@@ -87,7 +91,7 @@ class ApiManager implements ApiManagerInterface
     }
 
     /**
-     *  Return an array of modification from all campaign
+     * Return an array of modification from all campaigns
      * @param array $campaigns
      * @return Modification[] Return an array of Modification
      */
@@ -218,8 +222,14 @@ class ApiManager implements ApiManagerInterface
     private function log($message = "Decision manager", $context = null)
     {
         $logManger = $this->config->getLogManager();
+        // logManager
         if (!is_null($logManger)) {
             $logManger->error($message, $context);
         }
+        // exception retun statement before ?
+        // if (!is_null($logManger)) {
+        //     return;
+        // }
+        // $logManger->error($message, $context);
     }
 }

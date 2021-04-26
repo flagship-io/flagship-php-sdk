@@ -7,6 +7,8 @@ use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Interfaces\HttpClientInterface;
 
+// c'est toi qui a construit cette classe ou tu l'a récupérée quelque part ?
+// 
 class HttpClient implements HttpClientInterface
 {
 
@@ -212,6 +214,8 @@ class HttpClient implements HttpClientInterface
      * @return string
      */
     private function buildUrl($url, $mixed_data = '')
+    // simple http_build_query not working ?
+    // camelcase inside instead of snake case
     {
         $query_string = '';
         if (!empty($mixed_data)) {
@@ -229,6 +233,7 @@ class HttpClient implements HttpClientInterface
      * @inheritDoc
      */
     public static function create()
+    // prefer constructor no ?
     {
         return new HttpClient();
     }

@@ -13,25 +13,30 @@ class Modification
      * @var string
      */
     private $key;
+
     /**
      * @var string
      */
     private $campaignId;
+
     /**
      * @var string
      */
     private $variationGroupId;
+
     /**
      * @var string
      */
     private $variationId;
+
     /**
      * @var string
      */
     private $isReference;
+
     /**
      * @var string|bool|numeric
-     */
+     */    
     private $value;
 
     /**

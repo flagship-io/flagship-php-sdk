@@ -16,7 +16,7 @@ class FlagshipTest extends TestCase
         parent::setUp();
 
         //Set Flagship singleton to null
-        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'instance');
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
         if ($instance instanceof  Flagship) {
             Utils::setPrivateProperty($instance, 'instance', null);
@@ -25,7 +25,7 @@ class FlagshipTest extends TestCase
 
     public function testInstance()
     {
-        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'instance');
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance1 = $instanceMethod->invoke(null);
         $instance2 = $instanceMethod->invoke(null);
 
@@ -74,7 +74,7 @@ class FlagshipTest extends TestCase
             'Flagship\Flagship'
         )->setMethods(['logInfo','logError'])->disableOriginalConstructor()->getMock();
 
-        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'instance');
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
 
         Utils::setPrivateProperty($instance, 'instance', $flagshipStub);
@@ -136,7 +136,7 @@ class FlagshipTest extends TestCase
             ->setMethods(['logInfo','logError'])
             ->disableOriginalConstructor()->getMock();
 
-        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'instance');
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
 
         Utils::setPrivateProperty($instance, 'instance', $flagshipStub);

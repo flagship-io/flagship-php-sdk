@@ -42,7 +42,7 @@ class Flagship
      *
      * @return Flagship
      */
-    protected static function instance()
+    protected static function getInstance()
     {
         if (!self::$instance) {
             self::$instance = new Flagship();
@@ -60,7 +60,7 @@ class Flagship
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
     {
-        $flagship = self::instance();
+        $flagship = self::getInstance();
         if (!$config) {
             $config = new FlagshipConfig($envId, $apiKey);
         }
@@ -83,9 +83,9 @@ class Flagship
                 sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
             );
-            self::instance()->setStatus(FlagshipStatus::READY);
+            self::getInstance()->setStatus(FlagshipStatus::READY);
         } else {
-            self::instance()->setStatus(FlagshipStatus::NOT_READY);
+            self::getInstance()->setStatus(FlagshipStatus::NOT_READY);
         }
     }
 
@@ -96,12 +96,12 @@ class Flagship
      */
     public static function isReady()
     {
-        if (self::$instance && self::$instance->config) {
-            $envId = self::$instance->config->getEnvId();
-            $apiKey = self::$instance->config->getApiKey();
-            return !empty($envId) && !empty($apiKey);
+        if (!self::$instance || !self::$instance->config) {
+            return false;
         }
-        return false;
+        $envId = self::$instance->config->getEnvId();
+        $apiKey = self::$instance->config->getApiKey();
+        return !empty($envId) && !empty($apiKey);
     }
 
     /**
@@ -111,7 +111,7 @@ class Flagship
      */
     public static function getConfig()
     {
-        return self::instance()->config;
+        return self::getInstance()->config;
     }
 
     /**
@@ -132,7 +132,7 @@ class Flagship
      */
     public static function getStatus()
     {
-        return self::instance()->status;
+        return self::getInstance()->status;
     }
 
     /**
@@ -154,9 +154,9 @@ class Flagship
      */
     public static function newVisitor($visitorId, $context = [])
     {
-        if (!empty($visitorId) && self::isReady()) {
-            return new Visitor(self::getConfig(), $visitorId, $context);
+        if (empty($visitorId) || !self::isReady()) {
+            return  null;
         }
-        return null;
+        return new Visitor(self::getConfig(), $visitorId, $context);
     }
 }

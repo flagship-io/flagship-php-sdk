@@ -4,7 +4,7 @@ namespace Flagship;
 
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Interfaces\LogManagerInterface;
+use Flagship\Utils\LogManagerInterface;
 
 /**
  * Flagship SDK configuration class to provide at initialization.

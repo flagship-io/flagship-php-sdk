@@ -3,38 +3,15 @@
 namespace Flagship\Decision;
 
 use Exception;
-use Flagship\Decision\ApiManager;
 use Flagship\FlagshipConfig;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 class ApiManagerTest extends TestCase
 {
-
-
-    public function tearDown()
-    {
-        $config = new FlagshipConfig("env_id", "api_key");
-        $singleton = ApiManager::getInstance($config);
-        $reflection = new ReflectionClass($singleton);
-        $instance = $reflection->getProperty('instance');
-        $instance->setAccessible(true);
-        $instance->setValue(null, null);
-        $instance->setAccessible(false);
-    }
-
-    public function testGetInstance()
-    {
-        $config = new FlagshipConfig("env_id", "api_key");
-        $manager1 = ApiManager::getInstance($config);
-        $manager2 = ApiManager::getInstance($config);
-        $this->assertSame($manager1, $manager2);
-    }
-
     public function testGetAllModifications()
     {
-        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], "", false);
+        $stub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
         $visitorId = 'visitor_id';
         $modificationValue1 = [
             "background" => "bleu ciel",
@@ -104,7 +81,7 @@ class ApiManagerTest extends TestCase
         $stub->method('post')
             ->willReturn($result);
         $config = new FlagshipConfig("env_id", "api_key");
-        $manager = ApiManager::getInstance($config);
+        $manager = new ApiManager($config);
         $visitor = new Visitor($config, $visitorId, ['age' => 15]);
         $modifications = $manager->getCampaignsModifications($visitor, $stub);
 
@@ -129,7 +106,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetCampaigns()
     {
-        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], '', false);
+        $stub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], '', false);
         $visitorId = 'visitor_id';
         $campaigns = [
             [
@@ -153,7 +130,7 @@ class ApiManagerTest extends TestCase
         $stub->method('post')
             ->willReturn($result);
         $config = new FlagshipConfig("env_id", "api_key");
-        $manager = ApiManager::getInstance($config);
+        $manager = new ApiManager($config);
         $visitor = new Visitor($config, $visitorId, ['age' => 15]);
         $value = $manager->getCampaigns($visitor, $stub);
         $this->assertSame($campaigns, $value);
@@ -163,14 +140,14 @@ class ApiManagerTest extends TestCase
     {
         //Mock logManger
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Interfaces\LogManagerInterface',
+            'Flagship\Utils\LogManagerInterface',
             ['error'],
             '',
             false
         );
 
         //Mock class Curl
-        $curlStub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], '', false);
+        $curlStub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], '', false);
         ;
 
         //Mock method curl->post to throw Exception
@@ -186,7 +163,7 @@ class ApiManagerTest extends TestCase
         $config->setLogManager($logManagerStub);
 
 
-        $manager = ApiManager::getInstance($config);
+        $manager = new ApiManager($config);
         $visitor = new Visitor($config, 'visitor_id', ['age' => 15]);
         $value = $manager->getCampaigns($visitor, $curlStub);
         $this->assertSame([], $value);

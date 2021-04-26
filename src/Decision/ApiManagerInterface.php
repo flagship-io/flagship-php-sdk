@@ -1,8 +1,9 @@
 <?php
 
-namespace Flagship\Interfaces;
+namespace Flagship\Decision;
 
 use Flagship\Model\Modification;
+use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor;
 
 /**

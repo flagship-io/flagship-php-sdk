@@ -6,9 +6,9 @@ use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\FlagshipConfig;
-use Flagship\Interfaces\ApiManagerInterface;
-use Flagship\Interfaces\HttpClientInterface;
+use Flagship\Utils\HttpClientInterface;
 use Flagship\Model\Modification;
+use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Visitor;
 
@@ -20,45 +20,24 @@ use Flagship\Visitor;
 class ApiManager implements ApiManagerInterface
 {
     use ValidatorTrait;
-
-    private static $instance;
+    use LogTrait;
 
     /**
      * @var FlagshipConfig
      */
     private $config;
 
-
-    /**
-     * Return ApiManager singleton instance
-     *
-     * @param  FlagshipConfig $config
-     * @return ApiManager
-     */
-    public static function getInstance(FlagshipConfig $config)
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new ApiManager($config);
-        }
-        return self::$instance;
-    }
-
     /**
      * ApiManager constructor.
      *
      * @param FlagshipConfig $config
      */
-    private function __construct(FlagshipConfig $config)
+    public function __construct(FlagshipConfig $config)
     {
         $this->config = $config;
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
-    private function __clone()
-    {
-    }
+
 
     /**
      * @inheritDoc
@@ -74,7 +53,7 @@ class ApiManager implements ApiManagerInterface
             $response = $httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
             return $response[FlagshipField::FIELD_CAMPAIGNS];
         } catch (Exception $e) {
-            $this->log($e->getMessage());
+            $this->logError($this->config->getLogManager(), $e->getMessage());
             return [];
         }
     }
@@ -89,7 +68,7 @@ class ApiManager implements ApiManagerInterface
     }
 
     /**
-     *  Return an array of modification from all campaign
+     *  Return an array of modification from all campaigns
      * @param array $campaigns
      * @return Modification[] Return an array of Modification
      */
@@ -209,19 +188,5 @@ class ApiManager implements ApiManagerInterface
             "trigger_hit" => false,
             "context" => $visitor->getContext()
         ];
-    }
-
-    /**
-     * Report ApiManager Error
-     *
-     * @param string $message
-     * @param null   $context
-     */
-    private function log($message = "Decision manager", $context = null)
-    {
-        $logManger = $this->config->getLogManager();
-        if (!is_null($logManger)) {
-            $logManger->error($message, $context);
-        }
     }
 }

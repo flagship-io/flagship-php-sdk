@@ -34,7 +34,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetAllModifications()
     {
-        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], "", false);
+        $stub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
         $visitorId = 'visitor_id';
         $modificationValue1 = [
             "background" => "bleu ciel",
@@ -129,7 +129,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetCampaigns()
     {
-        $stub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], '', false);
+        $stub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], '', false);
         $visitorId = 'visitor_id';
         $campaigns = [
             [
@@ -170,7 +170,7 @@ class ApiManagerTest extends TestCase
         );
 
         //Mock class Curl
-        $curlStub = $this->getMockForAbstractClass('Flagship\Interfaces\HttpClientInterface', ['post'], '', false);
+        $curlStub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], '', false);
         ;
 
         //Mock method curl->post to throw Exception

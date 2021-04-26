@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1619439298">
-  <project timestamp="1619439298">
+<coverage generated="1619439352">
+  <project timestamp="1619439352">
     <package name="Flagship\Decision">
       <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Decision/ApiManager.php">
         <class name="ApiManager" namespace="Flagship\Decision" fullPackage="Flagship" package="Flagship">

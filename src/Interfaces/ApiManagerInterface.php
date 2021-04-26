@@ -13,24 +13,22 @@ use Flagship\Visitor;
 interface ApiManagerInterface
 {
     /**
-     * This function will fetch campaigns modifications from the server according to the visitor context.
+     * This function will fetch campaigns modifications from the server according to the visitor context and
+     * return an associative array of campaigns
      *
      * @param  Visitor             $visitor
      * @param  HttpClientInterface $httpClient
-     * @return array
+     * @return array return an associative array of campaigns
      */
     public function getCampaigns(Visitor $visitor, HttpClientInterface $httpClient);
 
     /**
+     * This function will fetch campaigns modifications from the server according to the visitor context and
+     * Return an array of Modification from all campaigns
+     *
      * @param  Visitor             $visitor
      * @param  HttpClientInterface $httpClient
-     * @return Modification[]
+     * @return Modification[] Return an array of Modification
      */
     public function getCampaignsModifications(Visitor $visitor, HttpClientInterface $httpClient);
-
-    /**
-     * @param  array $campaigns
-     * @return Modification[]
-     */
-    public function getAllModifications(array $campaigns);
 }

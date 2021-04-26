@@ -51,6 +51,9 @@ class ApiManager implements ApiManagerInterface
         $this->config = $config;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __clone()
     {
     }
@@ -75,9 +78,7 @@ class ApiManager implements ApiManagerInterface
     }
 
     /**
-     * @param  Visitor             $visitor
-     * @param  HttpClientInterface $httpClient
-     * @return Modification[]
+     * @inheritDoc
      */
     public function getCampaignsModifications(Visitor $visitor, HttpClientInterface $httpClient)
     {
@@ -86,10 +87,11 @@ class ApiManager implements ApiManagerInterface
     }
 
     /**
-     * @param  array $campaigns
-     * @return Modification[]
+     *  Return an array of modification from all campaign
+     * @param array $campaigns
+     * @return Modification[] Return an array of Modification
      */
-    public function getAllModifications(array $campaigns)
+    private function getAllModifications(array $campaigns)
     {
         $modifications = [];
         foreach ($campaigns as $campaign) {

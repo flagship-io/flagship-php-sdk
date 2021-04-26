@@ -2,6 +2,7 @@
 
 namespace Flagship;
 
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Model\Modification;
 use Flagship\Utils\Utils;
@@ -37,9 +38,15 @@ class VisitorTest extends TestCase
         //Begin Test visitor null
 
         //Mock logManger
-        $logManagerStub = $this->getMockBuilder('Flagship\utils\LogManager')
-            ->setMethods(['error'])
-            ->getMock();
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Interfaces\LogManagerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
         $logManagerStub->expects($this->exactly(2))->method('error');
 
         $visitor->getConfig()->setLogManager($logManagerStub);
@@ -305,6 +312,78 @@ class VisitorTest extends TestCase
         $defaultValue = "blue-border";
         $modificationValue = $visitor->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
+
+        //Test getModification key is not exist
+        //Return DefaultValue
+        $defaultValue = "blue-border";
+        $modificationValue = $visitor->getModification('keyNotExist', $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
+    }
+
+    /**
+     * @dataProvider modifications
+     * @param        Modification[] $modifications
+     */
+    public function testGetModificationLog($modifications)
+    {
+        $apiManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Interfaces\ApiManagerInterface',
+            ['getCampaignsModifications'],
+            'ApiManagerInterface',
+            false
+        );
+        $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
+        $config = new FlagshipConfig("EnvId", 'ApiKey');
+        $visitorMock = $this->getMockBuilder('Flagship\Visitor')
+            ->setMethods(['logError'])
+            ->setConstructorArgs([$config, "visitorId", []])->getMock();
+
+        Utils::setPrivateProperty($visitorMock, 'decisionAPi', $apiManagerStub, 'Flagship\Visitor');
+
+        $visitorMock->synchronizedModifications();
+
+        //Test getModification key is null
+        //Return DefaultValue
+        $defaultValue = true;
+        $key = null;
+        $visitorMock->expects($this->at(0))
+            ->method('logError')
+            ->with(
+                $config->getLogManager(),
+                sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+            );
+        $visitorMock->getModification($key, $defaultValue);
+
+        //Test getModification key is not exist
+        //Return DefaultValue
+
+        $key = "notExistKey";
+        $defaultValue = true;
+
+        $visitorMock->expects($this->at(0))
+            ->method('logError')
+            ->with(
+                $config->getLogManager(),
+                sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+            );
+        $visitorMock->getModification($key, $defaultValue);
+
+        //Test getModification keyValue is string and DefaultValue is not string
+        //Return DefaultValue
+
+        $key = $modifications[0]->getKey();
+        $keyValue = $modifications[0]->getValue();
+        $defaultValue = 25; // default is numeric
+        $visitorMock->expects($this->at(0))
+            ->method('logError')
+            ->with(
+                $config->getLogManager(),
+                sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+            );
+        $visitorMock->getModification($key, $defaultValue);
     }
 
     /**

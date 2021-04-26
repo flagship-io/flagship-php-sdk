@@ -36,7 +36,7 @@ class Visitor
     /**
      * @var Modification[]
      */
-    private $modifications;
+    private $modifications = [];
 
     /**
      * @var ApiManagerInterface
@@ -193,16 +193,16 @@ class Visitor
                 $foundKey = true;
                 if (gettype($modification->getValue()) === gettype($defaultValue)) {
                     return $modification->getValue();
-                } else {
-                    $this->logError(
-                        $this->config->getLogManager(),
-                        sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
-                        [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
-                    );
                 }
+                $this->logError(
+                    $this->config->getLogManager(),
+                    sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
+                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+                );
+                break;
             }
         }
-        if ($foundKey) {
+        if (!$foundKey) {
             $this->logError(
                 $this->config->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),

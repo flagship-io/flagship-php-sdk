@@ -31,6 +31,13 @@ class Flagship
     }
 
     /**
+     * @codeCoverageIgnore
+     */
+    private function __clone()
+    {
+    }
+
+    /**
      * Flagship singleton instance
      *
      * @return Flagship

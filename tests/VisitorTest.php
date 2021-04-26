@@ -406,25 +406,24 @@ class VisitorTest extends TestCase
 
         $modification = $modifications[0];
 
-        $campaign = [
+        $campaignExpected = [
             FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
             FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
             FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
             FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference()
         ];
-        $campaignJsonExpected = json_encode($campaign);
 
         //Test key exist in modifications set
 
-        $campaignJson = $visitor->getModificationInfo($modification->getKey());
-        $this->assertJsonStringEqualsJsonString($campaignJsonExpected, $campaignJson);
+        $campaign = $visitor->getModificationInfo($modification->getKey());
+        $this->assertSame($campaignExpected, $campaign);
 
         //Test key doesn't exist in modifications set
-        $campaignJson = $visitor->getModificationInfo('notExistKey');
-        $this->assertNull($campaignJson);
+        $campaign = $visitor->getModificationInfo('notExistKey');
+        $this->assertNull($campaign);
 
         //Test Key is null
-        $campaignJson = $visitor->getModificationInfo(null);
-        $this->assertNull($campaignJson);
+        $campaign = $visitor->getModificationInfo(null);
+        $this->assertNull($campaign);
     }
 }

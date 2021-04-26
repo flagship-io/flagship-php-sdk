@@ -216,7 +216,7 @@ class Visitor
      * Get the campaign modification information value matching the given key.
      *
      * @param  $key : key which identify the modification.
-     * @return string|null JSON encoded string containing the modification information.
+     * @return array|null
      */
     public function getModificationInfo($key)
     {
@@ -230,7 +230,7 @@ class Visitor
         }
         foreach ($this->modifications as $modification) {
             if ($modification->getKey() === $key) {
-                return $this->parseCampaignToJson($modification);
+                return $this->parseToCampaign($modification);
             }
         }
         $this->logError(
@@ -242,20 +242,19 @@ class Visitor
     }
 
     /**
-     * Return a JSON encoded string of Campaign from modification
+     * Build the Campaign of Modification
      *
      * @param  Modification $modification Modification containing information
-     * @return string JSON encoded string
+     * @return array JSON encoded string
      */
-    private function parseCampaignToJson(Modification $modification)
+    private function parseToCampaign(Modification $modification)
     {
-        $campaign = [
+        return [
             FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
             FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
             FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
             FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference()
         ];
-        return json_encode($campaign);
     }
 
     /**

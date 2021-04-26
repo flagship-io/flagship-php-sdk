@@ -13,9 +13,10 @@ trait LogTrait
      */
     protected function logError($logManager, $message, $context = [])
     {
-        if (!is_null($logManager)) {
-            $logManager->error($message, $context);
+        if (is_null($logManager)) {
+            return;
         }
+        $logManager->error($message, $context);
     }
 
     /**
@@ -25,9 +26,9 @@ trait LogTrait
      */
     protected function logInfo($logManager, $message, $context = [])
     {
-        if (!is_null($logManager)) {
-            $logManager->info($message, $context);
+        if (is_null($logManager)) {
+            return;
         }
+        $logManager->info($message, $context);
     }
-
 }

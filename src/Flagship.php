@@ -2,9 +2,11 @@
 
 namespace Flagship;
 
+use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Traits\LogTrait;
+use Flagship\Utils\Container;
 
 /**
  * Flagship main singleton.
@@ -17,6 +19,10 @@ class Flagship
      * @var Flagship
      */
     private static $instance;
+    /**
+     * @var Container
+     */
+    private static $container;
     /**
      * @var FlagshipConfig
      */
@@ -60,12 +66,20 @@ class Flagship
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
     {
+        self::$container = new Container();
+        self::initContainerBinding(self::$container);
+
         $flagship = self::getInstance();
         if (!$config) {
-            $config = new FlagshipConfig($envId, $apiKey);
+            $config = self::$container->get('Flagship\FlagshipConfig', [$envId, $apiKey]);
+        }
+        if (!$config->getLogManager()) {
+            $logManager = self::$container->get('Flagship\Utils\LogManager');
+            $config->setLogManager($logManager);
         }
         $config->setEnvId($envId);
         $config->setApiKey($apiKey);
+        $flagship->setConfig($config);
 
         if (empty($envId) || empty($apiKey)) {
             $flagship->logError(
@@ -75,7 +89,7 @@ class Flagship
             );
         }
 
-        $flagship->setConfig($config);
+
 
         if (self::isReady()) {
             $flagship->logInfo(
@@ -87,6 +101,26 @@ class Flagship
         } else {
             self::getInstance()->setStatus(FlagshipStatus::NOT_READY);
         }
+    }
+
+    /**
+     * @param Container $container
+     */
+    private static function initContainerBinding($container)
+    {
+        $container->bind(
+            'Flagship\Decision\ApiManagerAbstract',
+            'Flagship\Decision\ApiManager'
+        );
+        $container->bind(
+            'Flagship\Utils\HttpClientInterface',
+            'Flagship\Utils\HttpClient'
+        );
+
+        $container->bind(
+            'Flagship\Utils\LogManagerInterface',
+            'Flagship\Utils\LogManager'
+        );
     }
 
     /**
@@ -157,6 +191,17 @@ class Flagship
         if (empty($visitorId) || !self::isReady()) {
             return  null;
         }
-        return new Visitor(self::getConfig(), $visitorId, $context);
+        try {
+            $apiManager = self::$container->get('Flagship\Decision\ApiManager');
+            return new Visitor($apiManager, $visitorId, $context);
+        } catch (Exception $exception) {
+            $instance = self::getInstance();
+            $instance->logError(
+                $instance->config->getLogManager(),
+                $exception->getMessage(),
+                [FlagshipConstant::PROCESS => FlagshipConstant::NEW_VISITOR]
+            );
+        }
+        return  null;
     }
 }

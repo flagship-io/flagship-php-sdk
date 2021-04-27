@@ -12,7 +12,6 @@
     <testsuites>
         <testsuite name="my test">
             <directory>tests</directory>
-            <exclude>tests/Decision/ApiManagerTest.php</exclude>
             <exclude>tests/FlagshipTest.php</exclude>
         </testsuite>
     </testsuites>

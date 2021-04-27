@@ -2,10 +2,11 @@
 
 namespace Flagship;
 
+use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Model\Modification;
-use Flagship\Utils\Utils;
+use Flagship\Utils\HttpClient;
 use PHPUnit\Framework\TestCase;
 
 class VisitorTest extends TestCase
@@ -18,6 +19,7 @@ class VisitorTest extends TestCase
     {
         $configData = ['envId' => 'env_value','apiKey' => 'key_value'];
         $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $apiManager = new ApiManager($config, new HttpClient());
 
         $visitorId = "visitor_id";
         $ageKey = 'age';
@@ -25,8 +27,7 @@ class VisitorTest extends TestCase
             'name' => 'visitor_name',
             'age' => 25
         ];
-        $visitor = new Visitor($config, $visitorId, $visitorContext);
-        $this->assertInstanceOf("Flagship\FlagshipConfig", $visitor->getConfig());
+        $visitor = new Visitor($apiManager, $visitorId, $visitorContext);
         $this->assertEquals($visitorId, $visitor->getVisitorId());
 
         //Test new visitorId
@@ -49,7 +50,7 @@ class VisitorTest extends TestCase
         );
         $logManagerStub->expects($this->exactly(2))->method('error');
 
-        $visitor->getConfig()->setLogManager($logManagerStub);
+        $apiManager->getConfig()->setLogManager($logManagerStub);
         $visitor->setVisitorId(null);
         $this->assertEquals($newVisitorId, $visitor->getVisitorId());
 
@@ -57,19 +58,12 @@ class VisitorTest extends TestCase
         $visitor->setVisitorId("");
         $this->assertEquals($newVisitorId, $visitor->getVisitorId());
 
-
         //End Test visitor null
 
         //Test context
         $this->assertEquals($visitorContext['name'], $visitor->getContext()['name']);
         $this->assertEquals($visitorContext[$ageKey], $visitor->getContext()[$ageKey]);
 
-        //Test setConfig
-
-        $config2 = new FlagshipConfig($newVisitorId, $configData['apiKey']);
-        $visitor->setConfig($config2);
-        $this->assertInstanceOf("Flagship\FlagshipConfig", $visitor->getConfig());
-        $this->assertSame($config2, $visitor->getConfig());
         return $visitor;
     }
 
@@ -79,6 +73,28 @@ class VisitorTest extends TestCase
      */
     public function testUpdateContext($visitor)
     {
+        //Mock logManger
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+        $config = new FlagshipConfig('envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        $apiManager = new ApiManager($config, new HttpClient());
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $visitor = new Visitor($apiManager, $visitorId, $visitorContext);
         //Test number value
         $ageKey = 'age';
         $newAge = 45;
@@ -151,7 +167,8 @@ class VisitorTest extends TestCase
             'name' => 'visitor_name',
             'age' => 25
         ];
-        $visitor = new Visitor($config, $visitorId, $visitorContext);
+        $apiManager = new ApiManager($config, new HttpClient());
+        $visitor = new Visitor($apiManager, $visitorId, $visitorContext);
 
         $newVisitorContext = [
             'vip' => true,
@@ -228,15 +245,21 @@ class VisitorTest extends TestCase
     public function testSynchronizedModifications($modifications)
     {
         $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\ApiManagerInterface',
-            ['getCampaignsModifications'],
+            'Flagship\Decision\ApiManagerAbstract',
+            [],
             'ApiManagerInterface',
-            false
+            false,
+            true,
+            true,
+            ['getCampaignsModifications','getConfig']
         );
+        $config = new FlagshipConfig('envId', 'apiKey');
+
         $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
-        $config = new FlagshipConfig("EnvId", 'ApiKey');
-        $visitor = new Visitor($config, "visitorId", []);
-        Utils::setPrivateProperty($visitor, 'decisionAPi', $apiManagerStub);
+        $apiManagerStub->method('getConfig')->willReturn($config);
+
+        $visitor = new Visitor($apiManagerStub, "visitorId", []);
+
         $visitor->synchronizedModifications();
         $this->assertSame($modifications, $visitor->getModifications());
 
@@ -327,18 +350,22 @@ class VisitorTest extends TestCase
     public function testGetModificationLog($modifications)
     {
         $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\ApiManagerInterface',
-            ['getCampaignsModifications'],
+            'Flagship\Decision\ApiManagerAbstract',
+            [],
             'ApiManagerInterface',
-            false
+            false,
+            true,
+            true,
+            ['getCampaignsModifications','getConfig']
         );
+        $config = new FlagshipConfig('envId', 'apiKey');
+
         $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
-        $config = new FlagshipConfig("EnvId", 'ApiKey');
+        $apiManagerStub->method('getConfig')->willReturn($config);
+
         $visitorMock = $this->getMockBuilder('Flagship\Visitor')
             ->setMethods(['logError'])
-            ->setConstructorArgs([$config, "visitorId", []])->getMock();
-
-        Utils::setPrivateProperty($visitorMock, 'decisionAPi', $apiManagerStub, 'Flagship\Visitor');
+            ->setConstructorArgs([$apiManagerStub, "visitorId", []])->getMock();
 
         $visitorMock->synchronizedModifications();
 
@@ -349,7 +376,7 @@ class VisitorTest extends TestCase
         $visitorMock->expects($this->at(0))
             ->method('logError')
             ->with(
-                $config->getLogManager(),
+                $apiManagerStub->getConfig()->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
             );
@@ -364,7 +391,7 @@ class VisitorTest extends TestCase
         $visitorMock->expects($this->at(0))
             ->method('logError')
             ->with(
-                $config->getLogManager(),
+                $apiManagerStub->getConfig()->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
             );
@@ -379,7 +406,7 @@ class VisitorTest extends TestCase
         $visitorMock->expects($this->at(0))
             ->method('logError')
             ->with(
-                $config->getLogManager(),
+                $apiManagerStub->getConfig()->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
             );
@@ -393,15 +420,20 @@ class VisitorTest extends TestCase
     public function testGetModificationInfo($modifications)
     {
         $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\ApiManagerInterface',
-            ['getCampaignsModifications'],
+            'Flagship\Decision\ApiManagerAbstract',
+            [],
             'ApiManagerInterface',
-            false
+            false,
+            true,
+            true,
+            ['getCampaignsModifications','getConfig']
         );
+        $config = new FlagshipConfig('envId', 'apiKey');
+
         $apiManagerStub->method('getCampaignsModifications')->willReturn($modifications);
-        $config = new FlagshipConfig("EnvId", 'ApiKey');
-        $visitor = new Visitor($config, "visitorId", []);
-        Utils::setPrivateProperty($visitor, 'decisionAPi', $apiManagerStub);
+        $apiManagerStub->method('getConfig')->willReturn($config);
+
+        $visitor = new Visitor($apiManagerStub, "visitorId", []);
         $visitor->synchronizedModifications();
 
         $modification = $modifications[0];

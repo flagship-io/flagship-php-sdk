@@ -45,4 +45,9 @@ class Utils
         $property->setAccessible(true);
         return $property;
     }
+
+    public static function isPhp5()
+    {
+        return version_compare(phpversion(), '7', '<');
+    }
 }

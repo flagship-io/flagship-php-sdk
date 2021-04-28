@@ -32,7 +32,11 @@ class ContainerTest extends TestCase
         $instanceAlias = $container->get('stdClass');
         $this->assertInstanceOf('stdClass', $instanceAlias);
 
-        $this->setExpectedException('ReflectionException');
+        if (Utils::isPhp5()) {
+            $this->setExpectedException('ReflectionException');
+        } else {
+            $this->expectException('ReflectionException');
+        }
         $container->get('NotExist');
     }
 
@@ -40,7 +44,12 @@ class ContainerTest extends TestCase
     {
         $container = new Container();
         $alias = 'Flagship\Decision\ApiManagerAbstract';
-        $this->setExpectedException('Exception');
+        if (Utils::isPhp5()) {
+            $this->setExpectedException('Exception');
+        } else {
+            $this->expectException('Exception');
+        }
+
         $container->get($alias);
     }
 
@@ -89,7 +98,12 @@ class ContainerTest extends TestCase
         $this->assertCount(2, $binding);
         $this->assertSame($binding[$alias2], $className2);
 
-        $this->setExpectedException('Exception');
+        if (Utils::isPhp5()) {
+            $this->setExpectedException('Exception');
+        } else {
+            $this->expectException('Exception');
+        }
+
         $container->bind($alias2, $className2);
     }
 }

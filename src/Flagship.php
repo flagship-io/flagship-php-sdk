@@ -212,7 +212,7 @@ class Flagship
             $instance->logError(
                 $instance->config->getLogManager(),
                 $exception->getMessage(),
-                [FlagshipConstant::PROCESS => FlagshipConstant::NEW_VISITOR]
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_NEW_VISITOR]
             );
         }
         return  null;

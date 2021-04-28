@@ -461,4 +461,99 @@ class VisitorTest extends TestCase
         $campaign = $visitor->getModificationInfo(null);
         $this->assertNull($campaign);
     }
+
+    /**
+     * @dataProvider modifications
+     * @param        Modification[] $modifications
+     */
+    public function testActivateModification($modifications)
+    {
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
+        $config = new FlagshipConfig('envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        $apiManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Decision\ApiManagerAbstract',
+            [$config, new HttpClient()],
+            'ApiManagerInterface',
+            true,
+            true,
+            true,
+            ['getCampaignsModifications','sendActiveModification']
+        );
+
+        $apiManagerStub->method('getCampaignsModifications')
+            ->willReturn($modifications);
+
+        $visitor = new Visitor($apiManagerStub, "visitorId", []);
+
+        $apiManagerStub->expects($this->once())
+            ->method('sendActiveModification')
+            ->with($visitor, $modifications[0]);
+
+        $visitor->synchronizedModifications();
+
+        $visitor->activateModification($modifications[0]->getKey());
+
+        //Test ke not exist
+        $key = "KeyNotExist";
+        $logManagerStub->expects($this->exactly(1))->method('error')->with(
+            sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]);
+
+        $visitor->activateModification($key);
+    }
+
+    /**
+     * @dataProvider modifications
+     * @param        Modification[] $modifications
+     */
+    public function testGetModificationWithActive($modifications)
+    {
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
+        $config = new FlagshipConfig('envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        $apiManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Decision\ApiManagerAbstract',
+            [$config, new HttpClient()],
+            'ApiManagerInterface',
+            true,
+            true,
+            true,
+            ['getCampaignsModifications','sendActiveModification']
+        );
+
+        $apiManagerStub->method('getCampaignsModifications')
+            ->willReturn($modifications);
+
+        $visitor = new Visitor($apiManagerStub, "visitorId", []);
+
+        $apiManagerStub->expects($this->once())
+            ->method('sendActiveModification')
+            ->with($visitor, $modifications[0]);
+
+        $visitor->synchronizedModifications();
+
+        $visitor->getModification($modifications[0]->getKey(),'defaultValue', true);
+    }
 }

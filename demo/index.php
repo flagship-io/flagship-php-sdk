@@ -20,7 +20,7 @@ use Flagship\Flagship;
 require __dir__ . '/../vendor/autoload.php';
 
 Flagship::start('envId', 'apiKey');
-$visitor = Flagship::newVisitor('visitor_1');
+$visitor = Flagship::newVisitor('visitor_5');
 if ($visitor) {
     $startTime = microtime(true);
     $visitor->synchronizedModifications();
@@ -28,5 +28,8 @@ if ($visitor) {
 
     echo "key = background, value = " .  $visitor->getModification('background', 'white') . "\n";
     echo "key = key, value = " . $visitor->getModification('key', 'key') . "\n";
+
+    $visitor->activateModification('background');
+
     echo 'sync time ' . ($endTime - $startTime) . "\n";
 }

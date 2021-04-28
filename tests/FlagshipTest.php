@@ -323,7 +323,7 @@ class FlagshipTest extends TestCase
         $flagshipMock->expects($this->once())->method('logError')->with(
             $config->getLogManager(),
             $exception->getMessage(),
-            [FlagshipConstant::PROCESS => FlagshipConstant::NEW_VISITOR]
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_NEW_VISITOR]
         );
 
         $visitor = Flagship::newVisitor($visitorId, $context);

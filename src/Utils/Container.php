@@ -9,11 +9,23 @@ use ReflectionException;
 class Container implements ContainerInterface
 {
     private $instances = [];
-    private $bins = [];
+    private $bindings = [];
 
+    /**
+     *
+     *
+     * @param $alias
+     * @param $className
+     * @return $this
+     * @throws Exception
+     */
     public function bind($alias, $className)
     {
-        $this->bins[$alias] = $className;
+        if (isset($this->bindings[$alias])) {
+            throw new Exception('alias ' . $alias . ' already exist');
+        }
+        $this->bindings[$alias] = $className;
+        return $this;
     }
 
     /**
@@ -30,11 +42,6 @@ class Container implements ContainerInterface
         return $this->instances[$id] = $this->resolve($id, $args);
     }
 
-    public function has($id)
-    {
-        // TODO: Implement has() method.
-    }
-
     /**
      * @throws ReflectionException
      * @throws Exception
@@ -42,15 +49,15 @@ class Container implements ContainerInterface
     private function resolve($id, $args = null)
     {
         $className = $id;
-        if (isset($this->bins[$id])) {
-            $className = $this->bins[$id];
+        if (isset($this->bindings[$id])) {
+            $className = $this->bindings[$id];
         }
         $reflectedClass = new ReflectionClass($className);
         if ($reflectedClass->isInstantiable()) {
             $constructor = $reflectedClass->getConstructor();
             if ($constructor) {
                 $constructorParameters = [];
-                if ($args) {
+                if (is_array($args)) {
                     $constructorParameters = $args;
                 } else {
                     $parameters = $constructor->getParameters();
@@ -70,7 +77,7 @@ class Container implements ContainerInterface
                 return $reflectedClass->newInstance();
             }
         } else {
-            throw new Exception($id . "not an instantiable Class");
+            throw new Exception($className . "not an instantiable Class");
         }
     }
 }

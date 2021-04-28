@@ -1,7 +1,9 @@
 <?php
 
-namespace Flagship\Utils;
+namespace Flagship\Utils\Version8;
 
+use Flagship\Utils\Container;
+use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase
@@ -32,11 +34,8 @@ class ContainerTest extends TestCase
         $instanceAlias = $container->get('stdClass');
         $this->assertInstanceOf('stdClass', $instanceAlias);
 
-        if (Utils::isPhp5()) {
-            $this->setExpectedException('ReflectionException');
-        } else {
-            $this->expectException('ReflectionException');
-        }
+        $this->expectException('ReflectionException');
+
         $container->get('NotExist');
     }
 
@@ -44,11 +43,9 @@ class ContainerTest extends TestCase
     {
         $container = new Container();
         $alias = 'Flagship\Decision\ApiManagerAbstract';
-        if (Utils::isPhp5()) {
-            $this->setExpectedException('Exception');
-        } else {
-            $this->expectException('Exception');
-        }
+
+        $this->expectException('Exception');
+
 
         $container->get($alias);
     }
@@ -98,11 +95,7 @@ class ContainerTest extends TestCase
         $this->assertCount(2, $binding);
         $this->assertSame($binding[$alias2], $className2);
 
-        if (Utils::isPhp5()) {
-            $this->setExpectedException('Exception');
-        } else {
-            $this->expectException('Exception');
-        }
+        $this->expectException('Exception');
 
         $container->bind($alias2, $className2);
     }

@@ -373,12 +373,20 @@ class VisitorTest extends TestCase
         //Return DefaultValue
         $defaultValue = true;
         $key = null;
-        $visitorMock->expects($this->at(0))
-            ->method('logError')
-            ->with(
-                $apiManagerStub->getConfig()->getLogManager(),
+
+        $expectedParams = [
+            [$apiManagerStub->getConfig()->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+            ],[],[]
+        ];
+
+        $visitorMock->expects($this->exactly(3))
+            ->method('logError')
+            ->withConsecutive(
+                $expectedParams[0],
+                $expectedParams[1],
+                $expectedParams[2]
             );
         $visitorMock->getModification($key, $defaultValue);
 
@@ -388,13 +396,10 @@ class VisitorTest extends TestCase
         $key = "notExistKey";
         $defaultValue = true;
 
-        $visitorMock->expects($this->at(0))
-            ->method('logError')
-            ->with(
-                $apiManagerStub->getConfig()->getLogManager(),
-                sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
-            );
+        $expectedParams[] = [$apiManagerStub->getConfig()->getLogManager(),
+            sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
+
         $visitorMock->getModification($key, $defaultValue);
 
         //Test getModification keyValue is string and DefaultValue is not string
@@ -403,13 +408,11 @@ class VisitorTest extends TestCase
         $key = $modifications[0]->getKey();
         $keyValue = $modifications[0]->getValue();
         $defaultValue = 25; // default is numeric
-        $visitorMock->expects($this->at(0))
-            ->method('logError')
-            ->with(
-                $apiManagerStub->getConfig()->getLogManager(),
-                sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
-            );
+
+        $expectedParams[] = [$apiManagerStub->getConfig()->getLogManager(),
+            sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
+
         $visitorMock->getModification($key, $defaultValue);
     }
 

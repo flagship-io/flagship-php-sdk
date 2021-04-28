@@ -3,7 +3,9 @@
 namespace Flagship\Decision;
 
 use Exception;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\FlagshipConfig;
+use Flagship\Model\Modification;
 use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +27,7 @@ class ApiManagerTest extends TestCase
         $this->assertNotSame($config, $apiManager->getConfig());
         $this->assertSame($config2, $apiManager->getConfig());
     }
+
     public function testGetAllModifications()
     {
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
@@ -87,7 +90,6 @@ class ApiManagerTest extends TestCase
                 ]
             ]
         ];
-
 
         $result = [
             "visitorId" => $visitorId,
@@ -168,8 +170,7 @@ class ApiManagerTest extends TestCase
             ['post'],
             '',
             false
-        );
-        ;
+        );;
 
         //Mock method curl->post to throw Exception
         $errorMessage = '{"message": "Forbidden"}';
@@ -183,9 +184,116 @@ class ApiManagerTest extends TestCase
 
         $config->setLogManager($logManagerStub);
 
-        $manager = new ApiManager($config, $httpClientMock);
-        $visitor = new Visitor($manager, 'visitor_id', ['age' => 15]);
-        $value = $manager->getCampaigns($visitor);
+        $apiManager = new ApiManager($config, $httpClientMock);
+        $visitor = new Visitor($apiManager, 'visitor_id', ['age' => 15]);
+        $value = $apiManager->getCampaigns($visitor);
         $this->assertSame([], $value);
+    }
+
+    public function testSendActiveModification()
+    {
+        //Mock logManger
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            ['error'],
+            '',
+            false
+        );
+
+        //Mock class HttpClient
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $modification = new Modification();
+        $modification
+            ->setKey('background')
+            ->setValue('EE3300')
+            ->setIsReference(false)
+            ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
+            ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
+            ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
+
+        $config = new FlagshipConfig("env_id", "api_key");
+
+        $logManagerStub->expects($this->never())->method('error');
+
+        $config->setLogManager($logManagerStub);
+
+        $apiManager = new ApiManager($config, $httpClientMock);
+        $visitor = new Visitor($apiManager, 'visitor_id', ['age' => 15]);
+
+        $postData=[
+            FlagshipConstant::VISITOR_ID => $visitor->getVisitorId(),
+            FlagshipConstant::VARIATION_ID=> $modification->getVariationId(),
+            FlagshipConstant::VARIATION_GROUP_ID => $modification->getVariationGroupId(),
+            FlagshipConstant::CUSTOMER_ENV_ID=> $config->getEnvId()
+        ];
+        $url = FlagshipConstant::BASE_API_URL . '/activate';
+
+        $httpClientMock->expects($this->once())
+            ->method('post')
+            ->willReturn(null)
+            ->with($url,[],$postData);
+
+        $apiManager->sendActiveModification($visitor, $modification);
+    }
+
+    public function testSendActiveModificationException(){
+        //Mock logManger
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            ['error'],
+            '',
+            false
+        );
+
+        //Mock class HttpClient
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $modification = new Modification();
+        $modification
+            ->setKey('background')
+            ->setValue('EE3300')
+            ->setIsReference(false)
+            ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
+            ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
+            ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
+
+        $config = new FlagshipConfig("env_id", "api_key");
+
+        $config->setLogManager($logManagerStub);
+
+        $apiManager = new ApiManager($config, $httpClientMock);
+        $visitor = new Visitor($apiManager, 'visitor_id', ['age' => 15]);
+
+        $postData=[
+            FlagshipConstant::VISITOR_ID => $visitor->getVisitorId(),
+            FlagshipConstant::VARIATION_ID=> $modification->getVariationId(),
+            FlagshipConstant::VARIATION_GROUP_ID => $modification->getVariationGroupId(),
+            FlagshipConstant::CUSTOMER_ENV_ID=> $config->getEnvId()
+        ];
+        $url = FlagshipConstant::BASE_API_URL . '/activate';
+
+        $exception = new Exception('test exception');
+
+        $httpClientMock->expects($this->once())
+            ->method('post')
+            ->willThrowException($exception)
+            ->with($url,[],$postData);
+
+        $logManagerStub->expects($this->once())->method('error')->with(
+            $exception->getMessage()
+        );
+
+        $apiManager->sendActiveModification($visitor, $modification);
     }
 }

@@ -23,20 +23,48 @@ class ApiManager extends ApiManagerAbstract
     /**
      * @inheritDoc
      */
+    public function sendActiveModification(Visitor $visitor, Modification $modification)
+    {
+        try {
+            $headers = $this->buildHeader();
+            $this->httpClient->setHeaders($headers);
+            $this->httpClient->setTimeout($this->config->getTimeOut());
+            $url = $this->buildDecisionApiUrl( FlagshipConstant::URL_ACTIVATE_MODIFICATION);
+            $postData = [
+                FlagshipConstant::VISITOR_ID => $visitor->getVisitorId(),
+                FlagshipConstant::VARIATION_ID => $modification->getVariationId(),
+                FlagshipConstant::VARIATION_GROUP_ID => $modification->getVariationGroupId(),
+                FlagshipConstant::CUSTOMER_ENV_ID => $this->config->getEnvId()
+            ];
+            $this->httpClient->post($url, [], $postData);
+        } catch (Exception $exception) {
+            $this->logError($this->config->getLogManager(), $exception->getMessage());
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getCampaigns(Visitor $visitor)
     {
         try {
             $headers = $this->buildHeader();
             $this->httpClient->setHeaders($headers);
             $this->httpClient->setTimeout($this->config->getTimeOut());
-            $url = $this->buildDecisionApiUrl();
-            $postData = $this->buildPostData($visitor);
+            $url = $this->buildDecisionApiUrl($this->config->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS . '/');
+
+            $postData = [
+                "visitorId" => $visitor->getVisitorId(),
+                "trigger_hit" => false,
+                "context" => $visitor->getContext()
+            ];
+
             $response = $this->httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
             return $response[FlagshipField::FIELD_CAMPAIGNS];
-        } catch (Exception $e) {
-            $this->logError($this->config->getLogManager(), $e->getMessage());
-            return [];
+        } catch (Exception $exception) {
+            $this->logError($this->config->getLogManager(), $exception->getMessage());
         }
+        return [];
     }
 
     /**
@@ -60,7 +88,7 @@ class ApiManager extends ApiManagerAbstract
             if (isset($campaign[FlagshipField::FIELD_VARIATION])) {
                 if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS])) {
                     if (
-                        isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
+                    isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
                         [FlagshipField::FIELD_VALUE])
                     ) {
                         $modificationValues = $campaign[FlagshipField::FIELD_VARIATION]
@@ -113,11 +141,11 @@ class ApiManager extends ApiManagerAbstract
                 }
             }
         }
-        return  $modifications;
+        return $modifications;
     }
 
     /**
-     * @param  Modification[] $modifications
+     * @param Modification[] $modifications
      * @param  $key
      * @return Modification|null
      */
@@ -139,10 +167,8 @@ class ApiManager extends ApiManagerAbstract
     private function buildHeader()
     {
         return [
-            'x-api-key' => $this->config->getApiKey(),
-            'x-sdk-client' => FlagshipConstant::SDK_LANGUAGE,
-            'x-sdk-version' => FlagshipConstant::SDK_VERSION,
-            'Content-Type' => 'application/json'
+            'x-api-key' => $this->config->getApiKey(),'x-sdk-version' => FlagshipConstant::SDK_VERSION,
+            'Content-Type' => 'application/json','x-sdk-client' => FlagshipConstant::SDK_LANGUAGE,
         ];
     }
 
@@ -151,23 +177,8 @@ class ApiManager extends ApiManagerAbstract
      *
      * @return string
      */
-    private function buildDecisionApiUrl()
+    private function buildDecisionApiUrl($url)
     {
-        return FlagshipConstant::BASE_API_URL . '/' . $this->config->getEnvId() . '/campaigns/';
-    }
-
-    /**
-     * Build and return the http Post body according to visitor
-     *
-     * @param  Visitor $visitor
-     * @return array
-     */
-    private function buildPostData(Visitor $visitor)
-    {
-        return [
-            "visitorId" => $visitor->getVisitorId(),
-            "trigger_hit" => false,
-            "context" => $visitor->getContext()
-        ];
+        return FlagshipConstant::BASE_API_URL . '/' . $url;
     }
 }

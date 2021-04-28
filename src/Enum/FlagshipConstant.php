@@ -52,4 +52,5 @@ class FlagshipConstant
     const PROCESS_UPDATE_CONTEXT        = 'UPDATE CONTEXT';
     const PROCESS_GET_MODIFICATION      = 'GET MODIFICATION';
     const PROCESS_GET_MODIFICATION_INFO = 'GET MODIFICATION INFO';
+    const NEW_VISITOR                    = 'NEW VISITOR';
 }

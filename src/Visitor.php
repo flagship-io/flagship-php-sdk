@@ -2,13 +2,11 @@
 
 namespace Flagship;
 
-use Flagship\Decision\ApiManager;
-use Flagship\Decision\ApiManagerInterface;
+use Flagship\Decision\ApiManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
-use Flagship\Utils\HttpClient;
 use Flagship\Traits\ValidatorTrait;
 
 /**
@@ -40,42 +38,24 @@ class Visitor
     private $modifications = [];
 
     /**
-     * @var ApiManagerInterface
+     * @var ApiManagerAbstract
      */
-    private $decisionAPi;
+    private $apiManager;
 
 
     /**
      * Create a new visitor.
      *
-     * @param FlagshipConfig $config    : configuration used when the visitor has been created.
-     * @param string         $visitorId : visitor unique identifier.
-     * @param array          $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+     * @param ApiManagerAbstract $apiManager
+     * @param string $visitorId : visitor unique identifier.
+     * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      */
-    public function __construct($config, $visitorId, $context = [])
+    public function __construct(ApiManagerAbstract $apiManager, $visitorId, array $context = [])
     {
-        $this->decisionAPi = new ApiManager($config); // May be a dependency injection or from DI container
-        $this->config = $config;
+        $this->apiManager = $apiManager;
+        $this->config = $apiManager->getConfig();
         $this->setVisitorId($visitorId);
         $this->updateContextCollection($context);
-    }
-
-    /**
-     * @return FlagshipConfig
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param  FlagshipConfig $config
-     * @return Visitor
-     */
-    public function setConfig($config)
-    {
-        $this->config = $config;
-        return $this;
     }
 
     /**
@@ -92,10 +72,10 @@ class Visitor
      */
     public function setVisitorId($visitorId)
     {
-        if (!empty($visitorId)) {
-            $this->visitorId = $visitorId;
-        } else {
+        if (empty($visitorId)) {
             $this->logError($this->config->getLogManager(), "");  //Log visitorId empty
+        } else {
+            $this->visitorId = $visitorId;
         }
         return $this;
     }
@@ -264,6 +244,6 @@ class Visitor
      */
     public function synchronizedModifications()
     {
-        $this->modifications = $this->decisionAPi->getCampaignsModifications($this, new HttpClient());
+        $this->modifications = $this->apiManager->getCampaignsModifications($this);
     }
 }

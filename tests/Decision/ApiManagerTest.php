@@ -4,14 +4,30 @@ namespace Flagship\Decision;
 
 use Exception;
 use Flagship\FlagshipConfig;
+use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
 
 class ApiManagerTest extends TestCase
 {
+    public function testConstruct()
+    {
+        $config = new FlagshipConfig('envId', 'api');
+        $httpClient = new HttpClient();
+        $apiManager = new ApiManager($config, $httpClient);
+
+        $this->assertSame($config, $apiManager->getConfig());
+        $this->assertSame($httpClient, $apiManager->getHttpClient());
+
+        $config2 = new FlagshipConfig('newEnvId', 'newApi');
+        $apiManager->setConfig($config2);
+
+        $this->assertNotSame($config, $apiManager->getConfig());
+        $this->assertSame($config2, $apiManager->getConfig());
+    }
     public function testGetAllModifications()
     {
-        $stub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
         $visitorId = 'visitor_id';
         $modificationValue1 = [
             "background" => "bleu ciel",
@@ -78,12 +94,12 @@ class ApiManagerTest extends TestCase
             "campaigns" => $campaigns
         ];
 
-        $stub->method('post')
+        $httpClientMock->method('post')
             ->willReturn($result);
         $config = new FlagshipConfig("env_id", "api_key");
-        $manager = new ApiManager($config);
-        $visitor = new Visitor($config, $visitorId, ['age' => 15]);
-        $modifications = $manager->getCampaignsModifications($visitor, $stub);
+        $manager = new ApiManager($config, $httpClientMock);
+        $visitor = new Visitor($manager, $visitorId, ['age' => 15]);
+        $modifications = $manager->getCampaignsModifications($visitor);
 
         //Test duplicate keys are overwritten
         $this->assertCount(count($mergeModification), $modifications);
@@ -106,7 +122,7 @@ class ApiManagerTest extends TestCase
 
     public function testGetCampaigns()
     {
-        $stub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], '', false);
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], '', false);
         $visitorId = 'visitor_id';
         $campaigns = [
             [
@@ -127,12 +143,12 @@ class ApiManagerTest extends TestCase
             "visitorId" => $visitorId,
             "campaigns" => $campaigns
         ];
-        $stub->method('post')
+        $httpClientMock->method('post')
             ->willReturn($result);
         $config = new FlagshipConfig("env_id", "api_key");
-        $manager = new ApiManager($config);
-        $visitor = new Visitor($config, $visitorId, ['age' => 15]);
-        $value = $manager->getCampaigns($visitor, $stub);
+        $manager = new ApiManager($config, $httpClientMock);
+        $visitor = new Visitor($manager, $visitorId, ['age' => 15]);
+        $value = $manager->getCampaigns($visitor);
         $this->assertSame($campaigns, $value);
     }
 
@@ -147,12 +163,17 @@ class ApiManagerTest extends TestCase
         );
 
         //Mock class Curl
-        $curlStub = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], '', false);
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
         ;
 
         //Mock method curl->post to throw Exception
         $errorMessage = '{"message": "Forbidden"}';
-        $curlStub->method('post')
+        $httpClientMock->method('post')
             ->willThrowException(new Exception($errorMessage, 403));
 
         $config = new FlagshipConfig("env_id", "api_key");
@@ -162,10 +183,9 @@ class ApiManagerTest extends TestCase
 
         $config->setLogManager($logManagerStub);
 
-
-        $manager = new ApiManager($config);
-        $visitor = new Visitor($config, 'visitor_id', ['age' => 15]);
-        $value = $manager->getCampaigns($visitor, $curlStub);
+        $manager = new ApiManager($config, $httpClientMock);
+        $visitor = new Visitor($manager, 'visitor_id', ['age' => 15]);
+        $value = $manager->getCampaigns($visitor);
         $this->assertSame([], $value);
     }
 }

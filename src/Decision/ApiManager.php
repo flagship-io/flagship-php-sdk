@@ -5,8 +5,6 @@ namespace Flagship\Decision;
 use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
-use Flagship\FlagshipConfig;
-use Flagship\Utils\HttpClientInterface;
 use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
@@ -17,40 +15,23 @@ use Flagship\Visitor;
  *
  * @package Flagship\Decision
  */
-class ApiManager implements ApiManagerInterface
+class ApiManager extends ApiManagerAbstract
 {
     use ValidatorTrait;
     use LogTrait;
 
     /**
-     * @var FlagshipConfig
-     */
-    private $config;
-
-    /**
-     * ApiManager constructor.
-     *
-     * @param FlagshipConfig $config
-     */
-    public function __construct(FlagshipConfig $config)
-    {
-        $this->config = $config;
-    }
-
-
-
-    /**
      * @inheritDoc
      */
-    public function getCampaigns(Visitor $visitor, HttpClientInterface $httpClient)
+    public function getCampaigns(Visitor $visitor)
     {
         try {
             $headers = $this->buildHeader();
-            $httpClient->setHeaders($headers);
-            $httpClient->setTimeout($this->config->getTimeOut());
+            $this->httpClient->setHeaders($headers);
+            $this->httpClient->setTimeout($this->config->getTimeOut());
             $url = $this->buildDecisionApiUrl();
             $postData = $this->buildPostData($visitor);
-            $response = $httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
+            $response = $this->httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
             return $response[FlagshipField::FIELD_CAMPAIGNS];
         } catch (Exception $e) {
             $this->logError($this->config->getLogManager(), $e->getMessage());
@@ -61,9 +42,9 @@ class ApiManager implements ApiManagerInterface
     /**
      * @inheritDoc
      */
-    public function getCampaignsModifications(Visitor $visitor, HttpClientInterface $httpClient)
+    public function getCampaignsModifications(Visitor $visitor)
     {
-        $campaigns = $this->getCampaigns($visitor, $httpClient);
+        $campaigns = $this->getCampaigns($visitor);
         return $this->getAllModifications($campaigns);
     }
 
@@ -140,7 +121,7 @@ class ApiManager implements ApiManagerInterface
      * @param  $key
      * @return Modification|null
      */
-    private function checkKeyExist($modifications, $key)
+    private function checkKeyExist(array $modifications, $key)
     {
         foreach ($modifications as $modification) {
             if ($modification->getKey() === $key) {

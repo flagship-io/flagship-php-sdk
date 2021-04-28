@@ -28,8 +28,11 @@ class HttpClient implements HttpClientInterface
         if (!extension_loaded('curl')) {
             throw new ErrorException('cURL library is not loaded');
         }
-        $this->curl = curl_init();
+    }
 
+    private function curlInit()
+    {
+        $this->curl = curl_init();
         $this->setTimeout();
         $this->setOpt(CURLOPT_RETURNTRANSFER, true);
     }
@@ -44,6 +47,9 @@ class HttpClient implements HttpClientInterface
      */
     public function setOpt($option, $value)
     {
+        if (!$this->curl) {
+            $this->curlInit();
+        }
         $success = curl_setopt($this->curl, $option, $value);
         if ($success) {
             $this->options[$option] = $value;
@@ -117,7 +123,10 @@ class HttpClient implements HttpClientInterface
         $httpError = in_array(floor($httpStatusCode / 100), [4, 5]);
 
         $response = $this->parseResponse($rawResponse);
+
         curl_close($this->curl);
+
+        $this->curl = null;
 
         if ($httpError) {
             throw new Exception($curlErrorMessage, $curlErrorCode);

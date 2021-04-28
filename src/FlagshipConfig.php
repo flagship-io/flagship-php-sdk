@@ -4,6 +4,7 @@ namespace Flagship;
 
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Utils\LogManager;
 use Flagship\Utils\LogManagerInterface;
 
 /**
@@ -144,7 +145,7 @@ class FlagshipConfig
      * @param  LogManagerInterface $logManager custom implementation of LogManager.
      * @return FlagshipConfig
      */
-    public function setLogManager($logManager)
+    public function setLogManager(LogManagerInterface $logManager)
     {
         $this->logManager = $logManager;
         return $this;

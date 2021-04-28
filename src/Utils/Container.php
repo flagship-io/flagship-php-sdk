@@ -24,10 +24,10 @@ class Container implements ContainerInterface
         if ($isFactory) {
             return $this->resolve($id, $args);
         }
-        if (!isset($this->instances[$id])) {
-            $this->instances[$id] = $this->resolve($id, $args);
+        if (isset($this->instances[$id])) {
+            return $this->instances[$id];
         }
-        return $this->instances[$id];
+        return $this->instances[$id] = $this->resolve($id, $args);
     }
 
     public function has($id)
@@ -55,8 +55,10 @@ class Container implements ContainerInterface
                 } else {
                     $parameters = $constructor->getParameters();
                     foreach ($parameters as $parameter) {
-                        if ($parameter->getClass()) {
-                            $constructorParameters[] = $this->get($parameter->getClass()->getName());
+                        $isPhp5 = version_compare(phpversion(), '7', '<');
+                        $typeName = $isPhp5 ? $parameter->getClass() : $parameter->getType();
+                        if ($typeName) {
+                            $constructorParameters[] = $this->get($typeName->getName());
                         } else {
                             $constructorParameters[] = $parameter->isDefaultValueAvailable() ?
                                 $parameter->getDefaultValue() : null;

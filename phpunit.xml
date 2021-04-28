@@ -11,10 +11,9 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="my test">
-            <exclude>tests/Decision/Version8/ApiManagerTest.php</exclude>
             <exclude>tests/Version8/FlagshipTest.php</exclude>
+            <exclude>tests/Utils/Version8/ContainerTest.php</exclude>
             <directory>tests</directory>
-
         </testsuite>
     </testsuites>
     <php>

@@ -5,6 +5,7 @@ namespace Flagship\Utils;
 require_once __dir__ . '/../Assets/ErrorLog.php';
 
 use Flagship\Assets\ErrorLog;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
 use PHPUnit\Framework\TestCase;
 
@@ -15,8 +16,9 @@ class LogManagerTest extends TestCase
         return [
             [
                 [
-                'context' => ['process' => 'testError', 'context2' => 'value 2'],
-                'contextString' => '[process => testError, context2 => value 2]'
+                    'flagshipSdk' => FlagshipConstant::FLAGSHIP_SDK,
+                    'context' => ['process' => 'testError', 'context2' => 'value 2'],
+                    'contextString' => '[process => testError, context2 => value 2]'
                 ]
             ]
         ];
@@ -31,7 +33,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->error($message, $data['context']);
         $level = LogLevel::ERROR;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -44,7 +46,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->info($message, $data['context']);
         $level = LogLevel::INFO;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -57,7 +59,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->alert($message, $data['context']);
         $level = LogLevel::ALERT;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -70,7 +72,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->emergency($message, $data['context']);
         $level = LogLevel::EMERGENCY;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -83,7 +85,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $level = LogLevel::EMERGENCY;
         $logManager->log($level, $message, $data['context']);
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -96,7 +98,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->warning($message, $data['context']);
         $level = LogLevel::WARNING;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -109,7 +111,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->critical($message, $data['context']);
         $level = LogLevel::CRITICAL;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -122,7 +124,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->notice($message, $data['context']);
         $level = LogLevel::NOTICE;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -135,7 +137,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->debug($message, $data['context']);
         $level = LogLevel::DEBUG;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[{$data['flagshipSdk']}] [{$level}] {$message} {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 }

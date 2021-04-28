@@ -19,10 +19,13 @@ class Flagship
      * @var Flagship
      */
     private static $instance;
+
     /**
+     * Dependency injection container
+     *
      * @var Container
      */
-    private static $container;
+    private $container;
     /**
      * @var FlagshipConfig
      */
@@ -52,6 +55,7 @@ class Flagship
     {
         if (!self::$instance) {
             self::$instance = new Flagship();
+            self::$instance->container = self::$instance->containerInitialization();
         }
         return self::$instance;
     }
@@ -66,17 +70,18 @@ class Flagship
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
     {
-        self::$container = new Container();
-        self::initContainerBinding(self::$container);
-
         $flagship = self::getInstance();
+        $container = $flagship->getContainer();
+
         if (!$config) {
-            $config = self::$container->get('Flagship\FlagshipConfig', [$envId, $apiKey]);
+            $config = $container->get('Flagship\FlagshipConfig', [$envId, $apiKey]);
         }
+
         if (!$config->getLogManager()) {
-            $logManager = self::$container->get('Flagship\Utils\LogManager');
+            $logManager = $container->get('Flagship\Utils\LogManager');
             $config->setLogManager($logManager);
         }
+
         $config->setEnvId($envId);
         $config->setApiKey($apiKey);
         $flagship->setConfig($config);
@@ -89,25 +94,25 @@ class Flagship
             );
         }
 
-
-
         if (self::isReady()) {
             $flagship->logInfo(
                 $config->getLogManager(),
                 sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
             );
-            self::getInstance()->setStatus(FlagshipStatus::READY);
+            $flagship->setStatus(FlagshipStatus::READY);
         } else {
-            self::getInstance()->setStatus(FlagshipStatus::NOT_READY);
+            $flagship->setStatus(FlagshipStatus::NOT_READY);
         }
     }
 
     /**
-     * @param Container $container
+     * This function initialize the dependency injection container
+     * @return Container
      */
-    private static function initContainerBinding($container)
+    private function containerInitialization()
     {
+        $container = new Container();
         $container->bind(
             'Flagship\Decision\ApiManagerAbstract',
             'Flagship\Decision\ApiManager'
@@ -116,11 +121,11 @@ class Flagship
             'Flagship\Utils\HttpClientInterface',
             'Flagship\Utils\HttpClient'
         );
-
         $container->bind(
             'Flagship\Utils\LogManagerInterface',
             'Flagship\Utils\LogManager'
         );
+        return $container;
     }
 
     /**
@@ -181,6 +186,14 @@ class Flagship
     }
 
     /**
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
      * Create a new visitor with a context.
      * @param $visitorId : Unique visitor identifier.
      * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
@@ -191,11 +204,11 @@ class Flagship
         if (empty($visitorId) || !self::isReady()) {
             return  null;
         }
+        $instance = self::getInstance();
         try {
-            $apiManager = self::$container->get('Flagship\Decision\ApiManager');
+            $apiManager = $instance->getContainer()->get('Flagship\Decision\ApiManager');
             return new Visitor($apiManager, $visitorId, $context);
         } catch (Exception $exception) {
-            $instance = self::getInstance();
             $instance->logError(
                 $instance->config->getLogManager(),
                 $exception->getMessage(),

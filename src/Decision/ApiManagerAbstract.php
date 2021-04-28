@@ -63,6 +63,15 @@ abstract class ApiManagerAbstract
     }
 
     /**
+     * Send to that this user has seen this modification
+     *
+     * @param Visitor $visitor
+     * @param Modification $modification
+     * @return void
+     */
+    abstract public function sendActiveModification(Visitor $visitor, Modification $modification);
+
+    /**
      * This function will fetch campaigns modifications from the server according to the visitor context and
      * return an associative array of campaigns
      *

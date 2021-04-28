@@ -2,14 +2,37 @@
 
 namespace Flagship;
 
+use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Utils\LogManager;
+use Flagship\Utils\LogManagerInterface;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 
 class FlagshipTest extends TestCase
 {
+    /**
+     * @var LogManagerInterface|PHPUnit_Framework_MockObject_MockObject
+     */
+    private $logManagerMock;
+
+    public function __construct($name = null, array $data = array(), $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+
+        $this->logManagerMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            [],
+            '',
+            false,
+            true,
+            true,
+            ['error','info']
+        );
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -17,9 +40,7 @@ class FlagshipTest extends TestCase
         //Set Flagship singleton to null
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
-        if ($instance instanceof  Flagship) {
-            Utils::setPrivateProperty($instance, 'instance', null);
-        }
+        Utils::setPrivateProperty($instance, 'instance', null);
     }
 
     public function testInstance()
@@ -41,17 +62,8 @@ class FlagshipTest extends TestCase
         //Test Start Flagship
         $envId = "end_id";
         $apiKey = "apiKey";
-        $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['error','info']
-        );
         $config = new FlagshipConfig($envId, $apiKey);
-        $config->setLogManager($logManagerMock);
+        $config->setLogManager($this->logManagerMock);
         Flagship::start($envId, $apiKey, $config);
         $this->assertSame($config, Flagship::getConfig());
         $this->assertTrue(Flagship::isReady());
@@ -60,20 +72,37 @@ class FlagshipTest extends TestCase
 
     public function testStartWithoutConfig()
     {
-        //Test Start Flagship
-        $logManagerInterface = 'Flagship\Utils\LogManagerInterface';
-        $logManagerMock = $this->getMockForAbstractClass(
-            $logManagerInterface,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['error','info']
-        );
+        //Test Start Flagship without config argument
+
+        $config = new FlagshipConfig('confEnvId', 'ConfigApiKey');
+
+        $containerGetMethod = function () use ($config) {
+            $args = func_get_args();
+            switch ($args[0]) {
+                case 'Flagship\FlagshipConfig':
+                    return $config;
+                case 'Flagship\Utils\LogManager':
+                    return $this->logManagerMock;
+                default:
+                    return null;
+            }
+        };
+
+        $containerMock = $this->getMockBuilder(
+            'Flagship\Utils\Container'
+        )->setMethods(['get'])->disableOriginalConstructor()->getMock();
+
+        $containerMock->method('get')->will($this->returnCallback($containerGetMethod));
+
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
+        $instance = $instanceMethod->invoke(null);
+
+        Utils::setPrivateProperty($instance, 'container', $containerMock);
 
         $envId = "end_id";
         $apiKey = "apiKey";
+
+        //Test Start Flagship without config argument
 
         Flagship::start($envId, $apiKey);
 
@@ -83,6 +112,7 @@ class FlagshipTest extends TestCase
         $this->assertSame($apiKey, Flagship::getConfig()->getApiKey());
 
         $this->assertTrue(Flagship::isReady());
+
         $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
     }
 
@@ -126,17 +156,10 @@ class FlagshipTest extends TestCase
         $envId = "";
         $apiKey = "apiKey";
         $config = new FlagshipConfig($envId, $apiKey);
-        $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['error','info']
-        );
-        $config->setLogManager($logManagerMock);
+        $config->setLogManager($this->logManagerMock);
+
         Flagship::start($envId, $apiKey, $config);
+
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
         $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
@@ -145,7 +168,7 @@ class FlagshipTest extends TestCase
         $envId = "envId";
         $apiKey = "";
         $config = new FlagshipConfig($envId, $apiKey);
-        $config->setLogManager($logManagerMock);
+        $config->setLogManager($this->logManagerMock);
         Flagship::start($envId, $apiKey, $config);
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
@@ -155,7 +178,7 @@ class FlagshipTest extends TestCase
         $envId = "";
         $apiKey = "";
         $config = new FlagshipConfig($envId, $apiKey);
-        $config->setLogManager($logManagerMock);
+        $config->setLogManager($this->logManagerMock);
         Flagship::start($envId, $apiKey, $config);
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
@@ -206,18 +229,8 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
 
-        $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['error','info']
-        );
-
         $config = new FlagshipConfig($envId, $apiKey);
-        $config->setLogManager($logManagerMock);
+        $config->setLogManager($this->logManagerMock);
 
         Flagship::start($envId, $apiKey, $config);
         $this->assertSame($config, Flagship::getConfig());
@@ -237,16 +250,8 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
         $config = new FlagshipConfig($envId, $apiKey);
-        $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['error','info']
-        );
-        $config->setLogManager($logManagerMock);
+        $config->setLogManager($this->logManagerMock);
+
         Flagship::start($envId, $apiKey, $config);
 
         $context = ['age' => 20];
@@ -258,21 +263,14 @@ class FlagshipTest extends TestCase
 
     public function testNewVisitorFailed()
     {
-        //Test Start Flagship
+        //Test Start Flagship with a empty envId
         $envId = "";
         $apiKey = "apiKey";
         $config = new FlagshipConfig($envId, $apiKey);
-        $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['error','info']
-        );
-        $config->setLogManager($logManagerMock);
+        $config->setLogManager($this->logManagerMock);
+
         Flagship::start($envId, $apiKey, $config);
+
         $context = ['age' => 20];
         $visitorId = "visitorId";
         $visitor1 = Flagship::newVisitor($visitorId, $context);
@@ -284,7 +282,51 @@ class FlagshipTest extends TestCase
         //Test Start Flagship
         $context = ['age' => 20];
         $visitorId = "visitorId";
+
         $visitor1 = Flagship::newVisitor($visitorId, $context);
+
         $this->assertSame(null, $visitor1);
+    }
+
+    public function testNewVisitorThrowException()
+    {
+        $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
+            ->setMethods(['logError','getContainer'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $containerMock = $this->getMockBuilder(
+            'Flagship\Utils\Container'
+        )->getMock();
+
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
+        $instance = $instanceMethod->invoke(null);
+
+        Utils::setPrivateProperty($instance, 'instance', $flagshipMock);
+
+        $envId = "end_id";
+        $apiKey = "apiKey";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+        $config->setLogManager($this->logManagerMock);
+
+        Flagship::start($envId, $apiKey, $config);
+
+        $context = ['age' => 20];
+        $visitorId = "visitorId";
+
+        $exception = new Exception('throw Exception');
+
+        $containerMock->method('get')->willThrowException($exception);
+        $flagshipMock->expects($this->once())->method('getContainer')->willReturn($containerMock);
+
+        $flagshipMock->expects($this->once())->method('logError')->with(
+            $config->getLogManager(),
+            $exception->getMessage(),
+            [FlagshipConstant::PROCESS => FlagshipConstant::NEW_VISITOR]
+        );
+
+        $visitor = Flagship::newVisitor($visitorId, $context);
+        $this->assertNull($visitor);
     }
 }

@@ -44,10 +44,12 @@ class FlagshipConstant
     const GET_MODIFICATION_MISSING_ERROR = "No modification for key '%s'. Default value is returned.";
     const GET_MODIFICATION_KEY_ERROR = "Key '%s' must not be null. Default value is returned.";
     const GET_MODIFICATION_ERROR     = "No modification for key '%s'.";
+    const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null." ;
+    const TRACKER_MANAGER_MISSING_ERROR  = "trackerManager must not be null.";
 
     //Messages Info
     const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";
-    const FLAGSHIP_SDK="Flagship SDK";
+    const FLAGSHIP_SDK ="Flagship SDK";
 
     //Process
     const PROCESS                       = 'process';
@@ -57,11 +59,12 @@ class FlagshipConstant
     const PROCESS_GET_MODIFICATION_INFO = 'GET MODIFICATION INFO';
     const PROCESS_NEW_VISITOR           = 'NEW VISITOR';
     const PROCESS_ACTIVE_MODIFICATION   = 'ACTIVE MODIFICATION';
+    const PROCESS_SYNCHRONIZED_MODIFICATION = "SYNCHRONIZED MODIFICATION";
 
     //Api items
 
-    const CUSTOMER_ENV_ID           = "cid";
-    const VISITOR_ID                = "vid";
-    const VARIATION_GROUP_ID        = "caid";
-    const VARIATION_ID              = "vaid";
+    const CUSTOMER_ENV_ID                = "cid";
+    const VISITOR_ID                     = "vid";
+    const VARIATION_GROUP_ID             = "caid";
+    const VARIATION_ID                   = "vaid";
 }

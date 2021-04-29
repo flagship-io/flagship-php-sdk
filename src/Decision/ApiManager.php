@@ -6,6 +6,7 @@ use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Model\Modification;
+use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Visitor;
@@ -15,10 +16,12 @@ use Flagship\Visitor;
  *
  * @package Flagship\Decision
  */
-class ApiManager extends ApiManagerAbstract
+class ApiManager extends DecisionManagerAbstract
 {
     use ValidatorTrait;
     use LogTrait;
+    use BuildApiTrait;
+
 
     /**
      * @inheritDoc
@@ -26,41 +29,41 @@ class ApiManager extends ApiManagerAbstract
     public function getCampaigns(Visitor $visitor)
     {
         try {
-            $headers = $this->buildHeader();
+            $headers = $this->buildHeader($visitor->getConfig());
             $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($this->config->getTimeOut());
-            $url = $this->buildDecisionApiUrl();
-            $postData = $this->buildPostData($visitor);
+            $this->httpClient->setTimeout($visitor->getConfig()->getTimeOut());
+            $url = $this->buildDecisionApiUrl($visitor->getConfig()->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS . '/');
+
+            $postData = [
+                "visitorId" => $visitor->getVisitorId(),
+                "trigger_hit" => false,
+                "context" => $visitor->getContext()
+            ];
+
             $response = $this->httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
-            return $response[FlagshipField::FIELD_CAMPAIGNS];
-        } catch (Exception $e) {
-            $this->logError($this->config->getLogManager(), $e->getMessage());
-            return [];
+            $body = $response->getBody();
+            return $body [FlagshipField::FIELD_CAMPAIGNS];
+        } catch (Exception $exception) {
+            $this->logError($visitor->getConfig()->getLogManager(), $exception->getMessage());
         }
+        return [];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getCampaignsModifications(Visitor $visitor)
-    {
-        $campaigns = $this->getCampaigns($visitor);
-        return $this->getAllModifications($campaigns);
-    }
+
 
     /**
      *  Return an array of modification from all campaigns
      * @param array $campaigns
      * @return Modification[] Return an array of Modification
      */
-    private function getAllModifications(array $campaigns)
+    public function getModifications($campaigns)
     {
         $modifications = [];
         foreach ($campaigns as $campaign) {
             if (isset($campaign[FlagshipField::FIELD_VARIATION])) {
                 if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS])) {
                     if (
-                        isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
+                    isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
                         [FlagshipField::FIELD_VALUE])
                     ) {
                         $modificationValues = $campaign[FlagshipField::FIELD_VARIATION]
@@ -113,11 +116,11 @@ class ApiManager extends ApiManagerAbstract
                 }
             }
         }
-        return  $modifications;
+        return $modifications;
     }
 
     /**
-     * @param  Modification[] $modifications
+     * @param Modification[] $modifications
      * @param  $key
      * @return Modification|null
      */
@@ -129,45 +132,5 @@ class ApiManager extends ApiManagerAbstract
             }
         }
         return null;
-    }
-
-    /**
-     * Build http request header
-     *
-     * @return array
-     */
-    private function buildHeader()
-    {
-        return [
-            'x-api-key' => $this->config->getApiKey(),
-            'x-sdk-client' => FlagshipConstant::SDK_LANGUAGE,
-            'x-sdk-version' => FlagshipConstant::SDK_VERSION,
-            'Content-Type' => 'application/json'
-        ];
-    }
-
-    /**
-     * Build and return the Decision Api url
-     *
-     * @return string
-     */
-    private function buildDecisionApiUrl()
-    {
-        return FlagshipConstant::BASE_API_URL . '/' . $this->config->getEnvId() . '/campaigns/';
-    }
-
-    /**
-     * Build and return the http Post body according to visitor
-     *
-     * @param  Visitor $visitor
-     * @return array
-     */
-    private function buildPostData(Visitor $visitor)
-    {
-        return [
-            "visitorId" => $visitor->getVisitorId(),
-            "trigger_hit" => false,
-            "context" => $visitor->getContext()
-        ];
     }
 }

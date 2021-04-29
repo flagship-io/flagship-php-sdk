@@ -3,6 +3,7 @@
 namespace Flagship\Utils;
 
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Model\HttpResponse;
 
 /**
  * Interface HttpClientInterface
@@ -42,7 +43,7 @@ interface HttpClientInterface
      * @param  $url
      * @param  array $params Collection key, value of http params
      * @param  array $data   Collection key, value of http post body
-     * @return mixed
+     * @return HttpResponse
      */
     public function post($url, array $params = [], array $data = []);
 }

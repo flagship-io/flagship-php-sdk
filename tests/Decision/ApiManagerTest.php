@@ -4,6 +4,7 @@ namespace Flagship\Decision;
 
 use Exception;
 use Flagship\FlagshipConfig;
+use Flagship\Model\HttpResponse;
 use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
@@ -12,20 +13,14 @@ class ApiManagerTest extends TestCase
 {
     public function testConstruct()
     {
-        $config = new FlagshipConfig('envId', 'api');
         $httpClient = new HttpClient();
-        $apiManager = new ApiManager($config, $httpClient);
-
-        $this->assertSame($config, $apiManager->getConfig());
+        $apiManager = new ApiManager($httpClient);
         $this->assertSame($httpClient, $apiManager->getHttpClient());
 
-        $config2 = new FlagshipConfig('newEnvId', 'newApi');
-        $apiManager->setConfig($config2);
 
-        $this->assertNotSame($config, $apiManager->getConfig());
-        $this->assertSame($config2, $apiManager->getConfig());
     }
-    public function testGetAllModifications()
+
+    public function testGetModifications()
     {
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
         $visitorId = 'visitor_id';
@@ -88,7 +83,6 @@ class ApiManagerTest extends TestCase
             ]
         ];
 
-
         $result = [
             "visitorId" => $visitorId,
             "campaigns" => $campaigns
@@ -96,10 +90,9 @@ class ApiManagerTest extends TestCase
 
         $httpClientMock->method('post')
             ->willReturn($result);
-        $config = new FlagshipConfig("env_id", "api_key");
-        $manager = new ApiManager($config, $httpClientMock);
-        $visitor = new Visitor($manager, $visitorId, ['age' => 15]);
-        $modifications = $manager->getCampaignsModifications($visitor);
+        $manager = new ApiManager($httpClientMock);
+
+        $modifications = $manager->getModifications($campaigns);
 
         //Test duplicate keys are overwritten
         $this->assertCount(count($mergeModification), $modifications);
@@ -122,8 +115,14 @@ class ApiManagerTest extends TestCase
 
     public function testGetCampaigns()
     {
-        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], '', false);
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false);
+
         $visitorId = 'visitor_id';
+
         $campaigns = [
             [
                 "id" => "c1e3t1nvfu1ncqfcdco0",
@@ -139,15 +138,21 @@ class ApiManagerTest extends TestCase
                     "reference" => false]
             ]
         ];
-        $result = [
+        $body = [
             "visitorId" => $visitorId,
             "campaigns" => $campaigns
         ];
+
+        $result = new HttpResponse(200, $body);
+
         $httpClientMock->method('post')
             ->willReturn($result);
         $config = new FlagshipConfig("env_id", "api_key");
-        $manager = new ApiManager($config, $httpClientMock);
-        $visitor = new Visitor($manager, $visitorId, ['age' => 15]);
+
+        $manager = new ApiManager($httpClientMock);
+
+        $visitor = new Visitor($config, $visitorId, ['age' => 15]);
+
         $value = $manager->getCampaigns($visitor);
         $this->assertSame($campaigns, $value);
     }
@@ -168,8 +173,7 @@ class ApiManagerTest extends TestCase
             ['post'],
             '',
             false
-        );
-        ;
+        );;
 
         //Mock method curl->post to throw Exception
         $errorMessage = '{"message": "Forbidden"}';
@@ -183,9 +187,11 @@ class ApiManagerTest extends TestCase
 
         $config->setLogManager($logManagerStub);
 
-        $manager = new ApiManager($config, $httpClientMock);
-        $visitor = new Visitor($manager, 'visitor_id', ['age' => 15]);
-        $value = $manager->getCampaigns($visitor);
+        $apiManager = new ApiManager($httpClientMock);
+
+        $visitor = new Visitor($config, 'visitor_id', ['age' => 15]);
+        $value = $apiManager->getCampaigns($visitor);
+
         $this->assertSame([], $value);
     }
 }

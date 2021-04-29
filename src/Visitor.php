@@ -2,7 +2,6 @@
 
 namespace Flagship;
 
-use Flagship\Decision\ApiManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Model\Modification;
@@ -38,22 +37,15 @@ class Visitor
     private $modifications = [];
 
     /**
-     * @var ApiManagerAbstract
-     */
-    private $apiManager;
-
-
-    /**
      * Create a new visitor.
      *
-     * @param ApiManagerAbstract $apiManager
+     * @param FlagshipConfig $config
      * @param string $visitorId : visitor unique identifier.
      * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      */
-    public function __construct(ApiManagerAbstract $apiManager, $visitorId, array $context = [])
+    public function __construct(FlagshipConfig $config, $visitorId, array $context = [])
     {
-        $this->apiManager = $apiManager;
-        $this->config = $apiManager->getConfig();
+        $this->config = $config;
         $this->setVisitorId($visitorId);
         $this->updateContextCollection($context);
     }
@@ -100,6 +92,7 @@ class Visitor
         return $this;
     }
 
+
     /**
      * Update the visitor context values, matching the given keys, used for targeting.
      *
@@ -144,6 +137,14 @@ class Visitor
     public function getModifications()
     {
         return $this->modifications;
+    }
+
+    /**
+     * @return FlagshipConfig
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 
     /**
@@ -259,7 +260,17 @@ class Visitor
      */
     public function synchronizedModifications()
     {
-        $this->modifications = $this->apiManager->getCampaignsModifications($this);
+        if (!$this->config->getDecisionManager()){
+            $this->logError(
+                $this->config->getLogManager(),
+                FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION]
+            );
+            return;
+        }
+
+        $campaigns = $this->config->getDecisionManager()->getCampaigns($this);
+        $this->modifications = $this->config->getDecisionManager()->getModifications($campaigns);
     }
 
     /**
@@ -278,6 +289,16 @@ class Visitor
             );
             return;
         }
-        $this->apiManager->sendActiveModification($this, $modification);
+
+        if (!$this->config->getTrackingManager()){
+            $this->logError(
+                $this->config->getLogManager(),
+                FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+            );
+            return;
+        }
+
+        $this->config->getTrackingManager()->sendActive($this, $modification);
     }
 }

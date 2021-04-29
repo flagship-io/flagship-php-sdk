@@ -5,13 +5,14 @@ namespace Flagship\Utils;
 use ErrorException;
 use Exception;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Model\HttpResponse;
 
 class HttpClient implements HttpClientInterface
 {
 
     private $curl;
 
-    private $options;
+    private $options = [];
 
     /**
      * @var array
@@ -58,6 +59,15 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
+     * @return mixed
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+
+    /**
      * @inheritDoc
      */
     public function setHeaders(array $headers)
@@ -97,13 +107,13 @@ class HttpClient implements HttpClientInterface
      * Set Url
      *
      * @param  $url
-     * @param  $mixedData
+     * @param  $data
      * @return HttpClientInterface
      */
-    private function setUrl($url, $mixedData = '')
+    private function setUrl($url, $data = '')
     {
-        $built_url = $this->buildUrl($url, $mixedData);
-        $this->setOpt(CURLOPT_URL, $built_url);
+        $builtUrl = $this->buildUrl($url, $data);
+        $this->setOpt(CURLOPT_URL, $builtUrl);
         return $this;
     }
 
@@ -122,17 +132,17 @@ class HttpClient implements HttpClientInterface
         $httpStatusCode = $this->getInfo(CURLINFO_HTTP_CODE);
         $httpError = in_array(floor($httpStatusCode / 100), [4, 5]);
 
-        $response = $this->parseResponse($rawResponse);
-
         curl_close($this->curl);
 
         $this->curl = null;
 
         if ($httpError) {
             throw new Exception($curlErrorMessage, $curlErrorCode);
-        } else {
-            return  $response;
         }
+
+        $response = $this->parseResponse($rawResponse);
+        return new HttpResponse($httpStatusCode, $response);
+
     }
 
     /**
@@ -149,13 +159,13 @@ class HttpClient implements HttpClientInterface
         $this->setUrl($url, $params);
         $this->setOpt(CURLOPT_CUSTOMREQUEST, 'GET');
         $this->setOpt(CURLOPT_HTTPGET, true);
-        return  $this->exec();
+        return $this->exec();
     }
 
     /**
      * @param  $url
-     * @param  array $params
-     * @param  array $data
+     * @param array $params
+     * @param array $data
      * @return mixed
      * @throws Exception
      */
@@ -191,19 +201,19 @@ class HttpClient implements HttpClientInterface
      *
      * @access public
      * @param  $url
-     * @param  $mixedData
+     * @param  $data
      *
      * @return string
      */
-    private function buildUrl($url, $mixedData = '')
+    private function buildUrl($url, $data = '')
     {
         $queryString = '';
-        if (!empty($mixedData)) {
+        if (!empty($data)) {
             $queryMark = strpos($url, '?') > 0 ? '&' : '?';
-            if (is_string($mixedData)) {
-                $queryString .= $queryMark . $mixedData;
-            } elseif (is_array($mixedData)) {
-                $queryString .= $queryMark . http_build_query($mixedData, '', '&');
+            if (is_string($data)) {
+                $queryString .= $queryMark . $data;
+            } elseif (is_array($data)) {
+                $queryString .= $queryMark . http_build_query($data, '', '&');
             }
         }
         return $url . $queryString;

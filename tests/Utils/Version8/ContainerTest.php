@@ -22,13 +22,12 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf($alias, $instanceAlias1);
 
         //Test constructor with default argument
-        $alias = 'Flagship\Decision\ApiManagerAbstract';
+        $alias = 'Flagship\Decision\DecisionManagerAbstract';
         $className = 'Flagship\Decision\ApiManager';
         $container->bind($alias, $className);
 
         $instanceAlias = $container->get($alias);
         $this->assertInstanceOf($alias, $instanceAlias);
-        $this->assertInstanceOf('Flagship\FlagshipConfig', $instanceAlias->getConfig());
 
         //Test without constructor
         $instanceAlias = $container->get('stdClass');
@@ -42,10 +41,9 @@ class ContainerTest extends TestCase
     public function testGetNotInstantiable()
     {
         $container = new Container();
-        $alias = 'Flagship\Decision\ApiManagerAbstract';
+        $alias = 'Flagship\Decision\DecisionManagerAbstract';
 
         $this->expectException('Exception');
-
 
         $container->get($alias);
     }
@@ -86,7 +84,7 @@ class ContainerTest extends TestCase
         $this->assertCount(1, $binding);
         $this->assertSame($binding[$alias1], $className1);
 
-        $alias2 = 'Flagship\Decision\ApiManagerInterface';
+        $alias2 = 'Flagship\Decision\DecisionManagerAbstract';
         $className2 = 'Flagship\Utils\ApiManager';
 
         $container->bind($alias2, $className2);

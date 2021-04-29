@@ -2,6 +2,7 @@
 
 namespace Flagship\Utils;
 
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
 
 class LogManager implements LogManagerInterface
@@ -76,7 +77,8 @@ class LogManager implements LogManagerInterface
      */
     public function log($level, $message, array $context = array())
     {
-        $customMessage = "[{$level}] {$message} ";
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $customMessage = "[{$flagshipSdk}] [{$level}] {$message} ";
         $contextString = $this->parseContextToString($context);
         error_log($customMessage . $contextString);
     }

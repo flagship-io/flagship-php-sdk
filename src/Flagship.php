@@ -2,7 +2,7 @@
 
 namespace Flagship;
 
-use Exception;
+use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Traits\LogTrait;
@@ -82,6 +82,21 @@ class Flagship
             $config->setLogManager($logManager);
         }
 
+        $decisionManager = null;
+
+        switch ($config->getDecisionMode()){
+            case DecisionMode::DECISION_API:
+                $decisionManager = $container->get('Flagship\Decision\ApiManager');
+                break;
+        }
+
+        $config->setDecisionManager($decisionManager);
+
+        $trackingManager= $container->get('Flagship\Api\TrackingManager');
+
+        $config->setTrackingManager($trackingManager);
+
+
         $config->setEnvId($envId);
         $config->setApiKey($apiKey);
         $flagship->setConfig($config);
@@ -113,10 +128,7 @@ class Flagship
     private function containerInitialization()
     {
         $container = new Container();
-        $container->bind(
-            'Flagship\Decision\ApiManagerAbstract',
-            'Flagship\Decision\ApiManager'
-        );
+
         $container->bind(
             'Flagship\Utils\HttpClientInterface',
             'Flagship\Utils\HttpClient'
@@ -205,16 +217,6 @@ class Flagship
             return  null;
         }
         $instance = self::getInstance();
-        try {
-            $apiManager = $instance->getContainer()->get('Flagship\Decision\ApiManager');
-            return new Visitor($apiManager, $visitorId, $context);
-        } catch (Exception $exception) {
-            $instance->logError(
-                $instance->config->getLogManager(),
-                $exception->getMessage(),
-                [FlagshipConstant::PROCESS => FlagshipConstant::NEW_VISITOR]
-            );
-        }
-        return  null;
+        return new Visitor($instance->config, $visitorId, $context);
     }
 }

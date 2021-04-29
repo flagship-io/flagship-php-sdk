@@ -2,9 +2,10 @@
 
 namespace Flagship;
 
+use Flagship\Api\TrackingManagerAbstract;
+use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Utils\LogManager;
 use Flagship\Utils\LogManagerInterface;
 
 /**
@@ -34,6 +35,16 @@ class FlagshipConfig
      * @var LogManagerInterface
      */
     private $logManager;
+
+    /**
+     * @var DecisionManagerAbstract
+     */
+    private $decisionManager;
+
+    /**
+     * @var TrackingManagerAbstract
+     */
+    private $trackingManager;
 
     /**
      * Create a new FlagshipConfig configuration.
@@ -150,4 +161,44 @@ class FlagshipConfig
         $this->logManager = $logManager;
         return $this;
     }
+
+    /**
+     * @return DecisionManagerAbstract
+     */
+    public function getDecisionManager()
+    {
+        return $this->decisionManager;
+    }
+
+    /**
+     * @param DecisionManagerAbstract $decisionManager
+     * @return FlagshipConfig
+     */
+    public function setDecisionManager($decisionManager)
+    {
+        $this->decisionManager = $decisionManager;
+        return $this;
+    }
+
+    /**
+     * @return TrackingManagerAbstract
+     */
+    public function getTrackingManager()
+    {
+        return $this->trackingManager;
+    }
+
+    /**
+     * @param TrackingManagerAbstract $trackerManager
+     * @return FlagshipConfig
+     */
+    public function setTrackingManager($trackerManager)
+    {
+        $this->trackingManager = $trackerManager;
+        return $this;
+    }
+
+
+
+
 }

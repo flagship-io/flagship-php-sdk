@@ -12,8 +12,8 @@
     <testsuites>
         <testsuite name="my test">
             <directory>tests</directory>
-            <exclude>tests/FlagshipTest.php</exclude>
             <exclude>tests/Utils/ContainerTest.php</exclude>
+            <exclude>tests/Utils/HttpClientTest.php</exclude>
         </testsuite>
     </testsuites>
     <php>

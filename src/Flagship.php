@@ -67,7 +67,7 @@ class Flagship
      *
      * @param $envId : Environment id provided by Flagship.
      * @param $apiKey : Secure api key provided by Flagship.
-     * @param FlagshipConfig|null $config : SDK configuration. @see FlagshipConfig
+     * @param FlagshipConfig|null $config : (optional) SDK configuration.
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
     {

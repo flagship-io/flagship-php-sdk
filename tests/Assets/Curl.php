@@ -8,12 +8,17 @@ namespace Flagship\Assets {
         public static $curlErrorCode = 0;
         public static $errorMessage = '';
         public static $curlHttpCodeInfo= '';
+        public static $extension=true;
     }
 }
 
 namespace Flagship\Utils {
 
     use Flagship\Assets\Curl;
+
+    function extension_loaded(){
+        return Curl::$extension;
+    }
 
     function curl_init () {
         Curl::$curlResource['url']='url';

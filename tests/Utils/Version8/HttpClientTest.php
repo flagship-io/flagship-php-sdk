@@ -1,18 +1,20 @@
 <?php
 
-namespace Flagship\Utils;
+namespace Flagship\Utils\Version8;
 
-require_once __dir__ . '/../Assets/Curl.php';
+require_once __dir__ . '/../../Assets/Curl.php';
 
 use Flagship\Assets\Curl;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Utils\HttpClient;
+use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
 class HttpClientTest extends TestCase
 {
     public function testConstructorFailed(){
         Curl::$extension = false;
-        $this->setExpectedException('Exception', FlagshipConstant::CURL_LIBRARY_IS_NOT_LOADED);
+        $this->expectException('Exception', FlagshipConstant::CURL_LIBRARY_IS_NOT_LOADED);
         $client = new HttpClient();
     }
 
@@ -78,7 +80,7 @@ class HttpClientTest extends TestCase
         Curl::$response='{"message": "Forbidden"}';
         Curl::$curlErrorCode=0;
         Curl::$curlHttpCodeInfo=403;
-        $this->setExpectedException('Exception');
+        $this->expectException('Exception');
         $response = $client->post($url, [],[]);
     }
     public function testGet(){

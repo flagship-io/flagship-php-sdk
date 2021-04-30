@@ -19,7 +19,6 @@ interface DecisionManagerInterface
     public function getCampaigns(Visitor $visitor);
 
     /**
-     * This function will fetch campaigns modifications from the server according to the visitor context and
      * Return an array of Modification from all campaigns
      *
      * @param $campaigns

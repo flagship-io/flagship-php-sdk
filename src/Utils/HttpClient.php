@@ -27,7 +27,7 @@ class HttpClient implements HttpClientInterface
     public function __construct()
     {
         if (!extension_loaded('curl')) {
-            throw new ErrorException('cURL library is not loaded');
+            throw new ErrorException('curl library is not loaded');
         }
     }
 

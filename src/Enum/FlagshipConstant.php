@@ -46,6 +46,7 @@ class FlagshipConstant
     const GET_MODIFICATION_ERROR     = "No modification for key '%s'.";
     const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null." ;
     const TRACKER_MANAGER_MISSING_ERROR  = "trackerManager must not be null.";
+    const CURL_LIBRARY_IS_NOT_LOADED = 'curl library is not loaded';
 
     //Messages Info
     const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";
@@ -63,8 +64,9 @@ class FlagshipConstant
 
     //Api items
 
-    const CUSTOMER_ENV_ID                = "cid";
-    const VISITOR_ID                     = "vid";
-    const VARIATION_GROUP_ID             = "caid";
-    const VARIATION_ID                   = "vaid";
+    const CUSTOMER_ENV_ID            = "cid";
+    const VISITOR_ID                 = "vid";
+    const VARIATION_GROUP_ID         = "caid";
+    const VARIATION_ID               = "vaid";
+
 }

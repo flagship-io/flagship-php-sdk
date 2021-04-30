@@ -38,6 +38,15 @@ class ContainerTest extends TestCase
         $container->get('NotExist');
     }
 
+    public function testGetWithDefaultArgs(){
+        $className = 'Flagship\FlagshipConfig';
+        $container = new Container();
+        $instanceAlias = $container->get($className);
+        $this->assertInstanceOf($className, $instanceAlias);
+        $this->assertNull($instanceAlias->getEnvId());
+        $this->assertNull($instanceAlias->getApiKey());
+    }
+
     public function testGetNotInstantiable()
     {
         $container = new Container();
@@ -71,6 +80,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf($className, $instanceAlias);
         $this->assertSame($envId, $instanceAlias->getEnvId());
         $this->assertSame($apiKey, $instanceAlias->getApiKey());
+
     }
 
     public function testBind()
@@ -97,4 +107,6 @@ class ContainerTest extends TestCase
 
         $container->bind($alias2, $className2);
     }
+
+
 }

@@ -2,6 +2,7 @@
 
 namespace Flagship;
 
+use Exception;
 use Flagship\Api\TrackingManager;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
@@ -12,12 +13,11 @@ use Flagship\Utils\LogManager;
 use Flagship\Utils\LogManagerInterface;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 
 class FlagshipTest extends TestCase
 {
     /**
-     * @var LogManagerInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var LogManagerInterface
      */
     private $logManagerMock;
 
@@ -32,34 +32,25 @@ class FlagshipTest extends TestCase
             false,
             true,
             true,
-            ['error','info']
+            ['error', 'info']
         );
     }
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        //Set Flagship singleton to null
-        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
-        $instance = $instanceMethod->invoke(null);
-        Utils::setPrivateProperty($instance, 'instance', null);
-    }
 
     public function containerInitialization()
-{
-    $container = new Container();
+    {
+        $container = new Container();
 
-    $container->bind(
-        'Flagship\Utils\HttpClientInterface',
-        'Flagship\Utils\HttpClient'
-    );
-    $container->bind(
-        'Flagship\Utils\LogManagerInterface',
-        'Flagship\Utils\LogManager'
-    );
-    return $container;
-}
+        $container->bind(
+            'Flagship\Utils\HttpClientInterface',
+            'Flagship\Utils\HttpClient'
+        );
+        $container->bind(
+            'Flagship\Utils\LogManagerInterface',
+            'Flagship\Utils\LogManager'
+        );
+        return $container;
+    }
 
     public function testInstance()
     {
@@ -99,7 +90,7 @@ class FlagshipTest extends TestCase
 
         $apiManager = new ApiManager(new HttpClient());
 
-        $trackingManager= new TrackingManager(new HttpClient());
+        $trackingManager = new TrackingManager(new HttpClient());
 
         $containerGetMethod = function () use ($config, $apiManager, $trackingManager) {
             $args = func_get_args();
@@ -109,7 +100,7 @@ class FlagshipTest extends TestCase
                 case 'Flagship\Utils\LogManager':
                     return $this->logManagerMock;
                 case 'Flagship\Decision\ApiManager':
-                    return  $apiManager;
+                    return $apiManager;
                 case 'Flagship\Api\TrackingManager':
                     return $trackingManager;
                 default:
@@ -159,7 +150,7 @@ class FlagshipTest extends TestCase
 
         $flagshipMock = $this->getMockBuilder(
             'Flagship\Flagship'
-        )->setMethods(['logInfo','logError', 'getContainer'])->disableOriginalConstructor()->getMock();
+        )->setMethods(['logInfo', 'logError', 'getContainer'])->disableOriginalConstructor()->getMock();
 
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
@@ -221,6 +212,7 @@ class FlagshipTest extends TestCase
 
     public function testStartFailedWithLog()
     {
+        //Test Start Flagship failed with null envKey
         $envId = null;
         $apiKey = "apiKey";
 
@@ -229,7 +221,7 @@ class FlagshipTest extends TestCase
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
-            ->setMethods(['logInfo','logError', 'getContainer'])
+            ->setMethods(['logInfo', 'logError', 'getContainer'])
             ->disableOriginalConstructor()->getMock();
 
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
@@ -252,6 +244,41 @@ class FlagshipTest extends TestCase
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
         $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
+    }
+
+    public function testStartFailedThrowException()
+    {
+
+        $envId = "envId";
+        $apiKey = "apiKey";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+        $logManager = new LogManager();
+        $config->setLogManager($logManager);
+
+        $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
+            ->setMethods(['logInfo', 'logError', 'getContainer'])
+            ->disableOriginalConstructor()->getMock();
+
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
+        $instance = $instanceMethod->invoke(null);
+
+        Utils::setPrivateProperty($instance, 'instance', $flagshipMock);
+
+        $exception = new Exception();
+
+        $flagshipMock->method('getContainer')->willThrowException($exception);
+
+        $flagshipMock->expects($this->once())->method('logError')
+            ->with(
+                $config->getLogManager(),
+                $exception->getMessage(),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+            );
+        $flagshipMock->expects($this->never())->method('logInfo');
+
+        Flagship::start($envId, $apiKey, $config);
+
     }
 
     public function testGetStatus()

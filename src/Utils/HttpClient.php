@@ -27,7 +27,7 @@ class HttpClient implements HttpClientInterface
     public function __construct()
     {
         if (!extension_loaded('curl')) {
-            throw new ErrorException('curl library is not loaded');
+            throw new ErrorException(FlagshipConstant::CURL_LIBRARY_IS_NOT_LOADED);
         }
     }
 
@@ -120,10 +120,10 @@ class HttpClient implements HttpClientInterface
     /**
      * Exec
      *
-     * @return mixed Returns the value provided by parseResponse.
+     * @return HttpResponse Returns the value provided by parseResponse.
      * @throws Exception
      */
-    public function exec()
+    private function exec()
     {
         $rawResponse = curl_exec($this->curl);
         $curlErrorCode = curl_errno($this->curl);
@@ -137,7 +137,13 @@ class HttpClient implements HttpClientInterface
         $this->curl = null;
 
         if ($httpError) {
-            throw new Exception($curlErrorMessage, $curlErrorCode);
+            $message=[
+                'curlCode'=>$curlErrorCode,
+                'curlMessage'=>$curlErrorMessage,
+                'httpCode'=> $httpStatusCode,
+                'httpMessage'=>$rawResponse
+            ];
+            throw new Exception(json_encode($message), $curlErrorCode);
         }
 
         $response = $this->parseResponse($rawResponse);
@@ -151,7 +157,7 @@ class HttpClient implements HttpClientInterface
      * @param $url
      * @param array $params
      *
-     * @return mixed value provided by exec.
+     * @return HttpResponse value provided by exec.
      * @throws Exception
      */
     public function get($url, array $params = [])
@@ -166,7 +172,7 @@ class HttpClient implements HttpClientInterface
      * @param  $url
      * @param array $params
      * @param array $data
-     * @return mixed
+     * @return HttpResponse
      * @throws Exception
      */
     public function post($url, array $params = [], array $data = [])

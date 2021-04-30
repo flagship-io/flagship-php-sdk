@@ -2,6 +2,7 @@
 
 namespace Flagship;
 
+use Exception;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
@@ -70,55 +71,65 @@ class Flagship
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
     {
-        $flagship = self::getInstance();
-        $container = $flagship->getContainer();
+        try {
+            $flagship = self::getInstance();
+            $container = $flagship->getContainer();
 
-        if (!$config) {
-            $config = $container->get('Flagship\FlagshipConfig', [$envId, $apiKey]);
+            if (!$config) {
+                $config = $container->get('Flagship\FlagshipConfig', [$envId, $apiKey]);
+            }
+
+            if (!$config->getLogManager()) {
+                $logManager = $container->get('Flagship\Utils\LogManager');
+                $config->setLogManager($logManager);
+            }
+
+            $decisionManager = null;
+
+            switch ($config->getDecisionMode()){
+                case DecisionMode::DECISION_API:
+                    $decisionManager = $container->get('Flagship\Decision\ApiManager');
+                    break;
+            }
+
+            $config->setDecisionManager($decisionManager);
+
+            $trackingManager= $container->get('Flagship\Api\TrackingManager');
+
+            $config->setTrackingManager($trackingManager);
+
+
+            $config->setEnvId($envId);
+            $config->setApiKey($apiKey);
+            $flagship->setConfig($config);
+
+            if (empty($envId) || empty($apiKey)) {
+                $flagship->logError(
+                    $config->getLogManager(),
+                    FlagshipConstant::INITIALIZATION_PARAM_ERROR,
+                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                );
+            }
+
+            if (self::isReady()) {
+                $flagship->logInfo(
+                    $config->getLogManager(),
+                    sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
+                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                );
+                $flagship->setStatus(FlagshipStatus::READY);
+            } else {
+                $flagship->setStatus(FlagshipStatus::NOT_READY);
+            }
         }
-
-        if (!$config->getLogManager()) {
-            $logManager = $container->get('Flagship\Utils\LogManager');
-            $config->setLogManager($logManager);
-        }
-
-        $decisionManager = null;
-
-        switch ($config->getDecisionMode()){
-            case DecisionMode::DECISION_API:
-                $decisionManager = $container->get('Flagship\Decision\ApiManager');
-                break;
-        }
-
-        $config->setDecisionManager($decisionManager);
-
-        $trackingManager= $container->get('Flagship\Api\TrackingManager');
-
-        $config->setTrackingManager($trackingManager);
-
-
-        $config->setEnvId($envId);
-        $config->setApiKey($apiKey);
-        $flagship->setConfig($config);
-
-        if (empty($envId) || empty($apiKey)) {
-            $flagship->logError(
+        catch (Exception $exception){
+            self::getInstance()->logError(
                 $config->getLogManager(),
-                FlagshipConstant::INITIALIZATION_PARAM_ERROR,
+                $exception->getMessage(),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
             );
         }
 
-        if (self::isReady()) {
-            $flagship->logInfo(
-                $config->getLogManager(),
-                sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
-            );
-            $flagship->setStatus(FlagshipStatus::READY);
-        } else {
-            $flagship->setStatus(FlagshipStatus::NOT_READY);
-        }
     }
 
     /**

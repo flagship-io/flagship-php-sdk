@@ -29,7 +29,7 @@ class ApiManager extends DecisionManagerAbstract
     public function getCampaigns(Visitor $visitor)
     {
         try {
-            $headers = $this->buildHeader($visitor->getConfig());
+            $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
             $this->httpClient->setTimeout($visitor->getConfig()->getTimeOut());
             $url = $this->buildDecisionApiUrl($visitor->getConfig()->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS . '/');

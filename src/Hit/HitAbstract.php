@@ -17,10 +17,26 @@ abstract class HitAbstract
 {
     use LogTrait;
 
+    /**
+     * @var string
+     */
     private $visitorId;
+    /**
+     * @var string
+     */
     private $ds;
+    /**
+     * @var string
+     */
     private $envId;
+    /**
+     * @var string
+     */
     private $apiKey;
+    /**
+     * @var string
+     * @see \Flagship\Enum\HitType
+     */
     protected $type;
     /**
      * @var int
@@ -32,13 +48,24 @@ abstract class HitAbstract
      */
     protected $logManager;
 
+    /**
+     * HitAbstract constructor.
+     *
+     * @param string $type : Hit type
+     * <code>
+     * Flagship\Enum\HitType::EVENT,
+     * Flagship\Enum\HitType::ITEM,
+     * Flagship\Enum\HitType::PAGEVIEW,
+     * Flagship\Enum\HitType::TRANSACTION
+     * </code>
+     */
     public function __construct($type){
         $this->type = $type;
     }
 
     /**
-     * @param $value
-     * @param $item
+     * @param mixed $value
+     * @param string $itemName
      * @return bool
      */
     protected function isNoEmptyString($value, $itemName){
@@ -50,6 +77,11 @@ abstract class HitAbstract
         return true;
     }
 
+    /**
+     * @param mixed $value
+     * @param string $itemName
+     * @return bool
+     */
     protected function isNumeric($value, $itemName){
         if (!is_numeric($value)) {
             $this->logError($this->logManager,
@@ -59,6 +91,11 @@ abstract class HitAbstract
         return true;
     }
 
+    /**
+     * @param mixed $value
+     * @param string $itemName
+     * @return bool
+     */
     protected function isInteger($value, $itemName){
         if (!is_int($value)) {
             $this->logError($this->logManager,
@@ -69,7 +106,7 @@ abstract class HitAbstract
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getVisitorId()
     {
@@ -77,7 +114,9 @@ abstract class HitAbstract
     }
 
     /**
-     * @param mixed $visitorId
+     * Specifies visitor unique identifier provided by developer at visitor creation
+     *
+     * @param string $visitorId
      * @return HitAbstract
      */
     public function setVisitorId($visitorId)
@@ -87,7 +126,7 @@ abstract class HitAbstract
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDs()
     {
@@ -95,7 +134,7 @@ abstract class HitAbstract
     }
 
     /**
-     * @param mixed $ds
+     * @param string $ds
      * @return HitAbstract
      */
     public function setDs($ds)
@@ -105,7 +144,7 @@ abstract class HitAbstract
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getEnvId()
     {
@@ -113,7 +152,9 @@ abstract class HitAbstract
     }
 
     /**
-     * @param mixed $envId
+     * Specifies customer environment id provided by Flagship
+     *
+     * @param string $envId
      * @return HitAbstract
      */
     public function setEnvId($envId)
@@ -123,7 +164,7 @@ abstract class HitAbstract
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getApiKey()
     {
@@ -131,7 +172,9 @@ abstract class HitAbstract
     }
 
     /**
-     * @param mixed $apiKey
+     * Specifies customer secure api key provided by Flagship.
+     *
+     * @param string $apiKey
      * @return HitAbstract
      */
     public function setApiKey($apiKey)
@@ -141,7 +184,9 @@ abstract class HitAbstract
     }
 
     /**
-     * @return mixed
+     * Timeout for api request.
+     *
+     * @return int
      */
     public function getTimeOut()
     {
@@ -149,7 +194,9 @@ abstract class HitAbstract
     }
 
     /**
-     * @param mixed $timeOut
+     * Specify timeout for api request.
+     *
+     * @param int $timeOut
      * @return HitAbstract
      */
     public function setTimeOut($timeOut)
@@ -159,7 +206,9 @@ abstract class HitAbstract
     }
 
     /**
-     * @return mixed
+     * Hit Type
+     * @see \Flagship\Enum\HitType
+     * @return string
      */
     public function getType()
     {
@@ -168,6 +217,7 @@ abstract class HitAbstract
 
 
     /**
+     * Return an associative array of the class with Api parameters as keys
      * @return array
      */
     public function toArray(){
@@ -198,6 +248,7 @@ abstract class HitAbstract
     }
 
     /**
+     * Return true if all required attributes are given, otherwise return false
      * @return bool
      */
     public function isReady (){
@@ -205,6 +256,7 @@ abstract class HitAbstract
     }
 
     /**
+     * This function return the error message according to required attributes of class
      * @return string
      */
     abstract public function getErrorMessage();

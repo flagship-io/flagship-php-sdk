@@ -23,8 +23,8 @@ class FlagshipConstant
     /**
      * Decision api base url
      */
-    const BASE_API_URL = "https://decision.flagship.io/v2";
-    const URL_CAMPAIGNS      = 'campaigns';
+    const BASE_API_URL              = "https://decision.flagship.io/v2";
+    const URL_CAMPAIGNS             = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
 
 
@@ -42,31 +42,47 @@ class FlagshipConstant
         following types : String, Number, Boolean, JsonObject, JsonArray.";
     const GET_MODIFICATION_CAST_ERROR    = "Modification for key '%s' has a different type. Default value is returned.";
     const GET_MODIFICATION_MISSING_ERROR = "No modification for key '%s'. Default value is returned.";
-    const GET_MODIFICATION_KEY_ERROR = "Key '%s' must not be null. Default value is returned.";
-    const GET_MODIFICATION_ERROR     = "No modification for key '%s'.";
-    const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null." ;
+    const GET_MODIFICATION_KEY_ERROR     = "Key '%s' must not be null. Default value is returned.";
+    const GET_MODIFICATION_ERROR         = "No modification for key '%s'.";
+    const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null.";
     const TRACKER_MANAGER_MISSING_ERROR  = "trackerManager must not be null.";
-    const CURL_LIBRARY_IS_NOT_LOADED = 'curl library is not loaded';
+    const CURL_LIBRARY_IS_NOT_LOADED     = 'curl library is not loaded';
+    const TYPE_ERROR   = " '%s' must be a '%s'";
 
     //Messages Info
     const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";
-    const FLAGSHIP_SDK ="Flagship SDK";
+    const FLAGSHIP_SDK     = "Flagship SDK";
 
     //Process
-    const PROCESS                       = 'process';
-    const PROCESS_INITIALIZATION        = 'INITIALIZATION';
-    const PROCESS_UPDATE_CONTEXT        = 'UPDATE CONTEXT';
-    const PROCESS_GET_MODIFICATION      = 'GET MODIFICATION';
-    const PROCESS_GET_MODIFICATION_INFO = 'GET MODIFICATION INFO';
-    const PROCESS_NEW_VISITOR           = 'NEW VISITOR';
-    const PROCESS_ACTIVE_MODIFICATION   = 'ACTIVE MODIFICATION';
+    const PROCESS                           = 'process';
+    const PROCESS_INITIALIZATION            = 'INITIALIZATION';
+    const PROCESS_UPDATE_CONTEXT            = 'UPDATE CONTEXT';
+    const PROCESS_GET_MODIFICATION          = 'GET MODIFICATION';
+    const PROCESS_GET_MODIFICATION_INFO     = 'GET MODIFICATION INFO';
+    const PROCESS_NEW_VISITOR               = 'NEW VISITOR';
+    const PROCESS_ACTIVE_MODIFICATION       = 'ACTIVE MODIFICATION';
     const PROCESS_SYNCHRONIZED_MODIFICATION = "SYNCHRONIZED MODIFICATION";
+    const PROCESS_SEND_HIT            = "SEND HIT";
 
     //Api items
 
-    const CUSTOMER_ENV_ID            = "cid";
-    const VISITOR_ID                 = "vid";
-    const VARIATION_GROUP_ID         = "caid";
-    const VARIATION_ID               = "vaid";
+    const CUSTOMER_ENV_ID_API_ITEM    = "cid";
+    const VISITOR_ID_API_ITEM         = "vid";
+    const VARIATION_GROUP_ID_API_ITEM = "caid";
+    const VARIATION_ID_API_ITEM = "vaid";
+    const DS_API_ITEM  = 'ds';
+    const T_API_ITEM   = 't';
+    const DL_API_ITEM  = 'dl';
+    const SDK_APP      = "APP";
+    const TID_API_ITEM = "tid";
+    const TA_API_ITEM  = "ta";
+    const TT_API_ITEM  = "tt";
+    const TC_API_ITEM  = "tc";
+    const TCC_API_ITEM = "tcc";
+    const ICN_API_ITEM = "icn";
+    const SM_API_ITEM  = "sm";
+    const PM_API_ITEM  = "pm";
+    const TR_API_ITEM  = "tr";
+    const TS_API_ITEM  = "ts";
 
 }

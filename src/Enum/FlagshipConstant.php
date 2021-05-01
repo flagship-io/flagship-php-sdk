@@ -39,7 +39,7 @@ class FlagshipConstant
     const INITIALIZATION_PARAM_ERROR     = "Params 'envId' and 'apiKey' must not be null or empty.";
     const ERROR                          = "error";
     const CONTEXT_PARAM_ERROR            = "params 'key' must be a non null String, and 'value' must be one of the
-        following types : String, Number, Boolean, JsonObject, JsonArray.";
+        following types : String, Number, Boolean";
     const GET_MODIFICATION_CAST_ERROR    = "Modification for key '%s' has a different type. Default value is returned.";
     const GET_MODIFICATION_MISSING_ERROR = "No modification for key '%s'. Default value is returned.";
     const GET_MODIFICATION_KEY_ERROR     = "Key '%s' must not be null. Default value is returned.";
@@ -82,16 +82,22 @@ class FlagshipConstant
     const ICN_API_ITEM = "icn";
     const SM_API_ITEM = "sm";
     const PM_API_ITEM = "pm";
-    const TR_API_ITEM              = "tr";
-    const TS_API_ITEM              = "ts";
-    const IN_API_ITEM              = "in";
-    const IC_API_ITEM              = "ic";
-    const IP_API_ITEM              = "ip";
-    const IQ_API_ITEM              = "iq";
-    const IV_API_ITEM              = "iv";
-    const EVENT_CATEGORY_API_ITEM  = "ec";
-    const EVENT_ACTION_API_ITEM    = "ea";
-    const EVENT_LABEL_API_ITEM     = "el";
-    const EVENT_VALUE_API_ITEM     = "ev";
-    
+    const TR_API_ITEM             = "tr";
+    const TS_API_ITEM             = "ts";
+    const IN_API_ITEM             = "in";
+    const IC_API_ITEM             = "ic";
+    const IP_API_ITEM             = "ip";
+    const IQ_API_ITEM             = "iq";
+    const IV_API_ITEM             = "iv";
+    const EVENT_CATEGORY_API_ITEM = "ec";
+    const EVENT_ACTION_API_ITEM   = "ea";
+    const EVENT_LABEL_API_ITEM    = "el";
+    const EVENT_VALUE_API_ITEM    = "ev";
+
+    const HEADER_X_API_KEY    = 'x-api-key';
+    const HEADER_CONTENT_TYPE = 'Content-Type';
+    const HEADER_X_SDK_CLIENT     = 'x-sdk-client';
+    const HEADER_X_SDK_VERSION    = 'x-sdk-version';
+    const HEADER_APPLICATION_JSON = 'application/json';
+
 }

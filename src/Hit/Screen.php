@@ -9,10 +9,11 @@ use Flagship\Enum\HitType;
 
 class Screen extends HitAbstract
 {
+    const ERROR_MESSAGE = 'Screen name is required';
     /**
      * @var string
      */
-    private $screenName;
+    private $screenName = null;
 
     /**
      * Screen constructor.
@@ -39,9 +40,7 @@ class Screen extends HitAbstract
      */
     public function setScreenName($screenName)
     {
-        if (!is_string($screenName)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'screenName', 'string'));
+        if (!$this->isNoEmptyString($screenName,'screenName')){
             return $this;
         }
         $this->screenName = $screenName;
@@ -55,5 +54,21 @@ class Screen extends HitAbstract
         $arrayParent = parent::toArray();
         $arrayParent[FlagshipConstant::DL_API_ITEM]= $this->getScreenName();
         return $arrayParent;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isReady()
+    {
+        return parent::isReady() && $this->getScreenName();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrorMessage()
+    {
+        return self::ERROR_MESSAGE;
     }
 }

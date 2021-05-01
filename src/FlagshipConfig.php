@@ -192,7 +192,7 @@ class FlagshipConfig
      * @param TrackingManagerAbstract $trackerManager
      * @return FlagshipConfig
      */
-    public function setTrackingManager($trackerManager)
+    public function setTrackingManager(TrackingManagerAbstract $trackerManager)
     {
         $this->trackingManager = $trackerManager;
         return $this;

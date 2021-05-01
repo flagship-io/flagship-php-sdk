@@ -13,10 +13,10 @@ trait BuildApiTrait
      *
      * @return array
      */
-    private function buildHeader($config)
+    private function buildHeader($apiKey)
     {
         return [
-            'x-api-key' => $config->getApiKey(),'x-sdk-version' => FlagshipConstant::SDK_VERSION,
+            'x-api-key' => $apiKey,'x-sdk-version' => FlagshipConstant::SDK_VERSION,
             'Content-Type' => 'application/json','x-sdk-client' => FlagshipConstant::SDK_LANGUAGE,
         ];
     }

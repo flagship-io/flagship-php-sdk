@@ -5,6 +5,7 @@ namespace Flagship\Api;
 use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\FlagshipConfig;
+use Flagship\Hit\Page;
 use Flagship\Model\Modification;
 use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
@@ -110,5 +111,90 @@ class TrackingManagerTest extends TestCase
             ->with($exception->getMessage());
 
         $trackingManager->sendActive($visitor, $modification);
+    }
+
+    public function testSendHit()
+    {
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false);
+
+        $trackingManager = new TrackingManager($httpClientMock);
+
+        $modification = new Modification();
+        $modification
+            ->setKey('background')
+            ->setValue('EE3300')
+            ->setIsReference(false)
+            ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
+            ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
+            ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
+
+        $pageUrl ="https://localhost";
+        $page = new Page($pageUrl);
+
+        $url = FlagshipConstant::HIT_API_URL;
+
+        $httpClientMock->expects($this->once())->method('post')->with(
+            $url,
+            [],
+           $page->toArray()
+        );
+
+        $trackingManager->sendHit($page);
+    }
+
+    public function testSendHitThrowException()
+    {
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false);
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            ['error'],
+            '',
+            false
+        );
+
+        $trackingManager = new TrackingManager($httpClientMock);
+
+        $config = new FlagshipConfig('envId', 'apiKey');
+
+        $config->setLogManager($logManagerStub);
+
+        $modification = new Modification();
+
+        $modification
+            ->setKey('background')
+            ->setValue('EE3300')
+            ->setIsReference(false)
+            ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
+            ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
+            ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
+
+        $pageUrl ="Https://localhost";
+        $page = new Page($pageUrl);
+
+        $url = FlagshipConstant::HIT_API_URL;
+
+        $exception = new Exception();
+        $httpClientMock->expects($this->once())->method('post')->with(
+            $url,
+            [],
+            $page->toArray()
+        )->willThrowException($exception);
+
+        $logManagerStub->expects($this->once())
+            ->method('error')
+            ->with($exception->getMessage());
+
+        $page->setLogManager($logManagerStub);
+
+        $trackingManager->sendHit($page);
     }
 }

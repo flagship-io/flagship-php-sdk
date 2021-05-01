@@ -8,6 +8,7 @@ use Flagship\Enum\FlagshipConstant;
 
 trait BuildApiTrait
 {
+
     /**
      * Build http request header
      *
@@ -16,8 +17,10 @@ trait BuildApiTrait
     private function buildHeader($apiKey)
     {
         return [
-            'x-api-key' => $apiKey,'x-sdk-version' => FlagshipConstant::SDK_VERSION,
-            'Content-Type' => 'application/json','x-sdk-client' => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::HEADER_X_API_KEY => $apiKey,
+            FlagshipConstant::HEADER_X_SDK_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON,
+            FlagshipConstant::HEADER_X_SDK_CLIENT => FlagshipConstant::SDK_LANGUAGE,
         ];
     }
 

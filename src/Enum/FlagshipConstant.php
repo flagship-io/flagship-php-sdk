@@ -23,10 +23,10 @@ class FlagshipConstant
     /**
      * Decision api base url
      */
-    const BASE_API_URL              = "https://decision.flagship.io/v2";
-    const URL_CAMPAIGNS             = 'campaigns';
+    const BASE_API_URL  = "https://decision.flagship.io/v2";
+    const HIT_API_URL   = "https://ariane.abtasty.com";
+    const URL_CAMPAIGNS = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
-
 
     const EXPOSE_ALL_KEYS = "exposeAllKeys";
 
@@ -80,9 +80,18 @@ class FlagshipConstant
     const TC_API_ITEM  = "tc";
     const TCC_API_ITEM = "tcc";
     const ICN_API_ITEM = "icn";
-    const SM_API_ITEM  = "sm";
-    const PM_API_ITEM  = "pm";
-    const TR_API_ITEM  = "tr";
-    const TS_API_ITEM  = "ts";
-
+    const SM_API_ITEM = "sm";
+    const PM_API_ITEM = "pm";
+    const TR_API_ITEM              = "tr";
+    const TS_API_ITEM              = "ts";
+    const IN_API_ITEM              = "in";
+    const IC_API_ITEM              = "ic";
+    const IP_API_ITEM              = "ip";
+    const IQ_API_ITEM              = "iq";
+    const IV_API_ITEM              = "iv";
+    const EVENT_CATEGORY_API_ITEM  = "ec";
+    const EVENT_ACTION_API_ITEM    = "ea";
+    const EVENT_LABEL_API_ITEM     = "el";
+    const EVENT_VALUE_API_ITEM     = "ev";
+    
 }

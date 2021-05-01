@@ -9,6 +9,7 @@ use Flagship\Enum\HitType;
 
 /**
  * Flagship hit type Transaction
+ *
  * @package Flagship\Hit
  */
 class Transaction extends HitAbstract
@@ -58,7 +59,8 @@ class Transaction extends HitAbstract
 
     /**
      * Transaction constructor.
-     * @param string $transactionId : Transaction unique identifier..
+     *
+     * @param string $transactionId          : Transaction unique identifier..
      * @param string $transactionAffiliation : Transaction affiliation.
      */
     public function __construct($transactionId, $transactionAffiliation)
@@ -81,7 +83,7 @@ class Transaction extends HitAbstract
     /**
      * Set Transaction unique identifier.
      *
-     * @param string $transactionId
+     * @param  string $transactionId
      * @return Transaction
      */
     public function setTransactionId($transactionId)
@@ -106,14 +108,16 @@ class Transaction extends HitAbstract
     /**
      * set transaction affiliation
      *
-     * @param string $transactionAffiliation
+     * @param  string $transactionAffiliation
      * @return Transaction
      */
     public function setTransactionAffiliation($transactionAffiliation)
     {
         if (!$this->isNoEmptyString(
             $transactionAffiliation,
-            'transactionAffiliation')) {
+            'transactionAffiliation'
+        )
+        ) {
             return $this;
         }
         $this->transactionAffiliation = $transactionAffiliation;
@@ -133,7 +137,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the total amount of taxes
      *
-     * @param float $taxesAmount
+     * @param  float $taxesAmount
      * @return Transaction
      */
     public function setTaxesAmount($taxesAmount)
@@ -157,14 +161,16 @@ class Transaction extends HitAbstract
      * Specify the currency of transaction.
      *     NOTE: This value should be a valid ISO 4217 currency code.
      *
-     * @param string $currency
+     * @param  string $currency
      * @return Transaction
      */
     public function setCurrency($currency)
     {
         if (!is_string($currency) || strlen($currency) < 0 || strlen($currency) > 3) {
-            $this->logError($this->logManager,
-                sprintf(self::CURRENCY_ERROR, 'currency'));
+            $this->logError(
+                $this->logManager,
+                sprintf(self::CURRENCY_ERROR, 'currency')
+            );
             return $this;
         }
         $this->currency = strtoupper($currency);
@@ -184,7 +190,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the coupon code used by the customer
      *
-     * @param string $couponCode
+     * @param  string $couponCode
      * @return Transaction
      */
     public function setCouponCode($couponCode)
@@ -209,7 +215,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the number of items in the transaction.
      *
-     * @param integer $itemsCount
+     * @param  integer $itemsCount
      * @return Transaction
      */
     public function setItemsCount($itemsCount)
@@ -234,7 +240,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the shipping method.
      *
-     * @param string $shippingMethod
+     * @param  string $shippingMethod
      * @return Transaction
      */
     public function setShippingMethod($shippingMethod)
@@ -259,7 +265,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the payment method used
      *
-     * @param string $paymentMethod
+     * @param  string $paymentMethod
      * @return Transaction
      */
     public function setPaymentMethod($paymentMethod)
@@ -282,9 +288,10 @@ class Transaction extends HitAbstract
     }
 
     /**
-     *Specify the total revenue associated with the transaction.
+     * Specify the total revenue associated with the transaction.
      *     NOTE: This value should include any shipping and/or tax amounts.
-     * @param float $revenue
+     *
+     * @param  float $revenue
      * @return Transaction
      */
     public function setRevenue($revenue)
@@ -309,7 +316,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the total shipping cost of the transaction\
      *
-     * @param float $shippingCost
+     * @param  float $shippingCost
      * @return Transaction
      */
     public function setShippingCost($shippingCost)

@@ -106,7 +106,8 @@ class ApiManagerTest extends TestCase
         $this->assertSame($campaigns[2]['variation']['reference'], $modifications[6]->getIsReference());
     }
 
-    public function testGetModificationsWithSomeFailed(){
+    public function testGetModificationsWithSomeFailed()
+    {
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
 
         $modificationValue = [
@@ -170,7 +171,8 @@ class ApiManagerTest extends TestCase
             'Flagship\Utils\HttpClientInterface',
             ['post'],
             '',
-            false);
+            false
+        );
 
         $visitorId = 'visitor_id';
 

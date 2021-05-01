@@ -10,8 +10,9 @@ use Flagship\Utils\LogManager;
 
 /**
  * Class HitAbstract
+ *
  * @abstract
- * @package Flagship\Hit
+ * @package  Flagship\Hit
  */
 abstract class HitAbstract
 {
@@ -52,54 +53,64 @@ abstract class HitAbstract
      * HitAbstract constructor.
      *
      * @param string $type : Hit type
-     * <code>
-     * Flagship\Enum\HitType::EVENT,
-     * Flagship\Enum\HitType::ITEM,
-     * Flagship\Enum\HitType::PAGEVIEW,
-     * Flagship\Enum\HitType::TRANSACTION
-     * </code>
+     *                     <code>
+     *                     Flagship\Enum\HitType::EVENT,
+     *                     Flagship\Enum\HitType::ITEM,
+     *                     Flagship\Enum\HitType::PAGEVIEW,
+     *                     Flagship\Enum\HitType::TRANSACTION
+     *                     </code>
      */
-    public function __construct($type){
+    public function __construct($type)
+    {
         $this->type = $type;
     }
 
     /**
-     * @param mixed $value
-     * @param string $itemName
+     * @param  mixed  $value
+     * @param  string $itemName
      * @return bool
      */
-    protected function isNoEmptyString($value, $itemName){
+    protected function isNoEmptyString($value, $itemName)
+    {
         if (empty($value) || !is_string($value)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'string'));
+            $this->logError(
+                $this->logManager,
+                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'string')
+            );
             return false;
         }
         return true;
     }
 
     /**
-     * @param mixed $value
-     * @param string $itemName
+     * @param  mixed  $value
+     * @param  string $itemName
      * @return bool
      */
-    protected function isNumeric($value, $itemName){
+    protected function isNumeric($value, $itemName)
+    {
         if (!is_numeric($value)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric'));
+            $this->logError(
+                $this->logManager,
+                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
+            );
             return false;
         }
         return true;
     }
 
     /**
-     * @param mixed $value
-     * @param string $itemName
+     * @param  mixed  $value
+     * @param  string $itemName
      * @return bool
      */
-    protected function isInteger($value, $itemName){
+    protected function isInteger($value, $itemName)
+    {
         if (!is_int($value)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'integer'));
+            $this->logError(
+                $this->logManager,
+                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'integer')
+            );
             return false;
         }
         return true;
@@ -116,7 +127,7 @@ abstract class HitAbstract
     /**
      * Specifies visitor unique identifier provided by developer at visitor creation
      *
-     * @param string $visitorId
+     * @param  string $visitorId
      * @return HitAbstract
      */
     public function setVisitorId($visitorId)
@@ -134,7 +145,7 @@ abstract class HitAbstract
     }
 
     /**
-     * @param string $ds
+     * @param  string $ds
      * @return HitAbstract
      */
     public function setDs($ds)
@@ -154,7 +165,7 @@ abstract class HitAbstract
     /**
      * Specifies customer environment id provided by Flagship
      *
-     * @param string $envId
+     * @param  string $envId
      * @return HitAbstract
      */
     public function setEnvId($envId)
@@ -174,7 +185,7 @@ abstract class HitAbstract
     /**
      * Specifies customer secure api key provided by Flagship.
      *
-     * @param string $apiKey
+     * @param  string $apiKey
      * @return HitAbstract
      */
     public function setApiKey($apiKey)
@@ -196,7 +207,7 @@ abstract class HitAbstract
     /**
      * Specify timeout for api request.
      *
-     * @param int $timeOut
+     * @param  int $timeOut
      * @return HitAbstract
      */
     public function setTimeOut($timeOut)
@@ -207,7 +218,8 @@ abstract class HitAbstract
 
     /**
      * Hit Type
-     * @see \Flagship\Enum\HitType
+     *
+     * @see    \Flagship\Enum\HitType
      * @return string
      */
     public function getType()
@@ -218,9 +230,11 @@ abstract class HitAbstract
 
     /**
      * Return an associative array of the class with Api parameters as keys
+     *
      * @return array
      */
-    public function toArray(){
+    public function toArray()
+    {
         return [
             FlagshipConstant::VISITOR_ID_API_ITEM=>$this->getVisitorId(),
             FlagshipConstant::DS_API_ITEM =>$this->getDs(),
@@ -238,7 +252,7 @@ abstract class HitAbstract
     }
 
     /**
-     * @param LogManager $logManager
+     * @param  LogManager $logManager
      * @return HitAbstract
      */
     public function setLogManager($logManager)
@@ -249,14 +263,17 @@ abstract class HitAbstract
 
     /**
      * Return true if all required attributes are given, otherwise return false
+     *
      * @return bool
      */
-    public function isReady (){
+    public function isReady()
+    {
         return $this->getVisitorId() && $this->getDs() && $this->getEnvId() && $this->getType();
     }
 
     /**
      * This function return the error message according to required attributes of class
+     *
      * @return string
      */
     abstract public function getErrorMessage();

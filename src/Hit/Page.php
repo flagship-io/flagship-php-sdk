@@ -9,6 +9,7 @@ use Flagship\Enum\HitType;
 
 /**
  * Flagship hit type Page
+ *
  * @package Flagship\Hit
  */
 class Page extends HitAbstract
@@ -22,6 +23,7 @@ class Page extends HitAbstract
 
     /**
      * Page constructor.
+     *
      * @param string $pageUrl : Valid url of the page seen.
      */
     public function __construct($pageUrl)
@@ -41,12 +43,12 @@ class Page extends HitAbstract
     /**
      * Specify Valid url of the page seen.
      *
-     * @param string $pageUrl
+     * @param  string $pageUrl
      * @return Page
      */
     public function setPageUrl($pageUrl)
     {
-        if (!$this->isNoEmptyString($pageUrl,'pageUrl')){
+        if (!$this->isNoEmptyString($pageUrl, 'pageUrl')) {
             return $this;
         }
         $this->pageUrl = $pageUrl;

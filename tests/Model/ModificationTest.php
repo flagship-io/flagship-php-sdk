@@ -6,7 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class ModificationTest extends TestCase
 {
-    public function testModificationInstance(){
+    public function testModificationInstance()
+    {
 
         $modification= new Modification();
 

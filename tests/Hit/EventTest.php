@@ -27,8 +27,8 @@ class EventTest extends TestCase
             FlagshipConstant::EVENT_CATEGORY_API_ITEM => $eventCategory,
             FlagshipConstant::EVENT_ACTION_API_ITEM => $eventAction,
 
-//            FlagshipConstant::EVENT_LABEL_API_ITEM=>$eventLabel,
-//            FlagshipConstant::EVENT_VALUE_API_ITEM =>$eventValue
+        //            FlagshipConstant::EVENT_LABEL_API_ITEM=>$eventLabel,
+        //            FlagshipConstant::EVENT_VALUE_API_ITEM =>$eventValue
         ];
 
         $event = new Event($eventCategory, $eventAction);

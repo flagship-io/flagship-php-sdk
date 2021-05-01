@@ -7,6 +7,10 @@ namespace Flagship\Hit;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 
+/**
+ * Flagship hit type Item
+ * @package Flagship\Hit
+ */
 class Item extends HitAbstract
 {
     const ERROR_MESSAGE = 'Transaction Id, Item name and item code are required';
@@ -42,9 +46,9 @@ class Item extends HitAbstract
 
     /**
      * Item constructor.
-     * @param $transactionId
-     * @param $itemName
-     * @param $itemCode
+     * @param string $transactionId : Transaction unique identifier.
+     * @param string $itemName : Name of the item product.
+     * @param string $itemCode : The SKU or item code.
      */
     public function __construct($transactionId, $itemName, $itemCode)
     {
@@ -56,6 +60,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Transaction unique identifier.
+     *
      * @return string
      */
     public function getTransactionId()
@@ -64,7 +70,9 @@ class Item extends HitAbstract
     }
 
     /**
-     * @param string $transactionId
+     * Specify transaction unique identifier.
+     *
+     * @param string $transactionId : Transaction unique identifier.
      * @return Item
      */
     public function setTransactionId($transactionId)
@@ -77,6 +85,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Name of the item product.
+     *
      * @return string
      */
     public function getItemName()
@@ -85,7 +95,9 @@ class Item extends HitAbstract
     }
 
     /**
-     * @param string $itemName
+     * Specify name of the item product.
+     *
+     * @param string $itemName : Name of the item product.
      * @return Item
      */
     public function setItemName($itemName)
@@ -98,6 +110,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * The SKU or item code.
+     *
      * @return string
      */
     public function getItemCode()
@@ -106,6 +120,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Specify the SKU or item code.
+     *
      * @param string $itemCode
      * @return Item
      */
@@ -119,6 +135,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Price for a single item/unit.
+     *
      * @return float
      */
     public function getItemPrice()
@@ -127,6 +145,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Specify the price for a single item
+     *
      * @param float $itemPrice
      * @return Item
      */
@@ -140,6 +160,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Number of items purchased.
+     *
      * @return int
      */
     public function getItemQuantity()
@@ -148,6 +170,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Specify the number of items purchased.
+     *
      * @param int $itemQuantity
      * @return Item
      */
@@ -161,6 +185,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Category that the item belongs to
+     *
      * @return string
      */
     public function getItemCategory()
@@ -169,6 +195,8 @@ class Item extends HitAbstract
     }
 
     /**
+     * Specify the category that the item belongs to
+     *
      * @param string $itemCategory
      * @return Item
      */
@@ -181,6 +209,9 @@ class Item extends HitAbstract
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toArray()
     {
         $arrayParent = parent::toArray();

@@ -33,4 +33,44 @@ class ScreenTest extends TestCase
         $screen->setScreenName([]);
         $this->assertSame($screenName, $screen->getScreenName());
     }
+
+    public function testIsReady()
+    {
+        //Test isReady without require HitAbstract fields
+        $screenName = "screenName";
+        $screen = new Screen($screenName);
+
+        $this->assertFalse($screen->isReady());
+
+        //Test with require HitAbstract fields and with null screenName
+        $screenName = null;
+        $screen = new Screen($screenName);
+
+        $screen->setEnvId('envId')
+            ->setVisitorId('visitorId')
+            ->setDs(FlagshipConstant::SDK_APP);
+
+        $this->assertFalse($screen->isReady());
+
+        //Test isReady Test with require HitAbstract fields and  with empty screenName
+        $screenName = "";
+        $screen = new Screen($screenName);
+
+        $screen->setEnvId('envId')
+            ->setVisitorId('visitorId')
+            ->setDs(FlagshipConstant::SDK_APP);
+
+        $this->assertFalse($screen->isReady());
+
+        $this->assertSame(Screen::ERROR_MESSAGE, $screen->getErrorMessage());
+
+        //Test with require HitAbstract fields and require Page fields
+        $screenName = "screenName";
+        $screen = new Screen($screenName);
+
+        $screen->setEnvId('envId')
+            ->setVisitorId('visitorId')
+            ->setDs(FlagshipConstant::SDK_APP);
+        $this->assertTrue($screen->isReady());
+    }
 }

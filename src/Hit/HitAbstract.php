@@ -16,11 +16,16 @@ use Flagship\Utils\LogManager;
 abstract class HitAbstract
 {
     use LogTrait;
+
     private $visitorId;
     private $ds;
     private $envId;
     private $apiKey;
     protected $type;
+    /**
+     * @var int
+     */
+    protected $timeOut = FlagshipConstant::REQUEST_TIME_OUT;
 
     /**
      * @var LogManager
@@ -29,6 +34,38 @@ abstract class HitAbstract
 
     public function __construct($type){
         $this->type = $type;
+    }
+
+    /**
+     * @param $value
+     * @param $item
+     * @return bool
+     */
+    protected function isNoEmptyString($value, $itemName){
+        if (empty($value) || !is_string($value)) {
+            $this->logError($this->logManager,
+                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'string'));
+            return false;
+        }
+        return true;
+    }
+
+    protected function isNumeric($value, $itemName){
+        if (!is_numeric($value)) {
+            $this->logError($this->logManager,
+                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric'));
+            return false;
+        }
+        return true;
+    }
+
+    protected function isInteger($value, $itemName){
+        if (!is_int($value)) {
+            $this->logError($this->logManager,
+                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'integer'));
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -106,6 +143,24 @@ abstract class HitAbstract
     /**
      * @return mixed
      */
+    public function getTimeOut()
+    {
+        return $this->timeOut;
+    }
+
+    /**
+     * @param mixed $timeOut
+     * @return HitAbstract
+     */
+    public function setTimeOut($timeOut)
+    {
+        $this->timeOut = $timeOut;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getType()
     {
         return $this->type;
@@ -141,4 +196,16 @@ abstract class HitAbstract
         $this->logManager = $logManager;
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isReady (){
+        return $this->getVisitorId() && $this->getDs() && $this->getEnvId() && $this->getType();
+    }
+
+    /**
+     * @return string
+     */
+    abstract public function getErrorMessage();
 }

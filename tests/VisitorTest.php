@@ -686,6 +686,7 @@ class VisitorTest extends TestCase
         $visitorId = "visitorId";
 
         $config = new FlagshipConfig($envId, $apiKey);
+
         $config->setTrackingManager($trackerManagerMock);
 
         $visitor = new Visitor($config, $visitorId);
@@ -712,7 +713,7 @@ class VisitorTest extends TestCase
 
         $trackerManagerMock->expects($this->exactly(5))
             ->method('sendHit')
-            ->withConsecutive($page, $screen, $transition, $event, $item);
+            ->withConsecutive([$page], [$screen], [$transition], [$event], [$item]);
 
         $visitor->sendHit($page);
 
@@ -811,8 +812,7 @@ class VisitorTest extends TestCase
         $page = new Page(null);
 
         $trackerManagerMock->expects($this->never())
-            ->method('sendHit')
-            ->withConsecutive($page);
+            ->method('sendHit');
 
         $visitor->sendHit($page);
     }

@@ -19,7 +19,7 @@ use Flagship\Flagship;
 
 require __dir__ . '/../vendor/autoload.php';
 
-Flagship::start('c1ndrd07m0300ro0jf20', 'QzdTI1M9iqaIhnJ66a34C5xdzrrvzq6q8XSVOsS6');
+Flagship::start('envId', 'apiKey');
 $total= 6000;
 for ($i = 0; $i < $total; $i++) {
     $old = 10 * ($i + 1);

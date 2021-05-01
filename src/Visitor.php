@@ -321,7 +321,17 @@ class Visitor
         $hit->setEnvId($this->config->getEnvId())
             ->setVisitorId($this->getVisitorId())
             ->setDs(FlagshipConstant::SDK_APP)
-            ->setApiKey($this->config->getApiKey());
+            ->setApiKey($this->config->getApiKey())
+        ->setTimeOut($this->config->getTimeOut());
+
+        if (!$hit->isReady()){
+            $this->logError(
+                $this->config->getLogManager(),
+                $hit->getErrorMessage(),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+            );
+            return;
+        }
 
         $this->config->getTrackingManager()->sendHit($hit);
     }

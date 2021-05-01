@@ -7,6 +7,10 @@ namespace Flagship\Hit;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 
+/**
+ * Flagship hit type Event
+ * @package Flagship\Hit
+ */
 class Event extends HitAbstract
 {
     const ERROR_MESSAGE = 'event category and event action are required';
@@ -32,8 +36,9 @@ class Event extends HitAbstract
 
     /**
      * Event constructor.
-     * @param string $category
-     * @param string $action
+     * @param string $category : Action Tracking or User Engagement.
+     * @param string $action : Event name that will also serve as the KPI
+     * that you will have inside your reporting.
      */
     public function __construct($category, $action)
     {
@@ -43,6 +48,8 @@ class Event extends HitAbstract
     }
 
     /**
+     * Action Tracking or User Engagement.
+     *
      * @return string
      */
     public function getCategory()
@@ -51,6 +58,8 @@ class Event extends HitAbstract
     }
 
     /**
+     * Specify Action Tracking or User Engagement.
+     *
      * @param string $category
      * @return Event
      */
@@ -64,6 +73,8 @@ class Event extends HitAbstract
     }
 
     /**
+     *  Event name.
+     *
      * @return string
      */
     public function getAction()
@@ -72,7 +83,9 @@ class Event extends HitAbstract
     }
 
     /**
-     * @param string $action
+     * Specify Event name that will also serve as the KPI
+     * that you will have inside your reporting
+     * @param string $action : Event name.
      * @return Event
      */
     public function setAction($action)
@@ -85,6 +98,8 @@ class Event extends HitAbstract
     }
 
     /**
+     * Additional description of event.
+     *
      * @return string
      */
     public function getLabel()
@@ -93,7 +108,9 @@ class Event extends HitAbstract
     }
 
     /**
-     * @param string $label
+     * Specify additional description of event.
+     *
+     * @param string $label : event label.
      * @return Event
      */
     public function setLabel($label)
@@ -106,6 +123,8 @@ class Event extends HitAbstract
     }
 
     /**
+     * Monetary value associated with an event
+     *
      * @return float
      */
     public function getValue()
@@ -114,7 +133,10 @@ class Event extends HitAbstract
     }
 
     /**
-     * @param float $value
+     * Specify the monetary value associated with an event
+     *      (e.g. you earn 10 to 100 euros depending on the quality of lead generated).
+     *      NOTE: this value must be non-negative.
+     * @param float $value : event value
      * @return Event
      */
     public function setValue($value)
@@ -126,6 +148,9 @@ class Event extends HitAbstract
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toArray()
     {
         $arrayParent = parent::toArray();

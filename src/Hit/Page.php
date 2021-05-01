@@ -7,9 +7,17 @@ namespace Flagship\Hit;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 
+/**
+ * Flagship hit type Page
+ * @package Flagship\Hit
+ */
 class Page extends HitAbstract
 {
     const ERROR_MESSAGE = 'Page url is required';
+
+    /**
+     * @var string
+     */
     private $pageUrl = null;
 
     /**
@@ -31,12 +39,17 @@ class Page extends HitAbstract
     }
 
     /**
+     * Specify Valid url of the page seen.
+     *
      * @param string $pageUrl
      * @return Page
      */
     public function setPageUrl($pageUrl)
     {
-        $this->pageUrl = $pageUrl; // Todo: check url with absolute or relative path ?
+        if (!$this->isNoEmptyString($pageUrl,'pageUrl')){
+            return $this;
+        }
+        $this->pageUrl = $pageUrl;
         return $this;
     }
 

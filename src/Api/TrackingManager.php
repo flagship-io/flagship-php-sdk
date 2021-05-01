@@ -16,6 +16,7 @@ class TrackingManager extends TrackingManagerAbstract
 {
     use LogTrait;
     use BuildApiTrait;
+
     /**
      * @inheritDoc
      */
@@ -44,6 +45,14 @@ class TrackingManager extends TrackingManagerAbstract
      */
     public function sendHit(HitAbstract $hit)
     {
-        // TODO: Implement sendHit() method.
+        try {
+            $headers = $this->buildHeader($hit->getApiKey());
+            $this->httpClient->setHeaders($headers);
+            $this->httpClient->setTimeout($hit->getTimeOut());
+            $url = FlagshipConstant::HIT_API_URL;
+            $this->httpClient->post($url, [], $hit->toArray());
+        } catch (Exception $exception) {
+            $this->logError($hit->getLogManager(), $exception->getMessage());
+        }
     }
 }

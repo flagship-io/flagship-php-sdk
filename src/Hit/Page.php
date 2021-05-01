@@ -9,7 +9,8 @@ use Flagship\Enum\HitType;
 
 class Page extends HitAbstract
 {
-    private $pageUrl;
+    const ERROR_MESSAGE = 'Page url is required';
+    private $pageUrl = null;
 
     /**
      * Page constructor.
@@ -35,16 +36,33 @@ class Page extends HitAbstract
      */
     public function setPageUrl($pageUrl)
     {
-        $this->pageUrl = $pageUrl; // Todo: check url
+        $this->pageUrl = $pageUrl; // Todo: check url with absolute or relative path ?
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function toArray(){
+    public function toArray()
+    {
         $arrayParent = parent::toArray();
-        $arrayParent[FlagshipConstant::DL_API_ITEM]= $this->getPageUrl();
+        $arrayParent[FlagshipConstant::DL_API_ITEM] = $this->getPageUrl();
         return $arrayParent;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isReady()
+    {
+        return parent::isReady() && $this->getPageUrl();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrorMessage()
+    {
+        return self::ERROR_MESSAGE;
     }
 }

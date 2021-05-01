@@ -240,7 +240,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testSynchronizedModifications($modifications)
     {
@@ -348,7 +348,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testSynchronizedModificationsWithoutDecisionManager($modifications)
     {
@@ -379,7 +379,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testGetModificationLog($modifications)
     {
@@ -454,7 +454,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testGetModificationInfo($modifications)
     {
@@ -502,7 +502,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testActivateModification($modifications)
     {
@@ -561,14 +561,15 @@ class VisitorTest extends TestCase
         $key = "KeyNotExist";
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
             sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]);
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+        );
 
         $visitor->activateModification($key);
     }
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testActivateModificationWithoutTrackerManager($modifications)
     {
@@ -607,14 +608,15 @@ class VisitorTest extends TestCase
 
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
             FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]);
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+        );
 
         $visitor->activateModification($modifications[0]->getKey());
     }
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testGetModificationWithActive($modifications)
     {
@@ -803,7 +805,8 @@ class VisitorTest extends TestCase
             ->withConsecutive(
                 [FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
                     [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]],
-                [$page->getErrorMessage(), [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]]);
+                [$page->getErrorMessage(), [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]]
+            );
 
         $visitor->sendHit($page);
 

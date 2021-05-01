@@ -9,6 +9,7 @@ use Flagship\Enum\HitType;
 
 /**
  * Flagship hit type Screen
+ *
  * @package Flagship\Hit
  */
 class Screen extends HitAbstract
@@ -21,6 +22,7 @@ class Screen extends HitAbstract
 
     /**
      * Screen constructor.
+     *
      * @param string $screenName : Name of the interface seen.
      */
     public function __construct($screenName)
@@ -43,12 +45,12 @@ class Screen extends HitAbstract
     /**
      * Specify Name of the interface seen.
      *
-     * @param string $screenName : Interface seen.
+     * @param  string $screenName : Interface seen.
      * @return Screen
      */
     public function setScreenName($screenName)
     {
-        if (!$this->isNoEmptyString($screenName,'screenName')){
+        if (!$this->isNoEmptyString($screenName, 'screenName')) {
             return $this;
         }
         $this->screenName = $screenName;
@@ -58,7 +60,8 @@ class Screen extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toArray(){
+    public function toArray()
+    {
         $arrayParent = parent::toArray();
         $arrayParent[FlagshipConstant::DL_API_ITEM]= $this->getScreenName();
         return $arrayParent;

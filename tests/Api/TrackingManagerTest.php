@@ -27,7 +27,8 @@ class TrackingManagerTest extends TestCase
             'Flagship\Utils\HttpClientInterface',
             ['post'],
             '',
-            false);
+            false
+        );
 
         $trackingManager = new TrackingManager($httpClientMock);
 
@@ -65,7 +66,8 @@ class TrackingManagerTest extends TestCase
             'Flagship\Utils\HttpClientInterface',
             ['post'],
             '',
-            false);
+            false
+        );
 
         $logManagerStub = $this->getMockForAbstractClass(
             'Flagship\Utils\LogManagerInterface',
@@ -119,7 +121,8 @@ class TrackingManagerTest extends TestCase
             'Flagship\Utils\HttpClientInterface',
             ['post'],
             '',
-            false);
+            false
+        );
 
         $trackingManager = new TrackingManager($httpClientMock);
 
@@ -140,7 +143,7 @@ class TrackingManagerTest extends TestCase
         $httpClientMock->expects($this->once())->method('post')->with(
             $url,
             [],
-           $page->toArray()
+            $page->toArray()
         );
 
         $trackingManager->sendHit($page);
@@ -152,7 +155,8 @@ class TrackingManagerTest extends TestCase
             'Flagship\Utils\HttpClientInterface',
             ['post'],
             '',
-            false);
+            false
+        );
 
         $logManagerStub = $this->getMockForAbstractClass(
             'Flagship\Utils\LogManagerInterface',

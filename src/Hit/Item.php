@@ -9,6 +9,7 @@ use Flagship\Enum\HitType;
 
 /**
  * Flagship hit type Item
+ *
  * @package Flagship\Hit
  */
 class Item extends HitAbstract
@@ -46,9 +47,10 @@ class Item extends HitAbstract
 
     /**
      * Item constructor.
+     *
      * @param string $transactionId : Transaction unique identifier.
-     * @param string $itemName : Name of the item product.
-     * @param string $itemCode : The SKU or item code.
+     * @param string $itemName      : Name of the item product.
+     * @param string $itemCode      : The SKU or item code.
      */
     public function __construct($transactionId, $itemName, $itemCode)
     {
@@ -72,12 +74,12 @@ class Item extends HitAbstract
     /**
      * Specify transaction unique identifier.
      *
-     * @param string $transactionId : Transaction unique identifier.
+     * @param  string $transactionId : Transaction unique identifier.
      * @return Item
      */
     public function setTransactionId($transactionId)
     {
-        if (!$this->isNoEmptyString($transactionId,'transactionId')) {
+        if (!$this->isNoEmptyString($transactionId, 'transactionId')) {
             return $this;
         }
         $this->transactionId = $transactionId;
@@ -97,12 +99,12 @@ class Item extends HitAbstract
     /**
      * Specify name of the item product.
      *
-     * @param string $itemName : Name of the item product.
+     * @param  string $itemName : Name of the item product.
      * @return Item
      */
     public function setItemName($itemName)
     {
-        if (!$this->isNoEmptyString($itemName,'itemName')) {
+        if (!$this->isNoEmptyString($itemName, 'itemName')) {
             return $this;
         }
         $this->itemName = $itemName;
@@ -122,12 +124,12 @@ class Item extends HitAbstract
     /**
      * Specify the SKU or item code.
      *
-     * @param string $itemCode
+     * @param  string $itemCode
      * @return Item
      */
     public function setItemCode($itemCode)
     {
-        if (!$this->isNoEmptyString($itemCode,'itemCode')) {
+        if (!$this->isNoEmptyString($itemCode, 'itemCode')) {
             return $this;
         }
         $this->itemCode = $itemCode;
@@ -147,12 +149,12 @@ class Item extends HitAbstract
     /**
      * Specify the price for a single item
      *
-     * @param float $itemPrice
+     * @param  float $itemPrice
      * @return Item
      */
     public function setItemPrice($itemPrice)
     {
-        if (!$this->isNumeric($itemPrice,'itemPrice')){
+        if (!$this->isNumeric($itemPrice, 'itemPrice')) {
             return $this;
         }
         $this->itemPrice = $itemPrice;
@@ -172,12 +174,12 @@ class Item extends HitAbstract
     /**
      * Specify the number of items purchased.
      *
-     * @param int $itemQuantity
+     * @param  int $itemQuantity
      * @return Item
      */
     public function setItemQuantity($itemQuantity)
     {
-        if (!$this->isInteger($itemQuantity, "itemQuantity")){
+        if (!$this->isInteger($itemQuantity, "itemQuantity")) {
             return $this;
         }
         $this->itemQuantity = $itemQuantity;
@@ -197,12 +199,12 @@ class Item extends HitAbstract
     /**
      * Specify the category that the item belongs to
      *
-     * @param string $itemCategory
+     * @param  string $itemCategory
      * @return Item
      */
     public function setItemCategory($itemCategory)
     {
-        if (!$this->isNoEmptyString($itemCategory,"itemCategory")){
+        if (!$this->isNoEmptyString($itemCategory, "itemCategory")) {
             return $this;
         }
         $this->itemCategory = $itemCategory;

@@ -12,10 +12,8 @@ class Container implements ContainerInterface
     private $bindings = [];
 
     /**
-     *
-     *
-     * @param $alias
-     * @param $className
+     * @param  $alias
+     * @param  $className
      * @return $this
      * @throws Exception
      */

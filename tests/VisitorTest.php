@@ -5,6 +5,9 @@ namespace Flagship;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Enum\HitType;
+use Flagship\Hit\Page;
+use Flagship\Hit\Screen;
 use Flagship\Model\Modification;
 use Flagship\Utils\HttpClient;
 use PHPUnit\Framework\TestCase;
@@ -662,5 +665,112 @@ class VisitorTest extends TestCase
         $visitor->synchronizedModifications();
 
         $visitor->getModification($modifications[0]->getKey(), 'defaultValue', true);
+    }
+
+    public function testSendHit(){
+        $trackerManagerMock = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            [new HttpClient()],
+            '',
+            true,
+            true,
+            true,
+            ['sendHit']
+        );
+
+        $envId= "envId";
+        $apiKey = "apiKey";
+        $visitorId= "visitorId";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+        $config->setTrackingManager($trackerManagerMock);
+
+        $visitor =  new Visitor($config, $visitorId);
+
+        $pageUrl = 'https://locahost';
+        $page= new Page($pageUrl);
+        $pageArray = [
+            FlagshipConstant::VISITOR_ID_API_ITEM=>$visitorId,
+            FlagshipConstant::DS_API_ITEM =>FlagshipConstant::SDK_APP,
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM =>$envId,
+            FlagshipConstant::T_API_ITEM=>HitType::PAGE_VIEW,
+            FlagshipConstant::DL_API_ITEM=>$pageUrl
+        ];
+
+        $screenName = 'ScreenName';
+        $screen = new Screen($screenName);
+        $screenArray = [
+            FlagshipConstant::VISITOR_ID_API_ITEM=>$visitorId,
+            FlagshipConstant::DS_API_ITEM =>FlagshipConstant::SDK_APP,
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM =>$envId,
+            FlagshipConstant::T_API_ITEM=>HitType::SCREEN_VIEW,
+            FlagshipConstant::DL_API_ITEM=>$screenName
+        ];
+
+        $trackerManagerMock->expects($this->exactly(2))
+            ->method('sendHit')->withConsecutive($page, $screen);
+
+        $visitor->sendHit($page);
+
+        $this->assertSame($envId, $page->getEnvId()); // test abstract class property
+        $this->assertSame($visitorId, $page->getVisitorId()); // test abstract class property
+        $this->assertSame($apiKey, $page->getApiKey()); // test abstract class property
+        $this->assertSame(HitType::PAGE_VIEW, $page->getType()); // test abstract class property
+
+        $this->assertSame($pageUrl, $page->getPageUrl());
+        $this->assertSame($pageArray, $page->toArray());
+
+        // Test type screen
+        $visitor->sendHit($screen);
+
+        $this->assertSame(HitType::SCREEN_VIEW, $screen->getType());
+        $this->assertSame($screenName, $screen->getScreenName());
+        $this->assertSame($screenArray, $screen->toArray());
+    }
+
+    public function testSendHitTransaction(){
+        $trackerManagerMock = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            [new HttpClient()],
+            '',
+            true,
+            true,
+            true,
+            ['sendHit']
+        );
+
+        $envId= "envId";
+        $apiKey = "apiKey";
+        $visitorId= "visitorId";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+        $config->setTrackingManager($trackerManagerMock);
+
+        $visitor =  new Visitor($config, $visitorId);
+
+        $pageUrl = 'https://locahost';
+        $page= new Page($pageUrl);
+
+        $screenName = 'ScreenName';
+        $screen = new Screen($screenName);
+
+        $trackerManagerMock->expects($this->exactly(2))
+            ->method('sendHit')->withConsecutive($page, $screen);
+
+        $visitor->sendHit($page);
+
+        $this->assertSame($envId, $page->getEnvId()); // test abstract class property
+        $this->assertSame($visitorId, $page->getVisitorId()); // test abstract class property
+        $this->assertSame($apiKey, $page->getApiKey()); // test abstract class property
+        $this->assertSame(HitType::PAGE_VIEW, $page->getType()); // test abstract class property
+
+        $this->assertSame($pageUrl, $page->getPageUrl());
+
+        // Test type screen
+        $visitor->sendHit($screen);
+
+        $this->assertSame(HitType::SCREEN_VIEW, $screen->getType());
+        $this->assertSame($screenName, $screen->getScreenName());
+
     }
 }

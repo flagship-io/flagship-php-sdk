@@ -4,6 +4,7 @@
 namespace Flagship\Api;
 
 
+use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor;
@@ -41,4 +42,10 @@ abstract class TrackingManagerAbstract
      * @return bool
      */
     abstract public function sendActive(Visitor $visitor, Modification $modification);
+
+    /**
+     * @param HitAbstract $hit
+     * @return mixed
+     */
+    abstract public function sendHit(HitAbstract $hit);
 }

@@ -48,10 +48,10 @@ class TrackingManagerTest extends TestCase
             $url,
             [],
             [
-                FlagshipConstant::VISITOR_ID => $visitor->getVisitorId(),
-                FlagshipConstant::VARIATION_ID => $modification->getVariationId(),
-                FlagshipConstant::VARIATION_GROUP_ID => $modification->getVariationGroupId(),
-                FlagshipConstant::CUSTOMER_ENV_ID => $config->getEnvId()
+                FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
+                FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
+                FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
+                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId()
             ]
         );
 
@@ -98,10 +98,10 @@ class TrackingManagerTest extends TestCase
             $url,
             [],
             [
-                FlagshipConstant::VISITOR_ID => $visitor->getVisitorId(),
-                FlagshipConstant::VARIATION_ID => $modification->getVariationId(),
-                FlagshipConstant::VARIATION_GROUP_ID => $modification->getVariationGroupId(),
-                FlagshipConstant::CUSTOMER_ENV_ID => $config->getEnvId()
+                FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
+                FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
+                FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
+                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId()
             ]
         )->willThrowException($exception);
 

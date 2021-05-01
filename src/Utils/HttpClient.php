@@ -170,8 +170,8 @@ class HttpClient implements HttpClientInterface
 
     /**
      * @param  $url
-     * @param array $params
-     * @param array $data
+     * @param  array $params
+     * @param  array $data
      * @return HttpResponse
      * @throws Exception
      */

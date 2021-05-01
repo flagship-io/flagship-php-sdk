@@ -51,9 +51,10 @@ class ApiManager extends DecisionManagerAbstract
 
     /**
      * Return modification of a campaign
-     * @param array $modificationValues
-     * @param $campaign
-     * @param array $modifications
+     *
+     * @param  array $modificationValues
+     * @param  $campaign
+     * @param  array $modifications
      * @return array
      */
     private function getModificationValues(array $modificationValues, $campaign, $modifications)
@@ -86,9 +87,9 @@ class ApiManager extends DecisionManagerAbstract
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_ID])) {
                 $modification->setVariationId(
-                        $campaign[FlagshipField::FIELD_VARIATION]
+                    $campaign[FlagshipField::FIELD_VARIATION]
                         [FlagshipField::FIELD_ID]
-                    );
+                );
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_REFERENCE])) {
@@ -102,7 +103,7 @@ class ApiManager extends DecisionManagerAbstract
                 $localModifications[] = $modification;
             }
         }
-        return array_merge($modifications, $localModifications) ;
+        return array_merge($modifications, $localModifications);
     }
 
     /**
@@ -114,10 +115,10 @@ class ApiManager extends DecisionManagerAbstract
         $modifications = [];
         foreach ($campaigns as $campaign) {
 
-            if (!isset($campaign[FlagshipField::FIELD_VARIATION]) ||
-                !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]) ||
-                !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
-                    [FlagshipField::FIELD_VALUE])) {
+            if (!isset($campaign[FlagshipField::FIELD_VARIATION]) 
+                || !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]) 
+                || !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE])
+            ) {
                 continue;
             }
 
@@ -130,7 +131,7 @@ class ApiManager extends DecisionManagerAbstract
     }
 
     /**
-     * @param Modification[] $modifications
+     * @param  Modification[] $modifications
      * @param  $key
      * @return Modification|null
      */

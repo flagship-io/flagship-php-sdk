@@ -9,6 +9,7 @@ use Flagship\Enum\HitType;
 
 /**
  * Flagship hit type Event
+ *
  * @package Flagship\Hit
  */
 class Event extends HitAbstract
@@ -36,9 +37,10 @@ class Event extends HitAbstract
 
     /**
      * Event constructor.
+     *
      * @param string $category : Action Tracking or User Engagement.
-     * @param string $action : Event name that will also serve as the KPI
-     * that you will have inside your reporting.
+     * @param string $action   : Event name that will also serve as the KPI
+     *                         that you will have inside your reporting.
      */
     public function __construct($category, $action)
     {
@@ -60,7 +62,7 @@ class Event extends HitAbstract
     /**
      * Specify Action Tracking or User Engagement.
      *
-     * @param string $category
+     * @param  string $category
      * @return Event
      */
     public function setCategory($category)
@@ -85,7 +87,8 @@ class Event extends HitAbstract
     /**
      * Specify Event name that will also serve as the KPI
      * that you will have inside your reporting
-     * @param string $action : Event name.
+     *
+     * @param  string $action : Event name.
      * @return Event
      */
     public function setAction($action)
@@ -110,7 +113,7 @@ class Event extends HitAbstract
     /**
      * Specify additional description of event.
      *
-     * @param string $label : event label.
+     * @param  string $label : event label.
      * @return Event
      */
     public function setLabel($label)
@@ -136,7 +139,8 @@ class Event extends HitAbstract
      * Specify the monetary value associated with an event
      *      (e.g. you earn 10 to 100 euros depending on the quality of lead generated).
      *      NOTE: this value must be non-negative.
-     * @param float $value : event value
+     *
+     * @param  float $value : event value
      * @return Event
      */
     public function setValue($value)

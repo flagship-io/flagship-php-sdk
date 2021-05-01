@@ -36,7 +36,8 @@ class ContainerTest extends TestCase
         $container->get('NotExist');
     }
 
-    public function testGetWithDefaultArgs(){
+    public function testGetWithDefaultArgs()
+    {
         $className = 'Flagship\FlagshipConfig';
         $container = new Container();
         $instanceAlias = $container->get($className);

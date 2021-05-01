@@ -8,7 +8,8 @@ use PHPUnit\Framework\TestCase;
 
 class BuildApiTraitTest extends TestCase
 {
-    public function testBuildHeader(){
+    public function testBuildHeader()
+    {
 
         $buildApiTraitMock = $this->getMockForTrait(
             'Flagship\Traits\BuildApiTrait',
@@ -31,7 +32,7 @@ class BuildApiTraitTest extends TestCase
             FlagshipConstant::HEADER_X_SDK_CLIENT => FlagshipConstant::SDK_LANGUAGE,
         ];
 
-        $this->assertSame($headerArray,$headers);
+        $this->assertSame($headerArray, $headers);
 
         $buildDecisionApiUrl = Utils::getMethod($buildApiTraitMock, "buildDecisionApiUrl");
 

@@ -9,7 +9,8 @@ use Flagship\Enum\HitType;
 
 class Transaction extends HitAbstract
 {
-    const CURRENCY_ERROR= "'%s' must be a string and have exactly 3 letters";
+    const CURRENCY_ERROR = "'%s' must be a string and have exactly 3 letters";
+    const ERROR_MESSAGE  = 'Transaction Id and Transaction affiliation are required';
     private $transactionId;
     private $transactionAffiliation;
     private $taxesAmount;
@@ -49,9 +50,7 @@ class Transaction extends HitAbstract
      */
     public function setTransactionId($transactionId)
     {
-        if (!is_string($transactionId)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'transactionId', 'string'));
+        if (!$this->isNoEmptyString($transactionId, 'transactionId')) {
             return $this;
         }
         $this->transactionId = $transactionId;
@@ -76,9 +75,9 @@ class Transaction extends HitAbstract
      */
     public function setTransactionAffiliation($transactionAffiliation)
     {
-        if (!is_string($transactionAffiliation)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'transactionAffiliation', 'string'));
+        if (!$this->isNoEmptyString(
+            $transactionAffiliation,
+            'transactionAffiliation')) {
             return $this;
         }
         $this->transactionAffiliation = $transactionAffiliation;
@@ -102,9 +101,7 @@ class Transaction extends HitAbstract
      */
     public function setTaxesAmount($taxesAmount)
     {
-        if (!is_numeric($taxesAmount)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'taxesAmount', 'numeric'));
+        if (!$this->isNumeric($taxesAmount, 'taxesAmount')) {
             return $this;
         }
         $this->taxesAmount = $taxesAmount;
@@ -128,7 +125,7 @@ class Transaction extends HitAbstract
      */
     public function setCurrency($currency)
     {
-        if (!is_string($currency) || strlen($currency)<0 || strlen($currency)>3) {
+        if (!is_string($currency) || strlen($currency) < 0 || strlen($currency) > 3) {
             $this->logError($this->logManager,
                 sprintf(self::CURRENCY_ERROR, 'currency'));
             return $this;
@@ -154,9 +151,7 @@ class Transaction extends HitAbstract
      */
     public function setCouponCode($couponCode)
     {
-        if (!is_string($couponCode)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'couponCode', 'string'));
+        if (!$this->isNoEmptyString($couponCode, 'couponCode')) {
             return $this;
         }
         $this->couponCode = $couponCode;
@@ -180,9 +175,7 @@ class Transaction extends HitAbstract
      */
     public function setItemsCount($itemsCount)
     {
-        if (!is_int($itemsCount)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'itemsCount', 'integer'));
+        if (!$this->isInteger($itemsCount, 'itemsCount')) {
             return $this;
         }
         $this->itemsCount = $itemsCount;
@@ -207,9 +200,7 @@ class Transaction extends HitAbstract
      */
     public function setShippingMethod($shippingMethod)
     {
-        if (!is_string($shippingMethod)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'shippingMethod', 'string'));
+        if (!$this->isNoEmptyString($shippingMethod, 'shippingMethod')) {
             return $this;
         }
         $this->shippingMethod = $shippingMethod;
@@ -233,9 +224,7 @@ class Transaction extends HitAbstract
      */
     public function setPaymentMethod($paymentMethod)
     {
-        if (!is_string($paymentMethod)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'paymentMethod', 'string'));
+        if (!$this->isNoEmptyString($paymentMethod, 'paymentMethod')) {
             return $this;
         }
         $this->paymentMethod = $paymentMethod;
@@ -260,9 +249,7 @@ class Transaction extends HitAbstract
      */
     public function setRevenue($revenue)
     {
-        if (!is_numeric($revenue)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'revenue', 'numeric'));
+        if (!$this->isNumeric($revenue, 'revenue')) {
             return $this;
         }
         $this->revenue = $revenue;
@@ -285,9 +272,7 @@ class Transaction extends HitAbstract
      */
     public function setShippingCost($shippingCost)
     {
-        if (!is_numeric($shippingCost)) {
-            $this->logError($this->logManager,
-                sprintf(FlagshipConstant::TYPE_ERROR, 'shippingCost', 'numeric'));
+        if (!$this->isNumeric($shippingCost, 'shippingCost')) {
             return $this;
         }
         $this->shippingCost = $shippingCost;
@@ -297,18 +282,57 @@ class Transaction extends HitAbstract
     public function toArray()
     {
         $arrayParent = parent::toArray();
-        $arrayParent[FlagshipConstant::TID_API_ITEM]= $this->getTransactionId();
-        $arrayParent[FlagshipConstant::TA_API_ITEM]= $this->getTransactionAffiliation();
-        $arrayParent[FlagshipConstant::TT_API_ITEM]= $this->getTaxesAmount();
-        $arrayParent[FlagshipConstant::TC_API_ITEM]= $this->getCurrency();
-        $arrayParent[FlagshipConstant::TCC_API_ITEM]= $this->getCouponCode();
-        $arrayParent[FlagshipConstant::ICN_API_ITEM]= $this->getItemsCount();
-        $arrayParent[FlagshipConstant::SM_API_ITEM]= $this->getShippingMethod();
-        $arrayParent[FlagshipConstant::PM_API_ITEM]= $this->getPaymentMethod();
-        $arrayParent[FlagshipConstant::TR_API_ITEM]= $this->getRevenue();
-        $arrayParent[FlagshipConstant::TS_API_ITEM]= $this->getShippingCost();
+        $arrayParent[FlagshipConstant::TID_API_ITEM] = $this->getTransactionId();
+        $arrayParent[FlagshipConstant::TA_API_ITEM] = $this->getTransactionAffiliation();
+
+        if ($this->getTaxesAmount()) {
+            $arrayParent[FlagshipConstant::TT_API_ITEM] = $this->getTaxesAmount();
+        }
+
+        if ($this->getCurrency()) {
+            $arrayParent[FlagshipConstant::TC_API_ITEM] = $this->getCurrency();
+        }
+
+        if ($this->getCouponCode()) {
+            $arrayParent[FlagshipConstant::TCC_API_ITEM] = $this->getCouponCode();
+        }
+
+        if ($this->getItemsCount()) {
+            $arrayParent[FlagshipConstant::ICN_API_ITEM] = $this->getItemsCount();
+        }
+
+        if ($this->getShippingMethod()) {
+            $arrayParent[FlagshipConstant::SM_API_ITEM] = $this->getShippingMethod();
+        }
+
+        if ($this->getPaymentMethod()) {
+            $arrayParent[FlagshipConstant::PM_API_ITEM] = $this->getPaymentMethod();
+        }
+
+        if ($this->getRevenue()) {
+            $arrayParent[FlagshipConstant::TR_API_ITEM] = $this->getRevenue();
+        }
+
+        if ($this->getShippingCost()) {
+            $arrayParent[FlagshipConstant::TS_API_ITEM] = $this->getShippingCost();
+        }
 
         return $arrayParent;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function isReady()
+    {
+        return parent::isReady() && $this->getTransactionId() && $this->getTransactionAffiliation();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrorMessage()
+    {
+        return self::ERROR_MESSAGE;
+    }
 }

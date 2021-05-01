@@ -7,25 +7,59 @@ namespace Flagship\Hit;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 
+/**
+ * Flagship hit type Transaction
+ * @package Flagship\Hit
+ */
 class Transaction extends HitAbstract
 {
     const CURRENCY_ERROR = "'%s' must be a string and have exactly 3 letters";
     const ERROR_MESSAGE  = 'Transaction Id and Transaction affiliation are required';
+    /**
+     * @var string
+     */
     private $transactionId;
+    /**
+     * @var string
+     */
     private $transactionAffiliation;
+    /**
+     * @var float
+     */
     private $taxesAmount;
+    /**
+     * @var string
+     */
     private $currency;
+    /**
+     * @var string
+     */
     private $couponCode;
+    /**
+     * @var int
+     */
     private $itemsCount;
+    /**
+     * @var string
+     */
     private $shippingMethod;
+    /**
+     * @var string
+     */
     private $paymentMethod;
+    /**
+     * @var float
+     */
     private $revenue;
+    /**
+     * @var float
+     */
     private $shippingCost;
 
     /**
      * Transaction constructor.
-     * @param string $transactionId
-     * @param string $transactionAffiliation
+     * @param string $transactionId : Transaction unique identifier..
+     * @param string $transactionAffiliation : Transaction affiliation.
      */
     public function __construct($transactionId, $transactionAffiliation)
     {
@@ -35,6 +69,8 @@ class Transaction extends HitAbstract
     }
 
     /**
+     * Transaction unique identifier.
+     *
      * @return string
      */
     public function getTransactionId()
@@ -43,7 +79,7 @@ class Transaction extends HitAbstract
     }
 
     /**
-     * Set transaction id
+     * Set Transaction unique identifier.
      *
      * @param string $transactionId
      * @return Transaction
@@ -86,6 +122,7 @@ class Transaction extends HitAbstract
 
     /**
      * Total amount of taxes
+     * 
      * @return float
      */
     public function getTaxesAmount()
@@ -94,7 +131,7 @@ class Transaction extends HitAbstract
     }
 
     /**
-     * Specifies the total amount of taxes
+     * Specify the total amount of taxes
      *
      * @param float $taxesAmount
      * @return Transaction
@@ -117,7 +154,7 @@ class Transaction extends HitAbstract
     }
 
     /**
-     * Specifies the currency of transaction.
+     * Specify the currency of transaction.
      *     NOTE: This value should be a valid ISO 4217 currency code.
      *
      * @param string $currency
@@ -145,7 +182,8 @@ class Transaction extends HitAbstract
     }
 
     /**
-     * Specifies the coupon code used by the customer
+     * Specify the coupon code used by the customer
+     *
      * @param string $couponCode
      * @return Transaction
      */
@@ -169,7 +207,8 @@ class Transaction extends HitAbstract
     }
 
     /**
-     * Specifies the number of items in the transaction.
+     * Specify the number of items in the transaction.
+     *
      * @param integer $itemsCount
      * @return Transaction
      */
@@ -193,7 +232,7 @@ class Transaction extends HitAbstract
     }
 
     /**
-     * Specifies the shipping method.
+     * Specify the shipping method.
      *
      * @param string $shippingMethod
      * @return Transaction
@@ -209,6 +248,7 @@ class Transaction extends HitAbstract
 
     /**
      * Payment method
+     *
      * @return string
      */
     public function getPaymentMethod()
@@ -217,7 +257,7 @@ class Transaction extends HitAbstract
     }
 
     /**
-     * Specifies the payment method used
+     * Specify the payment method used
      *
      * @param string $paymentMethod
      * @return Transaction
@@ -242,8 +282,8 @@ class Transaction extends HitAbstract
     }
 
     /**
-     *Specifies the total revenue associated with the transaction.
-     *     This value should include any shipping and/or tax amounts.
+     *Specify the total revenue associated with the transaction.
+     *     NOTE: This value should include any shipping and/or tax amounts.
      * @param float $revenue
      * @return Transaction
      */
@@ -258,6 +298,7 @@ class Transaction extends HitAbstract
 
     /**
      * Total shipping cost of the transaction
+     *
      * @return string
      */
     public function getShippingCost()
@@ -266,7 +307,8 @@ class Transaction extends HitAbstract
     }
 
     /**
-     * Specifies the total shipping cost of the transaction
+     * Specify the total shipping cost of the transaction\
+     *
      * @param float $shippingCost
      * @return Transaction
      */
@@ -279,6 +321,9 @@ class Transaction extends HitAbstract
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toArray()
     {
         $arrayParent = parent::toArray();

@@ -4,6 +4,7 @@ namespace Flagship;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
@@ -169,7 +170,7 @@ class Visitor
         }
 
         $modification = $this->getObjetModification($key);
-        if (!$modification){
+        if (!$modification) {
             $this->logError(
                 $this->config->getLogManager(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
@@ -187,7 +188,7 @@ class Visitor
             return $defaultValue;
         }
 
-        if ($activate){
+        if ($activate) {
             $this->activateModification($key);
         }
         return $modification->getValue();
@@ -260,7 +261,7 @@ class Visitor
      */
     public function synchronizedModifications()
     {
-        if (!$this->config->getDecisionManager()){
+        if (!$this->config->getDecisionManager()) {
             $this->logError(
                 $this->config->getLogManager(),
                 FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
@@ -290,7 +291,7 @@ class Visitor
             return;
         }
 
-        if (!$this->config->getTrackingManager()){
+        if (!$this->config->getTrackingManager()) {
             $this->logError(
                 $this->config->getLogManager(),
                 FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
@@ -300,5 +301,28 @@ class Visitor
         }
 
         $this->config->getTrackingManager()->sendActive($this, $modification);
+    }
+
+    /**
+     * @param HitAbstract $hit
+     * @return void
+     */
+    public function sendHit(HitAbstract $hit)
+    {
+        if (!$this->config->getTrackingManager()) {
+            $this->logError(
+                $this->config->getLogManager(),
+                FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+            );
+            return;
+        }
+
+        $hit->setEnvId($this->config->getEnvId())
+            ->setVisitorId($this->getVisitorId())
+            ->setDs(FlagshipConstant::SDK_APP)
+            ->setApiKey($this->config->getApiKey());
+
+        $this->config->getTrackingManager()->sendHit($hit);
     }
 }

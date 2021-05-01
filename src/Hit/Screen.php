@@ -7,6 +7,10 @@ namespace Flagship\Hit;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 
+/**
+ * Flagship hit type Screen
+ * @package Flagship\Hit
+ */
 class Screen extends HitAbstract
 {
     const ERROR_MESSAGE = 'Screen name is required';
@@ -27,6 +31,8 @@ class Screen extends HitAbstract
     }
 
     /**
+     * Name of the interface seen.
+     *
      * @return string
      */
     public function getScreenName()
@@ -35,7 +41,9 @@ class Screen extends HitAbstract
     }
 
     /**
-     * @param string $screenName
+     * Specify Name of the interface seen.
+     *
+     * @param string $screenName : Interface seen.
      * @return Screen
      */
     public function setScreenName($screenName)

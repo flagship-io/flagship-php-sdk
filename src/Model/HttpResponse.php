@@ -9,7 +9,8 @@ class HttpResponse
     private $statusCode;
     private $body;
 
-    public function __construct($statusCode, $body){
+    public function __construct($statusCode, $body)
+    {
 
         $this->statusCode = $statusCode;
         $this->body = $body;
@@ -24,7 +25,7 @@ class HttpResponse
     }
 
     /**
-     * @param mixed $statusCode
+     * @param  mixed $statusCode
      * @return HttpResponse
      */
     public function setStatusCode($statusCode)
@@ -42,7 +43,7 @@ class HttpResponse
     }
 
     /**
-     * @param mixed $body
+     * @param  mixed $body
      * @return HttpResponse
      */
     public function setBody($body)

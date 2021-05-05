@@ -2,9 +2,14 @@
 
 namespace Flagship;
 
-use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Enum\HitType;
+use Flagship\Hit\Event;
+use Flagship\Hit\Item;
+use Flagship\Hit\Page;
+use Flagship\Hit\Screen;
+use Flagship\Hit\Transaction;
 use Flagship\Model\Modification;
 use Flagship\Utils\HttpClient;
 use PHPUnit\Framework\TestCase;
@@ -235,7 +240,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testSynchronizedModifications($modifications)
     {
@@ -343,7 +348,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testSynchronizedModificationsWithoutDecisionManager($modifications)
     {
@@ -365,8 +370,8 @@ class VisitorTest extends TestCase
 
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->with(
-            FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION]
+                FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION]
             );
 
         $visitor->synchronizedModifications();
@@ -374,7 +379,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testGetModificationLog($modifications)
     {
@@ -449,7 +454,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testGetModificationInfo($modifications)
     {
@@ -497,7 +502,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testActivateModification($modifications)
     {
@@ -556,14 +561,15 @@ class VisitorTest extends TestCase
         $key = "KeyNotExist";
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
             sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]);
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+        );
 
         $visitor->activateModification($key);
     }
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testActivateModificationWithoutTrackerManager($modifications)
     {
@@ -602,14 +608,15 @@ class VisitorTest extends TestCase
 
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
             FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]);
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+        );
 
         $visitor->activateModification($modifications[0]->getKey());
     }
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param        Modification[] $modifications
      */
     public function testGetModificationWithActive($modifications)
     {
@@ -662,5 +669,154 @@ class VisitorTest extends TestCase
         $visitor->synchronizedModifications();
 
         $visitor->getModification($modifications[0]->getKey(), 'defaultValue', true);
+    }
+
+    public function testSendHit()
+    {
+        $trackerManagerMock = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            [new HttpClient()],
+            '',
+            true,
+            true,
+            true,
+            ['sendHit']
+        );
+
+        $envId = "envId";
+        $apiKey = "apiKey";
+        $visitorId = "visitorId";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+
+        $config->setTrackingManager($trackerManagerMock);
+
+        $visitor = new Visitor($config, $visitorId);
+
+        $pageUrl = 'https://locahost';
+        $page = new Page($pageUrl);
+
+        $screenName = 'ScreenName';
+        $screen = new Screen($screenName);
+
+        $transitionId = "transitionId";
+        $transitionAffiliation = "transitionAffiliation";
+        $transition = new Transaction($transitionId, $transitionAffiliation);
+
+        $eventCategory = "eventCategory";
+        $eventAction = "eventAction";
+
+        $event = new Event($eventCategory, $eventAction);
+
+        $itemName = "itemName";
+        $itemCode = "itemCode";
+
+        $item = new Item($transitionId, $itemName, $itemCode);
+
+        $trackerManagerMock->expects($this->exactly(5))
+            ->method('sendHit')
+            ->withConsecutive([$page], [$screen], [$transition], [$event], [$item]);
+
+        $visitor->sendHit($page);
+
+        $this->assertSame($envId, $page->getEnvId()); // test abstract class property
+        $this->assertSame($visitorId, $page->getVisitorId()); // test abstract class property
+        $this->assertSame($apiKey, $page->getApiKey()); // test abstract class property
+        $this->assertSame(HitType::PAGE_VIEW, $page->getType()); // test abstract class property
+
+        $this->assertSame($pageUrl, $page->getPageUrl());
+
+        // Test type screen
+        $visitor->sendHit($screen);
+
+        $this->assertSame($envId, $screen->getEnvId()); // test abstract class property
+        $this->assertSame($visitorId, $screen->getVisitorId()); // test abstract class property
+        $this->assertSame($apiKey, $screen->getApiKey()); // test abstract class property
+
+        $this->assertSame(HitType::SCREEN_VIEW, $screen->getType());
+        $this->assertSame($screenName, $screen->getScreenName());
+
+        //Test type Transition
+        $visitor->sendHit($transition);
+        $this->assertSame($envId, $transition->getEnvId()); // test abstract class property
+        $this->assertSame($visitorId, $transition->getVisitorId()); // test abstract class property
+        $this->assertSame($apiKey, $transition->getApiKey()); // test abstract class property
+
+        $this->assertSame(HitType::TRANSACTION, $transition->getType());
+
+        //Test type Event
+        $visitor->sendHit($event);
+
+        $this->assertSame($envId, $event->getEnvId()); // test abstract class property
+        $this->assertSame($visitorId, $event->getVisitorId()); // test abstract class property
+        $this->assertSame($apiKey, $event->getApiKey()); // test abstract class property
+
+        $this->assertSame(HitType::EVENT, $event->getType());
+
+        //Test type Item
+        $visitor->sendHit($item);
+
+        $this->assertSame($envId, $item->getEnvId()); // test abstract class property
+        $this->assertSame($visitorId, $item->getVisitorId()); // test abstract class property
+        $this->assertSame($apiKey, $item->getApiKey()); // test abstract class property
+
+        $this->assertSame(HitType::ITEM, $item->getType());
+
+    }
+
+    public function testSendHitTransaction()
+    {
+
+        $trackerManagerMock = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            [new HttpClient()],
+            '',
+            true,
+            true,
+            true,
+            ['sendHit']
+        );
+
+        $logManagerMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
+        $envId = "envId";
+        $apiKey = "apiKey";
+        $visitorId = "visitorId";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+
+        $config->setLogManager($logManagerMock);
+
+        $visitor = new Visitor($config, $visitorId);
+
+        $pageUrl = 'https://locahost';
+        $page = new Page($pageUrl);
+
+        $logManagerMock->expects($this->exactly(2))
+            ->method('error')
+            ->withConsecutive(
+                [FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]],
+                [$page->getErrorMessage(), [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]]
+            );
+
+        $visitor->sendHit($page);
+
+        $config->setTrackingManager($trackerManagerMock);
+
+        $page = new Page(null);
+
+        $trackerManagerMock->expects($this->never())
+            ->method('sendHit');
+
+        $visitor->sendHit($page);
     }
 }

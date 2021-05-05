@@ -65,7 +65,7 @@ class Flagship
     /**
      * Start the flagship SDK, with a custom configuration implementation
      *
-     * @param $envId : Environment id provided by Flagship.
+     * @param $envId  : Environment id provided by Flagship.
      * @param $apiKey : Secure api key provided by Flagship.
      * @param FlagshipConfig|null $config : (optional) SDK configuration.
      */
@@ -87,9 +87,9 @@ class Flagship
             $decisionManager = null;
 
             switch ($config->getDecisionMode()){
-                case DecisionMode::DECISION_API:
-                    $decisionManager = $container->get('Flagship\Decision\ApiManager');
-                    break;
+            case DecisionMode::DECISION_API:
+                $decisionManager = $container->get('Flagship\Decision\ApiManager');
+                break;
             }
 
             $config->setDecisionManager($decisionManager);
@@ -134,6 +134,7 @@ class Flagship
 
     /**
      * This function initialize the dependency injection container
+     *
      * @return Container
      */
     private function containerInitialization()
@@ -177,7 +178,7 @@ class Flagship
     }
 
     /**
-     * @param FlagshipConfig $config
+     * @param  FlagshipConfig $config
      * @return Flagship
      */
     protected function setConfig($config)
@@ -199,7 +200,8 @@ class Flagship
 
     /**
      * Set Flagship SDK status
-     * @param int $status   FlagshipStatus::READY or FlagshipStatus::NOT_READY
+     *
+     * @param  int $status FlagshipStatus::READY or FlagshipStatus::NOT_READY
      * @return Flagship
      */
     protected function setStatus($status)
@@ -218,8 +220,9 @@ class Flagship
 
     /**
      * Create a new visitor with a context.
-     * @param $visitorId : Unique visitor identifier.
-     * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
+     *
+     * @param  $visitorId : Unique visitor identifier.
+     * @param  array $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return Visitor|null
      */
     public static function newVisitor($visitorId, $context = [])

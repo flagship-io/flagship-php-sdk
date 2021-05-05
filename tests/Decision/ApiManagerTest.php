@@ -23,7 +23,6 @@ class ApiManagerTest extends TestCase
     public function testGetModifications()
     {
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
-        $visitorId = 'visitor_id';
         $modificationValue1 = [
             "background" => "bleu ciel",
             "btnColor" => "#EE3300",
@@ -83,16 +82,10 @@ class ApiManagerTest extends TestCase
             ]
         ];
 
-        $result = [
-            "visitorId" => $visitorId,
-            "campaigns" => $campaigns
-        ];
-
-        $httpClientMock->method('post')
-            ->willReturn($result);
         $manager = new ApiManager($httpClientMock);
 
         $modifications = $manager->getModifications($campaigns);
+
 
         //Test duplicate keys are overwritten
         $this->assertCount(count($mergeModification), $modifications);
@@ -113,13 +106,73 @@ class ApiManagerTest extends TestCase
         $this->assertSame($campaigns[2]['variation']['reference'], $modifications[6]->getIsReference());
     }
 
+    public function testGetModificationsWithSomeFailed()
+    {
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
+
+        $modificationValue = [
+            "background" => "bleu ciel",
+            "btnColor" => "#EE3300",
+            "borderColor" => null,
+            'isVip' => false,
+            'firstConnect' => true,
+            ''=>'hello world' //Test with invalid key
+        ];
+
+
+        $campaigns = [
+            [
+                "id" => "c1e3t1nvfu1ncqfcdco0",
+                "variationGroupId" => "c1e3t1nvfu1ncqfcdcp0",
+                "variation" => [
+                    "id" => "c1e3t1nvfu1ncqfcdcq0",
+                    "modifications" => [ //Test modification without Value
+                        "type" => "FLAG",
+                    ],
+                    "reference" => false]
+            ],
+            [
+                "id" => "c20j8bk3fk9hdphqtd1g",
+                "variationGroupId" => "c20j8bk3fk9hdphqtd2g",
+                "variation" => [ //Test Variation without modification
+                    "id" => "c20j9lgbcahhf2mvhbf0",
+                    "reference" => true
+                ]
+            ],
+            [ // Test Campaign without variation
+                "id" => "c20j8bksdfk9hdphqtd1g",
+                "variationGroupId" => "c2sf8bk3fk9hdphqtd2g",
+
+            ],
+            [
+                "id" => "c20j8bksdfk9hdphqtd1g",
+                "variationGroupId" => "c2sf8bk3fk9hdphqtd2g",
+                "variation" => [
+                    "id" => "c20j9lrfcahhf2mvhbf0",
+                    "modifications" => [
+                        "type" => "JSON",
+                        "value" => $modificationValue
+                    ],
+                    "reference" => true
+                ]
+            ]
+        ];
+
+        $manager = new ApiManager($httpClientMock);
+
+        $modifications = $manager->getModifications($campaigns);
+
+        $this->assertCount(count($modificationValue)-1, $modifications);
+    }
+
     public function testGetCampaigns()
     {
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
             '',
-            false);
+            false
+        );
 
         $visitorId = 'visitor_id';
 

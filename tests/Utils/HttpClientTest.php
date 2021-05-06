@@ -2,7 +2,7 @@
 
 namespace Flagship\Utils;
 
-require_once __dir__ . '/../Assets/Curl.php';
+require_once __dir__ . "/../Assets/Curl.php";
 
 use Flagship\Assets\Curl;
 use Flagship\Enum\FlagshipConstant;
@@ -23,7 +23,7 @@ class HttpClientTest extends TestCase
         $optionKey = CURLOPT_TIMEOUT;
         $optionValue = 2000;
         $client->setOpt($optionKey, $optionValue);
-        $this->assertSame($client->getOptions()[$optionKey],  $optionValue);
+        $this->assertSame($client->getOptions()[$optionKey], $optionValue);
     }
 
     public function testSetHeaders()
@@ -45,9 +45,11 @@ class HttpClientTest extends TestCase
         $versionSDkKey = 'sdk';
         $versionSDkValue = '1';
         $urlOriginal = "https://localhost";
-        $urlExpected = $urlOriginal . '?' . $visitoKey . '=' . $visitorid . '&' . $versionSDkKey . '=' . $versionSDkValue;
+        $urlExpected = $urlOriginal . '?' . $visitoKey . '=' . $visitorid . '&' .
+            $versionSDkKey . '=' . $versionSDkValue;
         $urlBuild = $buildMethod->invokeArgs(
-            $client, [$urlOriginal,
+            $client,
+            [$urlOriginal,
             [
                 $visitoKey => $visitorid,
                 $versionSDkKey => $versionSDkValue
@@ -55,20 +57,19 @@ class HttpClientTest extends TestCase
             ]
         );
         $this->assertEquals($urlExpected, $urlBuild);
-        $visitor= 'visitor=visitor';
-        $urlExpected= $urlOriginal . '?'. $visitor;
+        $visitor = 'visitor=visitor';
+        $urlExpected = $urlOriginal . '?' . $visitor;
         $urlBuild = $buildMethod->invokeArgs($client, [$urlOriginal, $visitor]);
         $this->assertEquals($urlExpected, $urlBuild);
-
     }
 
     public function testPost()
     {
         $client = new HttpClient();
-        $url='http://localhost';
-        Curl::$response='"Test-response"';
-        Curl::$curlErrorCode=0;
-        Curl::$curlHttpCodeInfo=204;
+        $url = 'http://localhost';
+        Curl::$response = '"Test-response"';
+        Curl::$curlErrorCode = 0;
+        Curl::$curlHttpCodeInfo = 204;
 
         $response = $client->post($url, [], []);
 
@@ -80,20 +81,20 @@ class HttpClientTest extends TestCase
     public function testPostFailed()
     {
         $client = new HttpClient();
-        $url='http://localhost';
-        Curl::$response='{"message": "Forbidden"}';
-        Curl::$curlErrorCode=0;
-        Curl::$curlHttpCodeInfo=403;
+        $url = 'http://localhost';
+        Curl::$response = '{"message": "Forbidden"}';
+        Curl::$curlErrorCode = 0;
+        Curl::$curlHttpCodeInfo = 403;
         $this->setExpectedException('Exception');
         $response = $client->post($url, [], []);
     }
     public function testGet()
     {
         $client = new HttpClient();
-        $url='http://localhost';
-        Curl::$response='"Test-response"';
-        Curl::$curlErrorCode=0;
-        Curl::$curlHttpCodeInfo=204;
+        $url = 'http://localhost';
+        Curl::$response = '"Test-response"';
+        Curl::$curlErrorCode = 0;
+        Curl::$curlHttpCodeInfo = 204;
 
         $response = $client->get($url, []);
         $this->assertInstanceOf('Flagship\Model\HttpResponse', $response);

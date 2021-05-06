@@ -81,7 +81,6 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf($className, $instanceAlias);
         $this->assertSame($envId, $instanceAlias->getEnvId());
         $this->assertSame($apiKey, $instanceAlias->getApiKey());
-
     }
 
     public function testBind()
@@ -108,6 +107,4 @@ class ContainerTest extends TestCase
 
         $container->bind($alias2, $className2);
     }
-
-
 }

@@ -32,7 +32,8 @@ class ApiManager extends DecisionManagerAbstract
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
             $this->httpClient->setTimeout($visitor->getConfig()->getTimeOut());
-            $url = $this->buildDecisionApiUrl($visitor->getConfig()->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS . '/');
+            $url = $this->buildDecisionApiUrl($visitor->getConfig()->getEnvId() . '/' .
+                FlagshipConstant::URL_CAMPAIGNS . '/');
 
             $postData = [
                 "visitorId" => $visitor->getVisitorId(),
@@ -114,10 +115,11 @@ class ApiManager extends DecisionManagerAbstract
 
         $modifications = [];
         foreach ($campaigns as $campaign) {
-
-            if (!isset($campaign[FlagshipField::FIELD_VARIATION]) 
-                || !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]) 
-                || !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE])
+            if (
+                !isset($campaign[FlagshipField::FIELD_VARIATION])
+                || !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS])
+                || !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
+                    [FlagshipField::FIELD_VALUE])
             ) {
                 continue;
             }

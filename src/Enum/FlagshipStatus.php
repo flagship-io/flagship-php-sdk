@@ -2,6 +2,10 @@
 
 namespace Flagship\Enum;
 
+/**
+ * Class FlagshipStatus
+ * @package Flagship\Enum
+ */
 class FlagshipStatus
 {
 

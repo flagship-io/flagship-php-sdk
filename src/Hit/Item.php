@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Hit;
-
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
@@ -217,9 +215,9 @@ class Item extends HitAbstract
     public function toArray()
     {
         $arrayParent = parent::toArray();
-        $arrayParent[FlagshipConstant::TID_API_ITEM]= $this->getTransactionId();
-        $arrayParent[FlagshipConstant::IN_API_ITEM]= $this->getItemName();
-        $arrayParent[FlagshipConstant::IC_API_ITEM]= $this->getItemCode();
+        $arrayParent[FlagshipConstant::TID_API_ITEM] = $this->getTransactionId();
+        $arrayParent[FlagshipConstant::IN_API_ITEM] = $this->getItemName();
+        $arrayParent[FlagshipConstant::IC_API_ITEM] = $this->getItemCode();
 
         if ($this->getItemPrice()) {
             $arrayParent[FlagshipConstant::IP_API_ITEM] = $this->getItemPrice();

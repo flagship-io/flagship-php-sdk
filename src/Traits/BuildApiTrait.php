@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Traits;
-
 
 use Flagship\Enum\FlagshipConstant;
 

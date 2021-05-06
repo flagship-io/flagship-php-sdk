@@ -9,7 +9,6 @@ use Flagship\Model\HttpResponse;
 
 class HttpClient implements HttpClientInterface
 {
-
     private $curl;
 
     private $options = [];
@@ -137,18 +136,17 @@ class HttpClient implements HttpClientInterface
         $this->curl = null;
 
         if ($httpError) {
-            $message=[
-                'curlCode'=>$curlErrorCode,
-                'curlMessage'=>$curlErrorMessage,
-                'httpCode'=> $httpStatusCode,
-                'httpMessage'=>$rawResponse
+            $message = [
+                'curlCode' => $curlErrorCode,
+                'curlMessage' => $curlErrorMessage,
+                'httpCode' => $httpStatusCode,
+                'httpMessage' => $rawResponse
             ];
             throw new Exception(json_encode($message), $curlErrorCode);
         }
 
         $response = $this->parseResponse($rawResponse);
         return new HttpResponse($httpStatusCode, $response);
-
     }
 
     /**

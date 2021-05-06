@@ -197,6 +197,4 @@ class FlagshipConfig
         $this->trackingManager = $trackerManager;
         return $this;
     }
-
-
 }

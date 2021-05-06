@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Hit;
-
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
@@ -113,10 +111,11 @@ class Transaction extends HitAbstract
      */
     public function setTransactionAffiliation($transactionAffiliation)
     {
-        if (!$this->isNoEmptyString(
-            $transactionAffiliation,
-            'transactionAffiliation'
-        )
+        if (
+            !$this->isNoEmptyString(
+                $transactionAffiliation,
+                'transactionAffiliation'
+            )
         ) {
             return $this;
         }
@@ -126,7 +125,7 @@ class Transaction extends HitAbstract
 
     /**
      * Total amount of taxes
-     * 
+     *
      * @return float
      */
     public function getTaxesAmount()

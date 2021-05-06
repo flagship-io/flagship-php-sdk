@@ -99,5 +99,4 @@ class FlagshipConstant
     const HEADER_X_SDK_CLIENT     = 'x-sdk-client';
     const HEADER_X_SDK_VERSION    = 'x-sdk-version';
     const HEADER_APPLICATION_JSON = 'application/json';
-
 }

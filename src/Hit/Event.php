@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Hit;
-
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;

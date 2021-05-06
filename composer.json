@@ -23,8 +23,8 @@
   },
   "scripts": {
     "test": "phpunit",
-    "check-style": "phpcs src tests",
-    "fix-style": "phpcbf src tests"
+    "check-style": "phpcs --standard=PSR12 -n src tests",
+    "fix-style": "phpcbf --standard=PSR12 src tests"
   },
   "license": "MIT"
 }

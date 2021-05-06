@@ -16,8 +16,6 @@ class ApiManagerTest extends TestCase
         $httpClient = new HttpClient();
         $apiManager = new ApiManager($httpClient);
         $this->assertSame($httpClient, $apiManager->getHttpClient());
-
-
     }
 
     public function testGetModifications()
@@ -116,7 +114,7 @@ class ApiManagerTest extends TestCase
             "borderColor" => null,
             'isVip' => false,
             'firstConnect' => true,
-            ''=>'hello world' //Test with invalid key
+            '' => 'hello world' //Test with invalid key
         ];
 
 
@@ -162,7 +160,7 @@ class ApiManagerTest extends TestCase
 
         $modifications = $manager->getModifications($campaigns);
 
-        $this->assertCount(count($modificationValue)-1, $modifications);
+        $this->assertCount(count($modificationValue) - 1, $modifications);
     }
 
     public function testGetCampaigns()
@@ -226,7 +224,8 @@ class ApiManagerTest extends TestCase
             ['post'],
             '',
             false
-        );;
+        );
+        ;
 
         //Mock method curl->post to throw Exception
         $errorMessage = '{"message": "Forbidden"}';

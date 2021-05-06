@@ -154,7 +154,8 @@ class Visitor
      *
      * @param string              $key          : key associated to the modification.
      * @param string|bool|numeric $defaultValue : default value to return.
-     * @param bool                $activate     : Set this parameter to true to automatically report on our server that the
+     * @param bool                $activate     : Set this parameter to true to automatically
+     *                                          report on our server that the
      *                                          current visitor has seen this modification. It is possible to call
      *                                          activateModification() later.
 
@@ -244,7 +245,6 @@ class Visitor
     }
 
     /**
-     * 
      * Return the Modification that matches the key, otherwise return null
      *
      * @param  $key

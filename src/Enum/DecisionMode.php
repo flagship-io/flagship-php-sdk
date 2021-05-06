@@ -20,10 +20,10 @@ class DecisionMode
     public static function isDecisionMode($value)
     {
         switch ($value) {
-        case self::DECISION_API:
-            return true;
-        default:
-            return false;
+            case self::DECISION_API:
+                return true;
+            default:
+                return false;
         }
     }
 }

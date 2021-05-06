@@ -222,6 +222,15 @@ class Visitor
      */
     public function getModificationInfo($key)
     {
+        if ($this->isOnPanicMode()) {
+            $this->logError(
+                $this->config->getLogManager(),
+                sprintf(FlagshipConstant::PANIC_MODE_ERROR, "getModificationInfo"),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]
+            );
+            return null;
+        }
+
         if (!$this->isKeyValid($key)) {
             $this->logError(
                 $this->config->getLogManager(),

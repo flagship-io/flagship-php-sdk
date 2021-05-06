@@ -8,6 +8,10 @@ use Flagship\Visitor;
 abstract class DecisionManagerAbstract implements DecisionManagerInterface
 {
     /**
+     * @var bool
+     */
+    protected $isPanicMode = false;
+    /**
      * @var HttpClientInterface
      */
     protected $httpClient;
@@ -28,6 +32,24 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     public function getHttpClient()
     {
         return $this->httpClient;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsPanicMode()
+    {
+        return $this->isPanicMode;
+    }
+
+    /**
+     * @param bool $isPanicMode
+     * @return DecisionManagerAbstract
+     */
+    public function setIsPanicMode($isPanicMode)
+    {
+        $this->isPanicMode = $isPanicMode;
+        return $this;
     }
 
     /**

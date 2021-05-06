@@ -481,16 +481,33 @@ class VisitorTest extends TestCase
             false,
             true,
             true,
-            ['getModifications', 'getConfig']
+            ['getModifications']
         );
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
         $config = new FlagshipConfig('envId', 'apiKey');
 
         $config->setDecisionManager($apiManagerStub);
+        $config->setLogManager($logManagerStub);
+
+        $paramsExpected = [];
 
         $apiManagerStub->method('getModifications')->willReturn($modifications);
-        $apiManagerStub->method('getConfig')->willReturn($config);
+
+        $logManagerStub->expects($this->exactly(3))->method('error')
+            ->withConsecutive($paramsExpected);
 
         $visitor = new Visitor($config, "visitorId", []);
+
         $visitor->synchronizedModifications();
 
         $modification = $modifications[0];
@@ -508,11 +525,26 @@ class VisitorTest extends TestCase
         $this->assertSame($campaignExpected, $campaign);
 
         //Test key doesn't exist in modifications set
-        $campaign = $visitor->getModificationInfo('notExistKey');
+        $notExistKey = "notExistKey";
+        $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $notExistKey),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+
+        $campaign = $visitor->getModificationInfo($notExistKey);
         $this->assertNull($campaign);
 
         //Test Key is null
+        $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, null),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+
         $campaign = $visitor->getModificationInfo(null);
+        $this->assertNull($campaign);
+
+        //Test on Panic Mode
+        $paramsExpected[] = [sprintf(FlagshipConstant::PANIC_MODE_ERROR, "getModificationInfo"),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+
+        $apiManagerStub->setIsPanicMode(true);
+        $campaign = $visitor->getModificationInfo($modification->getKey());
         $this->assertNull($campaign);
     }
 

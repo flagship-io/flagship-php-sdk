@@ -99,6 +99,7 @@ class HttpClient implements HttpClientInterface
     public function setTimeout($seconds = FlagshipConstant::REQUEST_TIME_OUT)
     {
         $this->setOpt(CURLOPT_TIMEOUT, $seconds);
+        $this->setOpt(CURLOPT_CONNECTTIMEOUT, $seconds);
         return $this;
     }
 
@@ -135,7 +136,7 @@ class HttpClient implements HttpClientInterface
 
         $this->curl = null;
 
-        if ($httpError) {
+        if ($httpError || $curlErrorCode) {
             $message = [
                 'curlCode' => $curlErrorCode,
                 'curlMessage' => $curlErrorMessage,

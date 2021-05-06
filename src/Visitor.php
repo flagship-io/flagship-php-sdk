@@ -149,6 +149,30 @@ class Visitor
     }
 
     /**
+     * This function return true if panic mode is enabled, otherwise return false
+     *     Note: Return true if decisionManager is null
+     * @see hasDecisionManager
+     * @return bool
+     */
+    private function isOnPanicMode($functionName, $process)
+    {
+        if (!$this->hasDecisionManager($process)) {
+            return true;
+        }
+
+        $check = $this->getConfig()->getDecisionManager()->getIsPanicMode();
+
+        if ($check) {
+            $this->logError(
+                $this->config->getLogManager(),
+                sprintf(FlagshipConstant::PANIC_MODE_ERROR, $functionName),
+                [FlagshipConstant::PROCESS => $process]
+            );
+        }
+        return $check;
+    }
+
+    /**
      * Retrieve a modification value by its key. If no modification match the given
      * key or if the stored value type and default value type do not match, default value will be returned.
      *
@@ -163,6 +187,10 @@ class Visitor
      */
     public function getModification($key, $defaultValue, $activate = false)
     {
+        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_GET_MODIFICATION)) {
+            return $defaultValue;
+        }
+
         if (!$this->isKeyValid($key)) {
             $this->logError(
                 $this->config->getLogManager(),
@@ -205,6 +233,10 @@ class Visitor
      */
     public function getModificationInfo($key)
     {
+        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_GET_MODIFICATION_INFO)) {
+            return null;
+        }
+
         if (!$this->isKeyValid($key)) {
             $this->logError(
                 $this->config->getLogManager(),
@@ -260,32 +292,74 @@ class Visitor
         return null;
     }
 
+
     /**
-     * This function will call the decision api and update all the campaigns modifications
-     * from the server according to the visitor context.
+     * This function return true if decisionManager is not null,
+     * otherwise log an error and return false
+     *
+     * @param string $process : Process name
+     * @return bool
      */
-    public function synchronizedModifications()
+    private function hasDecisionManager($process)
     {
         if (!$this->config->getDecisionManager()) {
             $this->logError(
                 $this->config->getLogManager(),
                 FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION]
+                [FlagshipConstant::PROCESS => $process]
             );
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * This function calls the decision api and update all the campaigns modifications
+     * from the server according to the visitor context.
+     * @return void
+     */
+    public function synchronizedModifications()
+    {
+        if (!$this->hasDecisionManager(FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION)) {
             return;
         }
-
         $campaigns = $this->config->getDecisionManager()->getCampaigns($this);
         $this->modifications = $this->config->getDecisionManager()->getModifications($campaigns);
     }
 
     /**
+     * This function return true if trackingManager is not null,
+     * otherwise log an error and return false
+     *
+     * @return bool
+     */
+    private function hasTrackingManager($process)
+    {
+        $check = $this->config->getTrackingManager();
+
+        if (!$check) {
+            $this->logError(
+                $this->config->getLogManager(),
+                FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+                [FlagshipConstant::PROCESS => $process]
+            );
+        }
+        return !!$check;
+    }
+
+
+    /**
      * Report this user has seen this modification.
      *
      * @param $key : key which identify the modification to activate.
+     * @return void
      */
     public function activateModification($key)
     {
+        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
+            return ;
+        }
+
         $modification = $this->getObjetModification($key);
         if (!$modification) {
             $this->logError(
@@ -296,12 +370,7 @@ class Visitor
             return;
         }
 
-        if (!$this->config->getTrackingManager()) {
-            $this->logError(
-                $this->config->getLogManager(),
-                FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
-            );
+        if (!$this->hasTrackingManager(FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
             return;
         }
 
@@ -314,12 +383,11 @@ class Visitor
      */
     public function sendHit(HitAbstract $hit)
     {
-        if (!$this->config->getTrackingManager()) {
-            $this->logError(
-                $this->config->getLogManager(),
-                FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
-            );
+        if ($this->isOnPanicMode("sendHit", FlagshipConstant::PROCESS_SEND_HIT)) {
+            return ;
+        }
+
+        if (!$this->hasTrackingManager(FlagshipConstant::PROCESS_SEND_HIT)) {
             return;
         }
 

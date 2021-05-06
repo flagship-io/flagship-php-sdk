@@ -21,11 +21,11 @@ class BuildApiTraitTest extends TestCase
         );
         $buildHeader = Utils::getMethod($buildApiTraitMock, "buildHeader");
 
-        $apiKey="54545d8sfwr";
+        $apiKey = "54545d8sfwr";
 
         $headers = $buildHeader->invokeArgs($buildApiTraitMock, [$apiKey]);
 
-        $headerArray= [
+        $headerArray = [
             FlagshipConstant::HEADER_X_API_KEY => $apiKey,
             FlagshipConstant::HEADER_X_SDK_VERSION => FlagshipConstant::SDK_VERSION,
             FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON,

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Api;
-
 
 use Exception;
 use Flagship\Enum\FlagshipConstant;
@@ -12,6 +10,10 @@ use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
 use Flagship\Visitor;
 
+/**
+ * Class TrackingManager
+ * @package Flagship\Api
+ */
 class TrackingManager extends TrackingManagerAbstract
 {
     use LogTrait;
@@ -34,7 +36,6 @@ class TrackingManager extends TrackingManagerAbstract
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $visitor->getConfig()->getEnvId()
             ];
             $this->httpClient->post($url, [], $postData);
-
         } catch (Exception $exception) {
             $this->logError($visitor->getConfig()->getLogManager(), $exception->getMessage());
         }

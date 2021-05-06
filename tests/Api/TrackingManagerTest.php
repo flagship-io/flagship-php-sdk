@@ -18,7 +18,6 @@ class TrackingManagerTest extends TestCase
         $httpClient = new HttpClient();
         $trackingManager = new TrackingManager($httpClient);
         $this->assertSame($httpClient, $trackingManager->getHttpClient());
-
     }
 
     public function testSendActive()
@@ -135,7 +134,7 @@ class TrackingManagerTest extends TestCase
             ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
             ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
 
-        $pageUrl ="https://localhost";
+        $pageUrl = "https://localhost";
         $page = new Page($pageUrl);
 
         $url = FlagshipConstant::HIT_API_URL;
@@ -181,7 +180,7 @@ class TrackingManagerTest extends TestCase
             ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
             ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
 
-        $pageUrl ="Https://localhost";
+        $pageUrl = "Https://localhost";
         $page = new Page($pageUrl);
 
         $url = FlagshipConstant::HIT_API_URL;

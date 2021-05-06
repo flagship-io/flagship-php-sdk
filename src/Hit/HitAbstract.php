@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Hit;
-
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Traits\LogTrait;
@@ -236,10 +234,10 @@ abstract class HitAbstract
     public function toArray()
     {
         return [
-            FlagshipConstant::VISITOR_ID_API_ITEM=>$this->getVisitorId(),
-            FlagshipConstant::DS_API_ITEM =>$this->getDs(),
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM =>$this->getEnvId(),
-            FlagshipConstant::T_API_ITEM=>$this->getType()
+            FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
+            FlagshipConstant::DS_API_ITEM => $this->getDs(),
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getEnvId(),
+            FlagshipConstant::T_API_ITEM => $this->getType()
         ];
     }
 

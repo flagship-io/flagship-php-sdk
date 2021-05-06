@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Decision;
-
 
 use Flagship\Model\Modification;
 use Flagship\Visitor;

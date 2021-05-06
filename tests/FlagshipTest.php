@@ -95,16 +95,16 @@ class FlagshipTest extends TestCase
         $containerGetMethod = function () use ($config, $apiManager, $trackingManager) {
             $args = func_get_args();
             switch ($args[0]) {
-            case 'Flagship\FlagshipConfig':
-                return $config;
-            case 'Flagship\Utils\LogManager':
-                return $this->logManagerMock;
-            case 'Flagship\Decision\ApiManager':
-                return $apiManager;
-            case 'Flagship\Api\TrackingManager':
-                return $trackingManager;
-            default:
-                return null;
+                case 'Flagship\FlagshipConfig':
+                    return $config;
+                case 'Flagship\Utils\LogManager':
+                    return $this->logManagerMock;
+                case 'Flagship\Decision\ApiManager':
+                    return $apiManager;
+                case 'Flagship\Api\TrackingManager':
+                    return $trackingManager;
+                default:
+                    return null;
             }
         };
 
@@ -278,7 +278,6 @@ class FlagshipTest extends TestCase
         $flagshipMock->expects($this->never())->method('logInfo');
 
         Flagship::start($envId, $apiKey, $config);
-
     }
 
     public function testGetStatus()
@@ -351,5 +350,4 @@ class FlagshipTest extends TestCase
 
         $this->assertSame(null, $visitor1);
     }
-
 }

@@ -2,6 +2,8 @@
 
 namespace Flagship;
 
+use Flagship\Decision\ApiManager;
+use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\HitType;
@@ -749,6 +751,9 @@ class VisitorTest extends TestCase
         $config = new FlagshipConfig($envId, $apiKey);
 
         $config->setTrackingManager($trackerManagerMock);
+        $apiManager = new ApiManager(new HttpClient());
+
+        $config->setDecisionManager($apiManager);
 
         $visitor = new Visitor($config, $visitorId);
 
@@ -822,7 +827,7 @@ class VisitorTest extends TestCase
         $this->assertSame(HitType::ITEM, $item->getType());
     }
 
-    public function testSendHitTransaction()
+    public function testSendHitWithLog()
     {
 
         $trackerManagerMock = $this->getMockForAbstractClass(
@@ -858,22 +863,57 @@ class VisitorTest extends TestCase
         $pageUrl = 'https://locahost';
         $page = new Page($pageUrl);
 
-        $logManagerMock->expects($this->exactly(2))
+        $paramsExpected = [];
+
+        $logManagerMock->expects($this->exactly(4))
             ->method('error')
-            ->withConsecutive(
-                [FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]],
-                [$page->getErrorMessage(), [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]]
-            );
+            ->withConsecutive($paramsExpected);
+
+        //Test with DecisionManager is null
+
+        $paramsExpected[] = [
+            FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+        ];
 
         $visitor->sendHit($page);
 
+        //Set DecisionManager
+
+        $decisionManager = new ApiManager(new HttpClient());
+        $config->setDecisionManager($decisionManager);
+
+        //Test send with TrackingManager null
+        $paramsExpected[] = [
+            FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+        ];
+
+        $visitor->sendHit($page);
+
+        //Test with TrackingManager not null
         $config->setTrackingManager($trackerManagerMock);
 
+        // Test SendHit with invalid require field
         $page = new Page(null);
 
         $trackerManagerMock->expects($this->never())
             ->method('sendHit');
+
+        $paramsExpected[] = [
+            $page->getErrorMessage(),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+        ];
+
+        $visitor->sendHit($page);
+
+        //Test send Hit on Panic Mode
+        $paramsExpected[] = [
+            sprintf(FlagshipConstant::PANIC_MODE_ERROR, "activateModification"),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+        ];
+
+        $decisionManager->setIsPanicMode(true);
 
         $visitor->sendHit($page);
     }

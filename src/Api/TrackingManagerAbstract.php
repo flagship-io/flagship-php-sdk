@@ -1,14 +1,16 @@
 <?php
 
-
 namespace Flagship\Api;
-
 
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor;
 
+/**
+ * Class TrackingManagerAbstract
+ * @package Flagship\Api
+ */
 abstract class TrackingManagerAbstract
 {
     /**

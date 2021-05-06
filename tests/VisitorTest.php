@@ -761,7 +761,6 @@ class VisitorTest extends TestCase
         $this->assertSame($apiKey, $item->getApiKey()); // test abstract class property
 
         $this->assertSame(HitType::ITEM, $item->getType());
-
     }
 
     public function testSendHitTransaction()

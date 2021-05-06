@@ -131,6 +131,4 @@ class EventTest extends TestCase
 
         $this->assertTrue($event->isReady());
     }
-
-
 }

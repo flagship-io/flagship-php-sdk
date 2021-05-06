@@ -1,14 +1,21 @@
 <?php
 
-
 namespace Flagship\Model;
 
-
+/**
+ * Class HttpResponse
+ * @package Flagship\Model
+ */
 class HttpResponse
 {
     private $statusCode;
     private $body;
 
+    /**
+     * HttpResponse constructor.
+     * @param $statusCode
+     * @param $body
+     */
     public function __construct($statusCode, $body)
     {
 
@@ -51,6 +58,4 @@ class HttpResponse
         $this->body = $body;
         return $this;
     }
-
-
 }

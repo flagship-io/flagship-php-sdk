@@ -16,9 +16,9 @@ class ItemTest extends TestCase
         $itemCode = "itemCode";
         $visitorId = "visitorId";
         $envId = "envId";
-        $itemPrice =125;
-        $itemQuantity =45;
-        $itemCategory ="category 1";
+        $itemPrice = 125;
+        $itemQuantity = 45;
+        $itemCategory = "category 1";
 
         $itemArray = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,

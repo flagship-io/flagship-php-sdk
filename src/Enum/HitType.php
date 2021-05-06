@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Enum;
-
 
 class HitType
 {
@@ -11,7 +9,7 @@ class HitType
      *
      * @var string
      */
-    const PAGE_VIEW="PAGEVIEW";
+    const PAGE_VIEW = "PAGEVIEW";
 
     /**
      * User has seen a screen.

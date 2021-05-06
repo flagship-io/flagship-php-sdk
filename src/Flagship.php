@@ -86,15 +86,15 @@ class Flagship
 
             $decisionManager = null;
 
-            switch ($config->getDecisionMode()){
-            case DecisionMode::DECISION_API:
-                $decisionManager = $container->get('Flagship\Decision\ApiManager');
-                break;
+            switch ($config->getDecisionMode()) {
+                case DecisionMode::DECISION_API:
+                    $decisionManager = $container->get('Flagship\Decision\ApiManager');
+                    break;
             }
 
             $config->setDecisionManager($decisionManager);
 
-            $trackingManager= $container->get('Flagship\Api\TrackingManager');
+            $trackingManager = $container->get('Flagship\Api\TrackingManager');
 
             $config->setTrackingManager($trackingManager);
 
@@ -121,15 +121,13 @@ class Flagship
             } else {
                 $flagship->setStatus(FlagshipStatus::NOT_READY);
             }
-        }
-        catch (Exception $exception){
+        } catch (Exception $exception) {
             self::getInstance()->logError(
                 $config->getLogManager(),
                 $exception->getMessage(),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
             );
         }
-
     }
 
     /**

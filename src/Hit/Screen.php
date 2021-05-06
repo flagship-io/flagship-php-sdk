@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Flagship\Hit;
-
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
@@ -63,7 +61,7 @@ class Screen extends HitAbstract
     public function toArray()
     {
         $arrayParent = parent::toArray();
-        $arrayParent[FlagshipConstant::DL_API_ITEM]= $this->getScreenName();
+        $arrayParent[FlagshipConstant::DL_API_ITEM] = $this->getScreenName();
         return $arrayParent;
     }
 

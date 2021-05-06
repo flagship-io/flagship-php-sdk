@@ -312,6 +312,15 @@ class Visitor
      */
     public function activateModification($key)
     {
+        if ($this->isOnPanicMode()) {
+            $this->logError(
+                $this->config->getLogManager(),
+                sprintf(FlagshipConstant::PANIC_MODE_ERROR, "activateModification"),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+            );
+            return ;
+        }
+
         $modification = $this->getObjetModification($key);
         if (!$modification) {
             $this->logError(

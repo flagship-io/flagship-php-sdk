@@ -605,14 +605,25 @@ class VisitorTest extends TestCase
 
         $visitor->activateModification($modifications[0]->getKey());
 
-        //Test ke not exist
+        $paramsExpected = [];
+        $logManagerStub->expects($this->exactly(2))
+            ->method('error')
+            ->withConsecutive($paramsExpected);
+
+        //Test key not exist
         $key = "KeyNotExist";
-        $logManagerStub->expects($this->exactly(1))->method('error')->with(
-            sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
-        );
+
+        $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]];
 
         $visitor->activateModification($key);
+
+        //Test on panic panic Mode
+        $paramsExpected[] = [sprintf(FlagshipConstant::PANIC_MODE_ERROR, "activateModification"),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]];
+
+        $apiManagerStub->setIsPanicMode(true);
+        $visitor->activateModification("anyKey");
     }
 
     /**

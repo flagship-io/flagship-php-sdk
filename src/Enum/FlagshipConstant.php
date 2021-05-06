@@ -11,9 +11,9 @@ class FlagshipConstant
 {
 
     /**
-     * Default request timeout
+     * Default request timeout in second
      */
-    const REQUEST_TIME_OUT = 2000;
+    const REQUEST_TIME_OUT = 2;
 
     /**
      * SDK language
@@ -94,9 +94,10 @@ class FlagshipConstant
     const EVENT_LABEL_API_ITEM    = "el";
     const EVENT_VALUE_API_ITEM    = "ev";
 
-    const HEADER_X_API_KEY    = 'x-api-key';
-    const HEADER_CONTENT_TYPE = 'Content-Type';
+    const HEADER_X_API_KEY        = 'x-api-key';
+    const HEADER_CONTENT_TYPE     = 'Content-Type';
     const HEADER_X_SDK_CLIENT     = 'x-sdk-client';
     const HEADER_X_SDK_VERSION    = 'x-sdk-version';
     const HEADER_APPLICATION_JSON = 'application/json';
+    const PANIC_MODE_ERROR        = "'%s' deactivated while panic mode is on.";
 }

@@ -344,6 +344,11 @@ class VisitorTest extends TestCase
         $defaultValue = "blue-border";
         $modificationValue = $visitor->getModification('keyNotExist', $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
+
+        //Test getModification on Panic Mode
+        $apiManagerStub->setIsPanicMode(true);
+        $modificationValue = $visitor->getModification($modifications[0]->getKey(), $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
     }
 
     /**
@@ -417,11 +422,12 @@ class VisitorTest extends TestCase
             ], [], []
         ];
 
-        $visitorMock->expects($this->exactly(3))
+        $visitorMock->expects($this->exactly(4))
             ->method('logError')
             ->withConsecutive(
                 $expectedParams[0],
                 $expectedParams[1],
+                $expectedParams[2],
                 $expectedParams[2]
             );
         $visitorMock->getModification($key, $defaultValue);
@@ -449,6 +455,16 @@ class VisitorTest extends TestCase
             sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
             [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
 
+        $visitorMock->getModification($key, $defaultValue);
+
+        ////Test getModification on Panic Mode
+        //Return DefaultValue
+
+        $expectedParams[] = [$config->getLogManager(),
+            sprintf(FlagshipConstant::PANIC_MODE_ERROR, "getModification"),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
+
+        $apiManagerStub->setIsPanicMode(true);
         $visitorMock->getModification($key, $defaultValue);
     }
 

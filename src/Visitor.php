@@ -149,6 +149,14 @@ class Visitor
     }
 
     /**
+     * @return bool
+     */
+    private function isOnPanicMode()
+    {
+        return $this->getConfig()->getDecisionManager()->getIsPanicMode();
+    }
+
+    /**
      * Retrieve a modification value by its key. If no modification match the given
      * key or if the stored value type and default value type do not match, default value will be returned.
      *
@@ -163,6 +171,15 @@ class Visitor
      */
     public function getModification($key, $defaultValue, $activate = false)
     {
+        if ($this->isOnPanicMode()) {
+            $this->logError(
+                $this->config->getLogManager(),
+                sprintf(FlagshipConstant::PANIC_MODE_ERROR, "getModification"),
+                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+            );
+            return $defaultValue;
+        }
+
         if (!$this->isKeyValid($key)) {
             $this->logError(
                 $this->config->getLogManager(),

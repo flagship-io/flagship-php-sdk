@@ -43,7 +43,13 @@ class ApiManager extends DecisionManagerAbstract
 
             $response = $this->httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
             $body = $response->getBody();
-            return $body [FlagshipField::FIELD_CAMPAIGNS];
+            $hasPanicMode = !empty($body["panic"]);
+
+            $this->setIsPanicMode($hasPanicMode);
+
+            if (isset($body[FlagshipField::FIELD_CAMPAIGNS])) {
+                return $body[FlagshipField::FIELD_CAMPAIGNS];
+            }
         } catch (Exception $exception) {
             $this->logError($visitor->getConfig()->getLogManager(), $exception->getMessage());
         }

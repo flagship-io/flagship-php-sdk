@@ -2,6 +2,8 @@
 
 namespace Flagship;
 
+use Flagship\Decision\ApiManager;
+use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\HitType;
@@ -344,6 +346,11 @@ class VisitorTest extends TestCase
         $defaultValue = "blue-border";
         $modificationValue = $visitor->getModification('keyNotExist', $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
+
+        //Test getModification on Panic Mode
+        $apiManagerStub->setIsPanicMode(true);
+        $modificationValue = $visitor->getModification($modifications[0]->getKey(), $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
     }
 
     /**
@@ -417,11 +424,12 @@ class VisitorTest extends TestCase
             ], [], []
         ];
 
-        $visitorMock->expects($this->exactly(3))
+        $visitorMock->expects($this->exactly(4))
             ->method('logError')
             ->withConsecutive(
                 $expectedParams[0],
                 $expectedParams[1],
+                $expectedParams[2],
                 $expectedParams[2]
             );
         $visitorMock->getModification($key, $defaultValue);
@@ -450,6 +458,16 @@ class VisitorTest extends TestCase
             [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
 
         $visitorMock->getModification($key, $defaultValue);
+
+        ////Test getModification on Panic Mode
+        //Return DefaultValue
+
+        $expectedParams[] = [$config->getLogManager(),
+            sprintf(FlagshipConstant::PANIC_MODE_ERROR, "getModification"),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
+
+        $apiManagerStub->setIsPanicMode(true);
+        $visitorMock->getModification($key, $defaultValue);
     }
 
     /**
@@ -465,16 +483,33 @@ class VisitorTest extends TestCase
             false,
             true,
             true,
-            ['getModifications', 'getConfig']
+            ['getModifications']
         );
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Utils\LogManagerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
         $config = new FlagshipConfig('envId', 'apiKey');
 
         $config->setDecisionManager($apiManagerStub);
+        $config->setLogManager($logManagerStub);
+
+        $paramsExpected = [];
 
         $apiManagerStub->method('getModifications')->willReturn($modifications);
-        $apiManagerStub->method('getConfig')->willReturn($config);
+
+        $logManagerStub->expects($this->exactly(3))->method('error')
+            ->withConsecutive($paramsExpected);
 
         $visitor = new Visitor($config, "visitorId", []);
+
         $visitor->synchronizedModifications();
 
         $modification = $modifications[0];
@@ -492,11 +527,26 @@ class VisitorTest extends TestCase
         $this->assertSame($campaignExpected, $campaign);
 
         //Test key doesn't exist in modifications set
-        $campaign = $visitor->getModificationInfo('notExistKey');
+        $notExistKey = "notExistKey";
+        $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $notExistKey),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+
+        $campaign = $visitor->getModificationInfo($notExistKey);
         $this->assertNull($campaign);
 
         //Test Key is null
+        $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, null),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+
         $campaign = $visitor->getModificationInfo(null);
+        $this->assertNull($campaign);
+
+        //Test on Panic Mode
+        $paramsExpected[] = [sprintf(FlagshipConstant::PANIC_MODE_ERROR, "getModificationInfo"),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+
+        $apiManagerStub->setIsPanicMode(true);
+        $campaign = $visitor->getModificationInfo($modification->getKey());
         $this->assertNull($campaign);
     }
 
@@ -557,14 +607,25 @@ class VisitorTest extends TestCase
 
         $visitor->activateModification($modifications[0]->getKey());
 
-        //Test ke not exist
+        $paramsExpected = [];
+        $logManagerStub->expects($this->exactly(2))
+            ->method('error')
+            ->withConsecutive($paramsExpected);
+
+        //Test key not exist
         $key = "KeyNotExist";
-        $logManagerStub->expects($this->exactly(1))->method('error')->with(
-            sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
-        );
+
+        $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]];
 
         $visitor->activateModification($key);
+
+        //Test on panic panic Mode
+        $paramsExpected[] = [sprintf(FlagshipConstant::PANIC_MODE_ERROR, "activateModification"),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]];
+
+        $apiManagerStub->setIsPanicMode(true);
+        $visitor->activateModification("anyKey");
     }
 
     /**
@@ -690,6 +751,9 @@ class VisitorTest extends TestCase
         $config = new FlagshipConfig($envId, $apiKey);
 
         $config->setTrackingManager($trackerManagerMock);
+        $apiManager = new ApiManager(new HttpClient());
+
+        $config->setDecisionManager($apiManager);
 
         $visitor = new Visitor($config, $visitorId);
 
@@ -763,7 +827,7 @@ class VisitorTest extends TestCase
         $this->assertSame(HitType::ITEM, $item->getType());
     }
 
-    public function testSendHitTransaction()
+    public function testSendHitWithLog()
     {
 
         $trackerManagerMock = $this->getMockForAbstractClass(
@@ -799,22 +863,57 @@ class VisitorTest extends TestCase
         $pageUrl = 'https://locahost';
         $page = new Page($pageUrl);
 
-        $logManagerMock->expects($this->exactly(2))
+        $paramsExpected = [];
+
+        $logManagerMock->expects($this->exactly(4))
             ->method('error')
-            ->withConsecutive(
-                [FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]],
-                [$page->getErrorMessage(), [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]]
-            );
+            ->withConsecutive($paramsExpected);
+
+        //Test with DecisionManager is null
+
+        $paramsExpected[] = [
+            FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+        ];
 
         $visitor->sendHit($page);
 
+        //Set DecisionManager
+
+        $decisionManager = new ApiManager(new HttpClient());
+        $config->setDecisionManager($decisionManager);
+
+        //Test send with TrackingManager null
+        $paramsExpected[] = [
+            FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+        ];
+
+        $visitor->sendHit($page);
+
+        //Test with TrackingManager not null
         $config->setTrackingManager($trackerManagerMock);
 
+        // Test SendHit with invalid require field
         $page = new Page(null);
 
         $trackerManagerMock->expects($this->never())
             ->method('sendHit');
+
+        $paramsExpected[] = [
+            $page->getErrorMessage(),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+        ];
+
+        $visitor->sendHit($page);
+
+        //Test send Hit on Panic Mode
+        $paramsExpected[] = [
+            sprintf(FlagshipConstant::PANIC_MODE_ERROR, "activateModification"),
+            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+        ];
+
+        $decisionManager->setIsPanicMode(true);
 
         $visitor->sendHit($page);
     }

@@ -174,7 +174,7 @@ class FlagshipConfig
      * @param  DecisionManagerAbstract $decisionManager
      * @return FlagshipConfig
      */
-    public function setDecisionManager($decisionManager)
+    public function setDecisionManager(DecisionManagerAbstract $decisionManager)
     {
         $this->decisionManager = $decisionManager;
         return $this;

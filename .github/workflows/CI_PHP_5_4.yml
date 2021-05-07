@@ -59,6 +59,6 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
         files: ./clover.xml
         flags: unittests
-        name: codecov-umbrella
+        name: codecov-flagship-sdk-coverage
         fail_ci_if_error: false
         verbose: true

@@ -54,3 +54,13 @@ jobs:
         push_badge: true
         repo_token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: codecov
+    - uses: actions/checkout@master
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        files: ./clover.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+        verbose: true # optional (default = false)

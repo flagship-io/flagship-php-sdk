@@ -60,5 +60,5 @@ jobs:
         files: ./clover.xml
         flags: unittests
         name: codecov-flagship-sdk-coverage
-        fail_ci_if_error: false
+        fail_ci_if_error: true
         verbose: true

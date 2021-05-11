@@ -28,6 +28,9 @@ class VisitorController extends Controller
                 "context" => 'array|required'
             ]);
             $visitor = Flagship::newVisitor($data['visitor_id'], $data['context']);
+
+            $visitor->synchronizedModifications();
+
             $request->session()->put('visitor', $visitor);
             return response()->json($visitor);
         } catch (ValidationException $exception) {
@@ -45,6 +48,8 @@ class VisitorController extends Controller
             $value = $typeCast->castToType($data['value'], $data['type']);
 
             $visitor->updateContext($key, $value);
+
+            $visitor->synchronizedModifications();
 
             return response()->json($visitor);
         } catch (ValidationException $exception) {

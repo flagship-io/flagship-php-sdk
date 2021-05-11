@@ -375,9 +375,11 @@ class VisitorTest extends TestCase
 
         $visitor = new Visitor($config, "visitorId", []);
 
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->with(
-                FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
+                "[$flagshipSdk] " . FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION]
             );
 
@@ -668,8 +670,10 @@ class VisitorTest extends TestCase
 
         $visitor->synchronizedModifications();
 
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
-            FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+            "[$flagshipSdk] " . FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
             [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
         );
 

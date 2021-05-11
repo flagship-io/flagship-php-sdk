@@ -18,10 +18,10 @@ class FlagshipMiddleware
     {
 
         if (!$request->hasSession()) {
-            return $next($request);
+            return response()->json(['error' => 'First, set your Flagship Environment ID & API Key'], 200);
         }
         if (!$request->session()->has('flagshipConfig')) {
-            return $next($request);
+            return response()->json(['error' => 'First, set your Flagship Environment ID & API Key'], 200);
         }
 
         $config = $request->session()->get('flagshipConfig');

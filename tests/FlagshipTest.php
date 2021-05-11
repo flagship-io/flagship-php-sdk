@@ -10,14 +10,14 @@ use Flagship\Enum\FlagshipStatus;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\LogManager;
-use Flagship\Utils\LogManagerInterface;
+use Psr\Log\LoggerInterface;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
 class FlagshipTest extends TestCase
 {
     /**
-     * @var LogManagerInterface
+     * @var LoggerInterface
      */
     private $logManagerMock;
 
@@ -26,7 +26,7 @@ class FlagshipTest extends TestCase
         parent::__construct($name, $data, $dataName);
 
         $this->logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             '',
             false,
@@ -35,7 +35,6 @@ class FlagshipTest extends TestCase
             ['error', 'info']
         );
     }
-
 
     public function containerInitialization()
     {
@@ -46,7 +45,7 @@ class FlagshipTest extends TestCase
             'Flagship\Utils\HttpClient'
         );
         $container->bind(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             'Flagship\Utils\LogManager'
         );
         return $container;

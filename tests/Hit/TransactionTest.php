@@ -91,18 +91,23 @@ class TransactionTest extends TestCase
 
         $transaction->setLogManager($logManagerMock);
 
+        $errorMessage = function ($itemName, $typeName) {
+            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+            return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
+        };
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerMock->expects($this->exactly(10))->method('error')
             ->withConsecutive(
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'transactionId', 'string')],
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'transactionAffiliation', 'string')],
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'couponCode', 'string')],
-                [sprintf(Transaction::CURRENCY_ERROR, 'currency')],
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'itemsCount', 'integer')],
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'paymentMethod', 'string')],
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'revenue', 'numeric')],
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'shippingCost', 'numeric')],
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'shippingMethod', 'string')],
-                [sprintf(FlagshipConstant::TYPE_ERROR, 'taxesAmount', 'numeric')]
+                [$errorMessage('transactionId', 'string')],
+                [$errorMessage('transactionAffiliation', 'string')],
+                [$errorMessage('couponCode', 'string')],
+                ["[$flagshipSdk] " . sprintf(Transaction::CURRENCY_ERROR, 'currency')],
+                [$errorMessage('itemsCount', 'integer')],
+                [$errorMessage('paymentMethod', 'string')],
+                [$errorMessage('revenue', 'numeric')],
+                [$errorMessage('shippingCost', 'numeric')],
+                [$errorMessage('shippingMethod', 'string')],
+                [$errorMessage('taxesAmount', 'numeric')]
             );
 
         $transaction->setTransactionId([]);

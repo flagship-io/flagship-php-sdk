@@ -62,13 +62,18 @@ class ItemTest extends TestCase
 
         $item->setLogManager($logManagerMock);
 
+        $errorMessage = function ($itemName, $typeName) {
+            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+            return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
+        };
+
         $logManagerMock->expects($this->exactly(6))->method('error')->withConsecutive(
-            [sprintf(FlagshipConstant::TYPE_ERROR, 'transactionId', 'string')],
-            [sprintf(FlagshipConstant::TYPE_ERROR, 'itemName', 'string')],
-            [sprintf(FlagshipConstant::TYPE_ERROR, 'itemCode', 'string')],
-            [sprintf(FlagshipConstant::TYPE_ERROR, 'itemPrice', 'numeric')],
-            [sprintf(FlagshipConstant::TYPE_ERROR, 'itemQuantity', 'integer')],
-            [sprintf(FlagshipConstant::TYPE_ERROR, 'itemCategory', 'string')]
+            [$errorMessage('transactionId', 'string')],
+            [$errorMessage('itemName', 'string')],
+            [$errorMessage('itemCode', 'string')],
+            [$errorMessage('itemPrice', 'numeric')],
+            [$errorMessage('itemQuantity', 'integer')],
+            [$errorMessage('itemCategory', 'string')]
         );
 
         //Test transition id validation

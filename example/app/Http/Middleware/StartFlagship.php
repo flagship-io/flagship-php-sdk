@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Flagship\Flagship;
 
-class FlagshipMiddleware
+class StartFlagship
 {
     /**
      * Handle an incoming request.
@@ -16,14 +16,6 @@ class FlagshipMiddleware
      */
     public function handle($request, Closure $next)
     {
-
-        if (!$request->hasSession()) {
-            return response()->json(['error' => 'First, set your Flagship Environment ID & API Key'], 200);
-        }
-        if (!$request->session()->has('flagshipConfig')) {
-            return response()->json(['error' => 'First, set your Flagship Environment ID & API Key'], 200);
-        }
-
         $config = $request->session()->get('flagshipConfig');
 
         Flagship::start($config->getEnvId(), $config->getApiKey(), $config);

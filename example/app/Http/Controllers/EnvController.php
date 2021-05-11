@@ -5,12 +5,22 @@ namespace App\Http\Controllers;
 use Flagship\Flagship;
 use Flagship\FlagshipConfig;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EnvController extends Controller
 {
     public function index()
     {
-        return response()->json(Flagship::getConfig());
+        $config = Flagship::getConfig();
+        if (!$config) {
+            return response()->json(null);
+        }
+        $array =  [
+            "environment_id" => $config->getEnvId(),
+            "api_key" => $config->getApiKey(),
+            "timeout" => $config->getTimeOut() * 1000,
+        ];
+        return response()->json($array);
     }
 
     /**
@@ -29,9 +39,15 @@ class EnvController extends Controller
         $config = new FlagshipConfig($data['environment_id'], $data["api_key"]);
         $config->setTimeOut($data['timeout'] / 1000);
 
-        $request->session()->start();
-        $request->session()->put('flagshipConfig', $config);
+        $logManager = Log::getLogger();
 
+        $config->setLogManager($logManager);
+
+        Flagship::start($config->getEnvId(), $config->getApiKey(), $config);
+
+        $request->session()->start();
+
+        $request->session()->put('flagshipConfig', $config);
         return response()->json($config);
     }
 }

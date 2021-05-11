@@ -69,7 +69,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             ['error'],
             '',
             false
@@ -158,7 +158,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             ['error'],
             '',
             false

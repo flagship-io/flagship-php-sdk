@@ -46,7 +46,7 @@ class VisitorTest extends TestCase
 
         //Mock logManger
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -78,7 +78,7 @@ class VisitorTest extends TestCase
     {
         //Mock logManger
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -360,7 +360,7 @@ class VisitorTest extends TestCase
     public function testSynchronizedModificationsWithoutDecisionManager($modifications)
     {
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -487,7 +487,7 @@ class VisitorTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -559,7 +559,7 @@ class VisitorTest extends TestCase
     {
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -636,7 +636,7 @@ class VisitorTest extends TestCase
     public function testActivateModificationWithoutTrackerManager($modifications)
     {
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -683,7 +683,7 @@ class VisitorTest extends TestCase
     public function testGetModificationWithActive($modifications)
     {
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -842,7 +842,7 @@ class VisitorTest extends TestCase
         );
 
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,

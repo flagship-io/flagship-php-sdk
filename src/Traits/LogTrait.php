@@ -2,12 +2,12 @@
 
 namespace Flagship\Traits;
 
-use Flagship\Utils\LogManagerInterface;
+use Psr\Log\LoggerInterface;
 
 trait LogTrait
 {
     /**
-     * @param LogManagerInterface $logManager
+     * @param LoggerInterface $logManager
      * @param $message
      * @param array               $context
      */
@@ -20,7 +20,7 @@ trait LogTrait
     }
 
     /**
-     * @param LogManagerInterface $logManager
+     * @param LoggerInterface $logManager
      * @param $message
      * @param array               $context
      */

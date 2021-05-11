@@ -50,7 +50,7 @@ class EventTest extends TestCase
         $this->assertSame($eventArray, $event->toArray());
 
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,

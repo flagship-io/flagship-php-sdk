@@ -354,12 +354,12 @@ class Visitor implements JsonSerializable
      * Report this user has seen this modification.
      *
      * @param $key : key which identify the modification to activate.
-     * @return void
+     * @return bool
      */
     public function activateModification($key)
     {
         if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
-            return ;
+            return false;
         }
 
         $modification = $this->getObjetModification($key);
@@ -369,14 +369,14 @@ class Visitor implements JsonSerializable
                 sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
             );
-            return;
+            return false;
         }
 
         if (!$this->hasTrackingManager(FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
-            return;
+            return false;
         }
 
-        $this->config->getTrackingManager()->sendActive($this, $modification);
+        return $this->config->getTrackingManager()->sendActive($this, $modification);
     }
 
     /**

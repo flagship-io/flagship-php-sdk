@@ -51,7 +51,7 @@ class ItemTest extends TestCase
         $this->assertSame($itemArray, $item->toArray());
 
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,

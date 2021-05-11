@@ -14,7 +14,7 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return view('index');
 });
 
 $router->group(['prefix' => 'env'], function () use ($router) {
@@ -26,12 +26,17 @@ $router->group(['prefix' => 'env'], function () use ($router) {
 });
 
 $router->group(['prefix' => 'visitor', 'middleware' => 'flagship',], function () use ($router) {
-    $router->get('/', 'VisitorController@index');
+    $router->get('/', ['middleware' => 'flagshipVisitor', 'uses' => 'VisitorController@index']);
     $router->put('/', 'VisitorController@update');
+    $router->put('/context/{key}', ['middleware' => 'flagshipVisitor', 'uses' => 'VisitorController@updateContext']);
 });
 
 $router->group(['prefix' => 'flag', 'middleware' => ['flagship','flagshipVisitor']], function () use ($router) {
     $router->get('/{key}/activate', 'FlagController@activeModification');
     $router->get('/{key}/info', 'FlagController@getModificationInfo');
     $router->get('/{key}', 'FlagController@getModification');
+});
+
+$router->group(['prefix' => 'hit', 'middleware' => ['flagship','flagshipVisitor']], function () use ($router) {
+    $router->post('/', 'HitController@sendHit');
 });

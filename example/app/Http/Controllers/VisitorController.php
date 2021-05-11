@@ -2,27 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Casts\TypeCastInterface;
+use App\Rules\TypeCheck;
 use Flagship\Flagship;
+use Flagship\Visitor;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class VisitorController extends Controller
 {
-    public function index(Request $request)
+    public function index(Visitor $visitor = null)
     {
-        $visitor =  $request->session()->get('visitor');
-        return response()->json($visitor);
+        $array = [
+            'visitor_id' => $visitor->getVisitorId(),
+            'context' => $visitor->getContext(),
+        ];
+        return response()->json($array);
     }
-    /**
-     * @throws \Illuminate\Validation\ValidationException
-     */
+
     public function update(Request $request)
     {
-        $data = $this->validate($request, [
-            "visitor_id" => "string|required",
-            "context" => 'array|required'
-        ]);
-        $visitor = Flagship::newVisitor($data['visitor_id'], $data['context']);
-        $request->session()->put('visitor', $visitor);
-        return response()->json($visitor);
+        try {
+            $data = $this->validate($request, [
+                "visitor_id" => "string|required",
+                "context" => 'array|required'
+            ]);
+            $visitor = Flagship::newVisitor($data['visitor_id'], $data['context']);
+            $request->session()->put('visitor', $visitor);
+            return response()->json($visitor);
+        } catch (ValidationException $exception) {
+            return response()->json(['error' => $exception->errors()]);
+        }
+    }
+
+    public function updateContext($key, Request $request, TypeCastInterface $typeCast, Visitor $visitor)
+    {
+        try {
+            $data = $this->validate($request, [
+                "type" => "string|required",
+                "value" => ['required', new TypeCheck($request->get('type'))]
+            ]);
+            $value = $typeCast->castToType($data['value'], $data['type']);
+
+            $visitor->updateContext($key, $value);
+
+            return response()->json($visitor);
+        } catch (ValidationException $exception) {
+            return response()->json(['error' => $exception->errors()]);
+        }
     }
 }

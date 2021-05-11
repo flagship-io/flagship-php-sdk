@@ -70,5 +70,6 @@ class LogTraitTest extends TestCase
             );
         $loginInfo = Utils::getMethod($logTraitMock, "logInfo");
         $loginInfo->invokeArgs($logTraitMock, [$logManagerMock, $message, $context]);
+        $loginInfo->invokeArgs($logTraitMock, [null, $message, $context]);
     }
 }

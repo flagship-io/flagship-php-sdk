@@ -6,8 +6,8 @@ use Flagship\Api\TrackingManagerAbstract;
 use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Utils\LogManagerInterface;
 use JsonSerializable;
+use Psr\Log\LoggerInterface;
 
 /**
  * Flagship SDK configuration class to provide at initialization.
@@ -33,7 +33,7 @@ class FlagshipConfig implements JsonSerializable
      */
     private $timeOut = FlagshipConstant::REQUEST_TIME_OUT;
     /**
-     * @var LogManagerInterface
+     * @var LoggerInterface
      */
     private $logManager;
 
@@ -144,7 +144,7 @@ class FlagshipConfig implements JsonSerializable
     }
 
     /**
-     * @return LogManagerInterface
+     * @return LoggerInterface
      */
     public function getLogManager()
     {
@@ -154,10 +154,10 @@ class FlagshipConfig implements JsonSerializable
     /**
      * Specify a custom implementation of LogManager in order to receive logs from the SDK.
      *
-     * @param LogManagerInterface $logManager custom implementation of LogManager.
+     * @param LoggerInterface $logManager custom implementation of LogManager.
      * @return FlagshipConfig
      */
-    public function setLogManager(LogManagerInterface $logManager)
+    public function setLogManager(LoggerInterface $logManager)
     {
         $this->logManager = $logManager;
         return $this;

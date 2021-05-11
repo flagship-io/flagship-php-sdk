@@ -79,7 +79,7 @@ $app->middleware([
 ]);
 
 // $app->middleware([
-//     App\Http\Middleware\FlagshipMiddleware::class
+//     App\Http\Middleware\StartFlagship::class
 // ]);
 
 // $app->routeMiddleware([
@@ -87,11 +87,15 @@ $app->middleware([
 // ]);
 
 $app->routeMiddleware([
-    'flagship' => App\Http\Middleware\FlagshipMiddleware::class,
+    'CheckFlagshipSession' => App\Http\Middleware\CheckFlagshipSession::class,
 ]);
 
 $app->routeMiddleware([
-    'flagshipVisitor' => App\Http\Middleware\FlagshipVisitorMiddleware::class,
+    'startFlagship' => App\Http\Middleware\StartFlagship::class,
+]);
+
+$app->routeMiddleware([
+    'flagshipVisitor' => App\Http\Middleware\FlagshipVisitor::class,
 ]);
 
 /*

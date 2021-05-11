@@ -27,6 +27,7 @@ class FlagController extends Controller
             $defaultValue = $typeCast->castToType($data['defaultValue'], $data['type']);
 
             $modificationValue = $visitor->getModification($key, $defaultValue, $data['activate']);
+
             $result = [
                 "value" => $modificationValue,
                 'error' => null
@@ -39,8 +40,8 @@ class FlagController extends Controller
 
     public function getModificationInfo($key, Visitor $visitor)
     {
-        $reponse = $visitor->getModificationInfo($key);
-        if (!$reponse) {
+        $response = $visitor->getModificationInfo($key);
+        if (!$response) {
             return response()->json(['error' => 'Failed']);
         }
         return response()->json($visitor->getModificationInfo($key));

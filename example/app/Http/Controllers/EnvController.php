@@ -9,18 +9,14 @@ use Illuminate\Support\Facades\Log;
 
 class EnvController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $config = Flagship::getConfig();
+        $config = $request->session()->get('flagshipConfig');
         if (!$config) {
             return response()->json(null);
         }
-        $array =  [
-            "environment_id" => $config->getEnvId(),
-            "api_key" => $config->getApiKey(),
-            "timeout" => $config->getTimeOut() * 1000,
-        ];
-        return response()->json($array);
+
+        return response()->json($this->getEnvJson($config));
     }
 
     /**
@@ -39,15 +35,23 @@ class EnvController extends Controller
         $config = new FlagshipConfig($data['environment_id'], $data["api_key"]);
         $config->setTimeOut($data['timeout'] / 1000);
 
-        $logManager = Log::getLogger();
+        $request->session()->start();
 
+        $logManager = Log::getLogger();
         $config->setLogManager($logManager);
 
         Flagship::start($config->getEnvId(), $config->getApiKey(), $config);
 
-        $request->session()->start();
-
         $request->session()->put('flagshipConfig', $config);
-        return response()->json($config);
+        return response()->json($this->getEnvJson($config));
+    }
+
+    private function getEnvJson($config)
+    {
+        return [
+            "environment_id" => $config->getEnvId(),
+            "api_key" => $config->getApiKey(),
+            "timeout" => $config->getTimeOut() * 1000,
+        ];
     }
 }

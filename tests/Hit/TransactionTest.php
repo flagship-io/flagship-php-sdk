@@ -12,7 +12,7 @@ class TransactionTest extends TestCase
     public function testConstruct()
     {
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,

@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Flagship\Visitor;
+use Illuminate\Support\Facades\Log;
 
-class FlagshipVisitorMiddleware
+class FlagshipVisitor
 {
     /**
      * Handle an incoming request.
@@ -16,16 +17,14 @@ class FlagshipVisitorMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (!$request->session()->isStarted()) {
-            return $next($request);
-        }
+
         $visitor = $request->session()->get('visitor');
         if (!$visitor) {
-            return response()->json(['error' => 'visitor null'], 200);
+            $message = ['error' => 'visitor null'];
+            Log::error('Flagship', $message);
+            return response()->json($message);
         }
-
-        $visitor->synchronizedModifications();
-
+//        $visitor->synchronizedModifications();
         app()->instance(Visitor::class, $visitor);
         return $next($request);
     }

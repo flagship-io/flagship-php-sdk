@@ -2,6 +2,7 @@
 
 namespace Flagship\Traits;
 
+use Flagship\Enum\FlagshipConstant;
 use Psr\Log\LoggerInterface;
 
 trait LogTrait
@@ -16,7 +17,8 @@ trait LogTrait
         if (is_null($logManager)) {
             return;
         }
-        $logManager->error($message, $context);
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $logManager->error("[$flagshipSdk] $message", $context);
     }
 
     /**
@@ -29,6 +31,7 @@ trait LogTrait
         if (is_null($logManager)) {
             return;
         }
-        $logManager->info($message, $context);
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $logManager->info("[$flagshipSdk] $message", $context);
     }
 }

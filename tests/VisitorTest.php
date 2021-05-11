@@ -922,4 +922,20 @@ class VisitorTest extends TestCase
 
         $visitor->sendHit($page);
     }
+
+    public function testJson()
+    {
+        $config = new FlagshipConfig();
+        $visitorId = "visitor_id";
+        $context = ["age" => 20];
+        $visitor = new Visitor($config, $visitorId, $context);
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode([
+            'visitorId' => $visitorId,
+            'context' => $context,
+            ]),
+            json_encode($visitor)
+        );
+    }
 }

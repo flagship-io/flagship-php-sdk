@@ -14,4 +14,13 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
     </php>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">app</directory>
+        </include>
+        <report>
+            <clover outputFile="clover.xml" />
+            <html outputDirectory="reports/coverage"/>
+        </report>
+    </coverage>
 </phpunit>

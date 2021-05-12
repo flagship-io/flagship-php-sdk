@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Middleware\FlagshipVisitor;
+namespace Controller;
+
+use TestCase;
 use Flagship\FlagshipConfig;
 use Flagship\Visitor;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 class FlagControllerTest extends TestCase

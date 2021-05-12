@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1620799808">
-  <project timestamp="1620799808">
+<coverage generated="1620804594">
+  <project timestamp="1620804594">
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Casts/TypeCast.php">
       <class name="App\Casts\TypeCast" namespace="global">
         <metrics complexity="7" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="16" coveredelements="16"/>
       </class>
-      <line num="12" type="method" name="castToType" visibility="public" complexity="7" crap="7" count="5"/>
+      <line num="10" type="method" name="castToType" visibility="public" complexity="7" crap="7" count="5"/>
+      <line num="12" type="stmt" count="5"/>
+      <line num="13" type="stmt" count="5"/>
       <line num="14" type="stmt" count="5"/>
-      <line num="15" type="stmt" count="5"/>
-      <line num="16" type="stmt" count="5"/>
-      <line num="17" type="stmt" count="1"/>
-      <line num="18" type="stmt" count="1"/>
+      <line num="15" type="stmt" count="1"/>
+      <line num="16" type="stmt" count="1"/>
+      <line num="17" type="stmt" count="4"/>
+      <line num="18" type="stmt" count="4"/>
       <line num="19" type="stmt" count="4"/>
-      <line num="20" type="stmt" count="4"/>
-      <line num="21" type="stmt" count="4"/>
-      <line num="22" type="stmt" count="1"/>
-      <line num="23" type="stmt" count="1"/>
-      <line num="24" type="stmt" count="4"/>
-      <line num="25" type="stmt" count="4"/>
-      <line num="26" type="stmt" count="1"/>
-      <line num="27" type="stmt" count="1"/>
-      <line num="29" type="stmt" count="5"/>
-      <metrics loc="31" ncloc="28" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="16" coveredelements="16"/>
+      <line num="20" type="stmt" count="1"/>
+      <line num="21" type="stmt" count="1"/>
+      <line num="22" type="stmt" count="4"/>
+      <line num="23" type="stmt" count="4"/>
+      <line num="24" type="stmt" count="1"/>
+      <line num="25" type="stmt" count="1"/>
+      <line num="27" type="stmt" count="5"/>
+      <metrics loc="29" ncloc="26" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="16" coveredelements="16"/>
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Casts/TypeCastInterface.php">
       <metrics loc="13" ncloc="8" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
@@ -404,6 +404,6 @@
       <line num="56" type="stmt" count="2"/>
       <metrics loc="58" ncloc="42" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" elements="21" coveredelements="21"/>
     </file>
-    <metrics files="25" loc="930" ncloc="747" classes="19" methods="37" coveredmethods="18" conditionals="0" coveredconditionals="0" statements="219" coveredstatements="182" elements="256" coveredelements="200"/>
+    <metrics files="25" loc="928" ncloc="745" classes="19" methods="37" coveredmethods="18" conditionals="0" coveredconditionals="0" statements="219" coveredstatements="182" elements="256" coveredelements="200"/>
   </project>
 </coverage>

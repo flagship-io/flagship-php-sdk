@@ -25,7 +25,7 @@ class VisitorController extends Controller
         try {
             $data = $this->validate($request, [
                 "visitor_id" => "string|required",
-                "context" => 'array|required'
+                "context" => 'array'
             ]);
             $visitor = Flagship::newVisitor($data['visitor_id'], $data['context']);
 

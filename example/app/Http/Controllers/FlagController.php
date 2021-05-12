@@ -44,7 +44,7 @@ class FlagController extends Controller
         if (!$response) {
             return response()->json(['error' => 'Failed']);
         }
-        return response()->json($visitor->getModificationInfo($key));
+        return response()->json($response);
     }
 
     public function activeModification($key, Visitor $visitor)

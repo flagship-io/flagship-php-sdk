@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1620773202">
-  <project timestamp="1620773202">
+<coverage generated="1620781985">
+  <project timestamp="1620781985">
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Casts/TypeCast.php">
       <class name="App\Casts\TypeCast" namespace="global">
-        <metrics complexity="6" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="0" elements="15" coveredelements="0"/>
+        <metrics complexity="6" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="8" elements="15" coveredelements="8"/>
       </class>
-      <line num="10" type="method" name="castToType" visibility="public" complexity="6" crap="42" count="0"/>
-      <line num="12" type="stmt" count="0"/>
-      <line num="13" type="stmt" count="0"/>
-      <line num="14" type="stmt" count="0"/>
+      <line num="10" type="method" name="castToType" visibility="public" complexity="6" crap="8.83" count="1"/>
+      <line num="12" type="stmt" count="1"/>
+      <line num="13" type="stmt" count="1"/>
+      <line num="14" type="stmt" count="1"/>
       <line num="15" type="stmt" count="0"/>
       <line num="16" type="stmt" count="0"/>
-      <line num="17" type="stmt" count="0"/>
-      <line num="18" type="stmt" count="0"/>
-      <line num="19" type="stmt" count="0"/>
+      <line num="17" type="stmt" count="1"/>
+      <line num="18" type="stmt" count="1"/>
+      <line num="19" type="stmt" count="1"/>
       <line num="20" type="stmt" count="0"/>
       <line num="21" type="stmt" count="0"/>
-      <line num="22" type="stmt" count="0"/>
+      <line num="22" type="stmt" count="1"/>
       <line num="23" type="stmt" count="0"/>
       <line num="24" type="stmt" count="0"/>
-      <line num="26" type="stmt" count="0"/>
-      <metrics loc="28" ncloc="25" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="0" elements="15" coveredelements="0"/>
+      <line num="26" type="stmt" count="1"/>
+      <metrics loc="28" ncloc="25" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="8" elements="15" coveredelements="8"/>
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Casts/TypeCastInterface.php">
       <metrics loc="13" ncloc="8" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
@@ -73,49 +73,49 @@
       <line num="15" type="stmt" count="1"/>
       <line num="16" type="stmt" count="0"/>
       <line num="19" type="stmt" count="1"/>
-      <line num="25" type="method" name="update" visibility="public" complexity="1" crap="1" count="2"/>
-      <line num="27" type="stmt" count="2"/>
-      <line num="28" type="stmt" count="2"/>
-      <line num="35" type="stmt" count="2"/>
-      <line num="36" type="stmt" count="2"/>
-      <line num="38" type="stmt" count="2"/>
-      <line num="40" type="stmt" count="2"/>
-      <line num="41" type="stmt" count="2"/>
-      <line num="43" type="stmt" count="2"/>
-      <line num="45" type="stmt" count="2"/>
-      <line num="46" type="stmt" count="2"/>
-      <line num="49" type="method" name="getEnvJson" visibility="private" complexity="1" crap="1" count="2"/>
-      <line num="52" type="stmt" count="2"/>
-      <line num="53" type="stmt" count="2"/>
-      <line num="54" type="stmt" count="2"/>
+      <line num="25" type="method" name="update" visibility="public" complexity="1" crap="1" count="5"/>
+      <line num="27" type="stmt" count="5"/>
+      <line num="28" type="stmt" count="5"/>
+      <line num="35" type="stmt" count="5"/>
+      <line num="36" type="stmt" count="5"/>
+      <line num="38" type="stmt" count="5"/>
+      <line num="40" type="stmt" count="5"/>
+      <line num="41" type="stmt" count="5"/>
+      <line num="43" type="stmt" count="5"/>
+      <line num="45" type="stmt" count="5"/>
+      <line num="46" type="stmt" count="5"/>
+      <line num="49" type="method" name="getEnvJson" visibility="private" complexity="1" crap="1" count="5"/>
+      <line num="52" type="stmt" count="5"/>
+      <line num="53" type="stmt" count="5"/>
+      <line num="54" type="stmt" count="5"/>
       <metrics loc="57" ncloc="54" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="16" elements="20" coveredelements="18"/>
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Http/Controllers/FlagController.php">
       <class name="App\Http\Controllers\FlagController" namespace="global">
-        <metrics complexity="6" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" elements="21" coveredelements="0"/>
+        <metrics complexity="6" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" elements="21" coveredelements="21"/>
       </class>
-      <line num="16" type="method" name="getModification" visibility="public" complexity="2" crap="6" count="0"/>
-      <line num="19" type="stmt" count="0"/>
-      <line num="20" type="stmt" count="0"/>
-      <line num="23" type="stmt" count="0"/>
-      <line num="24" type="stmt" count="0"/>
-      <line num="27" type="stmt" count="0"/>
-      <line num="29" type="stmt" count="0"/>
-      <line num="32" type="stmt" count="0"/>
-      <line num="35" type="stmt" count="0"/>
-      <line num="36" type="stmt" count="0"/>
-      <line num="37" type="stmt" count="0"/>
-      <line num="41" type="method" name="getModificationInfo" visibility="public" complexity="2" crap="6" count="0"/>
-      <line num="43" type="stmt" count="0"/>
-      <line num="44" type="stmt" count="0"/>
-      <line num="45" type="stmt" count="0"/>
-      <line num="47" type="stmt" count="0"/>
-      <line num="50" type="method" name="activeModification" visibility="public" complexity="2" crap="6" count="0"/>
-      <line num="52" type="stmt" count="0"/>
-      <line num="53" type="stmt" count="0"/>
-      <line num="54" type="stmt" count="0"/>
-      <line num="56" type="stmt" count="0"/>
-      <metrics loc="58" ncloc="58" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" elements="21" coveredelements="0"/>
+      <line num="16" type="method" name="getModification" visibility="public" complexity="2" crap="2" count="1"/>
+      <line num="19" type="stmt" count="1"/>
+      <line num="20" type="stmt" count="1"/>
+      <line num="23" type="stmt" count="1"/>
+      <line num="24" type="stmt" count="1"/>
+      <line num="27" type="stmt" count="1"/>
+      <line num="29" type="stmt" count="1"/>
+      <line num="32" type="stmt" count="1"/>
+      <line num="35" type="stmt" count="1"/>
+      <line num="36" type="stmt" count="1"/>
+      <line num="37" type="stmt" count="1"/>
+      <line num="41" type="method" name="getModificationInfo" visibility="public" complexity="2" crap="2" count="1"/>
+      <line num="43" type="stmt" count="1"/>
+      <line num="44" type="stmt" count="1"/>
+      <line num="45" type="stmt" count="1"/>
+      <line num="47" type="stmt" count="1"/>
+      <line num="50" type="method" name="activeModification" visibility="public" complexity="2" crap="2" count="1"/>
+      <line num="52" type="stmt" count="1"/>
+      <line num="53" type="stmt" count="1"/>
+      <line num="54" type="stmt" count="1"/>
+      <line num="56" type="stmt" count="1"/>
+      <metrics loc="58" ncloc="58" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" elements="21" coveredelements="21"/>
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Http/Controllers/HitController.php">
       <class name="App\Http\Controllers\HitController" namespace="global">
@@ -211,18 +211,18 @@
       <class name="App\Http\Controllers\LogController" namespace="global">
         <metrics complexity="5" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="0" elements="11" coveredelements="0"/>
       </class>
-      <line num="12" type="method" name="index" visibility="public" complexity="2" crap="6" count="0"/>
+      <line num="11" type="method" name="index" visibility="public" complexity="2" crap="6" count="0"/>
+      <line num="13" type="stmt" count="0"/>
       <line num="14" type="stmt" count="0"/>
-      <line num="15" type="stmt" count="0"/>
-      <line num="17" type="stmt" count="0"/>
-      <line num="20" type="method" name="clear" visibility="public" complexity="2" crap="6" count="0"/>
+      <line num="16" type="stmt" count="0"/>
+      <line num="19" type="method" name="clear" visibility="public" complexity="2" crap="6" count="0"/>
+      <line num="21" type="stmt" count="0"/>
       <line num="22" type="stmt" count="0"/>
-      <line num="23" type="stmt" count="0"/>
+      <line num="24" type="stmt" count="0"/>
       <line num="25" type="stmt" count="0"/>
-      <line num="26" type="stmt" count="0"/>
-      <line num="29" type="method" name="getSessionFile" visibility="private" complexity="1" crap="2" count="0"/>
-      <line num="31" type="stmt" count="0"/>
-      <metrics loc="33" ncloc="33" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="0" elements="11" coveredelements="0"/>
+      <line num="28" type="method" name="getSessionFile" visibility="private" complexity="1" crap="2" count="0"/>
+      <line num="30" type="stmt" count="0"/>
+      <metrics loc="32" ncloc="32" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="0" elements="11" coveredelements="0"/>
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Http/Controllers/VisitorController.php">
       <class name="App\Http\Controllers\VisitorController" namespace="global">
@@ -270,30 +270,30 @@
       <class name="App\Http\Middleware\CheckFlagshipSession" namespace="global">
         <metrics complexity="3" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="4" elements="9" coveredelements="4"/>
       </class>
-      <line num="17" type="method" name="handle" visibility="public" complexity="3" crap="4.12" count="1"/>
-      <line num="19" type="stmt" count="1"/>
-      <line num="20" type="stmt" count="1"/>
+      <line num="17" type="method" name="handle" visibility="public" complexity="3" crap="4.12" count="4"/>
+      <line num="19" type="stmt" count="4"/>
+      <line num="20" type="stmt" count="4"/>
       <line num="21" type="stmt" count="0"/>
       <line num="22" type="stmt" count="0"/>
-      <line num="24" type="stmt" count="1"/>
+      <line num="24" type="stmt" count="4"/>
       <line num="25" type="stmt" count="0"/>
       <line num="26" type="stmt" count="0"/>
-      <line num="28" type="stmt" count="1"/>
+      <line num="28" type="stmt" count="4"/>
       <metrics loc="30" ncloc="23" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="4" elements="9" coveredelements="4"/>
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Http/Middleware/FlagshipVisitor.php">
       <class name="App\Http\Middleware\FlagshipVisitor" namespace="global">
-        <metrics complexity="2" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="0" elements="8" coveredelements="0"/>
+        <metrics complexity="2" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="4" elements="8" coveredelements="4"/>
       </class>
-      <line num="18" type="method" name="handle" visibility="public" complexity="2" crap="6" count="0"/>
-      <line num="21" type="stmt" count="0"/>
-      <line num="22" type="stmt" count="0"/>
+      <line num="18" type="method" name="handle" visibility="public" complexity="2" crap="2.31" count="3"/>
+      <line num="21" type="stmt" count="3"/>
+      <line num="22" type="stmt" count="3"/>
       <line num="23" type="stmt" count="0"/>
       <line num="24" type="stmt" count="0"/>
       <line num="25" type="stmt" count="0"/>
-      <line num="28" type="stmt" count="0"/>
-      <line num="29" type="stmt" count="0"/>
-      <metrics loc="31" ncloc="24" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="0" elements="8" coveredelements="0"/>
+      <line num="28" type="stmt" count="3"/>
+      <line num="29" type="stmt" count="3"/>
+      <metrics loc="31" ncloc="24" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="4" elements="8" coveredelements="4"/>
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Http/Middleware/StartFlagship.php">
       <class name="App\Http\Middleware\StartFlagship" namespace="global">
@@ -367,41 +367,41 @@
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Rules/CheckBoolean.php">
       <class name="App\Rules\CheckBoolean" namespace="global">
-        <metrics complexity="2" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="0" elements="5" coveredelements="0"/>
+        <metrics complexity="2" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="2" elements="5" coveredelements="3"/>
       </class>
-      <line num="17" type="method" name="passes" visibility="public" complexity="1" crap="2" count="0"/>
-      <line num="19" type="stmt" count="0"/>
-      <line num="20" type="stmt" count="0"/>
+      <line num="17" type="method" name="passes" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="19" type="stmt" count="1"/>
+      <line num="20" type="stmt" count="1"/>
       <line num="26" type="method" name="message" visibility="public" complexity="1" crap="2" count="0"/>
       <line num="28" type="stmt" count="0"/>
-      <metrics loc="30" ncloc="21" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="0" elements="5" coveredelements="0"/>
+      <metrics loc="30" ncloc="21" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="2" elements="5" coveredelements="3"/>
     </file>
     <file name="/home/merki230/source/flagship-php-sdk-dev/example/app/Rules/TypeCheck.php">
       <class name="App\Rules\TypeCheck" namespace="global">
-        <metrics complexity="9" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="0" elements="20" coveredelements="0"/>
+        <metrics complexity="9" methods="3" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="12" elements="20" coveredelements="13"/>
       </class>
-      <line num="22" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
-      <line num="24" type="stmt" count="0"/>
-      <line num="25" type="stmt" count="0"/>
-      <line num="30" type="method" name="passes" visibility="public" complexity="7" crap="56" count="0"/>
-      <line num="32" type="stmt" count="0"/>
-      <line num="33" type="stmt" count="0"/>
-      <line num="34" type="stmt" count="0"/>
-      <line num="35" type="stmt" count="0"/>
+      <line num="22" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="24" type="stmt" count="1"/>
+      <line num="25" type="stmt" count="1"/>
+      <line num="30" type="method" name="passes" visibility="public" complexity="7" crap="8.14" count="1"/>
+      <line num="32" type="stmt" count="1"/>
+      <line num="33" type="stmt" count="1"/>
+      <line num="34" type="stmt" count="1"/>
+      <line num="35" type="stmt" count="1"/>
       <line num="36" type="stmt" count="0"/>
       <line num="37" type="stmt" count="0"/>
-      <line num="38" type="stmt" count="0"/>
-      <line num="39" type="stmt" count="0"/>
-      <line num="40" type="stmt" count="0"/>
-      <line num="41" type="stmt" count="0"/>
+      <line num="38" type="stmt" count="1"/>
+      <line num="39" type="stmt" count="1"/>
+      <line num="40" type="stmt" count="1"/>
+      <line num="41" type="stmt" count="1"/>
       <line num="42" type="stmt" count="0"/>
       <line num="43" type="stmt" count="0"/>
-      <line num="45" type="stmt" count="0"/>
-      <line num="47" type="stmt" count="0"/>
+      <line num="45" type="stmt" count="1"/>
+      <line num="47" type="stmt" count="1"/>
       <line num="53" type="method" name="message" visibility="public" complexity="1" crap="2" count="0"/>
       <line num="55" type="stmt" count="0"/>
-      <metrics loc="57" ncloc="41" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="0" elements="20" coveredelements="0"/>
+      <metrics loc="57" ncloc="41" classes="1" methods="3" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="12" elements="20" coveredelements="13"/>
     </file>
-    <metrics files="25" loc="927" ncloc="744" classes="19" methods="37" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="217" coveredstatements="20" elements="254" coveredelements="22"/>
+    <metrics files="25" loc="926" ncloc="743" classes="19" methods="37" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="217" coveredstatements="64" elements="254" coveredelements="71"/>
   </project>
 </coverage>

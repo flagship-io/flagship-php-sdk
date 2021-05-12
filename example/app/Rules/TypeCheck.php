@@ -39,6 +39,7 @@ class TypeCheck implements Rule
             case 'long':
             case 'float':
             case 'int':
+            case 'integer':
                 $check = is_numeric($value);
                 break;
             default:

@@ -1,6 +1,10 @@
 <?php
 
-class EnvTest extends TestCase
+namespace Controller;
+
+use TestCase;
+
+class EnvControllerTest extends TestCase
 {
     public function testUpdate()
     {

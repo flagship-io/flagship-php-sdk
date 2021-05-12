@@ -20,6 +20,7 @@ class TypeCast implements TypeCastInterface
                 $value = (float)$defaultValue;
                 break;
             case 'int':
+            case 'integer':
                 $value = (int)$defaultValue;
                 break;
         }

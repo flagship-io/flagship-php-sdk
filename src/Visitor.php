@@ -90,7 +90,8 @@ class Visitor implements JsonSerializable
      */
     public function setContext($context)
     {
-        $this->context = $context;
+        $this->context = [];
+        $this->updateContextCollection($context);
         return $this;
     }
 

@@ -46,7 +46,7 @@ class VisitorTest extends TestCase
 
         //Mock logManger
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -78,7 +78,7 @@ class VisitorTest extends TestCase
     {
         //Mock logManger
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -360,7 +360,7 @@ class VisitorTest extends TestCase
     public function testSynchronizedModificationsWithoutDecisionManager($modifications)
     {
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -375,9 +375,11 @@ class VisitorTest extends TestCase
 
         $visitor = new Visitor($config, "visitorId", []);
 
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->with(
-                FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
+                "[$flagshipSdk] " . FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION]
             );
 
@@ -487,7 +489,7 @@ class VisitorTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -518,7 +520,8 @@ class VisitorTest extends TestCase
             FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
             FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
             FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
-            FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference()
+            FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference(),
+            FlagshipField::FIELD_VALUE => $modification->getValue()
         ];
 
         //Test key exist in modifications set
@@ -558,7 +561,7 @@ class VisitorTest extends TestCase
     {
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -635,7 +638,7 @@ class VisitorTest extends TestCase
     public function testActivateModificationWithoutTrackerManager($modifications)
     {
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -667,8 +670,10 @@ class VisitorTest extends TestCase
 
         $visitor->synchronizedModifications();
 
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
-            FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+            "[$flagshipSdk] " . FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
             [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
         );
 
@@ -682,7 +687,7 @@ class VisitorTest extends TestCase
     public function testGetModificationWithActive($modifications)
     {
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -841,7 +846,7 @@ class VisitorTest extends TestCase
         );
 
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -916,5 +921,21 @@ class VisitorTest extends TestCase
         $decisionManager->setIsPanicMode(true);
 
         $visitor->sendHit($page);
+    }
+
+    public function testJson()
+    {
+        $config = new FlagshipConfig();
+        $visitorId = "visitor_id";
+        $context = ["age" => 20];
+        $visitor = new Visitor($config, $visitorId, $context);
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode([
+            'visitorId' => $visitorId,
+            'context' => $context,
+            ]),
+            json_encode($visitor)
+        );
     }
 }

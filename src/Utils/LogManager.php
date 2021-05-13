@@ -2,16 +2,16 @@
 
 namespace Flagship\Utils;
 
-use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
+use Psr\Log\LoggerInterface;
 
-class LogManager implements LogManagerInterface
+class LogManager implements LoggerInterface
 {
 
     /**
      * @inheritDoc
      */
-    public function emergency($message, array $context = array())
+    public function emergency($message, array $context = [])
     {
         $this->log(LogLevel::EMERGENCY, $message, $context);
     }
@@ -19,7 +19,7 @@ class LogManager implements LogManagerInterface
     /**
      * @inheritDoc
      */
-    public function alert($message, $context = null)
+    public function alert($message, array $context = [])
     {
         $this->log(LogLevel::ALERT, $message, $context);
     }
@@ -27,7 +27,7 @@ class LogManager implements LogManagerInterface
     /**
      * @inheritDoc
      */
-    public function critical($message, array $context = array())
+    public function critical($message, array $context = [])
     {
         $this->log(LogLevel::CRITICAL, $message, $context);
     }
@@ -35,7 +35,7 @@ class LogManager implements LogManagerInterface
     /**
      * @inheritDoc
      */
-    public function error($message, $context = null)
+    public function error($message, array $context = [])
     {
         $this->log(LogLevel::ERROR, $message, $context);
     }
@@ -43,7 +43,7 @@ class LogManager implements LogManagerInterface
     /**
      * @inheritDoc
      */
-    public function warning($message, $context = null)
+    public function warning($message, array $context = [])
     {
         $this->log(LogLevel::WARNING, $message, $context);
     }
@@ -51,7 +51,7 @@ class LogManager implements LogManagerInterface
     /**
      * @inheritDoc
      */
-    public function notice($message, $context = [])
+    public function notice($message, array $context = [])
     {
         $this->log(LogLevel::NOTICE, $message, $context);
     }
@@ -59,7 +59,7 @@ class LogManager implements LogManagerInterface
     /**
      * @inheritDoc
      */
-    public function info($message, $context = [])
+    public function info($message, array $context = [])
     {
         $this->log(LogLevel::INFO, $message, $context);
     }
@@ -67,7 +67,7 @@ class LogManager implements LogManagerInterface
     /**
      * @inheritDoc
      */
-    public function debug($message, $context = [])
+    public function debug($message, array $context = [])
     {
         $this->log(LogLevel::DEBUG, $message, $context);
     }
@@ -75,10 +75,9 @@ class LogManager implements LogManagerInterface
     /**
      * @inheritDoc
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = [])
     {
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $customMessage = "[{$flagshipSdk}] [{$level}] {$message} ";
+        $customMessage = "[$level] $message ";
         $contextString = $this->parseContextToString($context);
         error_log($customMessage . $contextString);
     }

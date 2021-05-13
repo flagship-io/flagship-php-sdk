@@ -6,14 +6,15 @@ use Flagship\Api\TrackingManagerAbstract;
 use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Utils\LogManagerInterface;
+use JsonSerializable;
+use Psr\Log\LoggerInterface;
 
 /**
  * Flagship SDK configuration class to provide at initialization.
  *
  * @package Flagship
  */
-class FlagshipConfig
+class FlagshipConfig implements JsonSerializable
 {
     /**
      * @var string
@@ -32,7 +33,7 @@ class FlagshipConfig
      */
     private $timeOut = FlagshipConstant::REQUEST_TIME_OUT;
     /**
-     * @var LogManagerInterface
+     * @var LoggerInterface
      */
     private $logManager;
 
@@ -49,7 +50,7 @@ class FlagshipConfig
     /**
      * Create a new FlagshipConfig configuration.
      *
-     * @param string $envId  : Environment id provided by Flagship.
+     * @param string $envId : Environment id provided by Flagship.
      * @param string $apiKey : Secure api key provided by Flagship.
      */
     public function __construct($envId = null, $apiKey = null)
@@ -69,7 +70,7 @@ class FlagshipConfig
     /**
      * Specify the environment id provided by Flagship, to use.
      *
-     * @param  string $envId environment id.
+     * @param string $envId environment id.
      * @return FlagshipConfig
      */
     public function setEnvId($envId)
@@ -89,7 +90,7 @@ class FlagshipConfig
     /**
      * Specify the secure api key provided by Flagship, to use.
      *
-     * @param  string $apiKey secure api key.
+     * @param string $apiKey secure api key.
      * @return FlagshipConfig
      */
     public function setApiKey($apiKey)
@@ -109,7 +110,7 @@ class FlagshipConfig
     /**
      * Specify the SDK running mode.
      *
-     * @param  int $decisionMode decision mode value e.g DecisionMode::DECISION_API
+     * @param int $decisionMode decision mode value e.g DecisionMode::DECISION_API
      * @return FlagshipConfig
      */
     private function setDecisionMode($decisionMode)
@@ -131,7 +132,7 @@ class FlagshipConfig
     /**
      * Specify timeout for api request.
      *
-     * @param  int $timeOut milliseconds for connect and read timeouts. Default is 2000.
+     * @param int $timeOut milliseconds for connect and read timeouts. Default is 2000.
      * @return FlagshipConfig
      */
     public function setTimeOut($timeOut)
@@ -143,7 +144,7 @@ class FlagshipConfig
     }
 
     /**
-     * @return LogManagerInterface
+     * @return LoggerInterface
      */
     public function getLogManager()
     {
@@ -153,10 +154,10 @@ class FlagshipConfig
     /**
      * Specify a custom implementation of LogManager in order to receive logs from the SDK.
      *
-     * @param  LogManagerInterface $logManager custom implementation of LogManager.
+     * @param LoggerInterface $logManager custom implementation of LogManager.
      * @return FlagshipConfig
      */
-    public function setLogManager(LogManagerInterface $logManager)
+    public function setLogManager(LoggerInterface $logManager)
     {
         $this->logManager = $logManager;
         return $this;
@@ -171,7 +172,7 @@ class FlagshipConfig
     }
 
     /**
-     * @param  DecisionManagerAbstract $decisionManager
+     * @param DecisionManagerAbstract $decisionManager
      * @return FlagshipConfig
      */
     public function setDecisionManager(DecisionManagerAbstract $decisionManager)
@@ -189,12 +190,24 @@ class FlagshipConfig
     }
 
     /**
-     * @param  TrackingManagerAbstract $trackerManager
+     * @param TrackingManagerAbstract $trackerManager
      * @return FlagshipConfig
      */
     public function setTrackingManager(TrackingManagerAbstract $trackerManager)
     {
         $this->trackingManager = $trackerManager;
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return [
+            "environmentId" => $this->getEnvId(),
+            "apiKey" => $this->getApiKey(),
+            "timeout" => $this->getTimeOut(),
+        ];
     }
 }

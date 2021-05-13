@@ -144,7 +144,7 @@ class Flagship
             'Flagship\Utils\HttpClient'
         );
         $container->bind(
-            'Flagship\Utils\LogManagerInterface',
+            'Flagship\Utils\LoggerInterface',
             'Flagship\Utils\LogManager'
         );
         return $container;

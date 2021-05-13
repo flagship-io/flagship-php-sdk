@@ -50,7 +50,7 @@ class EventTest extends TestCase
         $this->assertSame($eventArray, $event->toArray());
 
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             true,
@@ -62,7 +62,8 @@ class EventTest extends TestCase
         $event->setLogManager($logManagerMock);
 
         $errorMessage = function ($itemName, $typeName) {
-            return sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
+            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+            return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
         };
 
         $logManagerMock->expects($this->exactly(4))->method('error')

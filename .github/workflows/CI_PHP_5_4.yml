@@ -53,4 +53,3 @@ jobs:
         coverage_badge_path: 'badge_php_5_4.svg'
         push_badge: true
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-

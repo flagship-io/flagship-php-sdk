@@ -3,6 +3,7 @@
 namespace Flagship\Decision;
 
 use Exception;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\FlagshipConfig;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\HttpClient;
@@ -212,7 +213,7 @@ class ApiManagerTest extends TestCase
     {
         //Mock logManger
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             ['error'],
             '',
             false
@@ -228,13 +229,14 @@ class ApiManagerTest extends TestCase
         ;
 
         //Mock method curl->post to throw Exception
-        $errorMessage = '{"message": "Forbidden"}';
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $errorMessage = "{'message': 'Forbidden'}";
         $httpClientMock->method('post')
             ->willThrowException(new Exception($errorMessage, 403));
 
         $config = new FlagshipConfig("env_id", "api_key");
         $logManagerStub->expects($this->once())->method('error')->withConsecutive(
-            [$errorMessage]
+            ["[$flagshipSdk] " . $errorMessage]
         );
 
         $config->setLogManager($logManagerStub);

@@ -2,8 +2,12 @@
 
 namespace Flagship;
 
+use Flagship\Api\TrackingManager;
+use Flagship\Decision\ApiManager;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Utils\HttpClient;
+use Flagship\Utils\LogManager;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
@@ -93,5 +97,34 @@ class FlagshipConfigTest extends TestCase
         $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
         $setDecisionMode->invokeArgs($config, [5]);
         $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
+    }
+
+    public function testJson()
+    {
+
+        $data =  [
+            "environmentId" => 'envId',
+            "apiKey" => "apiKey",
+            "timeout" => 2000,
+        ];
+
+        $config = new FlagshipConfig($data['environmentId'], $data['apiKey']);
+        $config->setTimeOut($data['timeout']);
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($data),
+            json_encode($config)
+        );
+        $logManager = new LogManager();
+        $config->setLogManager($logManager);
+        $this->assertSame($logManager, $config->getLogManager());
+
+        $decisionManager = new ApiManager(new HttpClient());
+        $config->setDecisionManager($decisionManager);
+        $this->assertSame($decisionManager, $config->getDecisionManager());
+
+        $trackingManager = new TrackingManager(new HttpClient());
+        $config->setTrackingManager($trackingManager);
+        $this->assertSame($trackingManager, $config->getTrackingManager());
     }
 }

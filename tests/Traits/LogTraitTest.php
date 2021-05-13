@@ -2,6 +2,7 @@
 
 namespace Flagship\Traits;
 
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +19,7 @@ class LogTraitTest extends TestCase
             true
         );
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             false,
@@ -26,12 +27,13 @@ class LogTraitTest extends TestCase
             true,
             ['error']
         );
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $message = "hello";
         $context = ['exception' => 'hello Exception'];
 
         $logManagerMock->expects($this->once())->method('error')
             ->with(
-                $message,
+                "[$flagshipSdk] " . $message,
                 $context
             );
         $logError = Utils::getMethod($logTraitMock, "logError");
@@ -49,7 +51,7 @@ class LogTraitTest extends TestCase
             true
         );
         $logManagerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             [],
             "",
             false,
@@ -59,13 +61,15 @@ class LogTraitTest extends TestCase
         );
         $message = "hello";
         $context = ['exception' => 'hello Exception'];
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
         $logManagerMock->expects($this->once())->method('info')
             ->with(
-                $message,
+                "[$flagshipSdk] " . $message,
                 $context
             );
         $loginInfo = Utils::getMethod($logTraitMock, "logInfo");
         $loginInfo->invokeArgs($logTraitMock, [$logManagerMock, $message, $context]);
+        $loginInfo->invokeArgs($logTraitMock, [null, $message, $context]);
     }
 }

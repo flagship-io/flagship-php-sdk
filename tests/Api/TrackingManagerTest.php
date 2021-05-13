@@ -6,6 +6,7 @@ use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\FlagshipConfig;
 use Flagship\Hit\Page;
+use Flagship\Model\HttpResponse;
 use Flagship\Model\Modification;
 use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
@@ -54,7 +55,7 @@ class TrackingManagerTest extends TestCase
                 FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId()
             ]
-        );
+        )->willReturn(new HttpResponse(204, null));
 
         $trackingManager->sendActive($visitor, $modification);
     }
@@ -69,7 +70,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             ['error'],
             '',
             false
@@ -107,9 +108,11 @@ class TrackingManagerTest extends TestCase
             ]
         )->willThrowException($exception);
 
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerStub->expects($this->once())
             ->method('error')
-            ->with($exception->getMessage());
+            ->with("[$flagshipSdk] " . $exception->getMessage());
+
 
         $trackingManager->sendActive($visitor, $modification);
     }
@@ -158,7 +161,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Utils\LogManagerInterface',
+            'Psr\Log\LoggerInterface',
             ['error'],
             '',
             false
@@ -192,9 +195,10 @@ class TrackingManagerTest extends TestCase
             $page->toArray()
         )->willThrowException($exception);
 
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerStub->expects($this->once())
             ->method('error')
-            ->with($exception->getMessage());
+            ->with("[$flagshipSdk] " . $exception->getMessage());
 
         $page->setLogManager($logManagerStub);
 

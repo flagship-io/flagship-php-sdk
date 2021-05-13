@@ -8,13 +8,14 @@ use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
+use JsonSerializable;
 
 /**
  * Flagship visitor representation.
  *
  * @package Flagship
  */
-class Visitor
+class Visitor implements JsonSerializable
 {
     use LogTrait;
     use ValidatorTrait;
@@ -272,7 +273,8 @@ class Visitor
             FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
             FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
             FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
-            FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference()
+            FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference(),
+            FlagshipField::FIELD_VALUE => $modification->getValue()
         ];
     }
 
@@ -352,12 +354,12 @@ class Visitor
      * Report this user has seen this modification.
      *
      * @param $key : key which identify the modification to activate.
-     * @return void
+     * @return bool
      */
     public function activateModification($key)
     {
         if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
-            return ;
+            return false;
         }
 
         $modification = $this->getObjetModification($key);
@@ -367,14 +369,14 @@ class Visitor
                 sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
             );
-            return;
+            return false;
         }
 
         if (!$this->hasTrackingManager(FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
-            return;
+            return false;
         }
 
-        $this->config->getTrackingManager()->sendActive($this, $modification);
+        return $this->config->getTrackingManager()->sendActive($this, $modification);
     }
 
     /**
@@ -407,5 +409,16 @@ class Visitor
         }
 
         $this->config->getTrackingManager()->sendHit($hit);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'visitorId' => $this->getVisitorId(),
+            'context' => $this->getContext(),
+        ];
     }
 }

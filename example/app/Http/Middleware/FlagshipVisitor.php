@@ -17,12 +17,11 @@ class FlagshipVisitor
      */
     public function handle($request, Closure $next)
     {
-
         $visitor = $request->session()->get('visitor');
         if (!$visitor) {
-            $message = ['error' => 'visitor null'];
+            $message = ['error' => 'Set your Visitor ID and context'];
             Log::error('Flagship', $message);
-            return response()->json($message);
+            return response()->json($message, 422);
         }
 //        $visitor->synchronizedModifications();
         app()->instance(Visitor::class, $visitor);

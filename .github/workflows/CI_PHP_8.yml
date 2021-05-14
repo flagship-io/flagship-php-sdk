@@ -1,11 +1,10 @@
 name: CI PHP 8
 
-# Only trigger, when the CI PHP 7.4 workflow succeeded
 on:
-  workflow_run:
-    workflows: ["CI PHP 7.4"]
-    types:
-      - completed
+  push:
+    branches: [ main]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -53,10 +52,4 @@ jobs:
     - name: Run test suite
       run: composer run-script test -- -c phpunit.8.xml
 
-    - name: Generate test coverage badge
-      uses: timkrase/phpunit-coverage-badge@v1.2.0
-      with:
-        coverage_badge_path: 'badge_php_8.svg'
-        push_badge: true
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
 

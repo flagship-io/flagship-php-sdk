@@ -22,6 +22,8 @@ COPY . /var/www/html
 
 WORKDIR /var/www/html
 
+RUN cp example/.env.example /var/www/html/example/.env
+
 RUN composer install
 
 RUN cd example && composer install

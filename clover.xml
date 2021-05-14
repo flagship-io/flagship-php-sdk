@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1620994137">
-  <project timestamp="1620994137">
+<coverage generated="1620994422">
+  <project timestamp="1620994422">
     <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Api/TrackingManager.php">
       <class name="Flagship\Api\TrackingManager" namespace="global">
         <metrics complexity="4" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="24" coveredelements="24"/>

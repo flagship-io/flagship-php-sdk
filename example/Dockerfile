@@ -1,10 +1,11 @@
-FROM php:7.4-apache
+FROM php:7.4-alpine
 
-RUN apt-get update
+RUN apk update
 
-RUN apt-get install -y curl mcrypt software-properties-common zip unzip
+RUN apk add apache2 php7-apache2 php7-mbstring php7-json php-curl
+RUN apk add php7-xml php7-simplexml php7-session php7-tokenizer php7-openssl
 
-RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
+COPY . /var/www/html
 
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
@@ -14,11 +15,18 @@ ENV APACHE_RUN_DIR /var/run/apache2
 ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_PID_FILE /var/run/apache2/apache2.pid
 
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-RUN a2enmod rewrite
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 777 /var/www/html/example/storage
 
-COPY . /var/www/html
+RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/apache2/httpd.conf
+RUN sed -i '/LoadModule session_module/s/^#//g' /etc/apache2/httpd.conf
+
+RUN sed -ri -e 's!/var/www/localhost/htdocs!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/httpd.conf
+RUN sed -i 's/AllowOverride\ None/AllowOverride\ All/g' /etc/apache2/httpd.conf
+
+RUN rm  -rf /tmp/* /var/cache/apk/*
+
+RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
 
 WORKDIR /var/www/html
 
@@ -28,9 +36,9 @@ RUN composer install
 
 RUN cd example && composer install
 
-RUN chown -R www-data:www-data /var/www/html/example/storage/
-
 VOLUME /var/www/html/example/storage
 
-CMD ["/usr/sbin/apache2", "-DFOREGROUND"]
+EXPOSE 80
+
+CMD  /usr/sbin/httpd -DFOREGROUND
 

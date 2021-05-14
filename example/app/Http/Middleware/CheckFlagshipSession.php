@@ -19,11 +19,11 @@ class CheckFlagshipSession
         $message = ['error' => 'First, set your Flagship Environment ID & API Key'];
         if (!$request->hasSession()) {
             Log::error("Flagship", $message);
-            return response()->json($message);
+            return response()->json($message, 422);
         }
         if (!$request->session()->has('flagshipConfig')) {
             Log::error("Flagship", $message);
-            return response()->json($message);
+            return response()->json($message, 422);
         }
         return $next($request);
     }

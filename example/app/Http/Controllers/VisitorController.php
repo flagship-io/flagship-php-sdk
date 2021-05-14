@@ -11,8 +11,12 @@ use Illuminate\Validation\ValidationException;
 
 class VisitorController extends Controller
 {
-    public function index(Visitor $visitor = null)
+    public function index(Request $request)
     {
+        $visitor = $request->session()->get('visitor');
+        if (!$visitor) {
+            return response()->json(null);
+        }
         $array = [
             'visitor_id' => $visitor->getVisitorId(),
             'context' => $visitor->getContext(),
@@ -34,7 +38,7 @@ class VisitorController extends Controller
             $request->session()->put('visitor', $visitor);
             return response()->json($visitor);
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()]);
+            return response()->json(['error' => $exception->errors()], 422);
         }
     }
 
@@ -53,7 +57,7 @@ class VisitorController extends Controller
 
             return response()->json($visitor);
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()]);
+            return response()->json(['error' => $exception->errors()], 422);
         }
     }
 }

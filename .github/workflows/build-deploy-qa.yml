@@ -8,8 +8,10 @@ on:
       - completed
 jobs:
   testqa:
-
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./example
 
     strategy:
       matrix:
@@ -44,6 +46,7 @@ jobs:
         run: composer run-script test
 
   deployqa:
+
     needs: testqa
     runs-on: ubuntu-latest
 

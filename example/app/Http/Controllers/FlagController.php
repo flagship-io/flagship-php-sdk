@@ -34,7 +34,9 @@ class FlagController extends Controller
             ];
             return response()->json($result);
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()]);
+            return response()->json(['error' => $exception->errors()], 422);
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 422);
         }
     }
 
@@ -42,7 +44,7 @@ class FlagController extends Controller
     {
         $response = $visitor->getModificationInfo($key);
         if (!$response) {
-            return response()->json(['error' => 'Failed']);
+            return response()->json(['error' => 'Failed'], 404);
         }
         return response()->json($response);
     }
@@ -51,8 +53,8 @@ class FlagController extends Controller
     {
         $check = $visitor->activateModification($key);
         if (!$check) {
-            return response()->json(['error' => 'Failed']);
+            return response()->json(['error' => 'Failed'], 404);
         }
-        return response()->json(['successful operation']);
+        return response()->json('successful operation');
     }
 }

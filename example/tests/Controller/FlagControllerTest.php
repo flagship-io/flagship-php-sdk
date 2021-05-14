@@ -90,7 +90,7 @@ class FlagControllerTest extends TestCase
 
         $this->get('/flag/key/activate?' .
             http_build_query(['type' => 'string','activate' => true, 'defaultValue' => 'yes']));
-        $this->assertSame(json_encode(['successful operation']), $this->response->content());
+        $this->assertSame(json_encode('successful operation'), $this->response->content());
 
         $this->get('/flag/key/activate?' .
             http_build_query(['type' => 'string','activate' => true, 'defaultValue' => 'yes']));

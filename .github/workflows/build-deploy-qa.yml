@@ -1,11 +1,9 @@
 name: Build and deploy CI for QA
 
-# Only trigger, when the CI PHP 8 workflow succeeded
 on:
-  workflow_run:
-    workflows: ["CI PHP 8"]
-    types:
-      - completed
+  push:
+    branches: [main]
+
 jobs:
   testqa:
     runs-on: ubuntu-latest

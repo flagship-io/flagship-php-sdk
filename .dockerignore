@@ -1,8 +1,10 @@
 .git
 .gitignore
-composer.lock
 dockers
 .idea
 vendor
 reports
-build
+example/vendor
+example/reports
+example/storage/logs/*
+example/storage/framework/sessions/*

@@ -19,32 +19,24 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'env'], function () use ($router) {
     $router->get('/', [
-        'middleware' => 'CheckFlagshipSession',
         'uses' => 'EnvController@index'
     ]);
     $router->put('/', 'EnvController@update');
 });
 
 $router->group(
-    [
-        'prefix' => 'visitor',
-        'middleware' => ['CheckFlagshipSession']
-    ],
+    ['prefix' => 'visitor'],
     function () use ($router) {
-        $router->get(
-            '/',
-            [
-                'middleware' => 'flagshipVisitor',
-                'uses' => 'VisitorController@index'
-            ]
-        );
+        $router->get('/', 'VisitorController@index');
 
-        $router->put('/', ['middleware' => 'startFlagship', 'uses' => 'VisitorController@update']);
+        $router->put('/', ['middleware' => 'CheckFlagshipSession|startFlagship', 'uses' => 'VisitorController@update']);
 
         $router->put(
             '/context/{key}',
-            ['middleware' => 'flagshipVisitor',
-            'uses' => 'VisitorController@updateContext']
+            [
+                'middleware' => 'CheckFlagshipSession|flagshipVisitor',
+                'uses' => 'VisitorController@updateContext'
+            ]
         );
     }
 );

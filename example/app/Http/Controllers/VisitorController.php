@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Casts\TypeCastInterface;
 use App\Rules\TypeCheck;
+use Exception;
 use Flagship\Flagship;
 use Flagship\Visitor;
 use Illuminate\Http\Request;
@@ -39,6 +40,8 @@ class VisitorController extends Controller
             return response()->json($visitor);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);
+        } catch (Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 422);
         }
     }
 

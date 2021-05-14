@@ -8,12 +8,14 @@ on:
       - completed
 jobs:
   testqa:
-
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./example
 
     strategy:
       matrix:
-        php-versions: [ '8' ]
+        php-versions: [ '7.4' ]
 
     steps:
       - uses: actions/checkout@v2
@@ -44,6 +46,7 @@ jobs:
         run: composer run-script test
 
   deployqa:
+
     needs: testqa
     runs-on: ubuntu-latest
 

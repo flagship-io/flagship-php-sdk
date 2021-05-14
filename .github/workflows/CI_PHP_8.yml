@@ -40,15 +40,15 @@ jobs:
         ini-values: post_max_size=256M, max_execution_time=180
         coverage: xdebug        
         tools: phpunit:${{ matrix.phpunit-versions }}
-
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-
+        
     - name: Remove current phpunit version
       run: composer remove phpunit/phpunit --dev
 
     - name: install new phpunit version
       run: composer require phpunit/phpunit --dev
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
 
     - name: Run test suite
       run: composer run-script test -- -c phpunit.8.xml

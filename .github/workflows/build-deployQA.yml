@@ -1,0 +1,66 @@
+name: Build and deploy CI for QA
+
+# Only trigger, when the CI PHP 8 workflow succeeded
+on:
+  workflow_run:
+    workflows: ["CI PHP 8"]
+    types:
+      - completed
+jobs:
+  testqa:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-versions: [ '8' ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+            path: vendor
+            key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-php-
+
+      - name: Setup nightly PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, intl, curl
+          ini-values: post_max_size=256M, max_execution_time=180
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run test suite
+        run: composer run-script test
+
+  deployqa:
+    needs: testqa
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.DOCKER_QA }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2.3.0
+        with:
+          push: true
+          tags: ghcr.io/${{ github.repository }}:QA
+          context: .
+          file: ./example/Dockerfile

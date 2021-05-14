@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
@@ -94,6 +95,8 @@ class HitController extends Controller
             return response()->json($visitor->getConfig());
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);
+        } catch (Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 422);
         }
     }
 

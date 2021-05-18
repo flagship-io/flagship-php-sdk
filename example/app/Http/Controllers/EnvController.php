@@ -34,7 +34,7 @@ class EnvController extends Controller
             ]);
 
             $config = new FlagshipConfig($data['environment_id'], $data["api_key"]);
-            $config->setTimeOut($data['timeout'] / 1000);
+            $config->setTimeout($data['timeout'] / 1000);
 
             $request->session()->start();
 

@@ -51,10 +51,8 @@ class FlagController extends Controller
 
     public function activeModification($key, Visitor $visitor)
     {
-        $check = $visitor->activateModification($key);
-        if (!$check) {
-            return response()->json(['error' => 'Failed'], 404);
-        }
+        $visitor->activateModification($key);
+
         return response()->json('successful operation');
     }
 }

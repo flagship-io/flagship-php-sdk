@@ -34,17 +34,17 @@ class HitController extends Controller
             case self::EVENT:
                 $hit = new Event($data['ec'], $data['ea']);
                 if (isset($data['ev'])) {
-                    $hit->setValue($data['ev']);
+                    $hit->setEventValue($data['ev']);
                 }
                 if (isset($data['el'])) {
-                    $hit->setLabel($data['el']);
+                    $hit->setEventLabel($data['el']);
                 }
                 break;
 
             case self::TRANSACTION:
                 $hit = new Transaction($data['tid'], $data['ta']);
                 if (isset($data['icn'])) {
-                    $hit->setItemsCount($data['icn']);
+                    $hit->setItemCount($data['icn']);
                 }
                 if (isset($data['pm'])) {
                     $hit->setPaymentMethod($data['pm']);
@@ -59,13 +59,13 @@ class HitController extends Controller
                     $hit->setCouponCode($data['tcc']);
                 }
                 if (isset($data['tr'])) {
-                    $hit->setRevenue($data['tr']);
+                    $hit->setTotalRevenue($data['tr']);
                 }
                 if (isset($data['ts'])) {
-                    $hit->setShippingCost($data['ts']);
+                    $hit->setShippingCosts($data['ts']);
                 }
                 if (isset($data['tt'])) {
-                    $hit->setTaxesAmount($data['tt']);
+                    $hit->setTaxes($data['tt']);
                 }
                 break;
             case self::ITEM:

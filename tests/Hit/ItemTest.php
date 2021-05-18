@@ -69,8 +69,8 @@ class ItemTest extends TestCase
 
         $logManagerMock->expects($this->exactly(6))->method('error')->withConsecutive(
             [$errorMessage('transactionId', 'string')],
-            [$errorMessage('itemName', 'string')],
-            [$errorMessage('itemCode', 'string')],
+            [$errorMessage('productName', 'string')],
+            [$errorMessage('productSku', 'string')],
             [$errorMessage('itemPrice', 'numeric')],
             [$errorMessage('itemQuantity', 'integer')],
             [$errorMessage('itemCategory', 'string')]
@@ -80,10 +80,10 @@ class ItemTest extends TestCase
         $item->setTransactionId('');
 
         //Test itemName validation
-        $item->setItemName(4886);
+        $item->setProductName(4886);
 
         //Test itemCode validation
-        $item->setItemCode([]);
+        $item->setProductSku([]);
 
         //Test itemPrice validation
         $item->setItemPrice("abc");

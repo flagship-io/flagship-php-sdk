@@ -27,16 +27,16 @@ class FlagshipConfigTest extends TestCase
         $timeOut = 5000;
         $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
 
-        $this->assertEquals(FlagshipConstant::REQUEST_TIME_OUT, $config->getTimeOut());
+        $this->assertEquals(FlagshipConstant::REQUEST_TIME_OUT, $config->getTimeout());
 
-        $config->setTimeOut($timeOut);
-        $this->assertEquals($timeOut, $config->getTimeOut());
+        $config->setTimeout($timeOut);
+        $this->assertEquals($timeOut, $config->getTimeout());
 
-        $config->setTimeOut(0);
-        $this->assertEquals($timeOut, $config->getTimeOut());
+        $config->setTimeout(0);
+        $this->assertEquals($timeOut, $config->getTimeout());
 
-        $config->setTimeOut("not a number");
-        $this->assertEquals($timeOut, $config->getTimeOut());
+        $config->setTimeout("not a number");
+        $this->assertEquals($timeOut, $config->getTimeout());
     }
 
     /**
@@ -109,7 +109,7 @@ class FlagshipConfigTest extends TestCase
         ];
 
         $config = new FlagshipConfig($data['environmentId'], $data['apiKey']);
-        $config->setTimeOut($data['timeout']);
+        $config->setTimeout($data['timeout']);
 
         $this->assertJsonStringEqualsJsonString(
             json_encode($data),

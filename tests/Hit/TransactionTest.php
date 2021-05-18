@@ -41,7 +41,7 @@ class TransactionTest extends TestCase
         ];
 
         $taxesAmount = 76;
-        $transaction->setTaxesAmount($taxesAmount);
+        $transaction->setTaxes($taxesAmount);
         $transactionArray[FlagshipConstant::TT_API_ITEM] = $taxesAmount;
 
         $this->assertSame($transactionArray, $transaction->toArray());
@@ -59,7 +59,7 @@ class TransactionTest extends TestCase
         $this->assertSame($transactionArray, $transaction->toArray());
 
         $itemCount = 5;
-        $transaction->setItemsCount($itemCount);
+        $transaction->setItemCount($itemCount);
         $transactionArray[FlagshipConstant::ICN_API_ITEM] = $itemCount;
 
         $this->assertSame($transactionArray, $transaction->toArray());
@@ -77,13 +77,13 @@ class TransactionTest extends TestCase
         $this->assertSame($transactionArray, $transaction->toArray());
 
         $revenue = 45;
-        $transaction->setRevenue($revenue);
+        $transaction->setTotalRevenue($revenue);
         $transactionArray[FlagshipConstant::TR_API_ITEM] = $revenue;
 
         $this->assertSame($transactionArray, $transaction->toArray());
 
         $shippingCost = 78;
-        $transaction->setShippingCost($shippingCost);
+        $transaction->setShippingCosts($shippingCost);
         $transactionArray[FlagshipConstant::TS_API_ITEM] = $shippingCost;
 
 
@@ -99,22 +99,22 @@ class TransactionTest extends TestCase
         $logManagerMock->expects($this->exactly(10))->method('error')
             ->withConsecutive(
                 [$errorMessage('transactionId', 'string')],
-                [$errorMessage('transactionAffiliation', 'string')],
+                [$errorMessage('affiliation', 'string')],
                 [$errorMessage('couponCode', 'string')],
                 ["[$flagshipSdk] " . sprintf(Transaction::CURRENCY_ERROR, 'currency')],
-                [$errorMessage('itemsCount', 'integer')],
+                [$errorMessage('itemCount', 'integer')],
                 [$errorMessage('paymentMethod', 'string')],
-                [$errorMessage('revenue', 'numeric')],
-                [$errorMessage('shippingCost', 'numeric')],
+                [$errorMessage('totalRevenue', 'numeric')],
+                [$errorMessage('shippingCosts', 'numeric')],
                 [$errorMessage('shippingMethod', 'string')],
-                [$errorMessage('taxesAmount', 'numeric')]
+                [$errorMessage('taxes', 'numeric')]
             );
 
         $transaction->setTransactionId([]);
         $this->assertSame($transactionId, $transaction->getTransactionId());
 
-        $transaction->setTransactionAffiliation([]);
-        $this->assertSame($transactionAffiliation, $transaction->getTransactionAffiliation());
+        $transaction->setAffiliation([]);
+        $this->assertSame($transactionAffiliation, $transaction->getAffiliation());
 
         //Test Coupon validation
         $transaction->setCouponCode('');
@@ -125,28 +125,28 @@ class TransactionTest extends TestCase
         $this->assertSame($currency, $transaction->getCurrency());
 
         //Test item count validation
-        $transaction->setItemsCount('abc');
-        $this->assertSame($itemCount, $transaction->getItemsCount());
+        $transaction->setItemCount('abc');
+        $this->assertSame($itemCount, $transaction->getItemCount());
 
         //Test payment method Validation
         $transaction->setPaymentMethod(78);
         $this->assertSame($paymentMethod, $transaction->getPaymentMethod());
 
         //Test Revenue validation
-        $transaction->setRevenue('abc');
-        $this->assertSame($revenue, $transaction->getRevenue());
+        $transaction->setTotalRevenue('abc');
+        $this->assertSame($revenue, $transaction->getTotalRevenue());
 
         //Test Shipping cost validation
-        $transaction->setShippingCost('abc');
-        $this->assertSame($shippingCost, $transaction->getShippingCost());
+        $transaction->setShippingCosts('abc');
+        $this->assertSame($shippingCost, $transaction->getShippingCosts());
 
         //Test shipping method validation
         $transaction->setShippingMethod([]);
         $this->assertSame($shippingMethod, $transaction->getShippingMethod());
 
         //Test Taxes amount validation
-        $transaction->setTaxesAmount('abc');
-        $this->assertSame($taxesAmount, $transaction->getTaxesAmount());
+        $transaction->setTaxes('abc');
+        $this->assertSame($taxesAmount, $transaction->getTaxes());
     }
 
     public function testIsReady()

@@ -43,7 +43,7 @@ class Visitor implements JsonSerializable
      *
      * @param FlagshipConfig $config
      * @param string         $visitorId : visitor unique identifier.
-     * @param array          $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+     * @param array          $context   : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
      */
     public function __construct(FlagshipConfig $config, $visitorId, array $context = [])
     {
@@ -103,7 +103,7 @@ class Visitor implements JsonSerializable
      * Context key must be String, and value type must be one of the following : Number, Boolean, String.
      *
      * @param string                $key   : context key.
-     * @param int|float|string|bool $value : context value.
+     * @param numeric|string|bool $value : context value.
      */
     public function updateContext($key, $value)
     {
@@ -125,7 +125,7 @@ class Visitor implements JsonSerializable
      * A new context value associated with this key will be created if there is no previous matching value.
      * Context keys must be String, and values types must be one of the following : Number, Boolean, String.
      *
-     * @param array $Context collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+     * @param array $Context collection of keys, values. e.g: ["age"=>42, "IsVip"=>true, "country"=>"UK"]
      */
     public function updateContextCollection(array $Context)
     {
@@ -230,7 +230,7 @@ class Visitor implements JsonSerializable
     /**
      * Get the campaign modification information value matching the given key.
      *
-     * @param  $key : key which identify the modification.
+     * @param string  $key : key which identify the modification.
      * @return array|null
      */
     public function getModificationInfo($key)
@@ -355,12 +355,12 @@ class Visitor implements JsonSerializable
      * Report this user has seen this modification.
      *
      * @param $key : key which identify the modification to activate.
-     * @return bool
+     * @return void
      */
     public function activateModification($key)
     {
         if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
-            return false;
+            return ;
         }
 
         $modification = $this->getObjetModification($key);
@@ -370,17 +370,18 @@ class Visitor implements JsonSerializable
                 sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
                 [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
             );
-            return false;
+            return ;
         }
 
         if (!$this->hasTrackingManager(FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
-            return false;
+            return ;
         }
 
-        return $this->config->getTrackingManager()->sendActive($this, $modification);
+        $this->config->getTrackingManager()->sendActive($this, $modification);
     }
 
     /**
+     * Send a Hit to Flagship servers for reporting.
      * @param  HitAbstract $hit
      * @return void
      */
@@ -398,7 +399,7 @@ class Visitor implements JsonSerializable
             ->setVisitorId($this->getVisitorId())
             ->setDs(FlagshipConstant::SDK_APP)
             ->setApiKey($this->config->getApiKey())
-            ->setTimeOut($this->config->getTimeOut());
+            ->setTimeOut($this->config->getTimeout());
 
         if (!$hit->isReady()) {
             $this->logError(

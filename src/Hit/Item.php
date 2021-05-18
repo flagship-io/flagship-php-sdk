@@ -21,12 +21,12 @@ class Item extends HitAbstract
     /**
      * @var string
      */
-    private $itemName = null;
+    private $productName = null;
 
     /**
      * @var string
      */
-    private $itemCode = null;
+    private $productSku = null;
 
     /**
      * @var float
@@ -47,16 +47,16 @@ class Item extends HitAbstract
      * Item constructor.
      *
      * @param string $transactionId : Transaction unique identifier.
-     * @param string $itemName      : Name of the item product.
-     * @param string $itemCode      : The SKU or item code.
+     * @param string $productName      : Name of the item product.
+     * @param string $productSku      : The SKU or item code.
      */
-    public function __construct($transactionId, $itemName, $itemCode)
+    public function __construct($transactionId, $productName, $productSku)
     {
         parent::__construct(HitType::ITEM);
 
         $this->setTransactionId($transactionId);
-        $this->setItemName($itemName);
-        $this->setItemCode($itemCode);
+        $this->setProductName($productName);
+        $this->setProductSku($productSku);
     }
 
     /**
@@ -89,23 +89,23 @@ class Item extends HitAbstract
      *
      * @return string
      */
-    public function getItemName()
+    public function getProductName()
     {
-        return $this->itemName;
+        return $this->productName;
     }
 
     /**
      * Specify name of the item product.
      *
-     * @param  string $itemName : Name of the item product.
+     * @param  string $productName : Name of the item product.
      * @return Item
      */
-    public function setItemName($itemName)
+    public function setProductName($productName)
     {
-        if (!$this->isNoEmptyString($itemName, 'itemName')) {
+        if (!$this->isNoEmptyString($productName, 'productName')) {
             return $this;
         }
-        $this->itemName = $itemName;
+        $this->productName = $productName;
         return $this;
     }
 
@@ -114,23 +114,23 @@ class Item extends HitAbstract
      *
      * @return string
      */
-    public function getItemCode()
+    public function getProductSku()
     {
-        return $this->itemCode;
+        return $this->productSku;
     }
 
     /**
      * Specify the SKU or item code.
      *
-     * @param  string $itemCode
+     * @param  string $productSku
      * @return Item
      */
-    public function setItemCode($itemCode)
+    public function setProductSku($productSku)
     {
-        if (!$this->isNoEmptyString($itemCode, 'itemCode')) {
+        if (!$this->isNoEmptyString($productSku, 'productSku')) {
             return $this;
         }
-        $this->itemCode = $itemCode;
+        $this->productSku = $productSku;
         return $this;
     }
 
@@ -216,8 +216,8 @@ class Item extends HitAbstract
     {
         $arrayParent = parent::toArray();
         $arrayParent[FlagshipConstant::TID_API_ITEM] = $this->getTransactionId();
-        $arrayParent[FlagshipConstant::IN_API_ITEM] = $this->getItemName();
-        $arrayParent[FlagshipConstant::IC_API_ITEM] = $this->getItemCode();
+        $arrayParent[FlagshipConstant::IN_API_ITEM] = $this->getProductName();
+        $arrayParent[FlagshipConstant::IC_API_ITEM] = $this->getProductSku();
 
         if ($this->getItemPrice()) {
             $arrayParent[FlagshipConstant::IP_API_ITEM] = $this->getItemPrice();
@@ -238,7 +238,7 @@ class Item extends HitAbstract
      */
     public function isReady()
     {
-        return parent::isReady() && $this->getTransactionId() && $this->getItemName() && $this->getItemCode();
+        return parent::isReady() && $this->getTransactionId() && $this->getProductName() && $this->getProductSku();
     }
 
     /**

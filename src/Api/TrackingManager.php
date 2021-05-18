@@ -27,7 +27,7 @@ class TrackingManager extends TrackingManagerAbstract
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($visitor->getConfig()->getTimeOut());
+            $this->httpClient->setTimeout($visitor->getConfig()->getTimeout());
             $url = $this->buildDecisionApiUrl(FlagshipConstant::URL_ACTIVATE_MODIFICATION);
             $postData = [
                 FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),

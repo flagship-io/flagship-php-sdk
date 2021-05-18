@@ -219,7 +219,7 @@ class Flagship
     /**
      * Create a new visitor with a context.
      *
-     * @param  $visitorId : Unique visitor identifier.
+     * @param string $visitorId : Unique visitor identifier.
      * @param  array $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return Visitor|null
      */

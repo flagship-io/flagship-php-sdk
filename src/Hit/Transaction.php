@@ -21,11 +21,11 @@ class Transaction extends HitAbstract
     /**
      * @var string
      */
-    private $transactionAffiliation;
+    private $affiliation;
     /**
      * @var float
      */
-    private $taxesAmount;
+    private $taxes;
     /**
      * @var string
      */
@@ -37,7 +37,7 @@ class Transaction extends HitAbstract
     /**
      * @var int
      */
-    private $itemsCount;
+    private $itemCount;
     /**
      * @var string
      */
@@ -49,23 +49,23 @@ class Transaction extends HitAbstract
     /**
      * @var float
      */
-    private $revenue;
+    private $totalRevenue;
     /**
      * @var float
      */
-    private $shippingCost;
+    private $shippingCosts;
 
     /**
      * Transaction constructor.
      *
-     * @param string $transactionId          : Transaction unique identifier..
-     * @param string $transactionAffiliation : Transaction affiliation.
+     * @param string $transactionId : Transaction unique identifier..
+     * @param string $affiliation   : Transaction affiliation.
      */
-    public function __construct($transactionId, $transactionAffiliation)
+    public function __construct($transactionId, $affiliation)
     {
         parent::__construct(HitType::TRANSACTION);
         $this->setTransactionId($transactionId);
-        $this->setTransactionAffiliation($transactionAffiliation);
+        $this->setAffiliation($affiliation);
     }
 
     /**
@@ -81,7 +81,7 @@ class Transaction extends HitAbstract
     /**
      * Set Transaction unique identifier.
      *
-     * @param  string $transactionId
+     * @param string $transactionId
      * @return Transaction
      */
     public function setTransactionId($transactionId)
@@ -98,28 +98,28 @@ class Transaction extends HitAbstract
      *
      * @return string
      */
-    public function getTransactionAffiliation()
+    public function getAffiliation()
     {
-        return $this->transactionAffiliation;
+        return $this->affiliation;
     }
 
     /**
      * set transaction affiliation
      *
-     * @param  string $transactionAffiliation
+     * @param string $affiliation
      * @return Transaction
      */
-    public function setTransactionAffiliation($transactionAffiliation)
+    public function setAffiliation($affiliation)
     {
         if (
             !$this->isNoEmptyString(
-                $transactionAffiliation,
-                'transactionAffiliation'
+                $affiliation,
+                'affiliation'
             )
         ) {
             return $this;
         }
-        $this->transactionAffiliation = $transactionAffiliation;
+        $this->affiliation = $affiliation;
         return $this;
     }
 
@@ -128,23 +128,23 @@ class Transaction extends HitAbstract
      *
      * @return float
      */
-    public function getTaxesAmount()
+    public function getTaxes()
     {
-        return $this->taxesAmount;
+        return $this->taxes;
     }
 
     /**
      * Specify the total amount of taxes
      *
-     * @param  float $taxesAmount
+     * @param float $taxes
      * @return Transaction
      */
-    public function setTaxesAmount($taxesAmount)
+    public function setTaxes($taxes)
     {
-        if (!$this->isNumeric($taxesAmount, 'taxesAmount')) {
+        if (!$this->isNumeric($taxes, 'taxes')) {
             return $this;
         }
-        $this->taxesAmount = $taxesAmount;
+        $this->taxes = $taxes;
         return $this;
     }
 
@@ -160,7 +160,7 @@ class Transaction extends HitAbstract
      * Specify the currency of transaction.
      *     NOTE: This value should be a valid ISO 4217 currency code.
      *
-     * @param  string $currency
+     * @param string $currency
      * @return Transaction
      */
     public function setCurrency($currency)
@@ -189,7 +189,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the coupon code used by the customer
      *
-     * @param  string $couponCode
+     * @param string $couponCode
      * @return Transaction
      */
     public function setCouponCode($couponCode)
@@ -206,23 +206,23 @@ class Transaction extends HitAbstract
      *
      * @return integer
      */
-    public function getItemsCount()
+    public function getItemCount()
     {
-        return $this->itemsCount;
+        return $this->itemCount;
     }
 
     /**
      * Specify the number of items in the transaction.
      *
-     * @param  integer $itemsCount
+     * @param integer $itemsCount
      * @return Transaction
      */
-    public function setItemsCount($itemsCount)
+    public function setItemCount($itemsCount)
     {
-        if (!$this->isInteger($itemsCount, 'itemsCount')) {
+        if (!$this->isInteger($itemsCount, 'itemCount')) {
             return $this;
         }
-        $this->itemsCount = $itemsCount;
+        $this->itemCount = $itemsCount;
         return $this;
     }
 
@@ -239,7 +239,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the shipping method.
      *
-     * @param  string $shippingMethod
+     * @param string $shippingMethod
      * @return Transaction
      */
     public function setShippingMethod($shippingMethod)
@@ -264,7 +264,7 @@ class Transaction extends HitAbstract
     /**
      * Specify the payment method used
      *
-     * @param  string $paymentMethod
+     * @param string $paymentMethod
      * @return Transaction
      */
     public function setPaymentMethod($paymentMethod)
@@ -281,24 +281,24 @@ class Transaction extends HitAbstract
      *
      * @return float
      */
-    public function getRevenue()
+    public function getTotalRevenue()
     {
-        return $this->revenue;
+        return $this->totalRevenue;
     }
 
     /**
      * Specify the total revenue associated with the transaction.
      *     NOTE: This value should include any shipping and/or tax amounts.
      *
-     * @param  float $revenue
+     * @param float $totalRevenue
      * @return Transaction
      */
-    public function setRevenue($revenue)
+    public function setTotalRevenue($totalRevenue)
     {
-        if (!$this->isNumeric($revenue, 'revenue')) {
+        if (!$this->isNumeric($totalRevenue, 'totalRevenue')) {
             return $this;
         }
-        $this->revenue = $revenue;
+        $this->totalRevenue = $totalRevenue;
         return $this;
     }
 
@@ -307,23 +307,23 @@ class Transaction extends HitAbstract
      *
      * @return string
      */
-    public function getShippingCost()
+    public function getShippingCosts()
     {
-        return $this->shippingCost;
+        return $this->shippingCosts;
     }
 
     /**
      * Specify the total shipping cost of the transaction\
      *
-     * @param  float $shippingCost
+     * @param float $shippingCosts
      * @return Transaction
      */
-    public function setShippingCost($shippingCost)
+    public function setShippingCosts($shippingCosts)
     {
-        if (!$this->isNumeric($shippingCost, 'shippingCost')) {
+        if (!$this->isNumeric($shippingCosts, 'shippingCosts')) {
             return $this;
         }
-        $this->shippingCost = $shippingCost;
+        $this->shippingCosts = $shippingCosts;
         return $this;
     }
 
@@ -334,10 +334,10 @@ class Transaction extends HitAbstract
     {
         $arrayParent = parent::toArray();
         $arrayParent[FlagshipConstant::TID_API_ITEM] = $this->getTransactionId();
-        $arrayParent[FlagshipConstant::TA_API_ITEM] = $this->getTransactionAffiliation();
+        $arrayParent[FlagshipConstant::TA_API_ITEM] = $this->getAffiliation();
 
-        if ($this->getTaxesAmount()) {
-            $arrayParent[FlagshipConstant::TT_API_ITEM] = $this->getTaxesAmount();
+        if ($this->getTaxes()) {
+            $arrayParent[FlagshipConstant::TT_API_ITEM] = $this->getTaxes();
         }
 
         if ($this->getCurrency()) {
@@ -348,8 +348,8 @@ class Transaction extends HitAbstract
             $arrayParent[FlagshipConstant::TCC_API_ITEM] = $this->getCouponCode();
         }
 
-        if ($this->getItemsCount()) {
-            $arrayParent[FlagshipConstant::ICN_API_ITEM] = $this->getItemsCount();
+        if ($this->getItemCount()) {
+            $arrayParent[FlagshipConstant::ICN_API_ITEM] = $this->getItemCount();
         }
 
         if ($this->getShippingMethod()) {
@@ -360,12 +360,12 @@ class Transaction extends HitAbstract
             $arrayParent[FlagshipConstant::PM_API_ITEM] = $this->getPaymentMethod();
         }
 
-        if ($this->getRevenue()) {
-            $arrayParent[FlagshipConstant::TR_API_ITEM] = $this->getRevenue();
+        if ($this->getTotalRevenue()) {
+            $arrayParent[FlagshipConstant::TR_API_ITEM] = $this->getTotalRevenue();
         }
 
-        if ($this->getShippingCost()) {
-            $arrayParent[FlagshipConstant::TS_API_ITEM] = $this->getShippingCost();
+        if ($this->getShippingCosts()) {
+            $arrayParent[FlagshipConstant::TS_API_ITEM] = $this->getShippingCosts();
         }
 
         return $arrayParent;
@@ -376,7 +376,7 @@ class Transaction extends HitAbstract
      */
     public function isReady()
     {
-        return parent::isReady() && $this->getTransactionId() && $this->getTransactionAffiliation();
+        return parent::isReady() && $this->getTransactionId() && $this->getAffiliation();
     }
 
     /**

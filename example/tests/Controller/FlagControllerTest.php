@@ -82,19 +82,11 @@ class FlagControllerTest extends TestCase
         $data = $this->startFlagShip();
         $visitor = $this->getVisitorMock($data['environment_id'], $data['api_key']);
 
-
-
-        $visitor->expects($this->exactly(2))
-            ->method('activateModification')
-            ->willReturnOnConsecutiveCalls(true, false);
+        $visitor->expects($this->once())
+            ->method('activateModification');
 
         $this->get('/flag/key/activate?' .
             http_build_query(['type' => 'string','activate' => true, 'defaultValue' => 'yes']));
         $this->assertSame(json_encode('successful operation'), $this->response->content());
-
-        $this->get('/flag/key/activate?' .
-            http_build_query(['type' => 'string','activate' => true, 'defaultValue' => 'yes']));
-
-        $this->assertSame(json_encode(['error' => 'Failed']), $this->response->content());
     }
 }

@@ -37,7 +37,7 @@ abstract class TrackingManagerAbstract
     }
 
     /**
-     * Send to that this user has seen this modification
+     * Send to server that this user has seen this modification
      *
      * @param  Visitor      $visitor
      * @param  Modification $modification

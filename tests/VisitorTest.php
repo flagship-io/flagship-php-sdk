@@ -4,6 +4,7 @@ namespace Flagship;
 
 use Flagship\Decision\ApiManager;
 use Flagship\Decision\DecisionManagerAbstract;
+use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\HitType;
@@ -772,7 +773,7 @@ class VisitorTest extends TestCase
         $transitionAffiliation = "transitionAffiliation";
         $transition = new Transaction($transitionId, $transitionAffiliation);
 
-        $eventCategory = "eventCategory";
+        $eventCategory = EventCategory::ACTION_TRACKING;
         $eventAction = "eventAction";
 
         $event = new Event($eventCategory, $eventAction);

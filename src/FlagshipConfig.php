@@ -31,7 +31,7 @@ class FlagshipConfig implements JsonSerializable
     /**
      * @var int
      */
-    private $timeOut = FlagshipConstant::REQUEST_TIME_OUT;
+    private $timeout = FlagshipConstant::REQUEST_TIME_OUT;
     /**
      * @var LoggerInterface
      */
@@ -124,21 +124,21 @@ class FlagshipConfig implements JsonSerializable
     /**
      * @return int
      */
-    public function getTimeOut()
+    public function getTimeout()
     {
-        return $this->timeOut;
+        return $this->timeout;
     }
 
     /**
      * Specify timeout for api request.
      *
-     * @param int $timeOut milliseconds for connect and read timeouts. Default is 2000.
+     * @param int $timeout : seconds for connect and read timeouts. Default is 2.
      * @return FlagshipConfig
      */
-    public function setTimeOut($timeOut)
+    public function setTimeout($timeout)
     {
-        if (is_numeric($timeOut) && $timeOut > 0) {
-            $this->timeOut = $timeOut;
+        if (is_numeric($timeout) && $timeout > 0) {
+            $this->timeout = $timeout;
         }
         return $this;
     }
@@ -207,7 +207,7 @@ class FlagshipConfig implements JsonSerializable
         return [
             "environmentId" => $this->getEnvId(),
             "apiKey" => $this->getApiKey(),
-            "timeout" => $this->getTimeOut(),
+            "timeout" => $this->getTimeout(),
         ];
     }
 }

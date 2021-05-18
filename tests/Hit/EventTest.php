@@ -2,6 +2,7 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +16,7 @@ class EventTest extends TestCase
         $envId = "envId";
 
         $eventAction = "eventAction";
-        $eventCategory = "eventCategory";
+        $eventCategory = EventCategory::USER_ENGAGEMENT;
         $eventLabel = "eventLabel";
         $eventValue = 458;
 
@@ -39,12 +40,12 @@ class EventTest extends TestCase
 
         $this->assertSame($eventArray, $event->toArray());
 
-        $event->setLabel($eventLabel);
+        $event->setEventLabel($eventLabel);
         $eventArray[FlagshipConstant::EVENT_LABEL_API_ITEM] = $eventLabel;
 
         $this->assertSame($eventArray, $event->toArray());
 
-        $event->setValue($eventValue);
+        $event->setEventValue($eventValue);
         $eventArray[FlagshipConstant::EVENT_VALUE_API_ITEM] = $eventValue;
 
         $this->assertSame($eventArray, $event->toArray());
@@ -61,17 +62,18 @@ class EventTest extends TestCase
 
         $event->setLogManager($logManagerMock);
 
-        $errorMessage = function ($itemName, $typeName) {
-            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $errorMessage = function ($itemName, $typeName) use ($flagshipSdk) {
+
             return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
         };
 
         $logManagerMock->expects($this->exactly(4))->method('error')
             ->withConsecutive(
-                [$errorMessage('category', 'string')],
+                ["[$flagshipSdk] " . sprintf(Event::CATEGORY_ERROR, 'category')],
                 [$errorMessage('action', 'string')],
-                [$errorMessage('label', 'string')],
-                [$errorMessage('value', 'numeric')]
+                [$errorMessage('eventLabel', 'string')],
+                [$errorMessage('eventValue', 'numeric')]
             );
 
         //Test category validation with empty
@@ -81,18 +83,34 @@ class EventTest extends TestCase
         $event->setAction(455);
 
         //Test label validation with no string
-        $event->setLabel([]);
+        $event->setEventLabel([]);
 
         //Test value validation with no numeric
-        $event->setValue('abc');
+        $event->setEventValue('abc');
 
         $this->assertSame($eventArray, $event->toArray());
+    }
+
+    public function testSetCategory()
+    {
+        $eventAction = 'action';
+        $event = new Event(EventCategory::ACTION_TRACKING, $eventAction);
+
+        $this->assertSame(EventCategory::ACTION_TRACKING, $event->getCategory());
+
+        $event->setCategory(EventCategory::USER_ENGAGEMENT);
+
+        $this->assertSame(EventCategory::USER_ENGAGEMENT, $event->getCategory());
+
+        $event->setCategory("otherCat");
+
+        $this->assertSame(EventCategory::USER_ENGAGEMENT, $event->getCategory());
     }
 
     public function testIsReady()
     {
         //Test isReady without require HitAbstract fields
-        $eventCategory = "eventCategory";
+        $eventCategory = EventCategory::USER_ENGAGEMENT;
         $eventAction = "eventAction";
         $event = new Event($eventCategory, $eventAction);
 
@@ -111,7 +129,7 @@ class EventTest extends TestCase
 
         //Test isReady with require HitAbstract fields and  with empty eventAction
         $eventAction = "";
-        $eventCategory = "eventCategory";
+        $eventCategory = EventCategory::ACTION_TRACKING;
         $event = new Event($eventCategory, $eventAction);
 
         $event->setEnvId('envId')
@@ -123,7 +141,7 @@ class EventTest extends TestCase
         $this->assertSame(Event::ERROR_MESSAGE, $event->getErrorMessage());
 
         //Test with require HitAbstract fields and require Transaction fields
-        $eventCategory = "eventCategory";
+        $eventCategory = EventCategory::ACTION_TRACKING;
         $eventAction = "ItemName";
         $event = new Event($eventCategory, $eventAction);
         $event->setEnvId('envId')

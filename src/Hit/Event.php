@@ -2,6 +2,7 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 
@@ -12,7 +13,8 @@ use Flagship\Enum\HitType;
  */
 class Event extends HitAbstract
 {
-    const ERROR_MESSAGE = 'event category and event action are required';
+    const ERROR_MESSAGE  = 'event category and event action are required';
+    const CATEGORY_ERROR = "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
     /**
      * @var string
      */
@@ -26,17 +28,17 @@ class Event extends HitAbstract
     /**
      * @var string
      */
-    private $label;
+    private $eventLabel;
 
     /**
      * @var float
      */
-    private $value;
+    private $eventValue;
 
     /**
      * Event constructor.
      *
-     * @param string $category : Action Tracking or User Engagement.
+     * @param string $category : Action Tracking or User Engagement. @see Flagship\Enum\EventCategory
      * @param string $action   : Event name that will also serve as the KPI
      *                         that you will have inside your reporting.
      */
@@ -59,13 +61,17 @@ class Event extends HitAbstract
 
     /**
      * Specify Action Tracking or User Engagement.
-     *
+     * @see \Flagship\Enum\EventCategory
      * @param  string $category
      * @return Event
      */
     public function setCategory($category)
     {
-        if (!$this->isNoEmptyString($category, 'category')) {
+        if ($category !== EventCategory::ACTION_TRACKING && $category !== EventCategory::USER_ENGAGEMENT) {
+            $this->logError(
+                $this->logManager,
+                sprintf(self::CATEGORY_ERROR, 'category')
+            );
             return $this;
         }
         $this->category = $category;
@@ -103,23 +109,23 @@ class Event extends HitAbstract
      *
      * @return string
      */
-    public function getLabel()
+    public function getEventLabel()
     {
-        return $this->label;
+        return $this->eventLabel;
     }
 
     /**
      * Specify additional description of event.
      *
-     * @param  string $label : event label.
+     * @param  string $eventLabel : event label.
      * @return Event
      */
-    public function setLabel($label)
+    public function setEventLabel($eventLabel)
     {
-        if (!$this->isNoEmptyString($label, 'label')) {
+        if (!$this->isNoEmptyString($eventLabel, 'eventLabel')) {
             return $this;
         }
-        $this->label = $label;
+        $this->eventLabel = $eventLabel;
         return $this;
     }
 
@@ -128,9 +134,9 @@ class Event extends HitAbstract
      *
      * @return float
      */
-    public function getValue()
+    public function getEventValue()
     {
-        return $this->value;
+        return $this->eventValue;
     }
 
     /**
@@ -138,15 +144,15 @@ class Event extends HitAbstract
      *      (e.g. you earn 10 to 100 euros depending on the quality of lead generated).
      *      NOTE: this value must be non-negative.
      *
-     * @param  float $value : event value
+     * @param  float $eventValue : event value
      * @return Event
      */
-    public function setValue($value)
+    public function setEventValue($eventValue)
     {
-        if (!$this->isNumeric($value, 'value')) {
+        if (!$this->isNumeric($eventValue, 'eventValue')) {
             return $this;
         }
-        $this->value = $value;
+        $this->eventValue = $eventValue;
         return $this;
     }
 
@@ -159,12 +165,12 @@ class Event extends HitAbstract
         $arrayParent[FlagshipConstant::EVENT_CATEGORY_API_ITEM] = $this->getCategory();
         $arrayParent[FlagshipConstant::EVENT_ACTION_API_ITEM] = $this->getAction();
 
-        if ($this->getLabel()) {
-            $arrayParent[FlagshipConstant::EVENT_LABEL_API_ITEM] = $this->getLabel();
+        if ($this->getEventLabel()) {
+            $arrayParent[FlagshipConstant::EVENT_LABEL_API_ITEM] = $this->getEventLabel();
         }
 
-        if ($this->getValue()) {
-            $arrayParent[FlagshipConstant::EVENT_VALUE_API_ITEM] = $this->getValue();
+        if ($this->getEventValue()) {
+            $arrayParent[FlagshipConstant::EVENT_VALUE_API_ITEM] = $this->getEventValue();
         }
 
         return $arrayParent;

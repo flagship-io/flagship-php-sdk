@@ -14,6 +14,7 @@ use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Transaction;
 use Flagship\Model\Modification;
+use Flagship\Utils\ConfigManager;
 use Flagship\Utils\HttpClient;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +35,10 @@ class VisitorTest extends TestCase
             'name' => 'visitor_name',
             'age' => 25
         ];
-        $visitor = new Visitor($config, $visitorId, $visitorContext);
+
+        $configManager = (new ConfigManager())->setConfig($config);
+
+        $visitor = new Visitor($configManager, $visitorId, $visitorContext);
         $this->assertEquals($visitorId, $visitor->getVisitorId());
 
         //Test new visitorId
@@ -101,7 +105,8 @@ class VisitorTest extends TestCase
             'age' => 25
         ];
 
-        $visitor = new Visitor($config, $visitorId, $visitorContext);
+        $configManager = (new ConfigManager())->setConfig($config);
+        $visitor = new Visitor($configManager, $visitorId, $visitorContext);
         //Test number value
         $ageKey = 'age';
         $newAge = 45;
@@ -174,8 +179,8 @@ class VisitorTest extends TestCase
             'name' => 'visitor_name',
             'age' => 25
         ];
-
-        $visitor = new Visitor($config, $visitorId, $visitorContext);
+        $configManager = (new ConfigManager())->setConfig($config);
+        $visitor = new Visitor($configManager, $visitorId, $visitorContext);
 
         $newVisitorContext = [
             'vip' => true,
@@ -247,7 +252,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param        Modification[] $modifications
+     * @param Modification[] $modifications
      */
     public function testSynchronizedModifications($modifications)
     {
@@ -266,9 +271,10 @@ class VisitorTest extends TestCase
         $apiManagerStub->expects($this->once())->method('getCampaignModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
 
-        $config->setDecisionManager($apiManagerStub);
+        $configManager = (new ConfigManager())->setConfig($config);
+        $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new Visitor($config, "visitorId", []);
+        $visitor = new Visitor($configManager, "visitorId", []);
 
         $visitor->synchronizedModifications();
 
@@ -361,7 +367,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param        Modification[] $modifications
+     * @param Modification[] $modifications
      */
     public function testSynchronizedModificationsWithoutDecisionManager($modifications)
     {
@@ -378,8 +384,8 @@ class VisitorTest extends TestCase
         $config = new FlagshipConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
-
-        $visitor = new Visitor($config, "visitorId", []);
+        $configManager = (new ConfigManager())->setConfig($config);
+        $visitor = new Visitor($configManager, "visitorId", []);
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
@@ -394,7 +400,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param        Modification[] $modifications
+     * @param Modification[] $modifications
      */
     public function testGetModificationLog($modifications)
     {
@@ -412,11 +418,12 @@ class VisitorTest extends TestCase
         $apiManagerStub->method('getCampaignModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
 
-        $config->setDecisionManager($apiManagerStub);
+        $configManager = (new ConfigManager())->setConfig($config);
+        $configManager->setDecisionManager($apiManagerStub);
 
         $visitorMock = $this->getMockBuilder('Flagship\Visitor')
             ->setMethods(['logError'])
-            ->setConstructorArgs([$config, "visitorId", []])->getMock();
+            ->setConstructorArgs([$configManager, "visitorId", []])->getMock();
 
         $visitorMock->synchronizedModifications();
 
@@ -480,7 +487,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param        Modification[] $modifications
+     * @param Modification[] $modifications
      */
     public function testGetModificationInfo($modifications)
     {
@@ -506,8 +513,10 @@ class VisitorTest extends TestCase
 
         $config = new FlagshipConfig('envId', 'apiKey');
 
-        $config->setDecisionManager($apiManagerStub);
+
         $config->setLogManager($logManagerStub);
+        $configManager = (new ConfigManager())->setConfig($config);
+        $configManager->setDecisionManager($apiManagerStub);
 
         $paramsExpected = [];
 
@@ -516,7 +525,7 @@ class VisitorTest extends TestCase
         $logManagerStub->expects($this->exactly(3))->method('error')
             ->withConsecutive($paramsExpected);
 
-        $visitor = new Visitor($config, "visitorId", []);
+        $visitor = new Visitor($configManager, "visitorId", []);
 
         $visitor->synchronizedModifications();
 
@@ -561,7 +570,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param        Modification[] $modifications
+     * @param Modification[] $modifications
      */
     public function testActivateModification($modifications)
     {
@@ -602,11 +611,12 @@ class VisitorTest extends TestCase
         $apiManagerStub->method('getCampaignModifications')
             ->willReturn($modifications);
 
-        $config->setDecisionManager($apiManagerStub);
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setDecisionManager($apiManagerStub)
+            ->setTrackingManager($trackerManagerStub);
 
-        $config->setTrackingManager($trackerManagerStub);
-
-        $visitor = new Visitor($config, "visitorId", []);
+        $visitor = new Visitor($configManager, "visitorId", []);
 
         $trackerManagerStub->expects($this->once())
             ->method('sendActive')
@@ -639,7 +649,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param        Modification[] $modifications
+     * @param Modification[] $modifications
      */
     public function testActivateModificationWithoutTrackerManager($modifications)
     {
@@ -669,10 +679,12 @@ class VisitorTest extends TestCase
         $apiManagerStub->method('getCampaignModifications')
             ->willReturn($modifications);
 
-        $config->setDecisionManager($apiManagerStub);
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setDecisionManager($apiManagerStub);
 
 
-        $visitor = new Visitor($config, "visitorId", []);
+        $visitor = new Visitor($configManager, "visitorId", []);
 
         $visitor->synchronizedModifications();
 
@@ -688,7 +700,7 @@ class VisitorTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param        Modification[] $modifications
+     * @param Modification[] $modifications
      */
     public function testGetModificationWithActive($modifications)
     {
@@ -725,14 +737,17 @@ class VisitorTest extends TestCase
         $config = new FlagshipConfig('envId', 'apiKey');
 
         $config->setLogManager($logManagerStub);
-        $config->setTrackingManager($trackerManagerStub);
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setTrackingManager($trackerManagerStub);
 
         $apiManagerStub->method('getCampaignModifications')
             ->willReturn($modifications);
-        $config->setDecisionManager($apiManagerStub);
 
+        $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new Visitor($config, "visitorId", []);
+        $visitor = new Visitor($configManager, "visitorId", []);
 
         $trackerManagerStub->expects($this->once())
             ->method('sendActive')
@@ -760,13 +775,15 @@ class VisitorTest extends TestCase
         $visitorId = "visitorId";
 
         $config = new FlagshipConfig($envId, $apiKey);
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setTrackingManager($trackerManagerMock);
 
-        $config->setTrackingManager($trackerManagerMock);
         $apiManager = new ApiManager(new HttpClient());
 
-        $config->setDecisionManager($apiManager);
+        $configManager->setDecisionManager($apiManager);
 
-        $visitor = new Visitor($config, $visitorId);
+        $visitor = new Visitor($configManager, $visitorId);
 
         $pageUrl = 'https://locahost';
         $page = new Page($pageUrl);
@@ -864,7 +881,10 @@ class VisitorTest extends TestCase
 
         $config->setLogManager($logManagerMock);
 
-        $visitor = new Visitor($config, $visitorId);
+        $configManager = (new ConfigManager())
+            ->setConfig($config);
+
+        $visitor = new Visitor($configManager, $visitorId);
 
         $pageUrl = 'https://locahost';
         $page = new Page($pageUrl);
@@ -887,7 +907,7 @@ class VisitorTest extends TestCase
         //Set DecisionManager
 
         $decisionManager = new ApiManager(new HttpClient());
-        $config->setDecisionManager($decisionManager);
+        $configManager->setDecisionManager($decisionManager);
 
         //Test send with TrackingManager null
         $paramsExpected[] = [
@@ -898,7 +918,7 @@ class VisitorTest extends TestCase
         $visitor->sendHit($page);
 
         //Test with TrackingManager not null
-        $config->setTrackingManager($trackerManagerMock);
+        $configManager->setTrackingManager($trackerManagerMock);
 
         // Test SendHit with invalid require field
         $page = new Page(null);
@@ -929,12 +949,14 @@ class VisitorTest extends TestCase
         $config = new FlagshipConfig();
         $visitorId = "visitor_id";
         $context = ["age" => 20];
-        $visitor = new Visitor($config, $visitorId, $context);
+        $configManager = (new ConfigManager())->setConfig($config);
+
+        $visitor = new Visitor($configManager, $visitorId, $context);
 
         $this->assertJsonStringEqualsJsonString(
             json_encode([
-            'visitorId' => $visitorId,
-            'context' => $context,
+                'visitorId' => $visitorId,
+                'context' => $context,
             ]),
             json_encode($visitor)
         );

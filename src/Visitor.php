@@ -8,6 +8,7 @@ use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
+use Flagship\Utils\ConfigManager;
 use JsonSerializable;
 
 /**
@@ -37,19 +38,32 @@ class Visitor implements JsonSerializable
      * @var Modification[]
      */
     private $modifications = [];
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
 
     /**
      * Create a new visitor.
      *
-     * @param FlagshipConfig $config
-     * @param string         $visitorId : visitor unique identifier.
-     * @param array          $context   : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
+     * @param ConfigManager $configManager
+     * @param string $visitorId : visitor unique identifier.
+     * @param array $context : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
      */
-    public function __construct(FlagshipConfig $config, $visitorId, array $context = [])
+    public function __construct(ConfigManager $configManager, $visitorId, array $context = [])
     {
-        $this->config = $config;
+        $this->config = $configManager->getConfig();
         $this->setVisitorId($visitorId);
         $this->updateContextCollection($context);
+        $this->configManager = $configManager;
+    }
+
+    /**
+     * @return ConfigManager
+     */
+    public function getConfigManager()
+    {
+        return $this->configManager;
     }
 
     /**
@@ -174,7 +188,7 @@ class Visitor implements JsonSerializable
             return true;
         }
 
-        $check = $this->getConfig()->getDecisionManager()->getIsPanicMode();
+        $check = $this->getConfigManager()->getDecisionManager()->getIsPanicMode();
 
         if ($check) {
             $this->logError(
@@ -317,7 +331,7 @@ class Visitor implements JsonSerializable
      */
     private function hasDecisionManager($process)
     {
-        if (!$this->config->getDecisionManager()) {
+        if (!$this->getConfigManager()->getDecisionManager()) {
             $this->logError(
                 $this->config,
                 FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
@@ -338,7 +352,7 @@ class Visitor implements JsonSerializable
         if (!$this->hasDecisionManager(FlagshipConstant::TAG_SYNCHRONIZED_MODIFICATION)) {
             return;
         }
-        $this->modifications = $this->config->getDecisionManager()->getCampaignModifications($this);
+        $this->modifications = $this->getConfigManager()->getDecisionManager()->getCampaignModifications($this);
     }
 
     /**
@@ -349,7 +363,7 @@ class Visitor implements JsonSerializable
      */
     private function hasTrackingManager($process)
     {
-        $check = $this->config->getTrackingManager();
+        $check = $this->getConfigManager()->getTrackingManager();
 
         if (!$check) {
             $this->logError(
@@ -388,7 +402,7 @@ class Visitor implements JsonSerializable
             return ;
         }
 
-        $this->config->getTrackingManager()->sendActive($this, $modification);
+        $this->getConfigManager()->getTrackingManager()->sendActive($this, $modification);
     }
 
     /**
@@ -419,7 +433,7 @@ class Visitor implements JsonSerializable
             return;
         }
 
-        $this->config->getTrackingManager()->sendHit($hit);
+        $this->getConfigManager()->getTrackingManager()->sendHit($hit);
     }
 
     /**

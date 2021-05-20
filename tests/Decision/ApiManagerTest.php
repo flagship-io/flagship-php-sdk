@@ -6,6 +6,7 @@ use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\FlagshipConfig;
 use Flagship\Model\HttpResponse;
+use Flagship\Utils\ConfigManager;
 use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
@@ -93,8 +94,9 @@ class ApiManagerTest extends TestCase
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
         $manager = new ApiManager($httpClientMock);
+        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
-        $visitor = new Visitor(new FlagshipConfig(), $visitorId, []);
+        $visitor = new Visitor($configManager, $visitorId, []);
 
         $modifications = $manager->getCampaignModifications($visitor);
 
@@ -133,8 +135,9 @@ class ApiManagerTest extends TestCase
         $manager = new ApiManager($httpClientMock);
 
         $this->assertFalse($manager->getIsPanicMode());
+        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
-        $visitor = new Visitor(new FlagshipConfig(), $visitorId, []);
+        $visitor = new Visitor($configManager, $visitorId, []);
 
         $modifications = $manager->getCampaignModifications($visitor);
 
@@ -204,8 +207,9 @@ class ApiManagerTest extends TestCase
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
         $manager = new ApiManager($httpClientMock);
+        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
-        $visitor = new Visitor(new FlagshipConfig(), $visitorId, []);
+        $visitor = new Visitor($configManager, $visitorId, []);
 
         $modifications = $manager->getCampaignModifications($visitor);
 
@@ -243,10 +247,12 @@ class ApiManagerTest extends TestCase
         );
 
         $config->setLogManager($logManagerStub);
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config);
 
         $apiManager = new ApiManager($httpClientMock);
 
-        $visitor = new Visitor($config, 'visitor_id', ['age' => 15]);
+        $visitor = new Visitor($configManager, 'visitor_id', ['age' => 15]);
         $value = $apiManager->getCampaignModifications($visitor);
 
         $this->assertSame([], $value);

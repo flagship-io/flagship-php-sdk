@@ -154,6 +154,7 @@ class Visitor implements JsonSerializable
 
     /**
      * clear the actual visitor context
+     * @return void
      */
     public function clearContext()
     {

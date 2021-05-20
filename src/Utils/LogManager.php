@@ -2,8 +2,9 @@
 
 namespace Flagship\Utils;
 
-use Flagship\Enum\LogLevel;
+
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 class LogManager implements LoggerInterface
 {

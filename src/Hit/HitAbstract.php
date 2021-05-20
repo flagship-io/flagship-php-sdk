@@ -3,8 +3,8 @@
 namespace Flagship\Hit;
 
 use Flagship\Enum\FlagshipConstant;
+use Flagship\FlagshipConfig;
 use Flagship\Traits\LogTrait;
-use Flagship\Utils\LogManager;
 
 /**
  * Class HitAbstract
@@ -24,28 +24,17 @@ abstract class HitAbstract
      * @var string
      */
     private $ds;
-    /**
-     * @var string
-     */
-    private $envId;
-    /**
-     * @var string
-     */
-    private $apiKey;
+
     /**
      * @var string
      * @see \Flagship\Enum\HitType
      */
     protected $type;
-    /**
-     * @var int
-     */
-    protected $timeOut = FlagshipConstant::REQUEST_TIME_OUT;
 
     /**
-     * @var LogManager
+     * @var FlagshipConfig
      */
-    protected $logManager;
+    protected $config;
 
     /**
      * HitAbstract constructor.
@@ -72,7 +61,7 @@ abstract class HitAbstract
     {
         if (empty($value) || !is_string($value)) {
             $this->logError(
-                $this->logManager,
+                $this->config,
                 sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'string')
             );
             return false;
@@ -89,7 +78,7 @@ abstract class HitAbstract
     {
         if (!is_numeric($value)) {
             $this->logError(
-                $this->logManager,
+                $this->config,
                 sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
             );
             return false;
@@ -106,7 +95,7 @@ abstract class HitAbstract
     {
         if (!is_int($value)) {
             $this->logError(
-                $this->logManager,
+                $this->config,
                 sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'integer')
             );
             return false;
@@ -153,68 +142,6 @@ abstract class HitAbstract
     }
 
     /**
-     * @return string
-     */
-    public function getEnvId()
-    {
-        return $this->envId;
-    }
-
-    /**
-     * Specifies customer environment id provided by Flagship
-     *
-     * @param  string $envId
-     * @return HitAbstract
-     */
-    public function setEnvId($envId)
-    {
-        $this->envId = $envId;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getApiKey()
-    {
-        return $this->apiKey;
-    }
-
-    /**
-     * Specifies customer secure api key provided by Flagship.
-     *
-     * @param  string $apiKey
-     * @return HitAbstract
-     */
-    public function setApiKey($apiKey)
-    {
-        $this->apiKey = $apiKey;
-        return $this;
-    }
-
-    /**
-     * Timeout for api request.
-     *
-     * @return int
-     */
-    public function getTimeOut()
-    {
-        return $this->timeOut;
-    }
-
-    /**
-     * Specify timeout for api request.
-     *
-     * @param  int $timeOut
-     * @return HitAbstract
-     */
-    public function setTimeOut($timeOut)
-    {
-        $this->timeOut = $timeOut;
-        return $this;
-    }
-
-    /**
      * Hit Type
      *
      * @see    \Flagship\Enum\HitType
@@ -223,6 +150,24 @@ abstract class HitAbstract
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return FlagshipConfig
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param FlagshipConfig $config
+     * @return HitAbstract
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+        return $this;
     }
 
 
@@ -236,27 +181,9 @@ abstract class HitAbstract
         return [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getEnvId(),
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
             FlagshipConstant::T_API_ITEM => $this->getType()
         ];
-    }
-
-    /**
-     * @return LogManager
-     */
-    public function getLogManager()
-    {
-        return $this->logManager;
-    }
-
-    /**
-     * @param  LogManager $logManager
-     * @return HitAbstract
-     */
-    public function setLogManager($logManager)
-    {
-        $this->logManager = $logManager;
-        return $this;
     }
 
     /**
@@ -266,7 +193,8 @@ abstract class HitAbstract
      */
     public function isReady()
     {
-        return $this->getVisitorId() && $this->getDs() && $this->getEnvId() && $this->getType();
+        return $this->getVisitorId() && $this->getDs() && $this->getConfig() &&
+            $this->getConfig()->getEnvId() && $this->getType();
     }
 
     /**

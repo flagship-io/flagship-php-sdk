@@ -3,35 +3,37 @@
 namespace Flagship\Traits;
 
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\LogLevel;
+use Flagship\FlagshipConfig;
 use Psr\Log\LoggerInterface;
 
 trait LogTrait
 {
     /**
-     * @param LoggerInterface $logManager
-     * @param $message
-     * @param array               $context
+     * @param FlagshipConfig $config
+     * @param string $message
+     * @param array $context
      */
-    protected function logError($logManager, $message, $context = [])
+    protected function logError($config, $message, $context = [])
     {
-        if (is_null($logManager)) {
+        if (!$config || $config->getLogLevel() < LogLevel::ERROR || is_null($config->getLogManager())) {
             return;
         }
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $logManager->error("[$flagshipSdk] $message", $context);
+        $config->getLogManager()->error("[$flagshipSdk] $message", $context);
     }
 
     /**
-     * @param LoggerInterface $logManager
-     * @param $message
-     * @param array               $context
+     * @param FlagshipConfig $config
+     * @param string $message
+     * @param array $context
      */
-    protected function logInfo($logManager, $message, $context = [])
+    protected function logInfo($config, $message, $context = [])
     {
-        if (is_null($logManager)) {
+        if (!$config || $config->getLogLevel() < LogLevel::INFO || is_null($config->getLogManager())) {
             return;
         }
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $logManager->info("[$flagshipSdk] $message", $context);
+        $config->getLogManager()->info("[$flagshipSdk] $message", $context);
     }
 }

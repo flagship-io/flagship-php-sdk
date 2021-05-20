@@ -4,6 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class TransactionTest extends TestCase
@@ -28,8 +29,9 @@ class TransactionTest extends TestCase
         $envId = "envId";
         $ds = FlagshipConstant::SDK_APP;
         $visitorId = "visitorId";
+        $config = new FlagshipConfig($envId);
 
-        $transaction->setVisitorId($visitorId)->setDs($ds)->setEnvId($envId);
+        $transaction->setVisitorId($visitorId)->setDs($ds)->setConfig($config);
 
         $transactionArray = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
@@ -89,7 +91,7 @@ class TransactionTest extends TestCase
 
         $this->assertSame($transactionArray, $transaction->toArray());
 
-        $transaction->setLogManager($logManagerMock);
+        $transaction->getConfig()->setLogManager($logManagerMock);
 
         $errorMessage = function ($itemName, $typeName) {
             $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
@@ -162,8 +164,9 @@ class TransactionTest extends TestCase
         $transactionId = null;
         $transactionAffiliation = "transactionAffiliation";
         $transaction = new Transaction($transactionId, $transactionAffiliation);
+        $config = new FlagshipConfig('envId');
 
-        $transaction->setEnvId('envId')
+        $transaction->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -174,7 +177,7 @@ class TransactionTest extends TestCase
         $transactionId = "transactionId";
         $transaction = new Transaction($transactionId, $transactionAffiliation);
 
-        $transaction->setEnvId('envId')
+        $transaction->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -186,7 +189,8 @@ class TransactionTest extends TestCase
         $transactionId = "transactionId";
         $transactionAffiliation = "ItemName";
         $transaction = new Transaction($transactionId, $transactionAffiliation);
-        $transaction->setEnvId('envId')
+
+        $transaction->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 

@@ -6,8 +6,9 @@ use Flagship\Api\TrackingManager;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\LogLevel;
 use Flagship\Utils\HttpClient;
-use Flagship\Utils\LogManager;
+use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
@@ -39,6 +40,26 @@ class FlagshipConfigTest extends TestCase
         $this->assertEquals($timeOut, $config->getTimeout());
     }
 
+    public function testSetLogLevel()
+    {
+        $envId = "envId";
+        $apiKey = "apiKey";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
+
+        $config->setLogLevel(-2);
+        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
+
+        $config->setLogLevel(12);
+        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
+
+        $config->setLogLevel("abc");
+        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
+
+        $config->setLogLevel(LogLevel::ERROR);
+        $this->assertSame(LogLevel::ERROR, $config->getLogLevel());
+    }
     /**
      * @dataProvider configData
      * @param        array $configData
@@ -106,6 +127,7 @@ class FlagshipConfigTest extends TestCase
             "environmentId" => 'envId',
             "apiKey" => "apiKey",
             "timeout" => 2000,
+            "logLevel" => LogLevel::ALL
         ];
 
         $config = new FlagshipConfig($data['environmentId'], $data['apiKey']);
@@ -115,16 +137,8 @@ class FlagshipConfigTest extends TestCase
             json_encode($data),
             json_encode($config)
         );
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $config->setLogManager($logManager);
         $this->assertSame($logManager, $config->getLogManager());
-
-        $decisionManager = new ApiManager(new HttpClient());
-        $config->setDecisionManager($decisionManager);
-        $this->assertSame($decisionManager, $config->getDecisionManager());
-
-        $trackingManager = new TrackingManager(new HttpClient());
-        $config->setTrackingManager($trackingManager);
-        $this->assertSame($trackingManager, $config->getTrackingManager());
     }
 }

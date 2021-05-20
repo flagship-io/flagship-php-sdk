@@ -9,7 +9,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
-use Flagship\Utils\LogManager;
+use Flagship\Utils\FlagshipLogManager;
 use Psr\Log\LoggerInterface;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
@@ -46,7 +46,7 @@ class FlagshipTest extends TestCase
         );
         $container->bind(
             'Psr\Log\LoggerInterface',
-            'Flagship\Utils\LogManager'
+            'Flagship\Utils\FlagshipLogManager'
         );
         return $container;
     }
@@ -96,7 +96,7 @@ class FlagshipTest extends TestCase
             switch ($args[0]) {
                 case 'Flagship\FlagshipConfig':
                     return $config;
-                case 'Flagship\Utils\LogManager':
+                case 'Psr\Log\LoggerInterface':
                     return $this->logManagerMock;
                 case 'Flagship\Decision\ApiManager':
                     return $apiManager;
@@ -144,7 +144,7 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
         $config = new FlagshipConfig($envId, $apiKey);
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder(
@@ -216,7 +216,7 @@ class FlagshipTest extends TestCase
         $apiKey = "apiKey";
 
         $config = new FlagshipConfig($envId, $apiKey);
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
@@ -252,7 +252,7 @@ class FlagshipTest extends TestCase
         $apiKey = "apiKey";
 
         $config = new FlagshipConfig($envId, $apiKey);
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder('Flagship\Flagship')

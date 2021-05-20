@@ -251,6 +251,7 @@ class VisitorTest extends TestCase
      */
     public function testSynchronizedModifications($modifications)
     {
+
         $apiManagerStub = $this->getMockForAbstractClass(
             'Flagship\Decision\DecisionManagerAbstract',
             [],
@@ -258,11 +259,11 @@ class VisitorTest extends TestCase
             false,
             true,
             true,
-            ['getModifications', 'getCampaigns', 'getConfig']
+            ['getCampaignModifications', 'getConfig']
         );
         $config = new FlagshipConfig('envId', 'apiKey');
 
-        $apiManagerStub->expects($this->once())->method('getModifications')->willReturn($modifications);
+        $apiManagerStub->expects($this->once())->method('getCampaignModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
 
         $config->setDecisionManager($apiManagerStub);
@@ -404,11 +405,11 @@ class VisitorTest extends TestCase
             false,
             true,
             true,
-            ['getModifications', 'getConfig']
+            ['getCampaignModifications', 'getConfig']
         );
         $config = new FlagshipConfig('envId', 'apiKey');
 
-        $apiManagerStub->method('getModifications')->willReturn($modifications);
+        $apiManagerStub->method('getCampaignModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
 
         $config->setDecisionManager($apiManagerStub);
@@ -490,7 +491,7 @@ class VisitorTest extends TestCase
             false,
             true,
             true,
-            ['getModifications']
+            ['getCampaignModifications']
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
@@ -510,7 +511,7 @@ class VisitorTest extends TestCase
 
         $paramsExpected = [];
 
-        $apiManagerStub->method('getModifications')->willReturn($modifications);
+        $apiManagerStub->method('getCampaignModifications')->willReturn($modifications);
 
         $logManagerStub->expects($this->exactly(3))->method('error')
             ->withConsecutive($paramsExpected);
@@ -585,7 +586,7 @@ class VisitorTest extends TestCase
             true,
             true,
             true,
-            ['getModifications']
+            ['getCampaignModifications']
         );
 
         $trackerManagerStub = $this->getMockForAbstractClass(
@@ -598,7 +599,7 @@ class VisitorTest extends TestCase
             ['sendActive']
         );
 
-        $apiManagerStub->method('getModifications')
+        $apiManagerStub->method('getCampaignModifications')
             ->willReturn($modifications);
 
         $config->setDecisionManager($apiManagerStub);
@@ -662,10 +663,10 @@ class VisitorTest extends TestCase
             true,
             true,
             true,
-            ['getModifications']
+            ['getCampaignModifications']
         );
 
-        $apiManagerStub->method('getModifications')
+        $apiManagerStub->method('getCampaignModifications')
             ->willReturn($modifications);
 
         $config->setDecisionManager($apiManagerStub);
@@ -718,7 +719,7 @@ class VisitorTest extends TestCase
             true,
             true,
             true,
-            ['getModifications', 'getCampaigns']
+            ['getCampaignModifications']
         );
 
         $config = new FlagshipConfig('envId', 'apiKey');
@@ -726,7 +727,7 @@ class VisitorTest extends TestCase
         $config->setLogManager($logManagerStub);
         $config->setTrackingManager($trackerManagerStub);
 
-        $apiManagerStub->method('getModifications')
+        $apiManagerStub->method('getCampaignModifications')
             ->willReturn($modifications);
         $config->setDecisionManager($apiManagerStub);
 

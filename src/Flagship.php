@@ -51,6 +51,7 @@ class Flagship
      * Flagship singleton instance
      *
      * @return Flagship
+     * @throws Exception
      */
     protected static function getInstance()
     {
@@ -80,7 +81,7 @@ class Flagship
             }
 
             if (!$config->getLogManager()) {
-                $logManager = $container->get('Flagship\Utils\LogManager');
+                $logManager = $container->get('Psr\Log\LoggerInterface');
                 $config->setLogManager($logManager);
             }
 
@@ -134,6 +135,7 @@ class Flagship
      * This function initialize the dependency injection container
      *
      * @return Container
+     * @throws Exception
      */
     private function containerInitialization()
     {
@@ -144,8 +146,8 @@ class Flagship
             'Flagship\Utils\HttpClient'
         );
         $container->bind(
-            'Flagship\Utils\LoggerInterface',
-            'Flagship\Utils\LogManager'
+            'Psr\Log\LoggerInterface',
+            'Flagship\Utils\FlagshipLogManager'
         );
         return $container;
     }

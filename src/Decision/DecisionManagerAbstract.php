@@ -55,10 +55,5 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @inheritDoc
      */
-    abstract public function getCampaigns(Visitor $visitor);
-
-    /**
-     * @inheritDoc
-     */
-    abstract public function getModifications($campaigns);
+    abstract public function getCampaignModifications(Visitor $visitor);
 }

@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Flagship\FlagshipConfig;
+use Flagship\Utils\ConfigManager;
 use Flagship\Visitor;
 use Illuminate\Support\Facades\Session;
 
@@ -27,8 +28,10 @@ trait GeneralMockTrait
     public function getVisitorMock($envId, $apiKey)
     {
         $config = new FlagshipConfig($envId, $apiKey);
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config);
         $visitor = $this->getMockBuilder(Visitor::class)
-            ->setConstructorArgs([$config, 'visitorId', []])->getMock();
+            ->setConstructorArgs([$configManager, 'visitorId', []])->getMock();
         $visitor->method('getConfig')->willReturn($config);
         Session::put('visitor', $visitor);
         return $visitor;

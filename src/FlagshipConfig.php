@@ -2,10 +2,9 @@
 
 namespace Flagship;
 
-use Flagship\Api\TrackingManagerAbstract;
-use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\LogLevel;
 use JsonSerializable;
 use Psr\Log\LoggerInterface;
 
@@ -36,16 +35,10 @@ class FlagshipConfig implements JsonSerializable
      * @var LoggerInterface
      */
     private $logManager;
-
     /**
-     * @var DecisionManagerAbstract
+     * @var int
      */
-    private $decisionManager;
-
-    /**
-     * @var TrackingManagerAbstract
-     */
-    private $trackingManager;
+    private $logLevel = LogLevel::ALL;
 
     /**
      * Create a new FlagshipConfig configuration.
@@ -164,38 +157,25 @@ class FlagshipConfig implements JsonSerializable
     }
 
     /**
-     * @return DecisionManagerAbstract
+     * @return int
      */
-    public function getDecisionManager()
+    public function getLogLevel()
     {
-        return $this->decisionManager;
+        return $this->logLevel;
     }
 
     /**
-     * @param DecisionManagerAbstract $decisionManager
+     * Set the maximum log level to display
+     * @see \Flagship\Enum\LogLevel Loglevel enum list
+     * @param int $logLevel
      * @return FlagshipConfig
      */
-    public function setDecisionManager(DecisionManagerAbstract $decisionManager)
+    public function setLogLevel($logLevel)
     {
-        $this->decisionManager = $decisionManager;
-        return $this;
-    }
-
-    /**
-     * @return TrackingManagerAbstract
-     */
-    public function getTrackingManager()
-    {
-        return $this->trackingManager;
-    }
-
-    /**
-     * @param TrackingManagerAbstract $trackerManager
-     * @return FlagshipConfig
-     */
-    public function setTrackingManager(TrackingManagerAbstract $trackerManager)
-    {
-        $this->trackingManager = $trackerManager;
+        if (!is_int($logLevel) || $logLevel < LogLevel::NONE || $logLevel > LogLevel::ALL) {
+            return $this;
+        }
+        $this->logLevel = $logLevel;
         return $this;
     }
 
@@ -208,6 +188,7 @@ class FlagshipConfig implements JsonSerializable
             "environmentId" => $this->getEnvId(),
             "apiKey" => $this->getApiKey(),
             "timeout" => $this->getTimeout(),
+            "logLevel" => $this->getLogLevel()
         ];
     }
 }

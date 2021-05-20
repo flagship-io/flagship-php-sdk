@@ -5,6 +5,7 @@ namespace Flagship\Hit;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase
@@ -33,8 +34,9 @@ class EventTest extends TestCase
         ];
 
         $event = new Event($eventCategory, $eventAction);
-
-        $event->setEnvId($envId)
+        $config = new FlagshipConfig();
+        $config->setEnvId($envId);
+        $event->setConfig($config)
             ->setVisitorId($visitorId)
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -60,7 +62,7 @@ class EventTest extends TestCase
             ['error']
         );
 
-        $event->setLogManager($logManagerMock);
+        $event->getConfig()->setLogManager($logManagerMock);
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $errorMessage = function ($itemName, $typeName) use ($flagshipSdk) {
@@ -95,7 +97,7 @@ class EventTest extends TestCase
     {
         $eventAction = 'action';
         $event = new Event(EventCategory::ACTION_TRACKING, $eventAction);
-
+        $event->setConfig(new FlagshipConfig());
         $this->assertSame(EventCategory::ACTION_TRACKING, $event->getCategory());
 
         $event->setCategory(EventCategory::USER_ENGAGEMENT);
@@ -120,8 +122,8 @@ class EventTest extends TestCase
         $eventCategory = null;
         $eventAction = "eventAction";
         $event = new Event($eventCategory, $eventAction);
-
-        $event->setEnvId('envId')
+        $config = new FlagshipConfig("envId");
+        $event->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -132,7 +134,7 @@ class EventTest extends TestCase
         $eventCategory = EventCategory::ACTION_TRACKING;
         $event = new Event($eventCategory, $eventAction);
 
-        $event->setEnvId('envId')
+        $event->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -144,7 +146,7 @@ class EventTest extends TestCase
         $eventCategory = EventCategory::ACTION_TRACKING;
         $eventAction = "ItemName";
         $event = new Event($eventCategory, $eventAction);
-        $event->setEnvId('envId')
+        $event->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 

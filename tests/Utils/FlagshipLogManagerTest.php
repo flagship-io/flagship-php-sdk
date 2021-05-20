@@ -6,10 +6,10 @@ require_once __dir__ . '/../Assets/ErrorLog.php';
 
 use Flagship\Assets\ErrorLog;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\LogLevel;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LogLevel;
 
-class LogManagerTest extends TestCase
+class FlagshipLogManagerTest extends TestCase
 {
     public function contextDataProvider()
     {
@@ -30,10 +30,10 @@ class LogManagerTest extends TestCase
     public function testError($data)
     {
         $message = 'Test Error';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $logManager->error($message, $data['context']);
         $level = LogLevel::ERROR;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -43,7 +43,7 @@ class LogManagerTest extends TestCase
     public function testInfo($data)
     {
         $message = 'Test info';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $logManager->info($message, $data['context']);
         $level = LogLevel::INFO;
         $messageError = "[{$level}] {$message} {$data['contextString']}";
@@ -56,7 +56,7 @@ class LogManagerTest extends TestCase
     public function testAlert($data)
     {
         $message = 'Test Error';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $logManager->alert($message, $data['context']);
         $level = LogLevel::ALERT;
         $messageError = "[{$level}] {$message} {$data['contextString']}";
@@ -69,7 +69,7 @@ class LogManagerTest extends TestCase
     public function testEmergency($data)
     {
         $message = 'Test Error';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $logManager->emergency($message, $data['context']);
         $level = LogLevel::EMERGENCY;
         $messageError = "[{$level}] {$message} {$data['contextString']}";
@@ -82,7 +82,7 @@ class LogManagerTest extends TestCase
     public function testLog($data)
     {
         $message = 'Test Error';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $level = LogLevel::EMERGENCY;
         $logManager->log($level, $message, $data['context']);
         $messageError = "[{$level}] {$message} {$data['contextString']}";
@@ -95,7 +95,7 @@ class LogManagerTest extends TestCase
     public function testWarning($data)
     {
         $message = 'Test Error';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $logManager->warning($message, $data['context']);
         $level = LogLevel::WARNING;
         $messageError = "[{$level}] {$message} {$data['contextString']}";
@@ -108,7 +108,7 @@ class LogManagerTest extends TestCase
     public function testCritical($data)
     {
         $message = 'Test Error';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $logManager->critical($message, $data['context']);
         $level = LogLevel::CRITICAL;
         $messageError = "[{$level}] {$message} {$data['contextString']}";
@@ -121,7 +121,7 @@ class LogManagerTest extends TestCase
     public function testNotice($data)
     {
         $message = 'Test Notice';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $logManager->notice($message, $data['context']);
         $level = LogLevel::NOTICE;
         $messageError = "[{$level}] {$message} {$data['contextString']}";
@@ -134,7 +134,7 @@ class LogManagerTest extends TestCase
     public function testDebug($data)
     {
         $message = 'Test Debug';
-        $logManager = new LogManager();
+        $logManager = new FlagshipLogManager();
         $logManager->debug($message, $data['context']);
         $level = LogLevel::DEBUG;
         $messageError = "[{$level}] {$message} {$data['contextString']}";

@@ -48,21 +48,23 @@ class FlagshipConstant
     const TRACKER_MANAGER_MISSING_ERROR  = "trackerManager must not be null.";
     const CURL_LIBRARY_IS_NOT_LOADED     = 'curl library is not loaded';
     const TYPE_ERROR                     = " '%s' must be a '%s'";
+    const PANIC_MODE_ERROR        = "'%s' deactivated while panic mode is on.";
+    const VISITOR_ID_ERROR        = "visitorId must not be null or empty";
 
     //Messages Info
     const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";
     const FLAGSHIP_SDK     = "Flagship SDK";
 
-    //Process
-    const PROCESS                           = 'process';
-    const PROCESS_INITIALIZATION            = 'INITIALIZATION';
-    const PROCESS_UPDATE_CONTEXT            = 'UPDATE CONTEXT';
-    const PROCESS_GET_MODIFICATION          = 'GET MODIFICATION';
-    const PROCESS_GET_MODIFICATION_INFO     = 'GET MODIFICATION INFO';
-    const PROCESS_NEW_VISITOR               = 'NEW VISITOR';
-    const PROCESS_ACTIVE_MODIFICATION       = 'ACTIVE MODIFICATION';
-    const PROCESS_SYNCHRONIZED_MODIFICATION = "SYNCHRONIZED MODIFICATION";
-    const PROCESS_SEND_HIT                  = "SEND HIT";
+    //Tag
+    const TAG                    = 'TAG';
+    const TAG_INITIALIZATION       = 'INITIALIZATION';
+    const TAG_UPDATE_CONTEXT            = 'UPDATE CONTEXT';
+    const TAG_GET_MODIFICATION      = 'GET MODIFICATION';
+    const TAG_GET_MODIFICATION_INFO   = 'GET MODIFICATION INFO';
+    const TAG_NEW_VISITOR                   = 'NEW VISITOR';
+    const TAG_ACTIVE_MODIFICATION       = 'ACTIVE MODIFICATION';
+    const TAG_SYNCHRONIZED_MODIFICATION = "SYNCHRONIZED MODIFICATION";
+    const TAG_SEND_HIT                  = "SEND HIT";
 
     //Api items
 
@@ -99,5 +101,5 @@ class FlagshipConstant
     const HEADER_X_SDK_CLIENT     = 'x-sdk-client';
     const HEADER_X_SDK_VERSION    = 'x-sdk-version';
     const HEADER_APPLICATION_JSON = 'application/json';
-    const PANIC_MODE_ERROR        = "'%s' deactivated while panic mode is on.";
+
 }

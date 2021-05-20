@@ -7,6 +7,7 @@ use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Traits\LogTrait;
+use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 
 /**
@@ -31,6 +32,11 @@ class Flagship
      * @var FlagshipConfig
      */
     private $config;
+
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
     /**
      * @var int
      */
@@ -51,6 +57,7 @@ class Flagship
      * Flagship singleton instance
      *
      * @return Flagship
+     * @throws Exception
      */
     protected static function getInstance()
     {
@@ -79,8 +86,11 @@ class Flagship
                 $config = $container->get('Flagship\FlagshipConfig', [$envId, $apiKey]);
             }
 
+            $config->setEnvId($envId);
+            $config->setApiKey($apiKey);
+
             if (!$config->getLogManager()) {
-                $logManager = $container->get('Flagship\Utils\LogManager');
+                $logManager = $container->get('Psr\Log\LoggerInterface');
                 $config->setLogManager($logManager);
             }
 
@@ -92,30 +102,33 @@ class Flagship
                     break;
             }
 
-            $config->setDecisionManager($decisionManager);
+            $configManager = $container->get('Flagship\Utils\ConfigManager');
+
+            $configManager->setDecisionManager($decisionManager);
 
             $trackingManager = $container->get('Flagship\Api\TrackingManager');
 
-            $config->setTrackingManager($trackingManager);
+            $configManager->setTrackingManager($trackingManager);
 
-
-            $config->setEnvId($envId);
-            $config->setApiKey($apiKey);
             $flagship->setConfig($config);
+
+            $configManager->setConfig($config);
+
+            $flagship->setConfigManager($configManager);
 
             if (empty($envId) || empty($apiKey)) {
                 $flagship->logError(
-                    $config->getLogManager(),
+                    $config,
                     FlagshipConstant::INITIALIZATION_PARAM_ERROR,
-                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                    [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
                 );
             }
 
             if (self::isReady()) {
                 $flagship->logInfo(
-                    $config->getLogManager(),
+                    $config,
                     sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
-                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                    [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
                 );
                 $flagship->setStatus(FlagshipStatus::READY);
             } else {
@@ -123,9 +136,9 @@ class Flagship
             }
         } catch (Exception $exception) {
             self::getInstance()->logError(
-                $config->getLogManager(),
+                $config,
                 $exception->getMessage(),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
             );
         }
     }
@@ -134,6 +147,7 @@ class Flagship
      * This function initialize the dependency injection container
      *
      * @return Container
+     * @throws Exception
      */
     private function containerInitialization()
     {
@@ -144,8 +158,8 @@ class Flagship
             'Flagship\Utils\HttpClient'
         );
         $container->bind(
-            'Flagship\Utils\LoggerInterface',
-            'Flagship\Utils\LogManager'
+            'Psr\Log\LoggerInterface',
+            'Flagship\Utils\FlagshipLogManager'
         );
         return $container;
     }
@@ -164,6 +178,25 @@ class Flagship
         $apiKey = self::$instance->config->getApiKey();
         return !empty($envId) && !empty($apiKey);
     }
+
+    /**
+     * @return ConfigManager
+     */
+    protected function getConfigManager()
+    {
+        return $this->configManager;
+    }
+
+    /**
+     * @param ConfigManager $configManager
+     * @return Flagship
+     */
+    protected function setConfigManager($configManager)
+    {
+        $this->configManager = $configManager;
+        return $this;
+    }
+
 
     /**
      * Return the current config set by the customer and used by the SDK.
@@ -229,6 +262,6 @@ class Flagship
             return  null;
         }
         $instance = self::getInstance();
-        return new Visitor($instance->config, $visitorId, $context);
+        return new Visitor($instance->getConfigManager(), $visitorId, $context);
     }
 }

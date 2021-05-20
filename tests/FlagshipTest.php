@@ -160,9 +160,9 @@ class FlagshipTest extends TestCase
 
         $flagshipMock->expects($this->once())->method('logInfo')
             ->with(
-                $config->getLogManager(),
+                $config,
                 sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
             );
 
         $flagshipMock->expects($this->never())->method('logError');
@@ -232,9 +232,9 @@ class FlagshipTest extends TestCase
 
         $flagshipMock->expects($this->once())->method('logError')
             ->with(
-                $config->getLogManager(),
+                $config,
                 FlagshipConstant::INITIALIZATION_PARAM_ERROR,
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
             );
         $flagshipMock->expects($this->never())->method('logInfo');
 
@@ -270,9 +270,9 @@ class FlagshipTest extends TestCase
 
         $flagshipMock->expects($this->once())->method('logError')
             ->with(
-                $config->getLogManager(),
+                $config,
                 $exception->getMessage(),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
             );
         $flagshipMock->expects($this->never())->method('logInfo');
 

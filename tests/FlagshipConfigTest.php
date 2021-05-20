@@ -6,6 +6,7 @@ use Flagship\Api\TrackingManager;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\LogLevel;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\LogManager;
 use Flagship\Utils\Utils;
@@ -39,6 +40,26 @@ class FlagshipConfigTest extends TestCase
         $this->assertEquals($timeOut, $config->getTimeout());
     }
 
+    public function testSetLogLevel()
+    {
+        $envId = "envId";
+        $apiKey = "apiKey";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
+
+        $config->setLogLevel(-2);
+        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
+
+        $config->setLogLevel(12);
+        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
+
+        $config->setLogLevel("abc");
+        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
+
+        $config->setLogLevel(LogLevel::ERROR);
+        $this->assertSame(LogLevel::ERROR, $config->getLogLevel());
+    }
     /**
      * @dataProvider configData
      * @param        array $configData

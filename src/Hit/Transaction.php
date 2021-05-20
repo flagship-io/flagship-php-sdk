@@ -167,7 +167,7 @@ class Transaction extends HitAbstract
     {
         if (!is_string($currency) || strlen($currency) < 0 || strlen($currency) > 3) {
             $this->logError(
-                $this->logManager,
+                $this->getConfig(),
                 sprintf(self::CURRENCY_ERROR, 'currency')
             );
             return $this;

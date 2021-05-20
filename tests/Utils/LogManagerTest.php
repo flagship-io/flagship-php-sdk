@@ -6,8 +6,8 @@ require_once __dir__ . '/../Assets/ErrorLog.php';
 
 use Flagship\Assets\ErrorLog;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\LogLevel;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LogLevel;
 
 class LogManagerTest extends TestCase
 {
@@ -33,7 +33,7 @@ class LogManagerTest extends TestCase
         $logManager = new LogManager();
         $logManager->error($message, $data['context']);
         $level = LogLevel::ERROR;
-        $messageError = "[{$level}] {$message} {$data['contextString']}";
+        $messageError = "[$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 

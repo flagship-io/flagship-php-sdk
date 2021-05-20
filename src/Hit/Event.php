@@ -69,7 +69,7 @@ class Event extends HitAbstract
     {
         if ($category !== EventCategory::ACTION_TRACKING && $category !== EventCategory::USER_ENGAGEMENT) {
             $this->logError(
-                $this->logManager,
+                $this->getConfig(),
                 sprintf(self::CATEGORY_ERROR, 'category')
             );
             return $this;

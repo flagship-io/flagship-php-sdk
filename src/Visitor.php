@@ -67,7 +67,11 @@ class Visitor implements JsonSerializable
     public function setVisitorId($visitorId)
     {
         if (empty($visitorId)) {
-            $this->logError($this->config->getLogManager(), "");  //Log visitorId empty
+            $this->logError(
+                $this->config,
+                FlagshipConstant::VISITOR_ID_ERROR,
+                [FlagshipConstant::TAG => __FUNCTION__]
+            );  //Log visitorId empty
         } else {
             $this->visitorId = $visitorId;
         }
@@ -109,9 +113,9 @@ class Visitor implements JsonSerializable
     {
         if (!$this->isKeyValid($key) || !$this->isValueValid($value)) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 FlagshipConstant::CONTEXT_PARAM_ERROR,
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_UPDATE_CONTEXT]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_UPDATE_CONTEXT]
             );
 
             return;
@@ -166,9 +170,9 @@ class Visitor implements JsonSerializable
 
         if ($check) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 sprintf(FlagshipConstant::PANIC_MODE_ERROR, $functionName),
-                [FlagshipConstant::PROCESS => $process]
+                [FlagshipConstant::TAG => $process]
             );
         }
         return $check;
@@ -189,15 +193,15 @@ class Visitor implements JsonSerializable
      */
     public function getModification($key, $defaultValue, $activate = false)
     {
-        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_GET_MODIFICATION)) {
+        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::TAG_GET_MODIFICATION)) {
             return $defaultValue;
         }
 
         if (!$this->isKeyValid($key)) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
             );
             return $defaultValue;
         }
@@ -205,18 +209,18 @@ class Visitor implements JsonSerializable
         $modification = $this->getObjetModification($key);
         if (!$modification) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
             );
             return $defaultValue;
         }
 
         if (gettype($modification->getValue()) !== gettype($defaultValue)) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
             );
             return $defaultValue;
         }
@@ -235,15 +239,15 @@ class Visitor implements JsonSerializable
      */
     public function getModificationInfo($key)
     {
-        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_GET_MODIFICATION_INFO)) {
+        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::TAG_GET_MODIFICATION_INFO)) {
             return null;
         }
 
         if (!$this->isKeyValid($key)) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION_INFO]
             );
             return null;
         }
@@ -252,9 +256,9 @@ class Visitor implements JsonSerializable
 
         if (!$modification) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION_INFO]
             );
             return null;
         }
@@ -307,9 +311,9 @@ class Visitor implements JsonSerializable
     {
         if (!$this->config->getDecisionManager()) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::PROCESS => $process]
+                [FlagshipConstant::TAG => $process]
             );
             return false;
         }
@@ -323,7 +327,7 @@ class Visitor implements JsonSerializable
      */
     public function synchronizedModifications()
     {
-        if (!$this->hasDecisionManager(FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION)) {
+        if (!$this->hasDecisionManager(FlagshipConstant::TAG_SYNCHRONIZED_MODIFICATION)) {
             return;
         }
         $campaigns = $this->config->getDecisionManager()->getCampaigns($this);
@@ -342,9 +346,9 @@ class Visitor implements JsonSerializable
 
         if (!$check) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::PROCESS => $process]
+                [FlagshipConstant::TAG => $process]
             );
         }
         return !!$check;
@@ -359,21 +363,21 @@ class Visitor implements JsonSerializable
      */
     public function activateModification($key)
     {
-        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
+        if ($this->isOnPanicMode(__FUNCTION__, FlagshipConstant::TAG_ACTIVE_MODIFICATION)) {
             return ;
         }
 
         $modification = $this->getObjetModification($key);
         if (!$modification) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]
             );
             return ;
         }
 
-        if (!$this->hasTrackingManager(FlagshipConstant::PROCESS_ACTIVE_MODIFICATION)) {
+        if (!$this->hasTrackingManager(FlagshipConstant::TAG_ACTIVE_MODIFICATION)) {
             return ;
         }
 
@@ -387,25 +391,23 @@ class Visitor implements JsonSerializable
      */
     public function sendHit(HitAbstract $hit)
     {
-        if ($this->isOnPanicMode("sendHit", FlagshipConstant::PROCESS_SEND_HIT)) {
+        if ($this->isOnPanicMode("sendHit", FlagshipConstant::TAG_SEND_HIT)) {
             return ;
         }
 
-        if (!$this->hasTrackingManager(FlagshipConstant::PROCESS_SEND_HIT)) {
+        if (!$this->hasTrackingManager(FlagshipConstant::TAG_SEND_HIT)) {
             return;
         }
 
-        $hit->setEnvId($this->config->getEnvId())
+        $hit->setConfig($this->config)
             ->setVisitorId($this->getVisitorId())
-            ->setDs(FlagshipConstant::SDK_APP)
-            ->setApiKey($this->config->getApiKey())
-            ->setTimeOut($this->config->getTimeout());
+            ->setDs(FlagshipConstant::SDK_APP);
 
         if (!$hit->isReady()) {
             $this->logError(
-                $this->config->getLogManager(),
+                $this->config,
                 $hit->getErrorMessage(),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_SEND_HIT]
             );
             return;
         }

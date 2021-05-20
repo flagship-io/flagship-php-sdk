@@ -139,6 +139,7 @@ class TrackingManagerTest extends TestCase
 
         $pageUrl = "https://localhost";
         $page = new Page($pageUrl);
+        $page->setConfig(new FlagshipConfig());
 
         $url = FlagshipConstant::HIT_API_URL;
 
@@ -185,6 +186,7 @@ class TrackingManagerTest extends TestCase
 
         $pageUrl = "Https://localhost";
         $page = new Page($pageUrl);
+        $page->setConfig(new FlagshipConfig());
 
         $url = FlagshipConstant::HIT_API_URL;
 
@@ -200,7 +202,7 @@ class TrackingManagerTest extends TestCase
             ->method('error')
             ->with("[$flagshipSdk] " . $exception->getMessage());
 
-        $page->setLogManager($logManagerStub);
+        $page->getConfig()->setLogManager($logManagerStub);
 
         $trackingManager->sendHit($page);
     }

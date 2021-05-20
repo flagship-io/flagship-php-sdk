@@ -98,24 +98,24 @@ class Flagship
 
             $config->setTrackingManager($trackingManager);
 
-
             $config->setEnvId($envId);
             $config->setApiKey($apiKey);
+
             $flagship->setConfig($config);
 
             if (empty($envId) || empty($apiKey)) {
                 $flagship->logError(
-                    $config->getLogManager(),
+                    $config,
                     FlagshipConstant::INITIALIZATION_PARAM_ERROR,
-                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                    [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
                 );
             }
 
             if (self::isReady()) {
                 $flagship->logInfo(
-                    $config->getLogManager(),
+                    $config,
                     sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
-                    [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                    [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
                 );
                 $flagship->setStatus(FlagshipStatus::READY);
             } else {
@@ -123,9 +123,9 @@ class Flagship
             }
         } catch (Exception $exception) {
             self::getInstance()->logError(
-                $config->getLogManager(),
+                $config,
                 $exception->getMessage(),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_INITIALIZATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
             );
         }
     }

@@ -338,8 +338,7 @@ class Visitor implements JsonSerializable
         if (!$this->hasDecisionManager(FlagshipConstant::TAG_SYNCHRONIZED_MODIFICATION)) {
             return;
         }
-        $campaigns = $this->config->getDecisionManager()->getCampaigns($this);
-        $this->modifications = $this->config->getDecisionManager()->getModifications($campaigns);
+        $this->modifications = $this->config->getDecisionManager()->getCampaignModifications($this);
     }
 
     /**

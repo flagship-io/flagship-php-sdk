@@ -6,6 +6,7 @@ use Flagship\Api\TrackingManagerAbstract;
 use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\LogLevel;
 use JsonSerializable;
 use Psr\Log\LoggerInterface;
 
@@ -46,6 +47,11 @@ class FlagshipConfig implements JsonSerializable
      * @var TrackingManagerAbstract
      */
     private $trackingManager;
+
+    /**
+     * @var int
+     */
+    private $logLevel = LogLevel::ALL;
 
     /**
      * Create a new FlagshipConfig configuration.
@@ -196,6 +202,29 @@ class FlagshipConfig implements JsonSerializable
     public function setTrackingManager(TrackingManagerAbstract $trackerManager)
     {
         $this->trackingManager = $trackerManager;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLogLevel()
+    {
+        return $this->logLevel;
+    }
+
+    /**
+     * Set the maximum log level to display
+     * @see \Flagship\Enum\LogLevel Loglevel enum list
+     * @param int $logLevel
+     * @return FlagshipConfig
+     */
+    public function setLogLevel($logLevel)
+    {
+        if (!is_int($logLevel) || $logLevel < LogLevel::NONE || $logLevel > LogLevel::ALL) {
+            return $this;
+        }
+        $this->logLevel = $logLevel;
         return $this;
     }
 

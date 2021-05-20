@@ -4,6 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class PageTest extends TestCase
@@ -16,7 +17,9 @@ class PageTest extends TestCase
         $envId = "envId";
 
         $page = new Page($pageUrl);
-        $page->setEnvId($envId)
+        $config = new FlagshipConfig($envId);
+
+        $page->setConfig($config)
             ->setDs(FlagshipConstant::SDK_APP)
             ->setVisitorId($visitorId);
 
@@ -42,8 +45,9 @@ class PageTest extends TestCase
         //Test with require HitAbstract fields and with null pageUrl
         $pageUrl = null;
         $page = new Page($pageUrl);
+        $config = new FlagshipConfig('envId');
 
-        $page->setEnvId('envId')
+        $page->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -53,7 +57,7 @@ class PageTest extends TestCase
         $pageUrl = "";
         $page = new Page($pageUrl);
 
-        $page->setEnvId('envId')
+        $page->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -64,10 +68,9 @@ class PageTest extends TestCase
         //Test with require HitAbstract fields and require Page fields
         $pageUrl = "https://localhost";
         $page = new Page($pageUrl);
-        $page->setEnvId('envId')
+        $page->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
-
 
         $this->assertTrue($page->isReady());
     }

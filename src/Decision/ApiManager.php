@@ -51,7 +51,7 @@ class ApiManager extends DecisionManagerAbstract
                 return $body[FlagshipField::FIELD_CAMPAIGNS];
             }
         } catch (Exception $exception) {
-            $this->logError($visitor->getConfig()->getLogManager(), $exception->getMessage());
+            $this->logError($visitor->getConfig(), $exception->getMessage());
         }
         return [];
     }

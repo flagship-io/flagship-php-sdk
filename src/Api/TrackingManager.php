@@ -38,7 +38,7 @@ class TrackingManager extends TrackingManagerAbstract
             $response = $this->httpClient->post($url, [], $postData);
             return $response->getStatusCode() == 204;
         } catch (Exception $exception) {
-            $this->logError($visitor->getConfig()->getLogManager(), $exception->getMessage());
+            $this->logError($visitor->getConfig(), $exception->getMessage());
         }
     }
 
@@ -48,13 +48,13 @@ class TrackingManager extends TrackingManagerAbstract
     public function sendHit(HitAbstract $hit)
     {
         try {
-            $headers = $this->buildHeader($hit->getApiKey());
+            $headers = $this->buildHeader($hit->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($hit->getTimeOut());
+            $this->httpClient->setTimeout($hit->getConfig()->getTimeOut());
             $url = FlagshipConstant::HIT_API_URL;
             $this->httpClient->post($url, [], $hit->toArray());
         } catch (Exception $exception) {
-            $this->logError($hit->getLogManager(), $exception->getMessage());
+            $this->logError($hit->getConfig(), $exception->getMessage());
         }
     }
 }

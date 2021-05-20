@@ -3,6 +3,8 @@
 namespace Flagship\Traits;
 
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\LogLevel;
+use Flagship\FlagshipConfig;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
@@ -31,13 +33,31 @@ class LogTraitTest extends TestCase
         $message = "hello";
         $context = ['exception' => 'hello Exception'];
 
-        $logManagerMock->expects($this->once())->method('error')
+        $logManagerMock->expects($this->exactly(3))->method('error')
             ->with(
                 "[$flagshipSdk] " . $message,
                 $context
             );
+
+        $config = new FlagshipConfig();
+        $config->setLogManager($logManagerMock);
         $logError = Utils::getMethod($logTraitMock, "logError");
-        $logError->invokeArgs($logTraitMock, [$logManagerMock, $message, $context]);
+        $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config->setLogLevel(LogLevel::CRITICAL);
+        $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config->setLogLevel(LogLevel::ERROR);
+        $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $logError->invokeArgs($logTraitMock, [null, $message, $context]);
+
+        $config->setLogLevel(LogLevel::WARNING);
+        $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config = new FlagshipConfig();
+        $config->setLogLevel(LogLevel::INFO);
+        $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
     }
 
     public function testLoginInfo()
@@ -63,13 +83,30 @@ class LogTraitTest extends TestCase
         $context = ['exception' => 'hello Exception'];
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
-        $logManagerMock->expects($this->once())->method('info')
+        $logManagerMock->expects($this->exactly(3))->method('info')
             ->with(
                 "[$flagshipSdk] " . $message,
                 $context
             );
-        $loginInfo = Utils::getMethod($logTraitMock, "logInfo");
-        $loginInfo->invokeArgs($logTraitMock, [$logManagerMock, $message, $context]);
-        $loginInfo->invokeArgs($logTraitMock, [null, $message, $context]);
+        $config = new FlagshipConfig();
+        $config->setLogManager($logManagerMock);
+
+        $logInfo = Utils::getMethod($logTraitMock, "logInfo");
+        $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config->setLogLevel(LogLevel::DEBUG);
+        $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config->setLogLevel(LogLevel::INFO);
+        $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $logInfo->invokeArgs($logTraitMock, [null, $message, $context]);
+
+        $config->setLogLevel(LogLevel::NOTICE);
+        $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config = new FlagshipConfig();
+        $config->setLogLevel(LogLevel::INFO);
+        $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
     }
 }

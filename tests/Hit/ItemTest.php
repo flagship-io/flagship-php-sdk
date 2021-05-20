@@ -4,6 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class ItemTest extends TestCase
@@ -31,7 +32,11 @@ class ItemTest extends TestCase
         ];
 
         $item = new Item($transactionId, $itemName, $itemCode);
-        $item->setVisitorId($visitorId)->setEnvId($envId)->setDs(FlagshipConstant::SDK_APP);
+        $config = new FlagshipConfig($envId);
+
+        $item->setVisitorId($visitorId)
+            ->setConfig($config)
+            ->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertSame($itemArray, $item->toArray());
 
@@ -60,7 +65,7 @@ class ItemTest extends TestCase
             ['error']
         );
 
-        $item->setLogManager($logManagerMock);
+        $item->getConfig()->setLogManager($logManagerMock);
 
         $errorMessage = function ($itemName, $typeName) {
             $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
@@ -114,8 +119,8 @@ class ItemTest extends TestCase
         $itemName = "itemName";
         $itemCode = "itemCode";
         $item = new Item($transactionId, $itemName, $itemCode);
-
-        $item->setEnvId('envId')
+        $config = new FlagshipConfig('envId');
+        $item->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -126,7 +131,7 @@ class ItemTest extends TestCase
         $transactionId = "transactionId";
         $item = new Item($transactionId, $itemName, $itemCode);
 
-        $item->setEnvId('envId')
+        $item->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -137,7 +142,7 @@ class ItemTest extends TestCase
         $transactionId = "transactionId";
         $itemName = "ItemName";
         $item = new Item($transactionId, $itemName, $itemCode);
-        $item->setEnvId('envId')
+        $item->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 

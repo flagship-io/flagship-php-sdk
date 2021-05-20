@@ -381,7 +381,7 @@ class VisitorTest extends TestCase
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->with(
                 "[$flagshipSdk] " . FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SYNCHRONIZED_MODIFICATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_SYNCHRONIZED_MODIFICATION]
             );
 
         $visitor->synchronizedModifications();
@@ -421,9 +421,9 @@ class VisitorTest extends TestCase
         $key = null;
 
         $expectedParams = [
-            [$config->getLogManager(),
+            [$config,
                 sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
-                [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
             ], [], []
         ];
 
@@ -443,9 +443,9 @@ class VisitorTest extends TestCase
         $key = "notExistKey";
         $defaultValue = true;
 
-        $expectedParams[] = [$config->getLogManager(),
+        $expectedParams[] = [$config,
             sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]];
 
         $visitorMock->getModification($key, $defaultValue);
 
@@ -456,18 +456,18 @@ class VisitorTest extends TestCase
         $keyValue = $modifications[0]->getValue();
         $defaultValue = 25; // default is numeric
 
-        $expectedParams[] = [$config->getLogManager(),
+        $expectedParams[] = [$config,
             sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]];
 
         $visitorMock->getModification($key, $defaultValue);
 
         ////Test getModification on Panic Mode
         //Return DefaultValue
 
-        $expectedParams[] = [$config->getLogManager(),
+        $expectedParams[] = [$config,
             sprintf(FlagshipConstant::PANIC_MODE_ERROR, "getModification"),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION]];
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]];
 
         $apiManagerStub->setIsPanicMode(true);
         $visitorMock->getModification($key, $defaultValue);
@@ -533,21 +533,21 @@ class VisitorTest extends TestCase
         //Test key doesn't exist in modifications set
         $notExistKey = "notExistKey";
         $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $notExistKey),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION_INFO]];
 
         $campaign = $visitor->getModificationInfo($notExistKey);
         $this->assertNull($campaign);
 
         //Test Key is null
         $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, null),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION_INFO]];
 
         $campaign = $visitor->getModificationInfo(null);
         $this->assertNull($campaign);
 
         //Test on Panic Mode
         $paramsExpected[] = [sprintf(FlagshipConstant::PANIC_MODE_ERROR, "getModificationInfo"),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_GET_MODIFICATION_INFO]];
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION_INFO]];
 
         $apiManagerStub->setIsPanicMode(true);
         $campaign = $visitor->getModificationInfo($modification->getKey());
@@ -620,13 +620,13 @@ class VisitorTest extends TestCase
         $key = "KeyNotExist";
 
         $paramsExpected[] = [sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]];
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]];
 
         $visitor->activateModification($key);
 
         //Test on panic panic Mode
         $paramsExpected[] = [sprintf(FlagshipConstant::PANIC_MODE_ERROR, "activateModification"),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]];
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]];
 
         $apiManagerStub->setIsPanicMode(true);
         $visitor->activateModification("anyKey");
@@ -675,7 +675,7 @@ class VisitorTest extends TestCase
 
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
             "[$flagshipSdk] " . FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]
         );
 
         $visitor->activateModification($modifications[0]->getKey());
@@ -789,9 +789,8 @@ class VisitorTest extends TestCase
 
         $visitor->sendHit($page);
 
-        $this->assertSame($envId, $page->getEnvId()); // test abstract class property
+        $this->assertSame($config, $page->getConfig()); // test abstract class property
         $this->assertSame($visitorId, $page->getVisitorId()); // test abstract class property
-        $this->assertSame($apiKey, $page->getApiKey()); // test abstract class property
         $this->assertSame(HitType::PAGE_VIEW, $page->getType()); // test abstract class property
 
         $this->assertSame($pageUrl, $page->getPageUrl());
@@ -799,36 +798,32 @@ class VisitorTest extends TestCase
         // Test type screen
         $visitor->sendHit($screen);
 
-        $this->assertSame($envId, $screen->getEnvId()); // test abstract class property
+        $this->assertSame($config, $page->getConfig()); // test abstract class property
         $this->assertSame($visitorId, $screen->getVisitorId()); // test abstract class property
-        $this->assertSame($apiKey, $screen->getApiKey()); // test abstract class property
 
         $this->assertSame(HitType::SCREEN_VIEW, $screen->getType());
         $this->assertSame($screenName, $screen->getScreenName());
 
         //Test type Transition
         $visitor->sendHit($transition);
-        $this->assertSame($envId, $transition->getEnvId()); // test abstract class property
+        $this->assertSame($config, $page->getConfig()); // test abstract class property
         $this->assertSame($visitorId, $transition->getVisitorId()); // test abstract class property
-        $this->assertSame($apiKey, $transition->getApiKey()); // test abstract class property
 
         $this->assertSame(HitType::TRANSACTION, $transition->getType());
 
         //Test type Event
         $visitor->sendHit($event);
 
-        $this->assertSame($envId, $event->getEnvId()); // test abstract class property
+        $this->assertSame($config, $page->getConfig()); // test abstract class property
         $this->assertSame($visitorId, $event->getVisitorId()); // test abstract class property
-        $this->assertSame($apiKey, $event->getApiKey()); // test abstract class property
 
         $this->assertSame(HitType::EVENT, $event->getType());
 
         //Test type Item
         $visitor->sendHit($item);
 
-        $this->assertSame($envId, $item->getEnvId()); // test abstract class property
+        $this->assertSame($config, $page->getConfig()); // test abstract class property
         $this->assertSame($visitorId, $item->getVisitorId()); // test abstract class property
-        $this->assertSame($apiKey, $item->getApiKey()); // test abstract class property
 
         $this->assertSame(HitType::ITEM, $item->getType());
     }
@@ -879,7 +874,7 @@ class VisitorTest extends TestCase
 
         $paramsExpected[] = [
             FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_SEND_HIT]
         ];
 
         $visitor->sendHit($page);
@@ -892,7 +887,7 @@ class VisitorTest extends TestCase
         //Test send with TrackingManager null
         $paramsExpected[] = [
             FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_SEND_HIT]
         ];
 
         $visitor->sendHit($page);
@@ -908,7 +903,7 @@ class VisitorTest extends TestCase
 
         $paramsExpected[] = [
             $page->getErrorMessage(),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_SEND_HIT]
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_SEND_HIT]
         ];
 
         $visitor->sendHit($page);
@@ -916,7 +911,7 @@ class VisitorTest extends TestCase
         //Test send Hit on Panic Mode
         $paramsExpected[] = [
             sprintf(FlagshipConstant::PANIC_MODE_ERROR, "activateModification"),
-            [FlagshipConstant::PROCESS => FlagshipConstant::PROCESS_ACTIVE_MODIFICATION]
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]
         ];
 
         $decisionManager->setIsPanicMode(true);

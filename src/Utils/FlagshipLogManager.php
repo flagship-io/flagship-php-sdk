@@ -2,11 +2,10 @@
 
 namespace Flagship\Utils;
 
-
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
-class LogManager implements LoggerInterface
+class FlagshipLogManager implements LoggerInterface
 {
 
     /**

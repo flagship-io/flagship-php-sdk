@@ -127,6 +127,7 @@ class FlagshipConfigTest extends TestCase
             "environmentId" => 'envId',
             "apiKey" => "apiKey",
             "timeout" => 2000,
+            "logLevel" => LogLevel::ALL
         ];
 
         $config = new FlagshipConfig($data['environmentId'], $data['apiKey']);

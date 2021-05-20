@@ -69,8 +69,12 @@ class VisitorTest extends TestCase
         //End Test visitor null
 
         //Test context
-        $this->assertEquals($visitorContext['name'], $visitor->getContext()['name']);
-        $this->assertEquals($visitorContext[$ageKey], $visitor->getContext()[$ageKey]);
+        $this->assertSame($visitorContext, $visitor->getContext());
+
+        //Test ClearContext
+        $visitor->clearContext();
+
+        $this->assertCount(0, $visitor->getContext());
 
         return $visitor;
     }

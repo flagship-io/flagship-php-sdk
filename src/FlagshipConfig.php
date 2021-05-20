@@ -237,6 +237,7 @@ class FlagshipConfig implements JsonSerializable
             "environmentId" => $this->getEnvId(),
             "apiKey" => $this->getApiKey(),
             "timeout" => $this->getTimeout(),
+            "logLevel" => $this->getLogLevel()
         ];
     }
 }

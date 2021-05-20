@@ -31,7 +31,7 @@ class Visitor implements JsonSerializable
     /**
      * @var array
      */
-    private $context;
+    private $context = [];
 
     /**
      * @var Modification[]
@@ -71,7 +71,7 @@ class Visitor implements JsonSerializable
                 $this->config,
                 FlagshipConstant::VISITOR_ID_ERROR,
                 [FlagshipConstant::TAG => __FUNCTION__]
-            );  //Log visitorId empty
+            );
         } else {
             $this->visitorId = $visitorId;
         }
@@ -136,6 +136,14 @@ class Visitor implements JsonSerializable
         foreach ($Context as $itemKey => $item) {
             $this->updateContext($itemKey, $item);
         }
+    }
+
+    /**
+     * clear the actual visitor context
+     */
+    public function clearContext()
+    {
+        $this->context = [];
     }
 
     /**

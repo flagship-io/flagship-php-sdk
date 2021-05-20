@@ -24,9 +24,13 @@ class ApiManager extends DecisionManagerAbstract
 
 
     /**
-     * @inheritDoc
+     * This function will fetch campaigns modifications from the server according to the visitor context and
+     * return an associative array of campaigns
+     *
+     * @param  Visitor $visitor
+     * @return array return an associative array of campaigns
      */
-    public function getCampaigns(Visitor $visitor)
+    private function getCampaigns(Visitor $visitor)
     {
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
@@ -51,7 +55,7 @@ class ApiManager extends DecisionManagerAbstract
                 return $body[FlagshipField::FIELD_CAMPAIGNS];
             }
         } catch (Exception $exception) {
-            $this->logError($visitor->getConfig()->getLogManager(), $exception->getMessage());
+            $this->logError($visitor->getConfig(), $exception->getMessage());
         }
         return [];
     }
@@ -114,9 +118,12 @@ class ApiManager extends DecisionManagerAbstract
     }
 
     /**
-     * @inheritDoc
+     * Return an array of Modification from all campaigns
+     *
+     * @param  $campaigns
+     * @return Modification[] Return an array of Modification
      */
-    public function getModifications($campaigns)
+    private function getModifications($campaigns)
     {
 
         $modifications = [];
@@ -151,5 +158,14 @@ class ApiManager extends DecisionManagerAbstract
             }
         }
         return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCampaignModifications(Visitor $visitor)
+    {
+        $campaigns = $this->getCampaigns($visitor);
+        return $this->getModifications($campaigns);
     }
 }

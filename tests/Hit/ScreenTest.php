@@ -4,6 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class ScreenTest extends TestCase
@@ -14,9 +15,10 @@ class ScreenTest extends TestCase
         $screenName = 'screenName';
         $visitorId = "visitorId";
         $envId = "envId";
+        $config = new FlagshipConfig($envId);
 
         $screen = new Screen($screenName);
-        $screen->setEnvId($envId)
+        $screen->setConfig($config)
             ->setDs(FlagshipConstant::SDK_APP)
             ->setVisitorId($visitorId);
 
@@ -45,8 +47,8 @@ class ScreenTest extends TestCase
         //Test with require HitAbstract fields and with null screenName
         $screenName = null;
         $screen = new Screen($screenName);
-
-        $screen->setEnvId('envId')
+        $config = new FlagshipConfig('envId');
+        $screen->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -56,7 +58,7 @@ class ScreenTest extends TestCase
         $screenName = "";
         $screen = new Screen($screenName);
 
-        $screen->setEnvId('envId')
+        $screen->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
 
@@ -68,7 +70,7 @@ class ScreenTest extends TestCase
         $screenName = "screenName";
         $screen = new Screen($screenName);
 
-        $screen->setEnvId('envId')
+        $screen->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
         $this->assertTrue($screen->isReady());

@@ -6,6 +6,7 @@ use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\FlagshipConfig;
 use Flagship\Model\HttpResponse;
+use Flagship\Utils\ConfigManager;
 use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,9 @@ class ApiManagerTest extends TestCase
         $httpClient = new HttpClient();
         $apiManager = new ApiManager($httpClient);
         $this->assertSame($httpClient, $apiManager->getHttpClient());
+        $this->assertFalse($apiManager->getIsPanicMode());
+        $apiManager->setIsPanicMode(true);
+        $this->assertTrue($apiManager->getIsPanicMode());
     }
 
     public function testGetModifications()
@@ -81,10 +85,20 @@ class ApiManagerTest extends TestCase
             ]
         ];
 
+        $visitorId = "visitorId";
+        $body = [
+            "visitorId" => $visitorId,
+            "campaigns" => $campaigns
+        ];
+
+        $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
+
         $manager = new ApiManager($httpClientMock);
+        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
-        $modifications = $manager->getModifications($campaigns);
+        $visitor = new Visitor($configManager, $visitorId, []);
 
+        $modifications = $manager->getCampaignModifications($visitor);
 
         //Test duplicate keys are overwritten
         $this->assertCount(count($mergeModification), $modifications);
@@ -103,6 +117,33 @@ class ApiManagerTest extends TestCase
 
         //Test reference
         $this->assertSame($campaigns[2]['variation']['reference'], $modifications[6]->getIsReference());
+    }
+
+    public function testActivatePanicMode()
+    {
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
+
+        $visitorId = "visitorId";
+        $body = [
+            "visitorId" => $visitorId,
+            "campaigns" => [],
+            "panic" => true
+        ];
+
+        $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
+
+        $manager = new ApiManager($httpClientMock);
+
+        $this->assertFalse($manager->getIsPanicMode());
+        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
+
+        $visitor = new Visitor($configManager, $visitorId, []);
+
+        $modifications = $manager->getCampaignModifications($visitor);
+
+        $this->assertTrue($manager->getIsPanicMode());
+
+        $this->assertSame([], $modifications);
     }
 
     public function testGetModificationsWithSomeFailed()
@@ -157,56 +198,22 @@ class ApiManagerTest extends TestCase
             ]
         ];
 
-        $manager = new ApiManager($httpClientMock);
-
-        $modifications = $manager->getModifications($campaigns);
-
-        $this->assertCount(count($modificationValue) - 1, $modifications);
-    }
-
-    public function testGetCampaigns()
-    {
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
-        );
-
-        $visitorId = 'visitor_id';
-
-        $campaigns = [
-            [
-                "id" => "c1e3t1nvfu1ncqfcdco0",
-                "variationGroupId" => "c1e3t1nvfu1ncqfcdcp0",
-                "variation" => [
-                    "id" => "c1e3t1nvfu1ncqfcdcq0",
-                    "modifications" => [
-                        "type" => "JSON",
-                        "value" => [
-                            "btnColor" => "green"
-                        ]
-                    ],
-                    "reference" => false]
-            ]
-        ];
+        $visitorId = "visitorId";
         $body = [
             "visitorId" => $visitorId,
             "campaigns" => $campaigns
         ];
 
-        $result = new HttpResponse(200, $body);
-
-        $httpClientMock->method('post')
-            ->willReturn($result);
-        $config = new FlagshipConfig("env_id", "api_key");
+        $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
         $manager = new ApiManager($httpClientMock);
+        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
-        $visitor = new Visitor($config, $visitorId, ['age' => 15]);
+        $visitor = new Visitor($configManager, $visitorId, []);
 
-        $value = $manager->getCampaigns($visitor);
-        $this->assertSame($campaigns, $value);
+        $modifications = $manager->getCampaignModifications($visitor);
+
+        $this->assertCount(count($modificationValue) - 1, $modifications);
     }
 
     public function testGetCampaignThrowException()
@@ -240,11 +247,13 @@ class ApiManagerTest extends TestCase
         );
 
         $config->setLogManager($logManagerStub);
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config);
 
         $apiManager = new ApiManager($httpClientMock);
 
-        $visitor = new Visitor($config, 'visitor_id', ['age' => 15]);
-        $value = $apiManager->getCampaigns($visitor);
+        $visitor = new Visitor($configManager, 'visitor_id', ['age' => 15]);
+        $value = $apiManager->getCampaignModifications($visitor);
 
         $this->assertSame([], $value);
     }

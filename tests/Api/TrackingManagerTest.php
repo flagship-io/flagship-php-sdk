@@ -8,6 +8,7 @@ use Flagship\FlagshipConfig;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
 use Flagship\Model\Modification;
+use Flagship\Utils\ConfigManager;
 use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
@@ -34,6 +35,9 @@ class TrackingManagerTest extends TestCase
 
         $config = new FlagshipConfig('envId', 'apiKey');
 
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config);
+
         $modification = new Modification();
         $modification
             ->setKey('background')
@@ -42,7 +46,7 @@ class TrackingManagerTest extends TestCase
             ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
             ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
             ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
-        $visitor = new Visitor($config, 'visitorId', []);
+        $visitor = new Visitor($configManager, 'visitorId', []);
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 
@@ -79,8 +83,10 @@ class TrackingManagerTest extends TestCase
         $trackingManager = new TrackingManager($httpClientMock);
 
         $config = new FlagshipConfig('envId', 'apiKey');
-
         $config->setLogManager($logManagerStub);
+
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config);
 
         $modification = new Modification();
 
@@ -92,7 +98,7 @@ class TrackingManagerTest extends TestCase
             ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
             ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
 
-        $visitor = new Visitor($config, 'visitorId', []);
+        $visitor = new Visitor($configManager, 'visitorId', []);
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 
@@ -139,6 +145,7 @@ class TrackingManagerTest extends TestCase
 
         $pageUrl = "https://localhost";
         $page = new Page($pageUrl);
+        $page->setConfig(new FlagshipConfig());
 
         $url = FlagshipConstant::HIT_API_URL;
 
@@ -185,6 +192,7 @@ class TrackingManagerTest extends TestCase
 
         $pageUrl = "Https://localhost";
         $page = new Page($pageUrl);
+        $page->setConfig(new FlagshipConfig());
 
         $url = FlagshipConstant::HIT_API_URL;
 
@@ -200,7 +208,7 @@ class TrackingManagerTest extends TestCase
             ->method('error')
             ->with("[$flagshipSdk] " . $exception->getMessage());
 
-        $page->setLogManager($logManagerStub);
+        $page->getConfig()->setLogManager($logManagerStub);
 
         $trackingManager->sendHit($page);
     }

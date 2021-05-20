@@ -140,13 +140,5 @@ class FlagshipConfigTest extends TestCase
         $logManager = new FlagshipLogManager();
         $config->setLogManager($logManager);
         $this->assertSame($logManager, $config->getLogManager());
-
-        $decisionManager = new ApiManager(new HttpClient());
-        $config->setDecisionManager($decisionManager);
-        $this->assertSame($decisionManager, $config->getDecisionManager());
-
-        $trackingManager = new TrackingManager(new HttpClient());
-        $config->setTrackingManager($trackingManager);
-        $this->assertSame($trackingManager, $config->getTrackingManager());
     }
 }

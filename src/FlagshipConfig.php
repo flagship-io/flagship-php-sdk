@@ -2,8 +2,6 @@
 
 namespace Flagship;
 
-use Flagship\Api\TrackingManagerAbstract;
-use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
@@ -37,17 +35,6 @@ class FlagshipConfig implements JsonSerializable
      * @var LoggerInterface
      */
     private $logManager;
-
-    /**
-     * @var DecisionManagerAbstract
-     */
-    private $decisionManager;
-
-    /**
-     * @var TrackingManagerAbstract
-     */
-    private $trackingManager;
-
     /**
      * @var int
      */
@@ -166,42 +153,6 @@ class FlagshipConfig implements JsonSerializable
     public function setLogManager(LoggerInterface $logManager)
     {
         $this->logManager = $logManager;
-        return $this;
-    }
-
-    /**
-     * @return DecisionManagerAbstract
-     */
-    public function getDecisionManager()
-    {
-        return $this->decisionManager;
-    }
-
-    /**
-     * @param DecisionManagerAbstract $decisionManager
-     * @return FlagshipConfig
-     */
-    public function setDecisionManager(DecisionManagerAbstract $decisionManager)
-    {
-        $this->decisionManager = $decisionManager;
-        return $this;
-    }
-
-    /**
-     * @return TrackingManagerAbstract
-     */
-    public function getTrackingManager()
-    {
-        return $this->trackingManager;
-    }
-
-    /**
-     * @param TrackingManagerAbstract $trackerManager
-     * @return FlagshipConfig
-     */
-    public function setTrackingManager(TrackingManagerAbstract $trackerManager)
-    {
-        $this->trackingManager = $trackerManager;
         return $this;
     }
 

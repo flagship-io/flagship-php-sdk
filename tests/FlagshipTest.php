@@ -7,6 +7,7 @@ use Flagship\Api\TrackingManager;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\FlagshipLogManager;
@@ -77,8 +78,22 @@ class FlagshipTest extends TestCase
         $this->assertTrue(Flagship::isReady());
         $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
 
-        $this->assertInstanceOf('Flagship\Decision\ApiManager', $config->getDecisionManager());
-        $this->assertInstanceOf('Flagship\Api\TrackingManager', $config->getTrackingManager());
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
+        $instance = $instanceMethod->invoke(null);
+        $getConfigManager = Utils::getMethod($instance, 'getConfigManager');
+        $configManager = $getConfigManager->invoke($instance);
+
+        $this->assertInstanceOf('Flagship\FlagshipConfig', Flagship::getConfig());
+
+        $this->assertSame($envId, Flagship::getConfig()->getEnvId());
+        $this->assertSame($apiKey, Flagship::getConfig()->getApiKey());
+
+        $this->assertInstanceOf('Flagship\Utils\ConfigManager', $configManager);
+        $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
+        $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
+        $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
+
+        $this->assertSame(Flagship::getConfig(), $configManager->getConfig());
     }
 
     public function testStartWithoutConfig()
@@ -91,7 +106,9 @@ class FlagshipTest extends TestCase
 
         $trackingManager = new TrackingManager(new HttpClient());
 
-        $containerGetMethod = function () use ($config, $apiManager, $trackingManager) {
+        $configManager = new ConfigManager();
+
+        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager) {
             $args = func_get_args();
             switch ($args[0]) {
                 case 'Flagship\FlagshipConfig':
@@ -102,6 +119,8 @@ class FlagshipTest extends TestCase
                     return $apiManager;
                 case 'Flagship\Api\TrackingManager':
                     return $trackingManager;
+                case 'Flagship\Utils\ConfigManager':
+                    return $configManager;
                 default:
                     return null;
             }
@@ -127,6 +146,8 @@ class FlagshipTest extends TestCase
 
         $this->assertInstanceOf('Flagship\FlagshipConfig', Flagship::getConfig());
 
+        $this->assertSame(Flagship::getConfig(), $configManager->getConfig());
+
         $this->assertSame($envId, Flagship::getConfig()->getEnvId());
         $this->assertSame($apiKey, Flagship::getConfig()->getApiKey());
 
@@ -134,8 +155,12 @@ class FlagshipTest extends TestCase
 
         $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
 
-        $this->assertInstanceOf('Flagship\Decision\ApiManager', $config->getDecisionManager());
-        $this->assertInstanceOf('Flagship\Api\TrackingManager', $config->getTrackingManager());
+        $this->assertInstanceOf('Flagship\Utils\ConfigManager', $configManager);
+        $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
+        $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
+        $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
+
+
     }
 
     public function testStartWithLog()

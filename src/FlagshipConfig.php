@@ -41,6 +41,11 @@ class FlagshipConfig implements JsonSerializable
     private $logLevel = LogLevel::ALL;
 
     /**
+     * @var callable
+     */
+    private $statusChangedCallable;
+
+    /**
      * Create a new FlagshipConfig configuration.
      *
      * @param string $envId : Environment id provided by Flagship.
@@ -176,6 +181,27 @@ class FlagshipConfig implements JsonSerializable
             return $this;
         }
         $this->logLevel = $logLevel;
+        return $this;
+    }
+
+    /**
+     * @return callable
+     */
+    public function getStatusChangedCallable()
+    {
+        return $this->statusChangedCallable;
+    }
+
+    /**
+     * Define a callable in order to get callback when the SDK status has changed.
+     * @param callable $statusChangedCallable callback
+     * @return FlagshipConfig
+     */
+    public function setStatusChangedCallable($statusChangedCallable)
+    {
+        if (is_callable($statusChangedCallable)) {
+            $this->statusChangedCallable = $statusChangedCallable;
+        }
         return $this;
     }
 

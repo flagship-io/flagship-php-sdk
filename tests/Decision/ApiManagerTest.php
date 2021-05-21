@@ -4,6 +4,7 @@ namespace Flagship\Decision;
 
 use Exception;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipStatus;
 use Flagship\FlagshipConfig;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
@@ -23,7 +24,7 @@ class ApiManagerTest extends TestCase
         $this->assertTrue($apiManager->getIsPanicMode());
     }
 
-    public function testGetModifications()
+    public function testGetCampaignModifications()
     {
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
         $modificationValue1 = [
@@ -94,9 +95,18 @@ class ApiManagerTest extends TestCase
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
         $manager = new ApiManager($httpClientMock);
+
+        $statusCallback = function ($status) {
+            echo $status;
+        };
+
+        $manager->setStatusChangedCallable($statusCallback);
         $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
         $visitor = new Visitor($configManager, $visitorId, []);
+
+        //Test Change Status to FlagshipStatus::READY_PANIC_ON
+        $this->expectOutputString((string)FlagshipStatus::READY);
 
         $modifications = $manager->getCampaignModifications($visitor);
 
@@ -119,7 +129,7 @@ class ApiManagerTest extends TestCase
         $this->assertSame($campaigns[2]['variation']['reference'], $modifications[6]->getIsReference());
     }
 
-    public function testActivatePanicMode()
+    public function testGetCampaignModificationsWithPanicMode()
     {
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
 
@@ -134,11 +144,19 @@ class ApiManagerTest extends TestCase
 
         $manager = new ApiManager($httpClientMock);
 
+        $statusCallback = function ($status) {
+            echo $status;
+        };
+
+        $manager->setStatusChangedCallable($statusCallback);
+
         $this->assertFalse($manager->getIsPanicMode());
         $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
         $visitor = new Visitor($configManager, $visitorId, []);
 
+        //Test Change Status to FlagshipStatus::READY_PANIC_ON
+        $this->expectOutputString((string)FlagshipStatus::READY_PANIC_ON);
         $modifications = $manager->getCampaignModifications($visitor);
 
         $this->assertTrue($manager->getIsPanicMode());
@@ -146,7 +164,7 @@ class ApiManagerTest extends TestCase
         $this->assertSame([], $modifications);
     }
 
-    public function testGetModificationsWithSomeFailed()
+    public function testGetCampaignModificationsWithSomeFailed()
     {
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
 

@@ -120,9 +120,19 @@ class FlagshipConfigTest extends TestCase
         $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
     }
 
+    public function testSetStatusChangedCallable()
+    {
+        $config = new FlagshipConfig();
+        $this->assertNull($config->getStatusChangedCallable());
+        $callable = function () {
+        };
+        $config->setStatusChangedCallable($callable);
+
+        $this->assertSame($callable, $config->getStatusChangedCallable());
+    }
+
     public function testJson()
     {
-
         $data =  [
             "environmentId" => 'envId',
             "apiKey" => "apiKey",

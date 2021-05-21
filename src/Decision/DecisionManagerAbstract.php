@@ -80,4 +80,9 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
             call_user_func($callable, $newStatus);
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    abstract public function getCampaignModifications(Visitor $visitor);
 }

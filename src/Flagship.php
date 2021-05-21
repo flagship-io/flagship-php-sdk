@@ -40,7 +40,7 @@ class Flagship
     /**
      * @var int
      */
-    private $status = FlagshipStatus::NOT_READY;
+    private $status = FlagshipStatus::NOT_INITIALIZED;
 
     private function __construct()
     {
@@ -132,7 +132,7 @@ class Flagship
                 );
                 $flagship->setStatus(FlagshipStatus::READY);
             } else {
-                $flagship->setStatus(FlagshipStatus::NOT_READY);
+                $flagship->setStatus(FlagshipStatus::NOT_INITIALIZED);
             }
         } catch (Exception $exception) {
             self::getInstance()->logError(
@@ -220,8 +220,7 @@ class Flagship
 
     /**
      * Return current status of Flagship SDK.
-     * e.g. FlagshipStatus::READY or FlagshipStatus::NOT_READY
-     *
+     * @see \Flagship\Enum\FlagshipStatus
      * @return int
      */
     public static function getStatus()

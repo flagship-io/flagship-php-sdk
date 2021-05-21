@@ -110,6 +110,9 @@ class ApiManagerTest extends TestCase
         //Test Change Status to FlagshipStatus::READY_PANIC_ON
         $this->expectOutputString((string)FlagshipStatus::READY);
 
+        //Test Change Status to FlagshipStatus::READY_PANIC_ON
+        $this->expectOutputString((string)FlagshipStatus::READY);
+
         $modifications = $manager->getCampaignModifications($visitor);
 
         //Test duplicate keys are overwritten

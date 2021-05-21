@@ -89,6 +89,10 @@ class Flagship
             $config->setEnvId($envId);
             $config->setApiKey($apiKey);
 
+            $flagship->setConfig($config);
+
+            $flagship->setStatus(FlagshipStatus::STARTING);
+
             if (!$config->getLogManager()) {
                 $logManager = $container->get('Psr\Log\LoggerInterface');
                 $config->setLogManager($logManager);
@@ -102,6 +106,11 @@ class Flagship
                     break;
             }
 
+            //Will trigger setStatus method of Flagship if decisionManager want update status
+            $decisionManager->setStatusChangedCallable(function ($status) use ($flagship) {
+                $flagship->setStatus($status);
+            });
+
             $configManager = $container->get('Flagship\Utils\ConfigManager');
 
             $configManager->setDecisionManager($decisionManager);
@@ -109,8 +118,6 @@ class Flagship
             $trackingManager = $container->get('Flagship\Api\TrackingManager');
 
             $configManager->setTrackingManager($trackingManager);
-
-            $flagship->setConfig($config);
 
             $configManager->setConfig($config);
 
@@ -135,6 +142,8 @@ class Flagship
                 $flagship->setStatus(FlagshipStatus::NOT_INITIALIZED);
             }
         } catch (Exception $exception) {
+            self::getInstance()->setStatus(FlagshipStatus::NOT_INITIALIZED);
+
             self::getInstance()->logError(
                 $config,
                 $exception->getMessage(),
@@ -231,11 +240,15 @@ class Flagship
     /**
      * Set Flagship SDK status
      *
-     * @param  int $status FlagshipStatus::READY or FlagshipStatus::NOT_READY
+     * @param int $status FlagshipStatus::READY or FlagshipStatus::NOT_READY
      * @return Flagship
      */
     protected function setStatus($status)
     {
+        if ($this->config && $this->config->getStatusChangedCallable() && $this->status !== $status) {
+            call_user_func($this->config->getStatusChangedCallable(), $status);
+        }
+
         $this->status = $status;
         return $this;
     }
@@ -252,10 +265,10 @@ class Flagship
      * Create a new visitor with a context.
      *
      * @param string $visitorId : Unique visitor identifier.
-     * @param  array $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
+     * @param array $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return Visitor|null
      */
-    public static function newVisitor($visitorId, $context = [])
+    public static function newVisitor($visitorId, array $context = [])
     {
         if (empty($visitorId) || !self::isReady()) {
             return  null;

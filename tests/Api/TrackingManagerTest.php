@@ -9,7 +9,6 @@ use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
 use Flagship\Model\Modification;
 use Flagship\Utils\ConfigManager;
-use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
@@ -47,7 +46,7 @@ class TrackingManagerTest extends TestCase
             ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
             ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
             ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', []);
+        $visitor = new Visitor\VisitorDelegate($configManager, 'visitorId', []);
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 
@@ -99,7 +98,7 @@ class TrackingManagerTest extends TestCase
             ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
             ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
 
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', []);
+        $visitor = new Visitor\VisitorDelegate($configManager, 'visitorId', []);
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 

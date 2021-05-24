@@ -8,8 +8,8 @@ use Flagship\Enum\FlagshipStatus;
 use Flagship\FlagshipConfig;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
-use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
+use Flagship\Visitor;
 use Flagship\Visitor\VisitorDelegate;
 use PHPUnit\Framework\TestCase;
 
@@ -104,11 +104,8 @@ class ApiManagerTest extends TestCase
         $manager->setStatusChangedCallable($statusCallback);
         $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
+        $visitor = new VisitorDelegate($configManager, $visitorId, []);
 
-
-        //Test Change Status to FlagshipStatus::READY_PANIC_ON
-        $this->expectOutputString((string)FlagshipStatus::READY);
 
         //Test Change Status to FlagshipStatus::READY_PANIC_ON
         $this->expectOutputString((string)FlagshipStatus::READY);
@@ -158,7 +155,7 @@ class ApiManagerTest extends TestCase
         $this->assertFalse($manager->getIsPanicMode());
         $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
+        $visitor = new VisitorDelegate($configManager, $visitorId, []);
 
         //Test Change Status to FlagshipStatus::READY_PANIC_ON
         $this->expectOutputString((string)FlagshipStatus::READY_PANIC_ON);
@@ -232,7 +229,7 @@ class ApiManagerTest extends TestCase
         $manager = new ApiManager($httpClientMock);
         $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
+        $visitor = new VisitorDelegate($configManager, $visitorId, []);
 
         $modifications = $manager->getCampaignModifications($visitor);
 
@@ -275,7 +272,7 @@ class ApiManagerTest extends TestCase
 
         $apiManager = new ApiManager($httpClientMock);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, 'visitor_id', ['age' => 15]);
+        $visitor = new VisitorDelegate($configManager, 'visitor_id', ['age' => 15]);
         $value = $apiManager->getCampaignModifications($visitor);
 
         $this->assertSame([], $value);

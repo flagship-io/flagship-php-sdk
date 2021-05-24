@@ -9,7 +9,7 @@ use Flagship\Model\Modification;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
-use Flagship\Visitor;
+use Flagship\Visitor\VisitorAbstract;
 
 /**
  * This class manage all http calls to Decision api
@@ -27,10 +27,10 @@ class ApiManager extends DecisionManagerAbstract
      * This function will fetch campaigns modifications from the server according to the visitor context and
      * return an associative array of campaigns
      *
-     * @param  Visitor $visitor
+     * @param VisitorAbstract $visitor
      * @return array return an associative array of campaigns
      */
-    private function getCampaigns(Visitor $visitor)
+    private function getCampaigns(VisitorAbstract $visitor)
     {
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
@@ -163,7 +163,7 @@ class ApiManager extends DecisionManagerAbstract
     /**
      * @inheritDoc
      */
-    public function getCampaignModifications(Visitor $visitor)
+    public function getCampaignModifications(VisitorAbstract $visitor)
     {
         $campaigns = $this->getCampaigns($visitor);
         return $this->getModifications($campaigns);

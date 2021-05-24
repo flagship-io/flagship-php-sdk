@@ -42,6 +42,10 @@ class Visitor implements JsonSerializable
      * @var ConfigManager
      */
     private $configManager;
+    /**
+     * @var bool
+     */
+    private $hasConsented = false;
 
     /**
      * Create a new visitor.
@@ -435,6 +439,24 @@ class Visitor implements JsonSerializable
         }
 
         $this->getConfigManager()->getTrackingManager()->sendHit($hit);
+    }
+
+    /**
+     * Return True or False if the visitor has consented for private data usage.
+     * @return bool
+     */
+    public function hasConsented()
+    {
+        return $this->hasConsented;
+    }
+
+    /**
+     * Set if visitor has consented for private data usage.
+     * @param bool $hasConsented True if the visitor has consented false otherwise.
+     */
+    public function setConsent($hasConsented)
+    {
+        $this->hasConsented = $hasConsented;
     }
 
     /**

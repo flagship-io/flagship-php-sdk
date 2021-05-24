@@ -159,4 +159,13 @@ class VisitorTest extends TestCase
             json_encode($visitor)
         );
     }
+
+    public function testSetConsent()
+    {
+        $configManager = new ConfigManager();
+        $visitor = new Visitor($configManager, "visitorId", []);
+        $this->assertFalse($visitor->hasConsented());
+        $visitor->setConsent(true);
+        $this->assertTrue($visitor->hasConsented());
+    }
 }

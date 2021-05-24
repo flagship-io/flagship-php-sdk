@@ -6,6 +6,7 @@ use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor;
+use Flagship\Visitor\VisitorAbstract;
 
 /**
  * Class TrackingManagerAbstract
@@ -39,11 +40,11 @@ abstract class TrackingManagerAbstract
     /**
      * Send to server that this user has seen this modification
      *
-     * @param  Visitor      $visitor
-     * @param  Modification $modification
+     * @param VisitorAbstract $visitor
+     * @param Modification $modification
      * @return bool
      */
-    abstract public function sendActive(Visitor $visitor, Modification $modification);
+    abstract public function sendActive(VisitorAbstract $visitor, Modification $modification);
 
     /**
      * @param  HitAbstract $hit

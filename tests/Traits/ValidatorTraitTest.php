@@ -2,6 +2,7 @@
 
 namespace Flagship\Traits;
 
+use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
 class ValidatorTraitTest extends TestCase
@@ -16,16 +17,17 @@ class ValidatorTraitTest extends TestCase
             true,
             true
         );
+        $isKeyValid = Utils::getMethod($validatorTraitMock, "isKeyValid");
         // Key is empty
-        $this->assertFalse($validatorTraitMock->isKeyValid(''));
+        $this->assertFalse($isKeyValid->invokeArgs($validatorTraitMock, ['']));
         // Key is null
-        $this->assertFalse($validatorTraitMock->isKeyValid(null));
+        $this->assertFalse($isKeyValid->invokeArgs($validatorTraitMock, [null]));
         // Key is not string
-        $this->assertFalse($validatorTraitMock->isKeyValid(44));
-        $this->assertFalse($validatorTraitMock->isKeyValid([]));
+        $this->assertFalse($isKeyValid->invokeArgs($validatorTraitMock, [44]));
+        $this->assertFalse($isKeyValid->invokeArgs($validatorTraitMock, [[]]));
 
         //Key is valid
-        $this->assertTrue($validatorTraitMock->isKeyValid('ValidKey'));
+        $this->assertTrue($isKeyValid->invokeArgs($validatorTraitMock, ['validKey']));
     }
 
 
@@ -39,25 +41,25 @@ class ValidatorTraitTest extends TestCase
             true,
             true
         );
+
+        $isValueValid = Utils::getMethod($validatorTraitMock, "isValueValid");
         // Value is empty
-        $this->assertFalse($validatorTraitMock->isValueValid(''));
+        $this->assertFalse($isValueValid->invokeArgs($validatorTraitMock, ['']));
 
         // Value is null
-        $this->assertFalse($validatorTraitMock->isValueValid(null));
+        $this->assertFalse($isValueValid->invokeArgs($validatorTraitMock, [null]));
 
         //Value is not valid
-        $this->assertFalse($validatorTraitMock->isValueValid([]));
+        $this->assertFalse($isValueValid->invokeArgs($validatorTraitMock, [[]]));
 
         //Test value is numeric
-        $this->assertTrue($validatorTraitMock->isValueValid(14));
-        $this->assertTrue($validatorTraitMock->isValueValid(14.5));
+        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [14]));
+        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [14.5]));
 
         //Test value is string
-        $this->assertTrue($validatorTraitMock->isValueValid("hello"));
+        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, ['abc']));
 
         //Test value is boolean
-        $this->assertTrue($validatorTraitMock->isValueValid(true));
-        //Test value is boolean
-        $this->assertTrue($validatorTraitMock->isValueValid(false));
+        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [true]));
     }
 }

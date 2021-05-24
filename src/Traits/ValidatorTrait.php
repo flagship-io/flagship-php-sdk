@@ -11,7 +11,7 @@ trait ValidatorTrait
      * @param  mixed $key Context key
      * @return bool
      */
-    public static function isKeyValid($key)
+    protected function isKeyValid($key)
     {
         return !empty($key) && is_string($key);
     }
@@ -23,7 +23,7 @@ trait ValidatorTrait
      * @param  $value
      * @return bool
      */
-    public static function isValueValid($value)
+    protected function isValueValid($value)
     {
         return (!empty($value) && (is_numeric($value) || is_bool($value) || is_string($value)));
     }

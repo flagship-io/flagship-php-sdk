@@ -9,6 +9,7 @@ use Flagship\Model\Modification;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
 use Flagship\Visitor;
+use Flagship\Visitor\VisitorAbstract;
 
 /**
  * Class TrackingManager
@@ -22,7 +23,7 @@ class TrackingManager extends TrackingManagerAbstract
     /**
      * @inheritDoc
      */
-    public function sendActive(Visitor $visitor, Modification $modification)
+    public function sendActive(VisitorAbstract $visitor, Modification $modification)
     {
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());

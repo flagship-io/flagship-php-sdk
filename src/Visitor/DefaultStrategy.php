@@ -9,7 +9,7 @@ use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
 
-class DefaultStrategyAbstract extends VisitorStrategyAbstract
+class DefaultStrategy extends VisitorStrategyAbstract
 {
     use LogTrait;
     use ValidatorTrait;
@@ -201,7 +201,7 @@ class DefaultStrategyAbstract extends VisitorStrategyAbstract
                 [FlagshipConstant::TAG => $process]
             );
         }
-        return !!$check;
+        return (bool)$check;
     }
 
     /**

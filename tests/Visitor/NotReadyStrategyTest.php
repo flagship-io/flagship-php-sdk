@@ -37,18 +37,14 @@ class NotReadyStrategyTest extends TestCase
                 [FlagshipConstant::TAG => $functionName]];
         };
 
-        $logManagerStub->expects($this->exactly(8))->method('error')
+        $logManagerStub->expects($this->exactly(5))->method('error')
             ->withConsecutive(
-                $logMessageBuild('updateContext'),
-                $logMessageBuild('updateContextCollection'),
-                $logMessageBuild('clearContext'),
                 $logMessageBuild('synchronizedModifications'),
                 $logMessageBuild('getModification'),
                 $logMessageBuild('getModificationInfo'),
                 $logMessageBuild('activateModification'),
                 $logMessageBuild('sendHit')
             );
-
 
         $configManager = (new ConfigManager())->setConfig($config);
 
@@ -61,11 +57,17 @@ class NotReadyStrategyTest extends TestCase
         $value = "value";
         $notReadyStrategy->updateContext($key, $value);
 
+        $this->assertSame([$key => $value], $visitor->getContext());
+
         //Test updateContextCollection
-        $notReadyStrategy->updateContextCollection([]);
+        $notReadyStrategy->updateContextCollection(['age' => 20]);
+
+        $this->assertSame([$key => $value, 'age' => 20], $visitor->getContext());
 
         //Test clearContext
         $notReadyStrategy->clearContext();
+
+        $this->assertCount(0, $visitor->getContext());
 
         //Test synchronizedModifications
         $notReadyStrategy->synchronizedModifications();

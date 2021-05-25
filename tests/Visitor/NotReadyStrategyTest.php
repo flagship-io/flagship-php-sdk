@@ -76,7 +76,7 @@ class NotReadyStrategyTest extends TestCase
         $defaultValue = "defaultValue";
         $valueOutput = $notReadyStrategy->getModification('key', $defaultValue);
 
-        $this->assertSame($valueOutput, $defaultValue);
+        $this->assertSame($defaultValue, $valueOutput);
 
         //Test getModificationInfo
         $valueOutput = $notReadyStrategy->getModificationInfo('key');

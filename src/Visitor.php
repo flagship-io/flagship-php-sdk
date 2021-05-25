@@ -4,7 +4,6 @@ namespace Flagship;
 
 use Flagship\Hit\HitAbstract;
 use Flagship\Traits\LogTrait;
-use Flagship\Utils\ConfigManager;
 use Flagship\Visitor\VisitorDelegate;
 use Flagship\Visitor\VisitorInterface;
 use JsonSerializable;
@@ -21,13 +20,11 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * Create a new visitor.
      *
-     * @param ConfigManager $configManager
-     * @param string $visitorId : visitor unique identifier.
-     * @param array $context : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
+     * @param VisitorDelegate $visitorDelegate
      */
-    public function __construct(ConfigManager $configManager, $visitorId, array $context = [])
+    public function __construct(VisitorDelegate $visitorDelegate)
     {
-        $this->visitorDelegate = new VisitorDelegate($configManager, $visitorId, $context);
+        $this->visitorDelegate = $visitorDelegate;
     }
 
     private function getVisitorDelegate()

@@ -3,11 +3,14 @@
 namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipStatus;
+use Flagship\Flagship;
 use Flagship\FlagshipConfig;
 use Flagship\Model\Modification;
 use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
+use Flagship\Utils\Container;
 use JsonSerializable;
 
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
@@ -40,6 +43,15 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
      * @var bool
      */
     protected $hasConsented = false;
+
+    /**
+     * @var callable
+     */
+    protected $getStrategyCallable;
+    /**
+     * @var Container
+     */
+    private $dependencyIContainer;
 
     /**
      * @return ConfigManager
@@ -148,9 +160,14 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
     /**
      * @return VisitorStrategyAbstract
      */
-    public function getStrategy()
+    protected function getStrategy()
     {
-        return new DefaultStrategyAbstract($this);
+        if (Flagship::getStatus() === FlagshipStatus::READY_PANIC_ON) {
+            $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\PanicStrategy", [$this], true);
+        } else {
+            $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\DefaultStrategy", [$this], true);
+        }
+        return $strategy;
     }
     /**
      * Return True or False if the visitor has consented for private data usage.
@@ -169,6 +186,23 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
     {
         $this->hasConsented = $hasConsented;
     }
+
+    /**
+     * @return Container
+     */
+    public function getDependencyIContainer()
+    {
+        return $this->dependencyIContainer;
+    }
+
+    public function setDependencyIContainer(Container $dependencyIContainer)
+    {
+        $this->dependencyIContainer = $dependencyIContainer;
+    }
+
+
+
+
 
     /**
      * @inheritDoc

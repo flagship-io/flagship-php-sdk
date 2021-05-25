@@ -27,6 +27,9 @@ class Visitor implements VisitorInterface, JsonSerializable
         $this->visitorDelegate = $visitorDelegate;
     }
 
+    /**
+     * @return VisitorDelegate
+     */
     private function getVisitorDelegate()
     {
         return $this->visitorDelegate;

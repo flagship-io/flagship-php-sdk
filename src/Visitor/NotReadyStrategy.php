@@ -18,6 +18,30 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
+    public function updateContext($key, $value)
+    {
+        $this->log(__FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateContextCollection(array $context)
+    {
+        $this->log(__FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function clearContext()
+    {
+        $this->log(__FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function synchronizedModifications()
     {
         $this->log(__FUNCTION__);

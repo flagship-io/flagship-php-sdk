@@ -51,31 +51,39 @@ class Container implements ContainerInterface
             $className = $this->bindings[$id];
         }
         $reflectedClass = new ReflectionClass($className);
-        if ($reflectedClass->isInstantiable()) {
-            $constructor = $reflectedClass->getConstructor();
-            if ($constructor) {
-                $constructorParameters = [];
-                if (is_array($args)) {
-                    $constructorParameters = $args;
-                } else {
-                    $parameters = $constructor->getParameters();
-                    foreach ($parameters as $parameter) {
-                        $isPhp5 = version_compare(phpversion(), '7', '<');
-                        $typeName = $isPhp5 ? $parameter->getClass() : $parameter->getType();
-                        if ($typeName) {
-                            $constructorParameters[] = $this->get($typeName->getName());
-                        } else {
-                            $constructorParameters[] = $parameter->isDefaultValueAvailable() ?
-                                $parameter->getDefaultValue() : null;
-                        }
-                    }
-                }
-                return $reflectedClass->newInstanceArgs($constructorParameters);
-            } else {
-                return $reflectedClass->newInstance();
-            }
-        } else {
+
+        if (!$reflectedClass->isInstantiable()) {
             throw new Exception($className . "not an instantiable Class");
         }
+
+        $constructor = $reflectedClass->getConstructor();
+
+        if (!$constructor) {
+            return $reflectedClass->newInstance();
+        }
+
+        if (is_array($args)) {
+            $constructorParameters = $args;
+        } else {
+            $parameters = $constructor->getParameters();
+            $constructorParameters = $this->extractConstructorParam($parameters);
+        }
+        return $reflectedClass->newInstanceArgs($constructorParameters);
+    }
+
+    private function extractConstructorParam($parameters)
+    {
+        $constructorParameters = [];
+        foreach ($parameters as $parameter) {
+            $isPhp5 = version_compare(phpversion(), '7', '<');
+            $typeName = $isPhp5 ? $parameter->getClass() : $parameter->getType();
+            if ($typeName) {
+                $constructorParameters[] = $this->get($typeName->getName());
+            } else {
+                $constructorParameters[] = $parameter->isDefaultValueAvailable() ?
+                    $parameter->getDefaultValue() : null;
+            }
+        }
+        return $constructorParameters;
     }
 }

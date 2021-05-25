@@ -12,6 +12,7 @@ use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\FlagshipLogManager;
+use Flagship\Visitor\VisitorDelegate;
 use Psr\Log\LoggerInterface;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
@@ -435,7 +436,9 @@ class FlagshipTest extends TestCase
 
         $configManager = new ConfigManager();
 
-        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager) {
+        $visitorId = 'Visitor_1';
+
+        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager, $visitorId) {
             $args = func_get_args();
             switch ($args[0]) {
                 case 'Flagship\FlagshipConfig':
@@ -448,6 +451,8 @@ class FlagshipTest extends TestCase
                     return $trackingManager;
                 case 'Flagship\Utils\ConfigManager':
                     return $configManager;
+                case 'Flagship\Visitor\VisitorDelegate':
+                    return new VisitorDelegate(new Container(), $configManager, $visitorId, []);
                 default:
                     return null;
             }

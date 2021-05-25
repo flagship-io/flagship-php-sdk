@@ -42,8 +42,12 @@ class Flagship
      */
     private $status = FlagshipStatus::NOT_INITIALIZED;
 
+    /**
+     * Flagship constructor.
+     */
     private function __construct()
     {
+        //private singleton constructor
     }
 
     /**
@@ -51,6 +55,7 @@ class Flagship
      */
     private function __clone()
     {
+        //private singleton clone
     }
 
     /**
@@ -160,17 +165,17 @@ class Flagship
      */
     private function containerInitialization()
     {
-        $container = new Container();
+        $newContainer = new Container();
 
-        $container->bind(
+        $newContainer->bind(
             'Flagship\Utils\HttpClientInterface',
             'Flagship\Utils\HttpClient'
         );
-        $container->bind(
+        $newContainer->bind(
             'Psr\Log\LoggerInterface',
             'Flagship\Utils\FlagshipLogManager'
         );
-        return $container;
+        return $newContainer;
     }
 
     /**
@@ -274,6 +279,12 @@ class Flagship
             return  null;
         }
         $instance = self::getInstance();
-        return new Visitor($instance->getConfigManager(), $visitorId, $context);
+        $visitorDelegate = $instance->getContainer()->get('Flagship\Visitor\VisitorDelegate', [
+            $instance->getContainer(),
+            $instance->getConfigManager(),
+            $visitorId,
+            $context
+        ], true);
+        return new Visitor($visitorDelegate);
     }
 }

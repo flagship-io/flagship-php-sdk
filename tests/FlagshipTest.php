@@ -366,7 +366,7 @@ class FlagshipTest extends TestCase
         $visitorId = "visitorId";
         $visitor1 = Flagship::newVisitor($visitorId, $context);
         $this->assertInstanceOf("Flagship\Visitor", $visitor1);
-        $this->assertSame($context['age'], $visitor1->getContext()['age']);
+        $this->assertSame($context, $visitor1->getContext());
     }
 
     public function testNewVisitorFailed()

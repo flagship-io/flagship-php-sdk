@@ -51,6 +51,7 @@ class FlagshipConstant
     const PANIC_MODE_ERROR        = "'%s' deactivated while panic mode is on.";
     const VISITOR_ID_ERROR        = "visitorId must not be null or empty";
     const METHOD_DEACTIVATED_ERROR = "Method '%s' is deactivated while SDK status is: %s.";
+    const METHOD_DEACTIVATED_CONSENT_ERROR = "Method '%s' is deactivated for visitor '%s': visitor did not consent.";
 
     //Messages Info
     const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";

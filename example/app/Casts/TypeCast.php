@@ -9,7 +9,6 @@ class TypeCast implements TypeCastInterface
      */
     public function castToType($defaultValue, $type)
     {
-        $value = $defaultValue;
         switch ($type) {
             case 'bool':
                 $value = filter_var($defaultValue, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
@@ -22,6 +21,13 @@ class TypeCast implements TypeCastInterface
             case 'int':
             case 'integer':
                 $value = (int)$defaultValue;
+                break;
+            case 'JSONArray':
+            case 'JSONObject':
+                $value = json_decode($defaultValue, true);
+                break;
+            default:
+                $value = $defaultValue;
                 break;
         }
         return $value;

@@ -201,18 +201,19 @@ class Visitor implements JsonSerializable
         return $check;
     }
 
+
     /**
      * Retrieve a modification value by its key. If no modification match the given
      * key or if the stored value type and default value type do not match, default value will be returned.
      *
      * @param string              $key          : key associated to the modification.
-     * @param string|bool|numeric $defaultValue : default value to return.
+     * @param string|bool|numeric|array $defaultValue : default value to return.
      * @param bool                $activate     : Set this parameter to true to automatically
      *                                          report on our server that the
      *                                          current visitor has seen this modification. It is possible to call
      *                                          activateModification() later.
 
-     * @return string|bool|numeric : modification value or default value.
+     * @return string|bool|numeric|array : modification value or default value.
      */
     public function getModification($key, $defaultValue, $activate = false)
     {
@@ -245,12 +246,16 @@ class Visitor implements JsonSerializable
                 sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
             );
+            if (is_null($modification->getValue())) {
+                $this->activateModification($key);
+            }
             return $defaultValue;
         }
 
         if ($activate) {
             $this->activateModification($key);
         }
+
         return $modification->getValue();
     }
 
@@ -373,7 +378,7 @@ class Visitor implements JsonSerializable
                 [FlagshipConstant::TAG => $process]
             );
         }
-        return !!$check;
+        return (bool)$check;
     }
 
 

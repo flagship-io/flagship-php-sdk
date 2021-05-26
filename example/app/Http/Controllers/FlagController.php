@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Casts\TypeCastInterface;
 use App\Rules\CheckBoolean;
 use App\Rules\TypeCheck;
+use Exception;
 use Flagship\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -18,8 +19,8 @@ class FlagController extends Controller
         try {
             $data = $this->validate($request, [
                 'type' => ['required', 'string', Rule::in(['string',
-                    'bool', 'float',
-                    'int', 'bool', 'double', 'long'])],
+                    'bool', 'float', 'int', 'bool', 'double', 'long',
+                    'JSONObject', 'JSONArray'])],
                 'activate' => ['required', new CheckBoolean()],
                 'defaultValue' => ['required', new TypeCheck($request->get('type'))]
             ]);
@@ -35,7 +36,7 @@ class FlagController extends Controller
             return response()->json($result);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 422);
         }
     }

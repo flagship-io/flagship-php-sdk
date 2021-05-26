@@ -19,8 +19,8 @@ class FlagController extends Controller
         try {
             $data = $this->validate($request, [
                 'type' => ['required', 'string', Rule::in(['string',
-                    'bool', 'float',
-                    'int', 'bool', 'double', 'long'])],
+                    'bool', 'float', 'int', 'bool', 'double', 'long',
+                    'JSONObject', 'JSONArray'])],
                 'activate' => ['required', new CheckBoolean()],
                 'defaultValue' => ['required', new TypeCheck($request->get('type'))]
             ]);

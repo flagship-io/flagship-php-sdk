@@ -342,7 +342,7 @@ class VisitorTest extends TestCase
         $keyValue = $modifications[2]->getValue();
         $defaultValue = 14;
         $modificationValue = $visitor->getModification($key, $defaultValue);
-        $this->assertSame($defaultValue, $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
 
         //Test getModification keyValue is empty
         //Return DefaultValue

@@ -162,11 +162,10 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
      */
     protected function getStrategy()
     {
-        // TODO tomorrow test this function
-        if (Flagship::getStatus() === FlagshipStatus::READY_PANIC_ON) {
-            $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\PanicStrategy", [$this], true);
-        } elseif (Flagship::getStatus() === FlagshipStatus::NOT_INITIALIZED) {
+        if (Flagship::getStatus() === FlagshipStatus::NOT_INITIALIZED) {
             $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\NotReadyStrategy", [$this], true);
+        } elseif (Flagship::getStatus() === FlagshipStatus::READY_PANIC_ON) {
+            $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\PanicStrategy", [$this], true);
         } elseif (!$this->hasConsented()) {
             $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\NoConsentStrategy", [$this], true);
         } else {

@@ -3,11 +3,13 @@
 namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipStatus;
 use Flagship\FlagshipConfig;
 use Flagship\Hit\Page;
 use Flagship\Model\Modification;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
+use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
 class VisitorDelegateTest extends TestCase
@@ -205,5 +207,40 @@ class VisitorDelegateTest extends TestCase
             ]),
             json_encode($visitorDelegate)
         );
+    }
+
+    public function testGetStrategy()
+    {
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
+        $instance = $instanceMethod->invoke(null);
+        $setStatusMethod = Utils::getMethod($instance, 'setStatus');
+        $setStatusMethod->invoke($instance, FlagshipStatus::NOT_INITIALIZED);
+
+        $config = new FlagshipConfig();
+        $visitorId = "visitor_id";
+        $context = ["age" => 20];
+        $configManager = (new ConfigManager())->setConfig($config);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $context);
+
+        $getStrategyMethod = Utils::getMethod($visitorDelegate, 'getStrategy');
+        $strategy = $getStrategyMethod->invoke($visitorDelegate);
+
+        $this->assertInstanceOf('Flagship\Visitor\NotReadyStrategy', $strategy);
+
+        $setStatusMethod->invoke($instance, FlagshipStatus::READY_PANIC_ON);
+        $strategy = $getStrategyMethod->invoke($visitorDelegate);
+
+        $this->assertInstanceOf('Flagship\Visitor\PanicStrategy', $strategy);
+
+        $setStatusMethod->invoke($instance, FlagshipStatus::READY);
+        $strategy = $getStrategyMethod->invoke($visitorDelegate);
+
+        $this->assertInstanceOf('Flagship\Visitor\NoConsentStrategy', $strategy);
+
+        $setStatusMethod->invoke($instance, FlagshipStatus::READY);
+        $visitorDelegate->setConsent(true);
+        $strategy = $getStrategyMethod->invoke($visitorDelegate);
+
+        $this->assertInstanceOf('Flagship\Visitor\DefaultStrategy', $strategy);
     }
 }

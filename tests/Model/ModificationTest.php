@@ -2,6 +2,7 @@
 
 namespace Flagship\Model;
 
+use Flagship\Enum\FlagshipField;
 use PHPUnit\Framework\TestCase;
 
 class ModificationTest extends TestCase
@@ -40,5 +41,16 @@ class ModificationTest extends TestCase
         $modification->setVariationId($variationId);
 
         $this->assertSame($variationId, $modification->getVariationId());
+
+        $arrayToJson =  [
+            FlagshipField::FIELD_KEY => $modification->getKey(),
+            FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
+            FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
+            FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
+            FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference(),
+            FlagshipField::FIELD_VALUE => $modification->getValue()
+        ];
+
+        $this->assertJsonStringEqualsJsonString(json_encode($arrayToJson), json_encode($modification));
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1621973408">
-  <project timestamp="1621973408">
+<coverage generated="1622034929">
+  <project timestamp="1622034929">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -178,7 +178,7 @@
         <class name="FlagshipField" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
-        <metrics loc="23" ncloc="18" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        <metrics loc="24" ncloc="19" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Enum/FlagshipStatus.php">
         <class name="FlagshipStatus" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
@@ -353,7 +353,7 @@
       </file>
       <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Visitor.php">
         <class name="Visitor" namespace="Flagship" fullPackage="Flagship" package="Flagship">
-          <metrics methods="22" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="159" coveredstatements="159" elements="181" coveredelements="181"/>
+          <metrics methods="22" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="162" coveredstatements="162" elements="184" coveredelements="184"/>
         </class>
         <line num="53" type="method" name="__construct" crap="1" count="20"/>
         <line num="55" type="stmt" count="20"/>
@@ -415,128 +415,131 @@
         <line num="199" type="stmt" count="5"/>
         <line num="200" type="stmt" count="5"/>
         <line num="201" type="stmt" count="8"/>
-        <line num="217" type="method" name="getModification" crap="6" count="3"/>
-        <line num="219" type="stmt" count="3"/>
-        <line num="220" type="stmt" count="2"/>
-        <line num="223" type="stmt" count="3"/>
-        <line num="224" type="stmt" count="2"/>
+        <line num="218" type="method" name="getModification" crap="7" count="3"/>
+        <line num="220" type="stmt" count="3"/>
+        <line num="221" type="stmt" count="2"/>
+        <line num="224" type="stmt" count="3"/>
         <line num="225" type="stmt" count="2"/>
         <line num="226" type="stmt" count="2"/>
         <line num="227" type="stmt" count="2"/>
         <line num="228" type="stmt" count="2"/>
         <line num="229" type="stmt" count="2"/>
-        <line num="232" type="stmt" count="3"/>
+        <line num="230" type="stmt" count="2"/>
         <line num="233" type="stmt" count="3"/>
-        <line num="234" type="stmt" count="2"/>
+        <line num="234" type="stmt" count="3"/>
         <line num="235" type="stmt" count="2"/>
         <line num="236" type="stmt" count="2"/>
         <line num="237" type="stmt" count="2"/>
         <line num="238" type="stmt" count="2"/>
         <line num="239" type="stmt" count="2"/>
-        <line num="242" type="stmt" count="3"/>
-        <line num="243" type="stmt" count="2"/>
+        <line num="240" type="stmt" count="2"/>
+        <line num="243" type="stmt" count="3"/>
         <line num="244" type="stmt" count="2"/>
         <line num="245" type="stmt" count="2"/>
         <line num="246" type="stmt" count="2"/>
         <line num="247" type="stmt" count="2"/>
         <line num="248" type="stmt" count="2"/>
-        <line num="251" type="stmt" count="2"/>
-        <line num="252" type="stmt" count="1"/>
-        <line num="253" type="stmt" count="1"/>
-        <line num="254" type="stmt" count="2"/>
-        <line num="263" type="method" name="getModificationInfo" crap="4" count="1"/>
-        <line num="265" type="stmt" count="1"/>
-        <line num="266" type="stmt" count="1"/>
-        <line num="269" type="stmt" count="1"/>
+        <line num="249" type="stmt" count="2"/>
+        <line num="250" type="stmt" count="1"/>
+        <line num="251" type="stmt" count="1"/>
+        <line num="252" type="stmt" count="2"/>
+        <line num="255" type="stmt" count="2"/>
+        <line num="256" type="stmt" count="1"/>
+        <line num="257" type="stmt" count="1"/>
+        <line num="259" type="stmt" count="2"/>
+        <line num="268" type="method" name="getModificationInfo" crap="4" count="1"/>
         <line num="270" type="stmt" count="1"/>
         <line num="271" type="stmt" count="1"/>
-        <line num="272" type="stmt" count="1"/>
-        <line num="273" type="stmt" count="1"/>
         <line num="274" type="stmt" count="1"/>
         <line num="275" type="stmt" count="1"/>
+        <line num="276" type="stmt" count="1"/>
+        <line num="277" type="stmt" count="1"/>
         <line num="278" type="stmt" count="1"/>
+        <line num="279" type="stmt" count="1"/>
         <line num="280" type="stmt" count="1"/>
-        <line num="281" type="stmt" count="1"/>
-        <line num="282" type="stmt" count="1"/>
         <line num="283" type="stmt" count="1"/>
-        <line num="284" type="stmt" count="1"/>
         <line num="285" type="stmt" count="1"/>
         <line num="286" type="stmt" count="1"/>
+        <line num="287" type="stmt" count="1"/>
+        <line num="288" type="stmt" count="1"/>
         <line num="289" type="stmt" count="1"/>
-        <line num="298" type="method" name="parseToCampaign" crap="1" count="1"/>
-        <line num="301" type="stmt" count="1"/>
-        <line num="302" type="stmt" count="1"/>
-        <line num="303" type="stmt" count="1"/>
-        <line num="304" type="stmt" count="1"/>
-        <line num="305" type="stmt" count="1"/>
+        <line num="290" type="stmt" count="1"/>
+        <line num="291" type="stmt" count="1"/>
+        <line num="294" type="stmt" count="1"/>
+        <line num="303" type="method" name="parseToCampaign" crap="1" count="1"/>
         <line num="306" type="stmt" count="1"/>
-        <line num="315" type="method" name="getObjetModification" crap="3" count="6"/>
-        <line num="317" type="stmt" count="6"/>
-        <line num="318" type="stmt" count="6"/>
-        <line num="319" type="stmt" count="6"/>
-        <line num="321" type="stmt" count="4"/>
-        <line num="322" type="stmt" count="4"/>
-        <line num="333" type="method" name="hasDecisionManager" crap="2" count="9"/>
-        <line num="335" type="stmt" count="9"/>
-        <line num="336" type="stmt" count="2"/>
-        <line num="337" type="stmt" count="2"/>
-        <line num="338" type="stmt" count="2"/>
-        <line num="339" type="stmt" count="2"/>
-        <line num="340" type="stmt" count="2"/>
+        <line num="307" type="stmt" count="1"/>
+        <line num="308" type="stmt" count="1"/>
+        <line num="309" type="stmt" count="1"/>
+        <line num="310" type="stmt" count="1"/>
+        <line num="311" type="stmt" count="1"/>
+        <line num="320" type="method" name="getObjetModification" crap="3" count="6"/>
+        <line num="322" type="stmt" count="6"/>
+        <line num="323" type="stmt" count="6"/>
+        <line num="324" type="stmt" count="6"/>
+        <line num="326" type="stmt" count="4"/>
+        <line num="327" type="stmt" count="4"/>
+        <line num="338" type="method" name="hasDecisionManager" crap="2" count="9"/>
+        <line num="340" type="stmt" count="9"/>
         <line num="341" type="stmt" count="2"/>
-        <line num="343" type="stmt" count="8"/>
-        <line num="351" type="method" name="synchronizedModifications" crap="2" count="7"/>
-        <line num="353" type="stmt" count="7"/>
-        <line num="354" type="stmt" count="1"/>
-        <line num="356" type="stmt" count="6"/>
-        <line num="357" type="stmt" count="6"/>
-        <line num="365" type="method" name="hasTrackingManager" crap="2" count="5"/>
-        <line num="367" type="stmt" count="5"/>
-        <line num="369" type="stmt" count="5"/>
-        <line num="370" type="stmt" count="2"/>
-        <line num="371" type="stmt" count="2"/>
-        <line num="372" type="stmt" count="2"/>
-        <line num="373" type="stmt" count="2"/>
-        <line num="374" type="stmt" count="2"/>
-        <line num="375" type="stmt" count="2"/>
-        <line num="376" type="stmt" count="5"/>
-        <line num="386" type="method" name="activateModification" crap="4" count="3"/>
-        <line num="388" type="stmt" count="3"/>
-        <line num="389" type="stmt" count="1"/>
-        <line num="392" type="stmt" count="3"/>
-        <line num="393" type="stmt" count="3"/>
+        <line num="342" type="stmt" count="2"/>
+        <line num="343" type="stmt" count="2"/>
+        <line num="344" type="stmt" count="2"/>
+        <line num="345" type="stmt" count="2"/>
+        <line num="346" type="stmt" count="2"/>
+        <line num="348" type="stmt" count="8"/>
+        <line num="356" type="method" name="synchronizedModifications" crap="2" count="7"/>
+        <line num="358" type="stmt" count="7"/>
+        <line num="359" type="stmt" count="1"/>
+        <line num="361" type="stmt" count="6"/>
+        <line num="362" type="stmt" count="6"/>
+        <line num="370" type="method" name="hasTrackingManager" crap="2" count="6"/>
+        <line num="372" type="stmt" count="6"/>
+        <line num="374" type="stmt" count="6"/>
+        <line num="375" type="stmt" count="3"/>
+        <line num="376" type="stmt" count="3"/>
+        <line num="377" type="stmt" count="3"/>
+        <line num="378" type="stmt" count="3"/>
+        <line num="379" type="stmt" count="3"/>
+        <line num="380" type="stmt" count="3"/>
+        <line num="381" type="stmt" count="6"/>
+        <line num="391" type="method" name="activateModification" crap="4" count="4"/>
+        <line num="393" type="stmt" count="4"/>
         <line num="394" type="stmt" count="1"/>
-        <line num="395" type="stmt" count="1"/>
-        <line num="396" type="stmt" count="1"/>
-        <line num="397" type="stmt" count="1"/>
-        <line num="398" type="stmt" count="1"/>
+        <line num="397" type="stmt" count="4"/>
+        <line num="398" type="stmt" count="4"/>
         <line num="399" type="stmt" count="1"/>
-        <line num="402" type="stmt" count="3"/>
+        <line num="400" type="stmt" count="1"/>
+        <line num="401" type="stmt" count="1"/>
+        <line num="402" type="stmt" count="1"/>
         <line num="403" type="stmt" count="1"/>
-        <line num="406" type="stmt" count="2"/>
-        <line num="407" type="stmt" count="2"/>
-        <line num="414" type="method" name="sendHit" crap="4" count="2"/>
-        <line num="416" type="stmt" count="2"/>
-        <line num="417" type="stmt" count="1"/>
-        <line num="420" type="stmt" count="2"/>
-        <line num="421" type="stmt" count="1"/>
-        <line num="424" type="stmt" count="2"/>
+        <line num="404" type="stmt" count="1"/>
+        <line num="407" type="stmt" count="4"/>
+        <line num="408" type="stmt" count="2"/>
+        <line num="411" type="stmt" count="2"/>
+        <line num="412" type="stmt" count="2"/>
+        <line num="419" type="method" name="sendHit" crap="4" count="2"/>
+        <line num="421" type="stmt" count="2"/>
+        <line num="422" type="stmt" count="1"/>
         <line num="425" type="stmt" count="2"/>
-        <line num="426" type="stmt" count="2"/>
-        <line num="428" type="stmt" count="2"/>
-        <line num="429" type="stmt" count="1"/>
-        <line num="430" type="stmt" count="1"/>
-        <line num="431" type="stmt" count="1"/>
-        <line num="432" type="stmt" count="1"/>
-        <line num="433" type="stmt" count="1"/>
+        <line num="426" type="stmt" count="1"/>
+        <line num="429" type="stmt" count="2"/>
+        <line num="430" type="stmt" count="2"/>
+        <line num="431" type="stmt" count="2"/>
+        <line num="433" type="stmt" count="2"/>
         <line num="434" type="stmt" count="1"/>
+        <line num="435" type="stmt" count="1"/>
+        <line num="436" type="stmt" count="1"/>
         <line num="437" type="stmt" count="1"/>
         <line num="438" type="stmt" count="1"/>
-        <line num="443" type="method" name="jsonSerialize" crap="1" count="1"/>
-        <line num="446" type="stmt" count="1"/>
-        <line num="447" type="stmt" count="1"/>
-        <line num="448" type="stmt" count="1"/>
-        <metrics loc="450" ncloc="308" classes="1" methods="22" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="159" coveredstatements="159" elements="181" coveredelements="181"/>
+        <line num="439" type="stmt" count="1"/>
+        <line num="442" type="stmt" count="1"/>
+        <line num="443" type="stmt" count="1"/>
+        <line num="448" type="method" name="jsonSerialize" crap="1" count="1"/>
+        <line num="451" type="stmt" count="1"/>
+        <line num="452" type="stmt" count="1"/>
+        <line num="453" type="stmt" count="1"/>
+        <metrics loc="455" ncloc="313" classes="1" methods="22" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="162" coveredstatements="162" elements="184" coveredelements="184"/>
       </file>
     </package>
     <package name="Flagship\Hit">
@@ -925,39 +928,47 @@
       </file>
       <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Model/Modification.php">
         <class name="Modification" namespace="Flagship\Model" fullPackage="Flagship" package="Flagship">
-          <metrics methods="12" coveredmethods="12" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" elements="30" coveredelements="30"/>
+          <metrics methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="38" coveredelements="38"/>
         </class>
-        <line num="40" type="method" name="getKey" crap="1" count="8"/>
-        <line num="42" type="stmt" count="8"/>
-        <line num="49" type="method" name="setKey" crap="1" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="58" type="method" name="getCampaignId" crap="1" count="3"/>
-        <line num="60" type="stmt" count="3"/>
-        <line num="67" type="method" name="setCampaignId" crap="1" count="7"/>
-        <line num="69" type="stmt" count="7"/>
-        <line num="70" type="stmt" count="7"/>
-        <line num="76" type="method" name="getVariationGroupId" crap="1" count="5"/>
-        <line num="78" type="stmt" count="5"/>
-        <line num="85" type="method" name="setVariationGroupId" crap="1" count="7"/>
-        <line num="87" type="stmt" count="7"/>
-        <line num="88" type="stmt" count="7"/>
-        <line num="94" type="method" name="getVariationId" crap="1" count="5"/>
-        <line num="96" type="stmt" count="5"/>
-        <line num="103" type="method" name="setVariationId" crap="1" count="7"/>
-        <line num="105" type="stmt" count="7"/>
-        <line num="106" type="stmt" count="7"/>
-        <line num="112" type="method" name="getIsReference" crap="1" count="3"/>
-        <line num="114" type="stmt" count="3"/>
-        <line num="121" type="method" name="setIsReference" crap="1" count="7"/>
-        <line num="123" type="stmt" count="7"/>
-        <line num="124" type="stmt" count="7"/>
-        <line num="130" type="method" name="getValue" crap="1" count="6"/>
-        <line num="132" type="stmt" count="6"/>
-        <line num="139" type="method" name="setValue" crap="1" count="7"/>
-        <line num="141" type="stmt" count="7"/>
-        <line num="142" type="stmt" count="7"/>
-        <metrics loc="144" ncloc="79" classes="1" methods="12" coveredmethods="12" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" elements="30" coveredelements="30"/>
+        <line num="43" type="method" name="getKey" crap="1" count="8"/>
+        <line num="45" type="stmt" count="8"/>
+        <line num="52" type="method" name="setKey" crap="1" count="7"/>
+        <line num="54" type="stmt" count="7"/>
+        <line num="55" type="stmt" count="7"/>
+        <line num="61" type="method" name="getCampaignId" crap="1" count="3"/>
+        <line num="63" type="stmt" count="3"/>
+        <line num="70" type="method" name="setCampaignId" crap="1" count="7"/>
+        <line num="72" type="stmt" count="7"/>
+        <line num="73" type="stmt" count="7"/>
+        <line num="79" type="method" name="getVariationGroupId" crap="1" count="5"/>
+        <line num="81" type="stmt" count="5"/>
+        <line num="88" type="method" name="setVariationGroupId" crap="1" count="7"/>
+        <line num="90" type="stmt" count="7"/>
+        <line num="91" type="stmt" count="7"/>
+        <line num="97" type="method" name="getVariationId" crap="1" count="5"/>
+        <line num="99" type="stmt" count="5"/>
+        <line num="106" type="method" name="setVariationId" crap="1" count="7"/>
+        <line num="108" type="stmt" count="7"/>
+        <line num="109" type="stmt" count="7"/>
+        <line num="115" type="method" name="getIsReference" crap="1" count="3"/>
+        <line num="117" type="stmt" count="3"/>
+        <line num="124" type="method" name="setIsReference" crap="1" count="7"/>
+        <line num="126" type="stmt" count="7"/>
+        <line num="127" type="stmt" count="7"/>
+        <line num="133" type="method" name="getValue" crap="1" count="6"/>
+        <line num="135" type="stmt" count="6"/>
+        <line num="142" type="method" name="setValue" crap="1" count="7"/>
+        <line num="144" type="stmt" count="7"/>
+        <line num="145" type="stmt" count="7"/>
+        <line num="151" type="method" name="jsonSerialize" crap="1" count="1"/>
+        <line num="154" type="stmt" count="1"/>
+        <line num="155" type="stmt" count="1"/>
+        <line num="156" type="stmt" count="1"/>
+        <line num="157" type="stmt" count="1"/>
+        <line num="158" type="stmt" count="1"/>
+        <line num="159" type="stmt" count="1"/>
+        <line num="160" type="stmt" count="1"/>
+        <metrics loc="162" ncloc="94" classes="1" methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="38" coveredelements="38"/>
       </file>
     </package>
     <package name="Flagship\Traits">
@@ -1019,8 +1030,8 @@
         <line num="55" type="method" name="setDecisionManager" crap="1" count="17"/>
         <line num="57" type="stmt" count="17"/>
         <line num="58" type="stmt" count="17"/>
-        <line num="64" type="method" name="getTrackingManager" crap="1" count="8"/>
-        <line num="66" type="stmt" count="8"/>
+        <line num="64" type="method" name="getTrackingManager" crap="1" count="9"/>
+        <line num="66" type="stmt" count="9"/>
         <line num="73" type="method" name="setTrackingManager" crap="1" count="13"/>
         <line num="75" type="stmt" count="13"/>
         <line num="76" type="stmt" count="13"/>
@@ -1214,6 +1225,6 @@
     <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Utils/HttpClientInterface.php">
       <metrics loc="49" ncloc="17" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="32" loc="3606" ncloc="2290" classes="29" methods="196" coveredmethods="196" conditionals="0" coveredconditionals="0" statements="818" coveredstatements="818" elements="1014" coveredelements="1014"/>
+    <metrics files="32" loc="3630" ncloc="2311" classes="29" methods="197" coveredmethods="197" conditionals="0" coveredconditionals="0" statements="828" coveredstatements="828" elements="1025" coveredelements="1025"/>
   </project>
 </coverage>

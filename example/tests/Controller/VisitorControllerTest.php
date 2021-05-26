@@ -34,10 +34,7 @@ class VisitorControllerTest extends TestCase
             'context' => $context,
         ]);
 
-        $this->assertJsonStringEqualsJsonString(json_encode([
-            'visitorId' => $visitorId,
-            'context' => $context,
-        ]), $this->response->getContent());
+        $this->assertJsonStringEqualsJsonString(json_encode([]), $this->response->getContent());
 
         $this->put('/visitor', [
             'context' => $context,

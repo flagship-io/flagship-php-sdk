@@ -301,10 +301,9 @@ class DefaultStrategyTest extends TestCase
         //Return DefaultValue
 
         $key = $modifications[2]->getKey();
-        $keyValue = $modifications[2]->getValue();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
-        $this->assertSame($defaultValue, $defaultValue);
+        $this->assertSame($defaultValue, $modificationValue);
 
         //Test getModification keyValue is empty
         //Return DefaultValue
@@ -405,13 +404,17 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $trackerManagerStub->expects($this->once())
+        $trackerManagerStub->expects($this->exactly(2))
             ->method('sendActive')
-            ->with($visitor, $modifications[0]);
+            ->withConsecutive([$visitor, $modifications[0]], [$visitor, $modifications[2]]);
 
         $defaultStrategy->synchronizedModifications();
 
         $defaultStrategy->getModification($modifications[0]->getKey(), 'defaultValue', true);
+
+        //Test activate on get Modification when value is null
+
+        $defaultStrategy->getModification($modifications[2]->getKey(), 'defaultValue', true);
     }
 
     /**

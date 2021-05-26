@@ -37,7 +37,7 @@ class VisitorController extends Controller
             $visitor->synchronizedModifications();
 
             $request->session()->put('visitor', $visitor);
-            return response()->json($visitor);
+            return response()->json($visitor->getModifications());
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);
         } catch (Exception $exception) {

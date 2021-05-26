@@ -42,10 +42,48 @@ class TypeCheck implements Rule
             case 'integer':
                 $check = is_numeric($value);
                 break;
+            case 'JSONArray':
+                $check = $this->isJsonArray($value);
+                break;
+            case 'JSONObject':
+                $check = $this->isJsonObject($value);
+                break;
             default:
                 $check = is_string($value) ;
         }
         return $check;
+    }
+
+    private function isJsonArray($string)
+    {
+        $jsonObject = json_decode($string);
+
+        if ($jsonObject === null) {
+            return false;
+        }
+
+        $json = ltrim($string);
+
+        if (strpos($json, '[') === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private function isJsonObject($string)
+    {
+        $jsonObject = json_decode($string);
+
+        if ($jsonObject === null) {
+            return false;
+        }
+
+        $json = ltrim($string);
+
+        if (strpos($json, '{') === 0) {
+            return true;
+        }
+        return false;
     }
 
     /**

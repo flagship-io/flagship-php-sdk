@@ -2,12 +2,15 @@
 
 namespace Flagship\Model;
 
+use Flagship\Enum\FlagshipField;
+use JsonSerializable;
+
 /**
  * This class is representation of modification to display
  *
  * @package Flagship\Model
  */
-class Modification
+class Modification implements JsonSerializable
 {
     /**
      * @var string
@@ -140,5 +143,20 @@ class Modification
     {
         $this->value = $value;
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return [
+            FlagshipField::FIELD_KEY => $this->getKey(),
+            FlagshipField::FIELD_CAMPAIGN_ID => $this->getCampaignId(),
+            FlagshipField::FIELD_VARIATION_GROUP_ID => $this->getVariationGroupId(),
+            FlagshipField::FIELD_VARIATION_ID => $this->getVariationId(),
+            FlagshipField::FIELD_IS_REFERENCE => $this->getIsReference(),
+            FlagshipField::FIELD_VALUE => $this->getValue()
+        ];
     }
 }

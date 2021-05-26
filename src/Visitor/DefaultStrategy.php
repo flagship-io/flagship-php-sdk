@@ -94,6 +94,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
             );
+
+            if (is_null($modification->getValue())) {
+                $this->activateModification($key);
+            }
             return $defaultValue;
         }
 

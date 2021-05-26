@@ -25,6 +25,6 @@ trait ValidatorTrait
      */
     protected function isValueValid($value)
     {
-        return (!empty($value) && (is_numeric($value) || is_bool($value) || is_string($value)));
+        return (is_numeric($value) || is_bool($value) || (is_string($value) && !empty($value)));
     }
 }

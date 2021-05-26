@@ -61,5 +61,8 @@ class ValidatorTraitTest extends TestCase
 
         //Test value is boolean
         $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [true]));
+
+        //Test value is boolean
+        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [false]));
     }
 }

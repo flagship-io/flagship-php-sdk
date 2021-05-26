@@ -45,7 +45,7 @@ class ApiManager extends DecisionManagerAbstract
                 "context" => $visitor->getContext()
             ];
 
-            $response = $this->httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => true], $postData);
+            $response = $this->httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => "true"], $postData);
             $body = $response->getBody();
             $hasPanicMode = !empty($body["panic"]);
 

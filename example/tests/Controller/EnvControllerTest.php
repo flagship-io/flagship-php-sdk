@@ -14,7 +14,7 @@ class EnvControllerTest extends TestCase
             "timeout" => 2000
         ];
         $this->put('/env', $data);
-        $this->assertJsonStringEqualsJsonString(json_encode([ 'data' => $data]), $this->response->getContent());
+        $this->assertJsonStringEqualsJsonString(json_encode($data), $this->response->getContent());
     }
 
 
@@ -27,6 +27,6 @@ class EnvControllerTest extends TestCase
         ];
         $this->put('/env', $data);
         $this->get('/env');
-        $this->assertJsonStringEqualsJsonString(json_encode([ 'data' => $data]), $this->response->getContent());
+        $this->assertJsonStringEqualsJsonString(json_encode($data), $this->response->getContent());
     }
 }

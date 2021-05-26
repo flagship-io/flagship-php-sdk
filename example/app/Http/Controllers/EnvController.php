@@ -55,11 +55,9 @@ class EnvController extends Controller
     private function getEnvJson($config)
     {
         return [
-            'data' => [
                 "environment_id" => $config->getEnvId(),
                 "api_key" => $config->getApiKey(),
                 "timeout" => $config->getTimeOut() * 1000
-            ]
         ];
     }
 }

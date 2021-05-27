@@ -36,21 +36,21 @@ class FlagshipConstant
     const SDK_VERSION = "v1";
 
     //Message Error
-    const INITIALIZATION_PARAM_ERROR     = "Params 'envId' and 'apiKey' must not be null or empty.";
-    const ERROR                          = "error";
-    const CONTEXT_PARAM_ERROR            = "params 'key' must be a non null String, and 'value' must be one of the
+    const INITIALIZATION_PARAM_ERROR       = "Params 'envId' and 'apiKey' must not be null or empty.";
+    const ERROR                            = "error";
+    const CONTEXT_PARAM_ERROR              = "params 'key' must be a non null String, and 'value' must be one of the
         following types : String, Number, Boolean";
-    const GET_MODIFICATION_CAST_ERROR    = "Modification for key '%s' has a different type. Default value is returned.";
-    const GET_MODIFICATION_MISSING_ERROR = "No modification for key '%s'. Default value is returned.";
-    const GET_MODIFICATION_KEY_ERROR     = "Key '%s' must not be null. Default value is returned.";
-    const GET_MODIFICATION_ERROR         = "No modification for key '%s'.";
-    const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null.";
-    const TRACKER_MANAGER_MISSING_ERROR  = "trackerManager must not be null.";
-    const CURL_LIBRARY_IS_NOT_LOADED     = 'curl library is not loaded';
-    const TYPE_ERROR                     = " '%s' must be a '%s'";
-    const PANIC_MODE_ERROR        = "'%s' deactivated while panic mode is on.";
-    const VISITOR_ID_ERROR        = "visitorId must not be null or empty";
-    const METHOD_DEACTIVATED_ERROR = "Method '%s' is deactivated while SDK status is: %s.";
+    const GET_MODIFICATION_CAST_ERROR      = "Modification for key '%s' has a different type. Default value is returned.";
+    const GET_MODIFICATION_MISSING_ERROR   = "No modification for key '%s'. Default value is returned.";
+    const GET_MODIFICATION_KEY_ERROR       = "Key '%s' must not be null. Default value is returned.";
+    const GET_MODIFICATION_ERROR           = "No modification for key '%s'.";
+    const DECISION_MANAGER_MISSING_ERROR   = "decisionManager must not be null.";
+    const TRACKER_MANAGER_MISSING_ERROR    = "trackerManager must not be null.";
+    const CURL_LIBRARY_IS_NOT_LOADED       = 'curl library is not loaded';
+    const TYPE_ERROR                       = " '%s' must be a '%s'";
+    const PANIC_MODE_ERROR                 = "'%s' deactivated while panic mode is on.";
+    const VISITOR_ID_ERROR                 = "visitorId must not be null or empty";
+    const METHOD_DEACTIVATED_ERROR         = "Method '%s' is deactivated while SDK status is: %s.";
     const METHOD_DEACTIVATED_CONSENT_ERROR = "Method '%s' is deactivated for visitor '%s': visitor did not consent.";
 
     //Messages Info
@@ -58,12 +58,12 @@ class FlagshipConstant
     const FLAGSHIP_SDK     = "Flagship SDK";
 
     //Tag
-    const TAG                    = 'TAG';
-    const TAG_INITIALIZATION       = 'INITIALIZATION';
+    const TAG                           = 'TAG';
+    const TAG_INITIALIZATION            = 'INITIALIZATION';
     const TAG_UPDATE_CONTEXT            = 'UPDATE CONTEXT';
-    const TAG_GET_MODIFICATION      = 'GET MODIFICATION';
-    const TAG_GET_MODIFICATION_INFO   = 'GET MODIFICATION INFO';
-    const TAG_NEW_VISITOR                   = 'NEW VISITOR';
+    const TAG_GET_MODIFICATION          = 'GET MODIFICATION';
+    const TAG_GET_MODIFICATION_INFO     = 'GET MODIFICATION INFO';
+    const TAG_NEW_VISITOR               = 'NEW VISITOR';
     const TAG_ACTIVE_MODIFICATION       = 'ACTIVE MODIFICATION';
     const TAG_SYNCHRONIZED_MODIFICATION = "SYNCHRONIZED MODIFICATION";
     const TAG_SEND_HIT                  = "SEND HIT";
@@ -103,5 +103,6 @@ class FlagshipConstant
     const HEADER_X_SDK_CLIENT     = 'x-sdk-client';
     const HEADER_X_SDK_VERSION    = 'x-sdk-version';
     const HEADER_APPLICATION_JSON = 'application/json';
-
+    const TIMEOUT_TYPE_ERROR      = "timeout must be numeric and > 0";
+    const LOG_LEVEL_ERROR         = "Loglevel value invalid, please use \Flagship\Enum\LogLevel ";
 }

@@ -20,5 +20,8 @@ class FlagshipField
     const FIELD_CAMPAIGN_ID        = 'campaignId';
     const FIELD_VARIATION_ID       = 'variationId';
     const FIELD_IS_REFERENCE       = 'isReference';
-    const FIELD_KEY                = 'Key';
+    const FIELD_KEY                = 'key';
+    const FIELD_VARIATION_GROUPS   = "variationGroups";
+    const FIELD_TARGETING          = 'targeting';
+    const FIELD_TARGETING_GROUPS   = 'targetingGroups';
 }

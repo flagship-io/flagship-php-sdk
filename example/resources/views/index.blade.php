@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://flagship-qa-front.netlify.app/lib/qa.umd.js"></script>
-    <link href="https://flagship-qa-front.netlify.app/lib/qa.css" rel="preload" as="style" />
+    <link href="https://flagship-qa-front.netlify.app/lib/qa.css" rel="stylesheet" />
 </head>
 <body>
 <div id="app">

@@ -7,7 +7,6 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Model\Modification;
 use Flagship\Traits\BuildApiTrait;
-use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Visitor\VisitorAbstract;
 
@@ -19,9 +18,7 @@ use Flagship\Visitor\VisitorAbstract;
 class ApiManager extends DecisionManagerAbstract
 {
     use ValidatorTrait;
-    use LogTrait;
     use BuildApiTrait;
-
 
     /**
      * This function will fetch campaigns modifications from the server according to the visitor context and

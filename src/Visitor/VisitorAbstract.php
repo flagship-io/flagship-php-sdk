@@ -7,7 +7,6 @@ use Flagship\Enum\FlagshipStatus;
 use Flagship\Flagship;
 use Flagship\FlagshipConfig;
 use Flagship\Model\Modification;
-use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -15,7 +14,6 @@ use JsonSerializable;
 
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
 {
-    use LogTrait;
     use ValidatorTrait;
 
     /**

@@ -5,6 +5,7 @@ namespace Flagship;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
+use Flagship\Traits\ValidatorTrait;
 use JsonSerializable;
 use Psr\Log\LoggerInterface;
 
@@ -15,6 +16,8 @@ use Psr\Log\LoggerInterface;
  */
 class FlagshipConfig implements JsonSerializable
 {
+    use ValidatorTrait;
+
     /**
      * @var string
      */
@@ -44,6 +47,11 @@ class FlagshipConfig implements JsonSerializable
      * @var callable
      */
     private $statusChangedCallable;
+
+    /**
+     * @var int
+     */
+    private $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT;
 
     /**
      * Create a new FlagshipConfig configuration.
@@ -109,9 +117,10 @@ class FlagshipConfig implements JsonSerializable
      * Specify the SDK running mode.
      *
      * @param int $decisionMode decision mode value e.g DecisionMode::DECISION_API
+     * @see \Flagship\Enum\DecisionMode Enum Decision mode
      * @return FlagshipConfig
      */
-    private function setDecisionMode($decisionMode)
+    public function setDecisionMode($decisionMode)
     {
         if (DecisionMode::isDecisionMode($decisionMode)) {
             $this->decisionMode = $decisionMode;
@@ -136,6 +145,7 @@ class FlagshipConfig implements JsonSerializable
     public function setTimeout($timeout)
     {
         if (is_numeric($timeout) && $timeout > 0) {
+            $this->logError($this, FlagshipConstant::TIMEOUT_TYPE_ERROR);
             $this->timeout = $timeout;
         }
         return $this;
@@ -178,6 +188,7 @@ class FlagshipConfig implements JsonSerializable
     public function setLogLevel($logLevel)
     {
         if (!is_int($logLevel) || $logLevel < LogLevel::NONE || $logLevel > LogLevel::ALL) {
+            $this->logError($this, FlagshipConstant::LOG_LEVEL_ERROR);
             return $this;
         }
         $this->logLevel = $logLevel;
@@ -202,6 +213,29 @@ class FlagshipConfig implements JsonSerializable
         if (is_callable($statusChangedCallable)) {
             $this->statusChangedCallable = $statusChangedCallable;
         }
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPollingInterval()
+    {
+        return $this->pollingInterval;
+    }
+
+    /**
+     * Specify delay between two bucketing polling.
+     *     Note: If 0 is given then it should poll only once at start time.
+     * @param int $pollingInterval : time delay in second. Default is 2sec.
+     * @return FlagshipConfig
+     */
+    public function setPollingInterval($pollingInterval)
+    {
+        if (!$this->isNumeric($pollingInterval, "pollingInterval", $this)) {
+            return $this;
+        }
+        $this->pollingInterval = $pollingInterval;
         return $this;
     }
 

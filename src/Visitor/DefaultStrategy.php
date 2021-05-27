@@ -6,12 +6,10 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
-use Flagship\Traits\LogTrait;
 use Flagship\Traits\ValidatorTrait;
 
 class DefaultStrategy extends VisitorStrategyAbstract
 {
-    use LogTrait;
     use ValidatorTrait;
 
     /**

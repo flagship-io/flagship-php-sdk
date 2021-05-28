@@ -5,6 +5,8 @@ namespace Flagship;
 use Exception;
 use Flagship\Api\TrackingManager;
 use Flagship\Decision\ApiManager;
+use Flagship\Decision\BucketingManager;
+use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Model\HttpResponse;
@@ -12,6 +14,7 @@ use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\FlagshipLogManager;
+use Flagship\Utils\MurmurHash;
 use Flagship\Visitor\VisitorDelegate;
 use Psr\Log\LoggerInterface;
 use Flagship\Utils\Utils;
@@ -112,7 +115,9 @@ class FlagshipTest extends TestCase
 
         $configManager = new ConfigManager();
 
-        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager) {
+        $bucketingManager = new BucketingManager(new HttpClient(), new MurmurHash());
+
+        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager, $bucketingManager) {
             $args = func_get_args();
             switch ($args[0]) {
                 case 'Flagship\FlagshipConfig':
@@ -125,6 +130,8 @@ class FlagshipTest extends TestCase
                     return $trackingManager;
                 case 'Flagship\Utils\ConfigManager':
                     return $configManager;
+                case 'Flagship\Decision\BucketingManager':
+                    return $bucketingManager;
                 default:
                     return null;
             }
@@ -163,6 +170,10 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
         $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
         $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
+
+        $config->setDecisionMode(DecisionMode::BUCKETING);
+        Flagship::start($envId, $apiKey, $config);
+        $this->assertInstanceOf('Flagship\Decision\BucketingManager', $configManager->getDecisionManager());
     }
 
     public function testStartWithLog()

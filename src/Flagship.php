@@ -75,7 +75,7 @@ class Flagship
 
 
     /**
-     * Start the flagship SDK, with a custom configuration implementation
+     * Start the flagship SDK
      *
      * @param $envId  : Environment id provided by Flagship.
      * @param $apiKey : Secure api key provided by Flagship.
@@ -103,12 +103,10 @@ class Flagship
                 $config->setLogManager($logManager);
             }
 
-            $decisionManager = null;
-
-            switch ($config->getDecisionMode()) {
-                case DecisionMode::DECISION_API:
-                    $decisionManager = $container->get('Flagship\Decision\ApiManager');
-                    break;
+            if ($config->getDecisionMode() === DecisionMode::BUCKETING) {
+                $decisionManager = $container->get('Flagship\Decision\BucketingManager');
+            } else {
+                $decisionManager = $container->get('Flagship\Decision\ApiManager');
             }
 
             //Will trigger setStatus method of Flagship if decisionManager want update status

@@ -16,12 +16,16 @@ class FlagshipField
     const FIELD_REFERENCE          = 'reference';
     const FIELD_VARIATION          = 'variation';
     const FIELD_VARIATION_GROUP_ID = 'variationGroupId';
-    const FIELD_ID                 = 'id';
-    const FIELD_CAMPAIGN_ID        = 'campaignId';
-    const FIELD_VARIATION_ID       = 'variationId';
-    const FIELD_IS_REFERENCE       = 'isReference';
-    const FIELD_KEY                = 'key';
-    const FIELD_VARIATION_GROUPS   = "variationGroups";
-    const FIELD_TARGETING          = 'targeting';
-    const FIELD_TARGETING_GROUPS   = 'targetingGroups';
+    const FIELD_ID               = 'id';
+    const FIELD_CAMPAIGN_ID      = 'campaignId';
+    const FIELD_VARIATION_ID     = 'variationId';
+    const FIELD_IS_REFERENCE     = 'isReference';
+    const FIELD_KEY              = 'key';
+    const FIELD_VARIATION_GROUPS = "variationGroups";
+    const FIELD_TARGETING        = 'targeting';
+    const FIELD_TARGETING_GROUPS = 'targetingGroups';
+    const FIELD_PANIC            = 'panic';
+    const FIELD_TARGETINGS       = 'targetings';
+    const FIELD_VARIATIONS       = "variations";
+    const FIELD_ALLOCATION       = 'allocation';
 }

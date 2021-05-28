@@ -2,9 +2,7 @@
 
 namespace Flagship\Decision;
 
-use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
-use Flagship\Model\Modification;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Utils\MurmurHash;
 use Flagship\Visitor\VisitorAbstract;
@@ -23,30 +21,30 @@ class BucketingManager extends DecisionManagerAbstract
         $this->murmurHash = $murmurHash;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getCampaignModifications(VisitorAbstract $visitor)
-    {
-        return $this->getBucketingCampaigns($visitor);
-    }
-
-    private function getBucketingCampaigns(VisitorAbstract $visitor)
+    protected function getCampaigns(VisitorAbstract $visitor)
     {
         $bucketingFile = __DIR__ . "/../../bucketing.json";
         if (!file_exists($bucketingFile)) {
-            return null;
+            return [];
         }
         $bucketingCampaigns = file_get_contents($bucketingFile);
 
         if (!$bucketingCampaigns) {
-            return null;
+            return [];
         }
 
         $bucketingCampaigns = json_decode($bucketingCampaigns, true);
 
+        if (isset($bucketingCampaigns[FlagshipField::FIELD_PANIC])) {
+            $hasPanicMode = !empty($bucketingCampaigns[FlagshipField::FIELD_PANIC]);
+            $this->setIsPanicMode($hasPanicMode);
+            return [];
+        }
+
+        $this->setIsPanicMode(false);
+
         if (!isset($bucketingCampaigns[FlagshipField::FIELD_CAMPAIGNS])) {
-            return null;
+            return [];
         }
 
 
@@ -59,42 +57,68 @@ class BucketingManager extends DecisionManagerAbstract
                 continue;
             }
             $variationGroups = $campaign[FlagshipField::FIELD_VARIATION_GROUPS];
-            foreach ($variationGroups as $variationGroup) {
-                $check = $this->isMatchTargeting($variationGroup, $visitor);
-                if ($check) {
-                    $variations = $this->getVariation(
-                        $variationGroup,
-                        $visitor->getVisitorId()
-                    );
-                    $visitorCampaigns[] = [
-                        FlagshipField::FIELD_ID => $campaign[FlagshipField::FIELD_ID],
-                        FlagshipField::FIELD_VARIATION_GROUP_ID => $variationGroup[FlagshipField::FIELD_ID],
-                        FlagshipField::FIELD_VARIATION => $variations
-                    ];
-                    continue 2;
-                }
+            $currentCampaigns = $this->getVisitorCampaigns(
+                $variationGroups,
+                $campaign[FlagshipField::FIELD_ID],
+                $visitor
+            );
+            $visitorCampaigns = array_merge($visitorCampaigns, $currentCampaigns);
+        }
+        return $visitorCampaigns;
+    }
+
+    /**
+     * @param $variationGroups
+     * @param $campaignId
+     * @param VisitorAbstract $visitor
+     * @return array
+     */
+    private function getVisitorCampaigns($variationGroups, $campaignId, VisitorAbstract $visitor)
+    {
+        $visitorCampaigns = [];
+        foreach ($variationGroups as $variationGroup) {
+            $check = $this->isMatchTargeting($variationGroup, $visitor);
+            if ($check) {
+                $variations = $this->getVariation(
+                    $variationGroup,
+                    $visitor->getVisitorId()
+                );
+                $visitorCampaigns[] = [
+                    FlagshipField::FIELD_ID => $campaignId,
+                    FlagshipField::FIELD_VARIATION_GROUP_ID => $variationGroup[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_VARIATION => $variations
+                ];
+                break;
             }
         }
-
-        return [
-            "visitorId" => $visitor->getVisitorId(),
-            FlagshipField::FIELD_CAMPAIGNS => $visitorCampaigns
-        ];
+        return $visitorCampaigns;
     }
 
     private function getVariation($variationGroup, $visitorId)
     {
+        $visitorVariation = [];
+        if (!isset($variationGroup[FlagshipField::FIELD_ID])) {
+            return $visitorVariation;
+        }
         $groupVariationId = $variationGroup[FlagshipField::FIELD_ID];
         $hash = $this->murmurHash->murmurHash3Int32($groupVariationId . $visitorId);
         $hashAllocation = $hash % 100;
-        $variations = $variationGroup["variations"];
+        $variations = $variationGroup[FlagshipField::FIELD_VARIATIONS];
         $totalAllocation = 0;
+
         foreach ($variations as $variation) {
-            $totalAllocation += $variation['allocation'];
+            $totalAllocation += $variation[FlagshipField::FIELD_ALLOCATION];
             if ($hashAllocation < $totalAllocation) {
-                return $variation;
+                $visitorVariation = [
+                    FlagshipField::FIELD_ID => $variation[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_MODIFICATIONS => $variation[FlagshipField::FIELD_MODIFICATIONS],
+                    FlagshipField::FIELD_REFERENCE => !empty($variation[FlagshipField::FIELD_REFERENCE])
+                ];
+                break;
             }
         }
+
+        return $visitorVariation;
     }
 
     /**
@@ -115,11 +139,11 @@ class BucketingManager extends DecisionManagerAbstract
         $targetingGroups = $targeting[FlagshipField::FIELD_TARGETING_GROUPS];
 
         foreach ($targetingGroups as $targetingGroup) {
-            if (!isset($targetingGroup['targetings'])) {
+            if (!isset($targetingGroup[FlagshipField::FIELD_TARGETINGS])) {
                 continue;
             }
 
-            $innerTargetings = $targetingGroup['targetings'];
+            $innerTargetings = $targetingGroup[FlagshipField::FIELD_TARGETINGS];
 
             $check = $this->checkAndTargeting($innerTargetings, $visitor);
             if ($check) {
@@ -174,7 +198,7 @@ class BucketingManager extends DecisionManagerAbstract
                 break;
             case "CONTAINS":
                 $targetingValueSting = join("|", $targetingValue);
-                $check = preg_match("/{$targetingValueSting}/i", $contextValue);
+                $check = (bool)preg_match("/{$targetingValueSting}/i", $contextValue);
                 break;
             case "NOT_CONTAINS":
                 $targetingValueSting = join("|", $targetingValue);
@@ -193,10 +217,10 @@ class BucketingManager extends DecisionManagerAbstract
                 $check = $contextValue <= $targetingValue;
                 break;
             case "STARTS_WITH":
-                $check = preg_match("/^{$targetingValue}/i", $contextValue);
+                $check = (bool)preg_match("/^{$targetingValue}/i", $contextValue);
                 break;
             case "ENDS_WITH":
-                $check = preg_match("/{$targetingValue}$/i", $contextValue);
+                $check = (bool)preg_match("/{$targetingValue}$/i", $contextValue);
                 break;
             default:
                 $check = false;

@@ -60,6 +60,25 @@ class FlagshipConfigTest extends TestCase
         $config->setLogLevel(LogLevel::ERROR);
         $this->assertSame(LogLevel::ERROR, $config->getLogLevel());
     }
+
+    public function testSetPollingInterval()
+    {
+        $envId = "envId";
+        $apiKey = "apiKey";
+
+        $config = new FlagshipConfig($envId, $apiKey);
+
+        //Test default value
+        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT, $config->getPollingInterval());
+
+        //Test set with alpha
+        $config->setPollingInterval('abc');
+        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT, $config->getPollingInterval());
+
+        $polling = 5;
+        $config->setPollingInterval($polling);
+        $this->assertSame($polling, $config->getPollingInterval());
+    }
     /**
      * @dataProvider configData
      * @param        array $configData

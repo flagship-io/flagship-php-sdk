@@ -17,8 +17,7 @@ use Flagship\Visitor\VisitorAbstract;
  */
 class ApiManager extends DecisionManagerAbstract
 {
-    use ValidatorTrait;
-    use BuildApiTrait;
+
 
     /**
      * This function will fetch campaigns modifications from the server according to the visitor context and
@@ -27,7 +26,7 @@ class ApiManager extends DecisionManagerAbstract
      * @param VisitorAbstract $visitor
      * @return array return an associative array of campaigns
      */
-    private function getCampaigns(VisitorAbstract $visitor)
+    protected function getCampaigns(VisitorAbstract $visitor)
     {
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
@@ -55,106 +54,6 @@ class ApiManager extends DecisionManagerAbstract
             $this->logError($visitor->getConfig(), $exception->getMessage());
         }
         return [];
-    }
-
-    /**
-     * Return modification of a campaign
-     *
-     * @param  array $modificationValues
-     * @param  $campaign
-     * @param  array $modifications
-     * @return array
-     */
-    private function getModificationValues(array $modificationValues, $campaign, $modifications)
-    {
-        $localModifications = [];
-        foreach ($modificationValues as $key => $modificationValue) {
-            if (!$this->isKeyValid($key)) {
-                continue;
-            }
-
-            //check if the key is already used
-            $modification = $this->checkModificationKeyExist($modifications, $key);
-            $isKeyUsed = true;
-
-            if (is_null($modification)) {
-                $modification = new Modification();
-                $isKeyUsed = false;
-            }
-
-            $modification->setKey($key);
-            $modification->setValue($modificationValue);
-
-            if (isset($campaign[FlagshipField::FIELD_ID])) {
-                $modification->setCampaignId($campaign[FlagshipField::FIELD_ID]);
-            }
-
-            if (isset($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID])) {
-                $modification->setVariationGroupId($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]);
-            }
-
-            if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_ID])) {
-                $modification->setVariationId(
-                    $campaign[FlagshipField::FIELD_VARIATION]
-                        [FlagshipField::FIELD_ID]
-                );
-            }
-
-            if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_REFERENCE])) {
-                $modification->setIsReference(
-                    $campaign[FlagshipField::FIELD_VARIATION]
-                    [FlagshipField::FIELD_REFERENCE]
-                );
-            }
-
-            if (!$isKeyUsed) {
-                $localModifications[] = $modification;
-            }
-        }
-        return array_merge($modifications, $localModifications);
-    }
-
-    /**
-     * Return an array of Modification from all campaigns
-     *
-     * @param  $campaigns
-     * @return Modification[] Return an array of Modification
-     */
-    private function getModifications($campaigns)
-    {
-
-        $modifications = [];
-        foreach ($campaigns as $campaign) {
-            if (
-                !isset($campaign[FlagshipField::FIELD_VARIATION])
-                || !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS])
-                || !isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_MODIFICATIONS]
-                    [FlagshipField::FIELD_VALUE])
-            ) {
-                continue;
-            }
-
-            $modificationValues = $campaign[FlagshipField::FIELD_VARIATION]
-            [FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE];
-
-            $modifications = $this->getModificationValues($modificationValues, $campaign, $modifications);
-        }
-        return $modifications;
-    }
-
-    /**
-     * @param  Modification[] $modifications
-     * @param  $key
-     * @return Modification|null
-     */
-    private function checkModificationKeyExist(array $modifications, $key)
-    {
-        foreach ($modifications as $modification) {
-            if ($modification->getKey() === $key) {
-                return $modification;
-            }
-        }
-        return null;
     }
 
     /**

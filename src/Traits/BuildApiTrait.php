@@ -12,7 +12,7 @@ trait BuildApiTrait
      *
      * @return array
      */
-    private function buildHeader($apiKey)
+    protected function buildHeader($apiKey)
     {
         return [
             FlagshipConstant::HEADER_X_API_KEY => $apiKey,
@@ -27,7 +27,7 @@ trait BuildApiTrait
      *
      * @return string
      */
-    private function buildDecisionApiUrl($url)
+    protected function buildDecisionApiUrl($url)
     {
         return FlagshipConstant::BASE_API_URL . '/' . $url;
     }

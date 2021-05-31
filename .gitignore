@@ -3,6 +3,6 @@ vendor
 .phpunit.result.cache
 .idea
 reports
-demo
+Demo
 bucketing.json
-demo
+Demo

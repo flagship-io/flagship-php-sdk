@@ -54,6 +54,11 @@ interface VisitorInterface
     public function getModification($key, $defaultValue, $activate = false);
 
     /**
+     * @return array
+     */
+    public function getModifications();
+
+    /**
      * Get the campaign modification information value matching the given key.
      *
      * @param string $key : key which identify the modification.

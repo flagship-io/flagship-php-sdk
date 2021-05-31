@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c10916496c1c48b61babf3d51d01e2a3",
+    "content-hash": "9dbe6b444ba0aa75c9770e37212370ac",
     "packages": [
         {
             "name": "brick/math",
@@ -365,6 +365,56 @@
                 }
             ],
             "time": "2020-12-29T14:50:06+00:00"
+        },
+        {
+            "name": "flagship-io/flagship-php-sdk",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../.",
+                "reference": "b4a942d96a4eb1a39184a409d3a2264fc507ab40"
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.4",
+                "psr/log": "^1.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "bin": [
+                "bin/flagship"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Flagship\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Flagship\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ],
+                "check-style": [
+                    "phpcs --standard=PSR12 -n src tests"
+                ],
+                "fix-style": [
+                    "phpcbf --standard=PSR12 src tests"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "graham-campbell/result-type",
@@ -6996,7 +7046,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "flagship-io/flagship-php-sdk": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

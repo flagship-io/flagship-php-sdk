@@ -6,10 +6,51 @@ require __DIR__ . "/../vendor/autoload.php";
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\HttpClient;
 
-// argument environment Id
-if (!isset($argv[1])) {
-    echo 'argument environment Id null';
-    exit(1);
+$fileConfig = null;
+
+// argument --file=flagship.json
+if (isset($argv[1])) {
+   $fileConfig = getopt(null, ["file:"]);
+}
+
+if (!$fileConfig){
+    $fileConfig = 'flagship.json';
+}
+
+if (!file_exists($fileConfig)){
+    fwrite(
+        STDERR,
+        "flagship config file not found" . PHP_EOL
+    );
+    die(1);
+}
+
+$fileContent = file_get_contents($fileConfig);
+
+$configArray = json_decode($fileContent, true);
+
+if (!$configArray){
+    fwrite(
+        STDERR,
+        "flagship config malformed" . PHP_EOL
+    );
+    die(1);
+}
+
+if (!isset($configArray['envId'])){
+    fwrite(
+        STDERR,
+        "envId field is missing" . PHP_EOL
+    );
+    die(1);
+}
+
+if (!isset($configArray['apiKey'])){
+    fwrite(
+        STDERR,
+        "apiKey field is missing" . PHP_EOL
+    );
+    die(1);
 }
 
 $envId = $argv[1];

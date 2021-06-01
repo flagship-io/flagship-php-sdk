@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1622541046">
-  <project timestamp="1622541046">
+<coverage generated="1622561009">
+  <project timestamp="1622561009">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -21,16 +21,16 @@
         <line num="40" type="stmt" count="1"/>
         <line num="41" type="stmt" count="1"/>
         <line num="43" type="stmt" count="1"/>
-        <line num="48" type="method" name="sendHit" crap="2" count="2"/>
-        <line num="51" type="stmt" count="2"/>
+        <line num="49" type="method" name="sendHit" crap="2" count="2"/>
         <line num="52" type="stmt" count="2"/>
         <line num="53" type="stmt" count="2"/>
         <line num="54" type="stmt" count="2"/>
         <line num="55" type="stmt" count="2"/>
         <line num="56" type="stmt" count="2"/>
-        <line num="57" type="stmt" count="1"/>
-        <line num="59" type="stmt" count="2"/>
-        <metrics loc="60" ncloc="50" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="24" coveredelements="24"/>
+        <line num="57" type="stmt" count="2"/>
+        <line num="58" type="stmt" count="1"/>
+        <line num="60" type="stmt" count="2"/>
+        <metrics loc="61" ncloc="51" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="24" coveredelements="24"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Api/TrackingManagerAbstract.php">
         <class name="TrackingManagerAbstract" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -1225,6 +1225,6 @@
     <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Utils/HttpClientInterface.php">
       <metrics loc="49" ncloc="17" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="32" loc="3630" ncloc="2311" classes="29" methods="197" coveredmethods="197" conditionals="0" coveredconditionals="0" statements="828" coveredstatements="828" elements="1025" coveredelements="1025"/>
+    <metrics files="32" loc="3631" ncloc="2312" classes="29" methods="197" coveredmethods="197" conditionals="0" coveredconditionals="0" statements="828" coveredstatements="828" elements="1025" coveredelements="1025"/>
   </project>
 </coverage>

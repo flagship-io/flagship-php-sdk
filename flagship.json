@@ -1,0 +1,7 @@
+{
+  "envId" : "",
+  "apiKey" : "",
+  "pollingInterval": 2,
+  "timeout": 2,
+  "logLevel": 9
+}

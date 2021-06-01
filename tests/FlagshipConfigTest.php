@@ -2,12 +2,9 @@
 
 namespace Flagship;
 
-use Flagship\Api\TrackingManager;
-use Flagship\Decision\ApiManager;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
-use Flagship\Utils\HttpClient;
 use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +25,7 @@ class FlagshipConfigTest extends TestCase
         $timeOut = 5000;
         $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
 
-        $this->assertEquals(FlagshipConstant::REQUEST_TIME_OUT, $config->getTimeout());
+        $this->assertEquals(FlagshipConstant::REQUEST_TIME_OUT * 1000, $config->getTimeout());
 
         $config->setTimeout($timeOut);
         $this->assertEquals($timeOut, $config->getTimeout());

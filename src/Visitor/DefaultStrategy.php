@@ -252,4 +252,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $this->getVisitor()->getConfigManager()->getTrackingManager()->sendHit($hit);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getModifications()
+    {
+        return $this->getVisitor()->getModifications();
+    }
 }

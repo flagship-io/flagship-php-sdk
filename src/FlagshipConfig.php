@@ -133,20 +133,20 @@ class FlagshipConfig implements JsonSerializable
      */
     public function getTimeout()
     {
-        return $this->timeout;
+        return $this->timeout * 1000;
     }
 
     /**
      * Specify timeout for api request.
      *
-     * @param int $timeout : seconds for connect and read timeouts. Default is 2.
+     * @param int $timeout : Milliseconds for connect and read timeouts. Default is 2000ms.
      * @return FlagshipConfig
      */
     public function setTimeout($timeout)
     {
         if (is_numeric($timeout) && $timeout > 0) {
             $this->logError($this, FlagshipConstant::TIMEOUT_TYPE_ERROR);
-            $this->timeout = $timeout;
+            $this->timeout = $timeout / 1000;
         }
         return $this;
     }

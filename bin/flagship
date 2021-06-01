@@ -9,22 +9,19 @@ use Flagship\Utils\HttpClient;
 
 $fileConfig = null;
 
-
-
 // argument --file=flagship.json
 if (isset($argv[1])) {
    $fileArgument = getopt(null, ["file:"]);
 
    if (isset($fileArgument['file'])){
-       $fileConfig = __DIR__ . '/../'. $fileArgument['file'];
+       $fileConfig =$fileArgument['file'];
    }
-
 }
 
 if (!$fileConfig){
     $fileConfig = 'flagship.json';
 }
-var_dump($fileConfig);
+
 if (!file_exists($fileConfig)){
     fwrite(
         STDERR,

@@ -45,6 +45,4 @@ class LogLevel
      * ALL = 9: All logs will be logged.
      */
     const ALL = 9;
-
-
 }

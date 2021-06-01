@@ -221,13 +221,13 @@ class FlagshipConfig implements JsonSerializable
      */
     public function getPollingInterval()
     {
-        return $this->pollingInterval;
+        return $this->pollingInterval * 1000;
     }
 
     /**
      * Specify delay between two bucketing polling.
      *     Note: If 0 is given then it should poll only once at start time.
-     * @param int $pollingInterval : time delay in second. Default is 2sec.
+     * @param int $pollingInterval : time delay in second. Default is 2000ms.
      * @return FlagshipConfig
      */
     public function setPollingInterval($pollingInterval)
@@ -235,7 +235,7 @@ class FlagshipConfig implements JsonSerializable
         if (!$this->isNumeric($pollingInterval, "pollingInterval", $this)) {
             return $this;
         }
-        $this->pollingInterval = $pollingInterval;
+        $this->pollingInterval = $pollingInterval / 1000;
         return $this;
     }
 

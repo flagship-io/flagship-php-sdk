@@ -17,7 +17,8 @@ namespace Flagship\Decision{
         return File::$fileExist;
     }
 
-    function file_get_contents ($filename){
+    function file_get_contents($filename)
+    {
         return File::$fileContent;
     }
 

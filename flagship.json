@@ -1,7 +1,7 @@
 {
-  "envId" : "c1ndrd07m0300ro0jf20",
-  "apiKey" : "QzdTI1M9iqaIhnJ66a34C5xdzrrvzq6q8XSVOsS6",
-  "pollingInterval": 2,
-  "timeout": 2,
+  "envId" : "bkev142bl68g07m5n69g",
+  "apiKey" : "YbG55489hK13O3pcfmBFy4ouGJCNdclZ2uOm9iae",
+  "pollingInterval": 2000,
+  "timeout": 2000,
   "logLevel": 9
 }

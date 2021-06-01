@@ -3,20 +3,28 @@
 
 require __DIR__ . "/../vendor/autoload.php";
 
+use Flagship\Decision\BucketingPolling;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\HttpClient;
 
 $fileConfig = null;
 
+
+
 // argument --file=flagship.json
 if (isset($argv[1])) {
-   $fileConfig = getopt(null, ["file:"]);
+   $fileArgument = getopt(null, ["file:"]);
+
+   if (isset($fileArgument['file'])){
+       $fileConfig = __DIR__ . '/../'. $fileArgument['file'];
+   }
+
 }
 
 if (!$fileConfig){
     $fileConfig = 'flagship.json';
 }
-
+var_dump($fileConfig);
 if (!file_exists($fileConfig)){
     fwrite(
         STDERR,
@@ -45,34 +53,24 @@ if (!isset($configArray['envId'])){
     die(1);
 }
 
-if (!isset($configArray['apiKey'])){
+$pollingInterval = null;
+
+if (!isset($configArray['pollingInterval'])){
+
+    $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT * 1000;
+
     fwrite(
         STDERR,
-        "apiKey field is missing" . PHP_EOL
+        "pollingInterval field is missing default value will be used 2000ms" . PHP_EOL
     );
-    die(1);
 }
 
-$envId = $argv[1];
-$pollingInterval = FlagshipConstant::REQUEST_TIME_OUT;
-// argument pollingInterval
-if (isset($argv[2])) {
-    $pollingInterval = $argv[2];
+$envId = $configArray['envId'];
+
+if (!$pollingInterval){
+    $pollingInterval = $configArray['pollingInterval'];
 }
 
-while (true) {
-    try {
-        echo 'start';
-        $httpClient = new HttpClient();
-        $url = "https://cdn.flagship.io/$envId/bucketing.json";
-        $response = $httpClient->get($url);
-        $bucketingFile = __DIR__ . "/../bucketing.json";
-        file_put_contents($bucketingFile, json_encode($response->getBody()));
+$bucketingPolling = new BucketingPolling($envId, $pollingInterval, new HttpClient());
 
-        echo 'sleep';
-        sleep($pollingInterval);
-        echo 'end sleep';
-    } catch (Exception $exception) {
-        var_dump($exception);
-    }
-}
+$bucketingPolling->startPolling();

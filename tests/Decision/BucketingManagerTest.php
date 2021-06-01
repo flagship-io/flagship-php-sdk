@@ -65,7 +65,7 @@ class BucketingManagerTest extends TestCase
         //
 
         File::$fileExist = true;
-        File::$fileContent = \file_get_contents('bucketing.json');
+        File::$fileContent = \file_get_contents(__DIR__ . '/bucketing.json');
 
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 

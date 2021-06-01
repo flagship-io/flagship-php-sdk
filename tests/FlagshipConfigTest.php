@@ -66,13 +66,13 @@ class FlagshipConfigTest extends TestCase
         $config = new FlagshipConfig($envId, $apiKey);
 
         //Test default value
-        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT, $config->getPollingInterval());
+        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT * 1000, $config->getPollingInterval());
 
         //Test set with alpha
         $config->setPollingInterval('abc');
-        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT, $config->getPollingInterval());
+        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT * 1000, $config->getPollingInterval());
 
-        $polling = 5;
+        $polling = 5000;
         $config->setPollingInterval($polling);
         $this->assertSame($polling, $config->getPollingInterval());
     }

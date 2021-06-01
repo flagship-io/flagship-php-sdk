@@ -107,6 +107,9 @@ class BucketingManager extends DecisionManagerAbstract
         $totalAllocation = 0;
 
         foreach ($variations as $variation) {
+            if (!isset($variation[FlagshipField::FIELD_ALLOCATION])) {
+                continue;
+            }
             $totalAllocation += $variation[FlagshipField::FIELD_ALLOCATION];
             if ($hashAllocation < $totalAllocation) {
                 $visitorVariation = [

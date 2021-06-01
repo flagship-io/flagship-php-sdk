@@ -35,7 +35,7 @@ class ApiManager extends DecisionManagerAbstract
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($visitor->getConfig()->getTimeout());
+            $this->httpClient->setTimeout($visitor->getConfig()->getTimeout() / 1000);
             $url = $this->buildDecisionApiUrl($visitor->getConfig()->getEnvId() . '/' .
                 FlagshipConstant::URL_CAMPAIGNS . '/');
 

@@ -28,7 +28,7 @@ class TrackingManager extends TrackingManagerAbstract
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($visitor->getConfig()->getTimeout());
+            $this->httpClient->setTimeout($visitor->getConfig()->getTimeout() / 1000);
             $url = $this->buildDecisionApiUrl(FlagshipConstant::URL_ACTIVATE_MODIFICATION);
             $postData = [
                 FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
@@ -41,6 +41,7 @@ class TrackingManager extends TrackingManagerAbstract
         } catch (Exception $exception) {
             $this->logError($visitor->getConfig(), $exception->getMessage());
         }
+        return false;
     }
 
     /**
@@ -51,7 +52,7 @@ class TrackingManager extends TrackingManagerAbstract
         try {
             $headers = $this->buildHeader($hit->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($hit->getConfig()->getTimeOut());
+            $this->httpClient->setTimeout($hit->getConfig()->getTimeOut() / 1000);
             $url = FlagshipConstant::HIT_API_URL;
             $this->httpClient->post($url, [], $hit->toArray());
         } catch (Exception $exception) {

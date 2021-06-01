@@ -37,7 +37,9 @@ class BucketingPolling
                 $url = "https://cdn.flagship.io/{$this->envId}/bucketing.json";
                 $response = $this->httpClient->get($url);
                 $bucketingFile = __DIR__ . "/../../bucketing.json";
-                file_put_contents($bucketingFile, json_encode($response->getBody()));
+                if ($response->getBody()) {
+                    file_put_contents($bucketingFile, json_encode($response->getBody()));
+                }
                 echo 'Polling end' . PHP_EOL;
                 sleep($this->pollingInterval / 1000);
             } catch (Exception $exception) {

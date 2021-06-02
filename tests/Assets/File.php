@@ -8,6 +8,8 @@ namespace Flagship\Assets {
         public static $fileContent = null;
         public static $fileName = null;
         public static $fwriteData = null;
+        public static $directory;
+        public static $directoryPermission;
     }
 }
 
@@ -33,6 +35,12 @@ namespace Flagship\Decision{
     function fwrite($stream, $data)
     {
         File::$fwriteData =  $data;
+    }
+
+    function mkdir($directory, $permissions = 0777, $recursive = false)
+    {
+        File::$directory = $directory;
+        File::$directoryPermission = $permissions;
     }
 
 }

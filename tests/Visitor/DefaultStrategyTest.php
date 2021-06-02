@@ -17,7 +17,6 @@ use Flagship\Model\Modification;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
-use Flagship\Visitor;
 use PHPUnit\Framework\TestCase;
 
 class DefaultStrategyTest extends TestCase
@@ -240,7 +239,7 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->synchronizedModifications();
 
-        $this->assertSame($modifications, $visitor->getModifications());
+        $this->assertSame($modifications, $defaultStrategy->getModifications());
 
         //Test getModification keyValue is string and DefaultValue is string
         //Return KeyValue

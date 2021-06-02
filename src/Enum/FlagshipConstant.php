@@ -25,6 +25,7 @@ class FlagshipConstant
      */
     const BASE_API_URL              = "https://decision.flagship.io/v2";
     const HIT_API_URL               = "https://ariane.abtasty.com";
+    const BUCKETING_API_URL         = "https://cdn.flagship.io/%s/bucketing.json";
     const URL_CAMPAIGNS             = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
 

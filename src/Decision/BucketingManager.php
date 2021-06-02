@@ -2,6 +2,7 @@
 
 namespace Flagship\Decision;
 
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Utils\MurmurHash;
@@ -9,7 +10,7 @@ use Flagship\Visitor\VisitorAbstract;
 
 class BucketingManager extends DecisionManagerAbstract
 {
-
+    private $bucketingDirectory;
     /**
      * @var MurmurHash
      */
@@ -19,11 +20,12 @@ class BucketingManager extends DecisionManagerAbstract
     {
         parent::__construct($httpClient);
         $this->murmurHash = $murmurHash;
+        $this->bucketingDirectory = __DIR__ . FlagshipConstant::BUCKETING_DIRECTORY;
     }
 
     protected function getCampaigns(VisitorAbstract $visitor)
     {
-        $bucketingFile = __DIR__ . "/../../bucketing.json";
+        $bucketingFile = $this->bucketingDirectory . "/bucketing.json";
         if (!file_exists($bucketingFile)) {
             return [];
         }

@@ -106,4 +106,5 @@ class FlagshipConstant
     const HEADER_APPLICATION_JSON = 'application/json';
     const TIMEOUT_TYPE_ERROR      = "timeout must be numeric and > 0";
     const LOG_LEVEL_ERROR         = "Loglevel value invalid, please use \Flagship\Enum\LogLevel ";
+    const BUCKETING_DIRECTORY     = "/../../flagship";
 }

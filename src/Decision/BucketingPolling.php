@@ -11,6 +11,7 @@ class BucketingPolling
 {
     private $envId;
     private $pollingInterval;
+    private $bucketingDirectory;
     /**
      * @var HttpClient
      */
@@ -25,10 +26,12 @@ class BucketingPolling
         $this->envId = $envId;
         $this->pollingInterval = $pollingInterval;
         $this->httpClient = $httpClient;
+        $this->bucketingDirectory = __DIR__ . FlagshipConstant::BUCKETING_DIRECTORY;
     }
 
     public function startPolling()
     {
+
         $condition = true;
         if ($this->pollingInterval == 0) {
             $condition = false;
@@ -38,7 +41,12 @@ class BucketingPolling
                 echo 'Polling start' . PHP_EOL;
                 $url = sprintf(FlagshipConstant::BUCKETING_API_URL, $this->envId);
                 $response = $this->httpClient->get($url);
-                $bucketingFile = __DIR__ . "/../../bucketing.json";
+
+                $bucketingFile = $this->bucketingDirectory . "/bucketing.json";
+
+                if (!file_exists($bucketingFile)) {
+                    mkdir($this->bucketingDirectory, 0777, true);
+                }
                 if ($response->getBody()) {
                     file_put_contents($bucketingFile, json_encode($response->getBody()));
                 }

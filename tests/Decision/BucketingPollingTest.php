@@ -20,7 +20,6 @@ class BucketingPollingTest extends TestCase
         $pollingInterval = 0;
         $body = "body Content";
 
-        $bucketingPolling = new BucketingPolling($envId, $pollingInterval, $httpClientMock);
         $url = sprintf(FlagshipConstant::BUCKETING_API_URL, $envId);
 
         File::$fileContent = null;
@@ -28,9 +27,16 @@ class BucketingPollingTest extends TestCase
         $httpClientMock->expects($this->exactly(2))
             ->method('get')
             ->with($url)
-            ->willReturnOnConsecutiveCalls(new HttpResponse(204, null), new HttpResponse(204, $body));
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(204, null),
+                new HttpResponse(204, $body)
+            );
+
+        $bucketingPolling = new BucketingPolling($envId, $pollingInterval, $httpClientMock);
 
         $bucketingPolling->startPolling();
+
+        File::$fileExist = false;
 
         $this->assertNull(File::$fileContent);
 

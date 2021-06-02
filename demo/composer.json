@@ -1,0 +1,22 @@
+{
+  "name": "flagship-io/demo",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "hp",
+      "email": "email@example.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../."
+    }
+  ],
+  "require": {
+    "php": "^7.3|^8.0",
+    "flagship-io/flagship-php-sdk": "dev-master"
+  }
+}

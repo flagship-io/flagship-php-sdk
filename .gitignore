@@ -3,6 +3,5 @@ vendor
 .phpunit.result.cache
 .idea
 reports
-Demo
 bucketing.json
-Demo
+flagship

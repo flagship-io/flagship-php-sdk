@@ -7,6 +7,40 @@ use Flagship\Decision\BucketingPolling;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\HttpClient;
 
+function startPolling($envId, $pollingInterval){
+
+    $bucketingPolling = new BucketingPolling($envId, $pollingInterval, new HttpClient());
+
+    $bucketingPolling->startPolling();
+}
+
+$isRunning =  getenv('FLAGSHIP-DOCKER');
+
+if ($isRunning){
+    $envId = getenv('FLAGSHIP_ENV_ID');
+    if (!$envId){
+        fwrite(
+            STDERR,
+            "FLAGSHIP_ENV_ID field is missing" . PHP_EOL
+        );
+        die(1);
+    }
+
+    $pollingInterval = getenv('FLAGSHIP_POLLING_INTERVAL');
+
+    if (!$pollingInterval){
+        $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT * 1000;
+        fwrite(
+            STDERR,
+            "FLAGSHIP_POLLING_INTERVAL field is missing default value will be used 2000ms" . PHP_EOL
+        );
+    }
+
+    startPolling($envId, $pollingInterval);
+
+    die(0);
+}
+
 $fileConfig = null;
 
 // argument --file=flagship.json
@@ -68,6 +102,4 @@ if (!$pollingInterval){
     $pollingInterval = $configArray['pollingInterval'];
 }
 
-$bucketingPolling = new BucketingPolling($envId, $pollingInterval, new HttpClient());
-
-$bucketingPolling->startPolling();
+startPolling($envId, $pollingInterval);

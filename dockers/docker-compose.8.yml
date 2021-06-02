@@ -6,7 +6,7 @@ services:
     build:
       context: ../.
       dockerfile: ./dockers/Dockerfile-8
-    image: ab-tasty/flagship-php-sdk:php-8
+    image: flagship-io/flagship-php-sdk:php-8
     container_name: app-8
     tty: true
     environment:

@@ -3,7 +3,9 @@
 namespace Flagship\Decision;
 
 use Exception;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\HttpClient;
+use Flagship\Utils\HttpClientInterface;
 
 class BucketingPolling
 {
@@ -18,7 +20,7 @@ class BucketingPolling
      * @param $envId
      * @param $pollingInterval
      */
-    public function __construct($envId, $pollingInterval, HttpClient $httpClient)
+    public function __construct($envId, $pollingInterval, HttpClientInterface $httpClient)
     {
         $this->envId = $envId;
         $this->pollingInterval = $pollingInterval;
@@ -34,7 +36,7 @@ class BucketingPolling
         do {
             try {
                 echo 'Polling start' . PHP_EOL;
-                $url = "https://cdn.flagship.io/{$this->envId}/bucketing.json";
+                $url = sprintf(FlagshipConstant::BUCKETING_API_URL, $this->envId);
                 $response = $this->httpClient->get($url);
                 $bucketingFile = __DIR__ . "/../../bucketing.json";
                 if ($response->getBody()) {

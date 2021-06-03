@@ -29,7 +29,7 @@ class BucketingPolling
         $this->pollingInterval = $pollingInterval;
         $this->httpClient = $httpClient;
         $this->bucketingDirectory = $bucketingDirectory ? __DIR__ . '/../../../../../' .
-            $bucketingDirectory : FlagshipConstant::BUCKETING_DIRECTORY;
+            $bucketingDirectory : __DIR__ . FlagshipConstant::BUCKETING_DIRECTORY;
     }
 
     public function startPolling()

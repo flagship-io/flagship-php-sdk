@@ -46,6 +46,8 @@ class BucketingPolling
 
                 $bucketingFile = $this->bucketingDirectory . "/bucketing.json";
 
+                var_dump($bucketingFile);
+
                 if (!file_exists($bucketingFile)) {
                     mkdir($this->bucketingDirectory, 0777, true);
                 }

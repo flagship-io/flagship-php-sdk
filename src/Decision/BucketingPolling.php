@@ -18,20 +18,22 @@ class BucketingPolling
     private $httpClient;
 
     /**
-     * @param $envId
-     * @param $pollingInterval
+     * @param string $envId
+     * @param int $pollingInterval
+     * @param HttpClientInterface $httpClient
+     * @param string $bucketingDirectory
      */
-    public function __construct($envId, $pollingInterval, HttpClientInterface $httpClient)
+    public function __construct($envId, $pollingInterval, HttpClientInterface $httpClient, $bucketingDirectory = null)
     {
         $this->envId = $envId;
         $this->pollingInterval = $pollingInterval;
         $this->httpClient = $httpClient;
-        $this->bucketingDirectory = __DIR__ . FlagshipConstant::BUCKETING_DIRECTORY;
+        $this->bucketingDirectory = __DIR__ . '/../../../../' .
+        $bucketingDirectory ?: FlagshipConstant::BUCKETING_DIRECTORY;
     }
 
     public function startPolling()
     {
-
         $condition = true;
         if ($this->pollingInterval == 0) {
             $condition = false;

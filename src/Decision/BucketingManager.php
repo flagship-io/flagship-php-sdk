@@ -23,6 +23,9 @@ class BucketingManager extends DecisionManagerAbstract
         $this->bucketingDirectory = __DIR__ . FlagshipConstant::BUCKETING_DIRECTORY;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getCampaigns(VisitorAbstract $visitor)
     {
         $bucketingFile = $this->bucketingDirectory . "/bucketing.json";
@@ -96,6 +99,12 @@ class BucketingManager extends DecisionManagerAbstract
         return $visitorCampaigns;
     }
 
+    /**
+     *
+     * @param array $variationGroup
+     * @param string $visitorId
+     * @return array
+     */
     private function getVariation($variationGroup, $visitorId)
     {
         $visitorVariation = [];
@@ -159,6 +168,11 @@ class BucketingManager extends DecisionManagerAbstract
         return false;
     }
 
+    /**
+     * @param array $innerTargetings
+     * @param VisitorAbstract $visitor
+     * @return bool
+     */
     private function checkAndTargeting($innerTargetings, VisitorAbstract $visitor)
     {
         $isMatching = true;
@@ -191,6 +205,12 @@ class BucketingManager extends DecisionManagerAbstract
         return $isMatching;
     }
 
+    /**
+     * @param string $operator
+     * @param mixed $contextValue
+     * @param mixed $targetingValue
+     * @return bool
+     */
     private function testOperator($operator, $contextValue, $targetingValue)
     {
 

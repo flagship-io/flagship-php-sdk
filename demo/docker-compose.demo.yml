@@ -4,8 +4,8 @@ services:
   #PHP Service
   app-polling:
     build:
-      context: ../.
-      dockerfile: ./demo/Dockerfile-polling
+      context: .
+      dockerfile: ./Dockerfile-polling
     image: flagship-io-polling/flagship-php-sdk:php-7.4
     container_name: app-polling
     tty: true
@@ -18,12 +18,13 @@ services:
       FLAGSHIP_POLLING_INTERVAL: 5000
     volumes:
       - bucketing-file:/home/app/flagship
+      - ./gitAuth:/root/.composer/
     working_dir: /home/app
 
   app-demo:
     build:
-      context: ../.
-      dockerfile: ./demo/Dockerfile-demo
+      context: .
+      dockerfile: ./Dockerfile-demo
     image: flagship-io-demo/flagship-php-sdk:php-7.4
     container_name: app-demo
     tty: true
@@ -34,8 +35,10 @@ services:
       FLAGSHIP-DOCKER: 1
       FLAGSHIP_ENV_ID: envId
       FLAGSHIP_API_KEY: apiKey
+      FLAGSHIP_POLLING_INTERVAL: 5000
     volumes:
       - bucketing-file:/home/app/flagship
+      - ./gitAuth:/root/.composer/
     working_dir: /home/app
 volumes:
   bucketing-file:

@@ -36,7 +36,6 @@ if ($isRunning){
 
     $bucketingDirectory = getenv('FLAGSHIP_BUCKETING_DIRECTORY');;
     if (!$bucketingDirectory){
-        $bucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
         fwrite(
             STDERR,
             "FLAGSHIP_BUCKETING_DIRECTORY field is missing default value will be used" . PHP_EOL

@@ -25,6 +25,9 @@ while (true) {
     echo 'visitor context';
     echo json_encode($context);
     echo PHP_EOL;
+    if (!$visitor) {
+        break;
+    }
     $visitor->synchronizedModifications();
      print_r($visitor->getModifications());
     sleep(10);

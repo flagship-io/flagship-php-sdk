@@ -1,7 +1,8 @@
 {
-  "envId" : "bkev142bl68g07m5n69g",
-  "apiKey" : "YbG55489hK13O3pcfmBFy4ouGJCNdclZ2uOm9iae",
+  "envId" : "",
+  "apiKey" : "",
   "pollingInterval": 2000,
   "timeout": 2000,
-  "logLevel": 9
+  "logLevel": 9,
+  "bucketingDirectory": "flagship"
 }

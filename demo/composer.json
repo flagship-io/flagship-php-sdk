@@ -11,12 +11,12 @@
   ],
   "repositories": [
     {
-      "type": "path",
-      "url": "../."
+      "type": "vcs",
+      "url": "https://github.com/flagship-io/flagship-php-sdk-dev.git"
     }
   ],
   "require": {
     "php": "^7.3|^8.0",
-    "flagship-io/flagship-php-sdk": "dev-master"
+    "flagship-io/flagship-php-sdk": "dev-feature/sdk_v2"
   }
 }

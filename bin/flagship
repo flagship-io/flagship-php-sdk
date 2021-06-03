@@ -1,16 +1,14 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . "/../vendor/autoload.php";
+require __DIR__ . "/../../vendor/autoload.php";
 
 use Flagship\Decision\BucketingPolling;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\HttpClient;
 
-function startPolling($envId, $pollingInterval){
-
-    $bucketingPolling = new BucketingPolling($envId, $pollingInterval, new HttpClient());
-
+function startPolling($envId, $pollingInterval, $bucketingDirectory = null){
+    $bucketingPolling = new BucketingPolling($envId, $pollingInterval, new HttpClient(), $bucketingDirectory);
     $bucketingPolling->startPolling();
 }
 
@@ -36,7 +34,16 @@ if ($isRunning){
         );
     }
 
-    startPolling($envId, $pollingInterval);
+    $bucketingDirectory = getenv('FLAGSHIP_BUCKETING_DIRECTORY');;
+    if (!$bucketingDirectory){
+        $bucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
+        fwrite(
+            STDERR,
+            "FLAGSHIP_BUCKETING_DIRECTORY field is missing default value will be used" . PHP_EOL
+        );
+    }
+
+    startPolling($envId, $pollingInterval, $bucketingDirectory);
 
     die(0);
 }
@@ -95,8 +102,17 @@ if (!isset($configArray['pollingInterval'])){
         "pollingInterval field is missing default value will be used 2000ms" . PHP_EOL
     );
 }
+$bucketingDirectory = null;
+if (!isset($configArray['bucketingDirectory'])){
+    $bucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
+    fwrite(
+        STDERR,
+        "bucketingDirectory field is missing default value will be used" . PHP_EOL
+    );
+}
 
 $envId = $configArray['envId'];
+$bucketingDirectory = $configArray['bucketingDirectory'];
 
 if (!$pollingInterval){
     $pollingInterval = $configArray['pollingInterval'];

@@ -4,6 +4,8 @@ services:
   #PHP Service
   app-polling:
     build:
+      args:
+        GITHUB_TOKEN: GITHUB_TOKEN
       context: .
       dockerfile: ./Dockerfile-polling
     image: flagship-io-polling/flagship-php-sdk:php-7.4
@@ -14,15 +16,17 @@ services:
       SERVICE_TAGS: dev
       XDEBUG_MODE: coverage
       FLAGSHIP-DOCKER: 1
-      FLAGSHIP_ENV_ID: envId
+      FLAGSHIP_ENV_ID: ENV_KEY
       FLAGSHIP_POLLING_INTERVAL: 5000
+      FLAGSHIP_BUCKETING_DIRECTORY: flagship
     volumes:
       - bucketing-file:/home/app/flagship
-      - ./gitAuth:/root/.composer/
     working_dir: /home/app
 
   app-demo:
     build:
+      args:
+        GITHUB_TOKEN: GITHUB_TOKEN
       context: .
       dockerfile: ./Dockerfile-demo
     image: flagship-io-demo/flagship-php-sdk:php-7.4
@@ -33,12 +37,11 @@ services:
       SERVICE_TAGS: dev
       XDEBUG_MODE: coverage
       FLAGSHIP-DOCKER: 1
-      FLAGSHIP_ENV_ID: envId
-      FLAGSHIP_API_KEY: apiKey
+      FLAGSHIP_ENV_ID: ENV_ID
+      FLAGSHIP_API_KEY: API_KEY
       FLAGSHIP_POLLING_INTERVAL: 5000
     volumes:
-      - bucketing-file:/home/app/flagship
-      - ./gitAuth:/root/.composer/
+      - bucketing-file:/home/app/vendor/flagship-io/flagship-php-sdk/flagship
     working_dir: /home/app
 volumes:
   bucketing-file:

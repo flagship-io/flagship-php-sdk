@@ -7,8 +7,9 @@ use Flagship\Decision\BucketingPolling;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\HttpClient;
 
-function startPolling($envId, $pollingInterval, $bucketingDirectory = null){
-    $bucketingPolling = new BucketingPolling($envId, $pollingInterval, new HttpClient(), $bucketingDirectory);
+function startPolling($envId, $pollingInterval, $bucketingDirectory = null, $configFile = null)
+{
+    $bucketingPolling = new BucketingPolling($envId, $pollingInterval, new HttpClient(), $bucketingDirectory, $configFile);
     $bucketingPolling->startPolling();
 }
 
@@ -34,7 +35,8 @@ if ($isRunning){
         );
     }
 
-    $bucketingDirectory = getenv('FLAGSHIP_BUCKETING_DIRECTORY');;
+    $bucketingDirectory = getenv('FLAGSHIP_BUCKETING_DIRECTORY');
+
     if (!$bucketingDirectory){
         fwrite(
             STDERR,
@@ -42,7 +44,16 @@ if ($isRunning){
         );
     }
 
-    startPolling($envId, $pollingInterval, $bucketingDirectory);
+    $configFile = getenv('FLAGSHIP_CONFIG_FILE');
+
+    if ($configFile){
+        fwrite(
+            STDERR,
+            "FLAGSHIP_CONFIG_FILE field is missing" . PHP_EOL
+        );
+    }
+
+    startPolling($envId, $pollingInterval, $bucketingDirectory, $configFile);
 
     die(0);
 }
@@ -98,10 +109,20 @@ if (!isset($configArray['pollingInterval'])){
 
     fwrite(
         STDERR,
-        "pollingInterval field is missing default value will be used 2000ms" . PHP_EOL
+        "pollingInterval field is missing, default value will be used 2000ms" . PHP_EOL
     );
 }
+
+if (!is_numeric($configArray['pollingInterval'])){
+    $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT * 1000;
+    fwrite(
+        STDERR,
+        "pollingInterval is not numeric, default value will be used 2000ms" . PHP_EOL
+    );
+}
+
 $bucketingDirectory = null;
+
 if (!isset($configArray['bucketingDirectory'])){
     $bucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
     fwrite(
@@ -117,4 +138,4 @@ if (!$pollingInterval){
     $pollingInterval = $configArray['pollingInterval'];
 }
 
-startPolling($envId, $pollingInterval);
+startPolling($envId, $pollingInterval, $bucketingDirectory, $fileConfig);

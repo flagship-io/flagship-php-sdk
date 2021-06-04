@@ -46,7 +46,7 @@ if ($isRunning){
 
     $configFile = getenv('FLAGSHIP_CONFIG_FILE');
 
-    if ($configFile){
+    if (!$configFile){
         fwrite(
             STDERR,
             "FLAGSHIP_CONFIG_FILE field is missing" . PHP_EOL

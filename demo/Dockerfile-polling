@@ -2,15 +2,19 @@ FROM php:7.4-alpine
 COPY . /home/app
 WORKDIR /home/app
 
+ARG GITHUB_TOKEN
+
+RUN apk add git
 RUN apk --no-cache add pcre-dev ${PHPIZE_DEPS} \ 
   && pecl install xdebug \
   && docker-php-ext-enable xdebug \
   && apk del pcre-dev ${PHPIZE_DEPS}
 
+
 RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
+
+RUN composer config -g github-oauth.github.com ${GITHUB_TOKEN}
 
 RUN composer install
 
-RUN cd demo && composer install
-
-CMD ["demo/vendor/bin/flagship"]
+CMD ["vendor/bin/flagship"]

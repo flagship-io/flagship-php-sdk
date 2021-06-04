@@ -11,8 +11,9 @@
   ],
   "repositories": [
     {
-      "type": "vcs",
-      "url": "https://github.com/flagship-io/flagship-php-sdk-dev.git"
+      "type": "git",
+      "url": "https://github.com/flagship-io/flagship-php-sdk-dev.git",
+      "no-api": true
     }
   ],
   "require": {

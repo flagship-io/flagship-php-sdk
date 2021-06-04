@@ -64,4 +64,40 @@ class BucketingPollingTest extends TestCase
 
         $this->assertSame(File::$fwriteData, $exception->getMessage() . PHP_EOL);
     }
+
+    public function testCheckAndUpdateField()
+    {
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['get'], "", false);
+        $envId = "envId";
+        $envId2 = "envId2";
+        $pollingInterval = 0;
+        $body = "body Content";
+
+        $url = sprintf(FlagshipConstant::BUCKETING_API_URL, $envId);
+        $url2 = sprintf(FlagshipConstant::BUCKETING_API_URL, $envId2);
+
+        File::$fileExist = true;
+        File::$fileContent = null;
+
+        $httpClientMock->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive([$url], [$url2])
+            ->willReturn(new HttpResponse(204, $body));
+
+        $bucketingPolling = new BucketingPolling($envId, $pollingInterval, $httpClientMock);
+
+        $bucketingPolling->startPolling();
+
+        File::$fileContent = '
+                        {
+                          "envId" : "' . $envId2 . '",
+                          "apiKey" : "apikey",
+                          "pollingInterval": 2000,
+                          "timeout": 0,
+                          "logLevel": 9,
+                          "bucketingDirectory": "flagship"
+                        }';
+
+        $bucketingPolling->startPolling();
+    }
 }

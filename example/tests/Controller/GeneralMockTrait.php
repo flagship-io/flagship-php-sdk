@@ -33,7 +33,9 @@ trait GeneralMockTrait
         $configManager->setConfig($config);
         $visitorDelegate = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', []);
         $visitor = $this->getMockBuilder(Visitor::class)
-            ->setConstructorArgs([$visitorDelegate])->getMock();
+            ->onlyMethods(['getConfig','sendHit'])
+            ->setConstructorArgs([$visitorDelegate])
+            ->getMock();
         $visitor->method('getConfig')->willReturn($config);
         Session::put('visitor', $visitor);
         return $visitor;

@@ -111,9 +111,7 @@ class Flagship
             }
 
             //Will trigger setStatus method of Flagship if decisionManager want update status
-            $decisionManager->setStatusChangedCallable(function ($status) use ($flagship) {
-                $flagship->setStatus($status);
-            });
+            $decisionManager->setStatusChangedCallable([$flagship,'setStatus']);
 
             $configManager = $container->get('Flagship\Utils\ConfigManager');
 
@@ -247,7 +245,7 @@ class Flagship
      * @param int $status FlagshipStatus::READY or FlagshipStatus::NOT_READY
      * @return Flagship
      */
-    protected function setStatus($status)
+    public function setStatus($status)
     {
         if ($this->config && $this->config->getStatusChangedCallable() && $this->status !== $status) {
             call_user_func($this->config->getStatusChangedCallable(), $status);

@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Flagship\Utils\ConfigManager;
+use Flagship\Utils\Container;
 use TestCase;
 use Flagship\FlagshipConfig;
 use Flagship\Visitor;
@@ -26,8 +27,9 @@ class FlagControllerTest extends TestCase
         $configManager = new ConfigManager();
         $config = new FlagshipConfig($envId, $apiKey);
         $configManager->setConfig($config);
+        $visitorDelegate = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', []);
         $visitor = $this->getMockBuilder(Visitor::class)
-            ->setConstructorArgs([$configManager, 'visitorId', []])->getMock();
+            ->setConstructorArgs([$visitorDelegate])->getMock();
         Session::start();
         Session::put('visitor', $visitor);
         return $visitor;

@@ -4,6 +4,7 @@ namespace Flagship;
 
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
 use Flagship\Traits\ValidatorTrait;
 use JsonSerializable;
@@ -48,10 +49,6 @@ class FlagshipConfig implements JsonSerializable
      */
     private $statusChangedCallable;
 
-    /**
-     * @var int
-     */
-    private $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT;
 
     /**
      * Create a new FlagshipConfig configuration.
@@ -120,7 +117,7 @@ class FlagshipConfig implements JsonSerializable
      * @see \Flagship\Enum\DecisionMode Enum Decision mode
      * @return FlagshipConfig
      */
-    public function setDecisionMode($decisionMode)
+    protected function setDecisionMode($decisionMode)
     {
         if (DecisionMode::isDecisionMode($decisionMode)) {
             $this->decisionMode = $decisionMode;
@@ -217,38 +214,15 @@ class FlagshipConfig implements JsonSerializable
     }
 
     /**
-     * @return int
-     */
-    public function getPollingInterval()
-    {
-        return $this->pollingInterval * 1000;
-    }
-
-    /**
-     * Specify delay between two bucketing polling.
-     *     Note: If 0 is given then it should poll only once at start time.
-     * @param int $pollingInterval : time delay in second. Default is 2000ms.
-     * @return FlagshipConfig
-     */
-    public function setPollingInterval($pollingInterval)
-    {
-        if (!$this->isNumeric($pollingInterval, "pollingInterval", $this)) {
-            return $this;
-        }
-        $this->pollingInterval = $pollingInterval / 1000;
-        return $this;
-    }
-
-    /**
      * @inheritDoc
      */
     public function jsonSerialize()
     {
         return [
-            "environmentId" => $this->getEnvId(),
-            "apiKey" => $this->getApiKey(),
-            "timeout" => $this->getTimeout(),
-            "logLevel" => $this->getLogLevel()
+            FlagshipField::FIELD_ENVIRONMENT_ID => $this->getEnvId(),
+            FlagshipField::FIELD_API_KEY => $this->getApiKey(),
+            FlagshipField::FIELD_TIMEOUT => $this->getTimeout(),
+            FlagshipField::FIELD_LOG_LEVEL => $this->getLogLevel()
         ];
     }
 }

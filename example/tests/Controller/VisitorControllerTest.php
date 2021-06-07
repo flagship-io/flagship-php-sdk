@@ -15,6 +15,7 @@ class VisitorControllerTest extends TestCase
         $array = [
             'visitor_id' => $visitor->getVisitorId(),
             'context' => $visitor->getContext(),
+            "hasConsented" => false
         ];
         $this->get('/visitor');
 
@@ -66,6 +67,36 @@ class VisitorControllerTest extends TestCase
         $this->put('/visitor/context/key', ['type' => 'double', 'value' => 'valueString']);
         $this->assertJsonStringEqualsJsonString(
             '{"error":{"value":["The value is not double"]}}',
+            $this->response->getContent()
+        );
+    }
+
+    public function testUpdateConsent()
+    {
+        $data = $this->startFlagShip();
+        $visitor = $this->getVisitorMock($data['environment_id'], $data['api_key']);
+
+        $this->put('/visitor/consent', ['value' => false]);
+
+        $this->assertFalse($visitor->hasConsented());
+
+        $this->put('/visitor/consent', ['value' => true]);
+
+        $this->assertTrue($visitor->hasConsented());
+
+        $this->assertJsonStringEqualsJsonString(json_encode($visitor), $this->response->getContent());
+
+        $this->put('/visitor/consent', []);
+
+        $this->assertJsonStringEqualsJsonString(
+            '{"error":{"value": ["The value field is required."]}}',
+            $this->response->getContent()
+        );
+
+        //Test type check
+        $this->put('/visitor/consent', ['value' => 'valueString']);
+        $this->assertJsonStringEqualsJsonString(
+            '{"error":{"value":["The value is not bool"]}}',
             $this->response->getContent()
         );
     }

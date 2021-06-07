@@ -3,6 +3,8 @@
 namespace Flagship;
 
 use Exception;
+use Flagship\Config\BucketingConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
@@ -79,7 +81,7 @@ class Flagship
      *
      * @param $envId  : Environment id provided by Flagship.
      * @param $apiKey : Secure api key provided by Flagship.
-     * @param FlagshipConfig|null $config : (optional) SDK configuration.
+     * @param BucketingConfig|DecisionApiConfig|null $config : (optional) SDK configuration.
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
     {

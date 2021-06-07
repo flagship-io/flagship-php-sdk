@@ -4,6 +4,8 @@ namespace Flagship;
 
 use Exception;
 use Flagship\Api\TrackingManager;
+use Flagship\Config\BucketingConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Decision\BucketingManager;
 use Flagship\Enum\DecisionMode;
@@ -107,7 +109,7 @@ class FlagshipTest extends TestCase
     {
         //Test Start Flagship without config argument
 
-        $config = new FlagshipConfig('confEnvId', 'ConfigApiKey');
+        $config = new DecisionApiConfig('confEnvId', 'ConfigApiKey');
 
         $apiManager = new ApiManager(new HttpClient());
 
@@ -117,10 +119,16 @@ class FlagshipTest extends TestCase
 
         $bucketingManager = new BucketingManager(new HttpClient(), new MurmurHash());
 
-        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager, $bucketingManager) {
+        $containerGetMethod = function () use (
+            $config,
+            $apiManager,
+            $trackingManager,
+            $configManager,
+            $bucketingManager
+) {
             $args = func_get_args();
             switch ($args[0]) {
-                case 'Flagship\FlagshipConfig':
+                case 'Flagship\Config\DecisionApiConfig':
                     return $config;
                 case 'Psr\Log\LoggerInterface':
                     return $this->logManagerMock;
@@ -171,7 +179,7 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
         $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
 
-        $config->setDecisionMode(DecisionMode::BUCKETING);
+        $config = new BucketingConfig();
         Flagship::start($envId, $apiKey, $config);
         $this->assertInstanceOf('Flagship\Decision\BucketingManager', $configManager->getDecisionManager());
     }

@@ -4,6 +4,7 @@ namespace Flagship;
 
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
 use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\Utils;
@@ -58,24 +59,7 @@ class FlagshipConfigTest extends TestCase
         $this->assertSame(LogLevel::ERROR, $config->getLogLevel());
     }
 
-    public function testSetPollingInterval()
-    {
-        $envId = "envId";
-        $apiKey = "apiKey";
 
-        $config = new FlagshipConfig($envId, $apiKey);
-
-        //Test default value
-        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT * 1000, $config->getPollingInterval());
-
-        //Test set with alpha
-        $config->setPollingInterval('abc');
-        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT * 1000, $config->getPollingInterval());
-
-        $polling = 5000;
-        $config->setPollingInterval($polling);
-        $this->assertSame($polling, $config->getPollingInterval());
-    }
     /**
      * @dataProvider configData
      * @param        array $configData
@@ -150,10 +134,10 @@ class FlagshipConfigTest extends TestCase
     public function testJson()
     {
         $data =  [
-            "environmentId" => 'envId',
-            "apiKey" => "apiKey",
-            "timeout" => 2000,
-            "logLevel" => LogLevel::ALL
+            FlagshipField::FIELD_ENVIRONMENT_ID => 'envId',
+            FlagshipField::FIELD_API_KEY => "apiKey",
+            FlagshipField::FIELD_TIMEOUT => 2000,
+            FlagshipField::FIELD_LOG_LEVEL => LogLevel::ALL,
         ];
 
         $config = new FlagshipConfig($data['environmentId'], $data['apiKey']);

@@ -88,9 +88,8 @@ class Flagship
             $container = $flagship->getContainer();
 
             if (!$config) {
-                $config = $container->get('Flagship\FlagshipConfig', [$envId, $apiKey]);
+                $config = $container->get('Flagship\Config\DecisionApiConfig', [$envId, $apiKey]);
             }
-
             $config->setEnvId($envId);
             $config->setApiKey($apiKey);
 

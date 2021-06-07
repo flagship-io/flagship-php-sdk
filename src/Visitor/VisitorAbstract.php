@@ -214,6 +214,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
         return [
             'visitorId' => $this->getVisitorId(),
             'context' => $this->getContext(),
+            'hasConsent' => $this->hasConsented()
         ];
     }
 }

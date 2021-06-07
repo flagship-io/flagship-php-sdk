@@ -21,6 +21,7 @@ class VisitorController extends Controller
         $array = [
             'visitor_id' => $visitor->getVisitorId(),
             'context' => $visitor->getContext(),
+            'hasConsented' => $visitor->hasConsented()
         ];
         return response()->json($array);
     }
@@ -42,6 +43,21 @@ class VisitorController extends Controller
             return response()->json(['error' => $exception->errors()], 422);
         } catch (Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 422);
+        }
+    }
+
+    public function updateConsent(Request $request, TypeCastInterface $typeCast, Visitor $visitor)
+    {
+        try {
+            $data = $this->validate($request, [
+                "value" => ['required', new TypeCheck('bool')]
+            ]);
+            $value = $typeCast->castToType($data['value'], 'bool');
+            $visitor->setConsent($value);
+
+            return response()->json($visitor);
+        } catch (ValidationException $exception) {
+            return response()->json(['error' => $exception->errors()], 422);
         }
     }
 

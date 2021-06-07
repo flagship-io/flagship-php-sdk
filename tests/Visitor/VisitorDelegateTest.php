@@ -204,6 +204,7 @@ class VisitorDelegateTest extends TestCase
             json_encode([
                 'visitorId' => $visitorId,
                 'context' => $context,
+                'hasConsent' => false
             ]),
             json_encode($visitorDelegate)
         );

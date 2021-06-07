@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Casts\TypeCastInterface;
+use App\Rules\TypeCheck;
 use Exception;
+use Flagship\Config\BucketingConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Flagship;
 use Flagship\FlagshipConfig;
 use Illuminate\Http\Request;
@@ -22,20 +26,32 @@ class EnvController extends Controller
     }
 
 
-    public function update(Request $request)
+    public function update(Request $request, TypeCastInterface $typeCast)
     {
         try {
             $data = $this->validate($request, [
                 'environment_id' => 'required',
                 'api_key' => 'required',
                 'timeout' => 'required|numeric',
-                'bucketing' => 'nullable',
-                'polling_interval' => 'nullable'
+                'bucketing' => ['nullable', new TypeCheck('bool')],
+                'polling_interval' => 'numeric'
             ]);
 
-            $config = new FlagshipConfig($data['environment_id'], $data["api_key"]);
-            $config->setTimeout($data['timeout']);
+            $bucketing = false;
+            if (isset($data['bucketing'])) {
+                $bucketing = $typeCast->castToType($data['bucketing'], 'bool');
+            }
 
+            if ($bucketing) {
+                $config = new BucketingConfig($data['environment_id'], $data["api_key"]);
+                if (isset($data['polling_interval'])) {
+                    $config->setPollingInterval($data['polling_interval']);
+                }
+            } else {
+                $config = new DecisionApiConfig($data['environment_id'], $data["api_key"]);
+            }
+
+            $config->setTimeout($data['timeout']);
             $request->session()->start();
 
             $logManager = Log::getLogger();
@@ -55,9 +71,11 @@ class EnvController extends Controller
     private function getEnvJson($config)
     {
         return [
-                "environment_id" => $config->getEnvId(),
-                "api_key" => $config->getApiKey(),
-                "timeout" => $config->getTimeOut()
+            "environment_id" => $config->getEnvId(),
+            "api_key" => $config->getApiKey(),
+            "timeout" => $config->getTimeOut(),
+            "bucketing" => $config instanceof  BucketingConfig,
+            "polling_interval" => $config instanceof  BucketingConfig ? $config->getPollingInterval() : 0,
         ];
     }
 }

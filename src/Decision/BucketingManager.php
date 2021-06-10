@@ -38,10 +38,14 @@ class BucketingManager extends DecisionManagerAbstract
         try {
             $response =  $this->httpClient->post($url, $postBody);
             if ($response->getStatusCode() >= 400) {
-                $this->logError($this->getConfig(), $response->getBody());
+                $this->logError($this->getConfig(), $response->getBody(), [
+                    FlagshipConstant::TAG => __FUNCTION__
+                ]);
             }
         } catch (Exception $exception) {
-            $this->logError($this->getConfig(), $exception->getMessage());
+            $this->logError($this->getConfig(), $exception->getMessage(), [
+                FlagshipConstant::TAG => __FUNCTION__
+            ]);
         }
     }
 

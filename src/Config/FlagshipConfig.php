@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
  *
  * @package Flagship
  */
-class FlagshipConfig implements JsonSerializable
+abstract class FlagshipConfig implements JsonSerializable
 {
     use ValidatorTrait;
 

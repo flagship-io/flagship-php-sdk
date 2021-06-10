@@ -3,7 +3,7 @@
 namespace Flagship\Api;
 
 use Exception;
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
@@ -34,7 +34,7 @@ class TrackingManagerTest extends TestCase
 
         $trackingManager = new TrackingManager($httpClientMock);
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
 
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
@@ -83,7 +83,7 @@ class TrackingManagerTest extends TestCase
 
         $trackingManager = new TrackingManager($httpClientMock);
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
         $configManager = new ConfigManager();
@@ -146,7 +146,7 @@ class TrackingManagerTest extends TestCase
 
         $pageUrl = "https://localhost";
         $page = new Page($pageUrl);
-        $page->setConfig(new FlagshipConfig());
+        $page->setConfig(new DecisionApiConfig());
 
         $url = FlagshipConstant::HIT_API_URL;
 
@@ -177,7 +177,7 @@ class TrackingManagerTest extends TestCase
 
         $trackingManager = new TrackingManager($httpClientMock);
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
 
         $config->setLogManager($logManagerStub);
 
@@ -193,7 +193,7 @@ class TrackingManagerTest extends TestCase
 
         $pageUrl = "Https://localhost";
         $page = new Page($pageUrl);
-        $page->setConfig(new FlagshipConfig());
+        $page->setConfig(new DecisionApiConfig());
 
         $url = FlagshipConstant::HIT_API_URL;
 

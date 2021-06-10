@@ -24,7 +24,7 @@ class FlagshipConfigTest extends TestCase
     public function testSetTimeOut($configData)
     {
         $timeOut = 5000;
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
 
         $this->assertEquals(FlagshipConstant::REQUEST_TIME_OUT * 1000, $config->getTimeout());
 
@@ -43,7 +43,7 @@ class FlagshipConfigTest extends TestCase
         $envId = "envId";
         $apiKey = "apiKey";
 
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $this->assertSame(LogLevel::ALL, $config->getLogLevel());
 
         $config->setLogLevel(-2);
@@ -67,7 +67,7 @@ class FlagshipConfigTest extends TestCase
     public function testSetApiKey($configData)
     {
         $newApiKey = 'new_api_key';
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $config->setApiKey($newApiKey);
         $this->assertEquals($newApiKey, $config->getApiKey());
     }
@@ -79,7 +79,7 @@ class FlagshipConfigTest extends TestCase
     public function testSetEnvId($configData)
     {
         $newEnvId = 'new_env_id';
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $config->setEnvId($newEnvId);
         $this->assertEquals($newEnvId, $config->getEnvId());
     }
@@ -90,7 +90,7 @@ class FlagshipConfigTest extends TestCase
      */
     public function testDecisionMode($configData)
     {
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $this->assertEquals(DecisionMode::DECISION_API, $config->getDecisionMode());
     }
 
@@ -100,8 +100,8 @@ class FlagshipConfigTest extends TestCase
      */
     public function testConstruct($configData)
     {
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
-        $this->assertInstanceOf("Flagship\Config\FlagshipConfig", $config);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
+        $this->assertInstanceOf("Flagship\Config\DecisionApiConfig", $config);
         $this->assertEquals($config->getEnvId(), $configData['envId']);
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
     }
@@ -112,7 +112,7 @@ class FlagshipConfigTest extends TestCase
      */
     public function testSetDecisionMode($configData)
     {
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $setDecisionMode = Utils::getMethod($config, 'setDecisionMode');
         $setDecisionMode->invokeArgs($config, [DecisionMode::DECISION_API]);
         $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
@@ -122,7 +122,7 @@ class FlagshipConfigTest extends TestCase
 
     public function testSetStatusChangedCallable()
     {
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $this->assertNull($config->getStatusChangedCallable());
         $callable = function () {
         };
@@ -140,7 +140,7 @@ class FlagshipConfigTest extends TestCase
             FlagshipField::FIELD_LOG_LEVEL => LogLevel::ALL,
         ];
 
-        $config = new FlagshipConfig($data['environmentId'], $data['apiKey']);
+        $config = new DecisionApiConfig($data['environmentId'], $data['apiKey']);
         $config->setTimeout($data['timeout']);
 
         $this->assertJsonStringEqualsJsonString(

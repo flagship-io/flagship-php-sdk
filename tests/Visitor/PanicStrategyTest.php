@@ -2,7 +2,7 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Hit\Page;
@@ -34,7 +34,7 @@ class PanicStrategyTest extends TestCase
             ['error']
         );
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
         $logMessageBuild = function ($functionName) {

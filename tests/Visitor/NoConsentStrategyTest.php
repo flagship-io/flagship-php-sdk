@@ -2,7 +2,7 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Page;
 use Flagship\Model\Modification;
@@ -34,7 +34,7 @@ class NoConsentStrategyTest extends TestCase
             ['error']
         );
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
         $visitorId = "visitorId";

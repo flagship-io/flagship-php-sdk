@@ -38,9 +38,14 @@ class BucketingPolling
         $this->envId = $envId;
         $this->pollingInterval = $pollingInterval;
         $this->httpClient = $httpClient;
-        $this->bucketingDirectory = $bucketingDirectory ? __DIR__ . '/../../../../../' .
-            $bucketingDirectory : __DIR__ . '/../../' . FlagshipConstant::BUCKETING_DIRECTORY;
+        $this->bucketingDirectory = $this->getBucketingDirectory($bucketingDirectory);
         $this->configFile = $configFile;
+    }
+
+    private function getBucketingDirectory($directory)
+    {
+        return $directory ? __DIR__ . '/../../../../../' .
+            $directory : __DIR__ . '/../../' . FlagshipConstant::BUCKETING_DIRECTORY;
     }
 
     /**
@@ -54,8 +59,14 @@ class BucketingPolling
             if (!empty($configArray['envId'])) {
                 $this->envId = $configArray['envId'];
             }
-            if (isset($configArray['pollingInterval']) && is_numeric($configArray['pollingInterval'])) {
+            if (
+                isset($configArray['pollingInterval']) && is_numeric($configArray['pollingInterval'])
+                && $configArray['pollingInterval'] >= 0
+            ) {
                 $this->pollingInterval = $configArray['pollingInterval'];
+            }
+            if (!empty($configArray['bucketingDirectory'])) {
+                $this->bucketingDirectory = $this->getBucketingDirectory($configArray['bucketingDirectory']);
             }
         }
     }

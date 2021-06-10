@@ -18,8 +18,10 @@ class ApiManagerTest extends TestCase
     public function testConstruct()
     {
         $httpClient = new HttpClient();
-        $apiManager = new ApiManager($httpClient);
+        $config = new DecisionApiConfig();
+        $apiManager = new ApiManager($httpClient, $config);
         $this->assertSame($httpClient, $apiManager->getHttpClient());
+        $this->assertSame($config, $apiManager->getConfig());
         $this->assertFalse($apiManager->getIsPanicMode());
         $apiManager->setIsPanicMode(true);
         $this->assertTrue($apiManager->getIsPanicMode());
@@ -95,14 +97,15 @@ class ApiManagerTest extends TestCase
 
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
-        $manager = new ApiManager($httpClientMock);
+        $config = new DecisionApiConfig();
+        $manager = new ApiManager($httpClientMock, $config);
 
         $statusCallback = function ($status) {
             echo $status;
         };
 
         $manager->setStatusChangedCallable($statusCallback);
-        $configManager = (new ConfigManager())->setConfig(new DecisionApiConfig());
+        $configManager = (new ConfigManager())->setConfig($config);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
 
@@ -144,7 +147,8 @@ class ApiManagerTest extends TestCase
 
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
-        $manager = new ApiManager($httpClientMock);
+        $config = new DecisionApiConfig();
+        $manager = new ApiManager($httpClientMock, $config);
 
         $statusCallback = function ($status) {
             echo $status;
@@ -153,7 +157,7 @@ class ApiManagerTest extends TestCase
         $manager->setStatusChangedCallable($statusCallback);
 
         $this->assertFalse($manager->getIsPanicMode());
-        $configManager = (new ConfigManager())->setConfig(new DecisionApiConfig());
+        $configManager = (new ConfigManager())->setConfig($config);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
 
@@ -226,8 +230,9 @@ class ApiManagerTest extends TestCase
 
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
-        $manager = new ApiManager($httpClientMock);
-        $configManager = (new ConfigManager())->setConfig(new DecisionApiConfig());
+        $config = new DecisionApiConfig();
+        $manager = new ApiManager($httpClientMock, $config);
+        $configManager = (new ConfigManager())->setConfig($config);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
 
@@ -270,7 +275,7 @@ class ApiManagerTest extends TestCase
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
 
-        $apiManager = new ApiManager($httpClientMock);
+        $apiManager = new ApiManager($httpClientMock, $config);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, 'visitor_id', ['age' => 15]);
         $value = $apiManager->getCampaignModifications($visitor);

@@ -2,7 +2,7 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\FlagshipConfig;
+use Flagship\Config\FlagshipConfig;
 use Flagship\Hit\HitAbstract;
 use Flagship\Traits\LogTrait;
 use JsonSerializable;

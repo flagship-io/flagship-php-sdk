@@ -110,13 +110,14 @@ class FlagshipTest extends TestCase
 
         $config = new DecisionApiConfig('confEnvId', 'ConfigApiKey');
 
-        $apiManager = new ApiManager(new HttpClient());
+        $apiManager = new ApiManager(new HttpClient(), $config);
 
         $trackingManager = new TrackingManager(new HttpClient());
 
         $configManager = new ConfigManager();
 
-        $bucketingManager = new BucketingManager(new HttpClient(), new MurmurHash());
+        $bucketingConfig = new BucketingConfig();
+        $bucketingManager = new BucketingManager(new HttpClient(), $bucketingConfig, new MurmurHash());
 
         $containerGetMethod = function () use (
             $config,
@@ -448,7 +449,7 @@ class FlagshipTest extends TestCase
                 ])
             );
 
-        $apiManager = new ApiManager($httpClientMock);
+        $apiManager = new ApiManager($httpClientMock, $config);
 
         $trackingManager = new TrackingManager(new HttpClient());
 

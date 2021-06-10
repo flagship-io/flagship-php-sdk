@@ -3,8 +3,10 @@
 namespace Flagship\Decision;
 
 use Exception;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor\VisitorAbstract;
 
 /**
@@ -14,7 +16,10 @@ use Flagship\Visitor\VisitorAbstract;
  */
 class ApiManager extends DecisionManagerAbstract
 {
-
+    public function __construct(HttpClientInterface $httpClient, DecisionApiConfig $config)
+    {
+        parent::__construct($httpClient, $config);
+    }
 
     /**
      * This function will fetch campaigns modifications from the server according to the visitor context and

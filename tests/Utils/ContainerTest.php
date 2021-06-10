@@ -20,6 +20,10 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf($alias, $instanceAlias1);
 
         //Test constructor with default argument
+        $container->bind(
+            "Flagship\Config\FlagshipConfig",
+            "Flagship\Config\DecisionApiConfig"
+        );
         $alias = 'Flagship\Decision\DecisionManagerAbstract';
         $className = 'Flagship\Decision\ApiManager';
         $container->bind($alias, $className);

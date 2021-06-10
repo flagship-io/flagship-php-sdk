@@ -106,10 +106,16 @@ class Flagship
                 $config->setLogManager($logManager);
             }
 
+            $httpClient = $container->get('Flagship\Utils\HttpClientInterface');
+
             if ($config->getDecisionMode() === DecisionMode::BUCKETING) {
-                $decisionManager = $container->get('Flagship\Decision\BucketingManager');
+                $murmurHash = $container->get('Flagship\Utils\MurmurHash');
+                $decisionManager = $container->get(
+                    'Flagship\Decision\BucketingManager',
+                    [$httpClient, $config, $murmurHash]
+                );
             } else {
-                $decisionManager = $container->get('Flagship\Decision\ApiManager');
+                $decisionManager = $container->get('Flagship\Decision\ApiManager', [$httpClient, $config]);
             }
 
             //Will trigger setStatus method of Flagship if decisionManager want update status

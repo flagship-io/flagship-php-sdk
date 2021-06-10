@@ -21,7 +21,7 @@ class ConfigManagerTest extends TestCase
         $configManager->setConfig($config);
         $this->assertSame($config, $configManager->getConfig());
 
-        $decisionManager =  new ApiManager(new HttpClient());
+        $decisionManager =  new ApiManager(new HttpClient(), $config);
         $configManager->setDecisionManager($decisionManager);
         $this->assertSame($decisionManager, $configManager->getDecisionManager());
 

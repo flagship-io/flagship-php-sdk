@@ -2,9 +2,9 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
-use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class PageTest extends TestCase

@@ -1,11 +1,11 @@
 <?php
 
-namespace Flagship;
+namespace Flagship\Visitor;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Hit\Page;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
-use Flagship\Visitor\VisitorDelegate;
 use PHPUnit\Framework\TestCase;
 
 class VisitorTest extends TestCase

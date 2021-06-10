@@ -2,10 +2,10 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
-use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase

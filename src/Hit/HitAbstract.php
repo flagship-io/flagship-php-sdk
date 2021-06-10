@@ -2,8 +2,8 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\FlagshipConfig;
 use Flagship\Traits\LogTrait;
 
 /**

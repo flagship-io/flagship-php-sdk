@@ -2,10 +2,9 @@
 
 namespace Flagship\Traits;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
-use Flagship\FlagshipConfig;
-use Psr\Log\LoggerInterface;
 
 trait LogTrait
 {

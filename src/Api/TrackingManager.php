@@ -8,7 +8,6 @@ use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
-use Flagship\Visitor;
 use Flagship\Visitor\VisitorAbstract;
 
 /**

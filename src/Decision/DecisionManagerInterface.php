@@ -3,7 +3,6 @@
 namespace Flagship\Decision;
 
 use Flagship\Model\Modification;
-use Flagship\Visitor;
 use Flagship\Visitor\VisitorAbstract;
 
 interface DecisionManagerInterface

@@ -3,9 +3,9 @@
 namespace Flagship\Decision;
 
 use Exception;
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
-use Flagship\FlagshipConfig;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;

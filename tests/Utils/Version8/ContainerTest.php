@@ -40,7 +40,7 @@ class ContainerTest extends TestCase
 
     public function testGetWithDefaultArgs()
     {
-        $className = 'Flagship\FlagshipConfig';
+        $className = 'Flagship\Config\FlagshipConfig';
         $container = new Container();
         $instanceAlias = $container->get($className);
         $this->assertInstanceOf($className, $instanceAlias);
@@ -62,7 +62,7 @@ class ContainerTest extends TestCase
     {
         //Test constructor with custom argument
         $container = new Container();
-        $className = 'Flagship\FlagshipConfig';
+        $className = 'Flagship\Config\FlagshipConfig';
         $envId = 'envId';
         $apiKey = 'apiKey';
         $instanceAlias = $container->get($className, [$envId, $apiKey]);
@@ -73,7 +73,7 @@ class ContainerTest extends TestCase
 
     public function testFactory()
     {
-        $className = 'Flagship\FlagshipConfig';
+        $className = 'Flagship\Config\FlagshipConfig';
         $container = new Container();
         $envId = 'envId';
         $apiKey = 'apiKey';

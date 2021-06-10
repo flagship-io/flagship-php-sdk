@@ -3,8 +3,8 @@
 namespace Flagship\Utils;
 
 use Flagship\Api\TrackingManager;
+use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\ApiManager;
-use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class ConfigManagerTest extends TestCase

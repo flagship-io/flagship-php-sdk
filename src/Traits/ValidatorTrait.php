@@ -2,8 +2,8 @@
 
 namespace Flagship\Traits;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\FlagshipConfig;
 
 trait ValidatorTrait
 {

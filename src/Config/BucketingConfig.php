@@ -5,7 +5,6 @@ namespace Flagship\Config;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
-use Flagship\FlagshipConfig;
 
 class BucketingConfig extends FlagshipConfig
 {

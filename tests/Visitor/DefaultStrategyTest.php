@@ -367,6 +367,8 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
+        $config = new DecisionApiConfig('envId', 'apiKey');
+
         $trackerManagerStub = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             [new HttpClient()],
@@ -379,7 +381,7 @@ class DefaultStrategyTest extends TestCase
 
         $apiManagerStub = $this->getMockForAbstractClass(
             'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient()],
+            [new HttpClient(), $config],
             'ApiManagerInterface',
             true,
             true,
@@ -387,7 +389,7 @@ class DefaultStrategyTest extends TestCase
             ['getCampaignModifications']
         );
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
+
 
         $config->setLogManager($logManagerStub);
 
@@ -593,7 +595,7 @@ class DefaultStrategyTest extends TestCase
 
         $apiManagerStub = $this->getMockForAbstractClass(
             'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient()],
+            [new HttpClient(), $config],
             '',
             true,
             true,
@@ -667,7 +669,7 @@ class DefaultStrategyTest extends TestCase
 
         $apiManagerStub = $this->getMockForAbstractClass(
             'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient()],
+            [new HttpClient(), $config],
             '',
             true,
             true,
@@ -720,7 +722,7 @@ class DefaultStrategyTest extends TestCase
             ->setConfig($config)
             ->setTrackingManager($trackerManagerMock);
 
-        $apiManager = new ApiManager(new HttpClient());
+        $apiManager = new ApiManager(new HttpClient(), $config);
 
         $configManager->setDecisionManager($apiManager);
 

@@ -2,6 +2,7 @@
 
 namespace Flagship\Decision;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Utils\HttpClientInterface;
@@ -16,11 +17,24 @@ class BucketingManager extends DecisionManagerAbstract
      */
     private $murmurHash;
 
-    public function __construct(HttpClientInterface $httpClient, MurmurHash $murmurHash)
+    public function __construct(HttpClientInterface $httpClient, FlagshipConfig $config, MurmurHash $murmurHash)
     {
-        parent::__construct($httpClient);
+        parent::__construct($httpClient, $config);
         $this->murmurHash = $murmurHash;
         $this->bucketingDirectory = __DIR__ . FlagshipConstant::BUCKETING_DIRECTORY;
+    }
+
+    protected function sendContext(VisitorAbstract $visitor)
+    {
+        $envId = $visitor->getConfig()->getEnvId();
+        $url = "https://decision.flagship.io/v2/$envId/events";
+        $postBody = [
+            ""
+        ];
+        try {
+            $response =  $this->httpClient->post($url);
+        } catch (\Exception $exception) {
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Flagship\Decision;
 require_once __dir__ . "/../Assets/File.php";
 
 use Flagship\Assets\File;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipField;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -20,7 +21,8 @@ class BucketingManagerTest extends TestCase
     {
 
         $murmurhash = new MurmurHash();
-        $bucketingManager = new BucketingManager(new HttpClient(), $murmurhash);
+        $config = new DecisionApiConfig();
+        $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_1";
         $visitorContext = [
             "age" => 20
@@ -75,7 +77,8 @@ class BucketingManagerTest extends TestCase
     public function testGetVariation()
     {
         $murmurhash = new MurmurHash();
-        $bucketingManager = new BucketingManager(new HttpClient(), $murmurhash);
+        $config = new DecisionApiConfig();
+        $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "123456";
 
         $getVariationMethod = Utils::getMethod($bucketingManager, "getVariation");
@@ -138,7 +141,8 @@ class BucketingManagerTest extends TestCase
     public function testIsMatchTargeting()
     {
         $murmurhash = new MurmurHash();
-        $bucketingManager = new BucketingManager(new HttpClient(), $murmurhash);
+        $config = new DecisionApiConfig();
+        $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [
             "age" => 20
@@ -297,7 +301,8 @@ class BucketingManagerTest extends TestCase
     public function testCheckAndTargeting()
     {
         $murmurhash = new MurmurHash();
-        $bucketingManager = new BucketingManager(new HttpClient(), $murmurhash);
+        $config = new DecisionApiConfig();
+        $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [
             "age" => 20
@@ -378,7 +383,8 @@ class BucketingManagerTest extends TestCase
     public function testOperator()
     {
         $murmurhash = new MurmurHash();
-        $bucketingManager = new BucketingManager(new HttpClient(), $murmurhash);
+        $config = new DecisionApiConfig();
+        $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [
 //            "isPHP" => true

@@ -26,10 +26,10 @@ class ApiManager extends DecisionManagerAbstract
     protected function getCampaigns(VisitorAbstract $visitor)
     {
         try {
-            $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
+            $headers = $this->buildHeader($this->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($visitor->getConfig()->getTimeout() / 1000);
-            $url = $this->buildDecisionApiUrl($visitor->getConfig()->getEnvId() . '/' .
+            $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
+            $url = $this->buildDecisionApiUrl($this->getConfig()->getEnvId() . '/' .
                 FlagshipConstant::URL_CAMPAIGNS . '/');
 
             $postData = [
@@ -48,7 +48,7 @@ class ApiManager extends DecisionManagerAbstract
                 return $body[FlagshipField::FIELD_CAMPAIGNS];
             }
         } catch (Exception $exception) {
-            $this->logError($visitor->getConfig(), $exception->getMessage());
+            $this->logError($this->getConfig(), $exception->getMessage());
         }
         return [];
     }

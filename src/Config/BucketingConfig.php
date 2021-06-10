@@ -8,17 +8,22 @@ use Flagship\Enum\FlagshipField;
 
 class BucketingConfig extends FlagshipConfig
 {
+    /**
+     * @var int
+     */
+    private $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT;
+
+    /**
+     * @var string
+     */
+    private $bucketingDirectory;
 
     public function __construct($envId = null, $apiKey = null)
     {
         parent::__construct($envId, $apiKey);
         $this->setDecisionMode(DecisionMode::BUCKETING);
+        $this->setBucketingDirectory(FlagshipConstant::BUCKETING_DIRECTORY);
     }
-
-    /**
-     * @var int
-     */
-    private $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT;
 
     /**
      * @return int
@@ -42,10 +47,33 @@ class BucketingConfig extends FlagshipConfig
         $this->pollingInterval = $pollingInterval / 1000;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getBucketingDirectory()
+    {
+        return $this->bucketingDirectory;
+    }
+
+    /**
+     * @param string $bucketingDirectory
+     * @return BucketingConfig
+     */
+    public function setBucketingDirectory($bucketingDirectory)
+    {
+        if (empty($bucketingDirectory)) {
+            $bucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
+        }
+        $this->bucketingDirectory = $bucketingDirectory;
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         $parent = parent::jsonSerialize();
         $parent[FlagshipField::FIELD_POLLING_INTERVAL] = $this->getPollingInterval();
+        $parent[FlagshipField::FIELD_BUCKETING_DIRECTORY] = $this->getBucketingDirectory();
         return $parent;
     }
 }

@@ -2,14 +2,12 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Flagship\Enum\DecisionMode;
+use Flagship\Config\BucketingConfig;
 use Flagship\Flagship;
-use Flagship\FlagshipConfig;
 
 $envId  =  getenv('FLAGSHIP_ENV_ID');
 $apiKey = getenv('FLAGSHIP_API_KEY');
-$config = new FlagshipConfig();
-$config->setDecisionMode(DecisionMode::BUCKETING);
+$config = new BucketingConfig();
 
 Flagship::start($envId, $apiKey, $config);
 

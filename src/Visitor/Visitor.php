@@ -1,11 +1,10 @@
 <?php
 
-namespace Flagship;
+namespace Flagship\Visitor;
 
+use Flagship\FlagshipConfig;
 use Flagship\Hit\HitAbstract;
 use Flagship\Traits\LogTrait;
-use Flagship\Visitor\VisitorDelegate;
-use Flagship\Visitor\VisitorInterface;
 use JsonSerializable;
 
 class Visitor implements VisitorInterface, JsonSerializable

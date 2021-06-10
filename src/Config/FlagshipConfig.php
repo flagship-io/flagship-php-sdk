@@ -1,6 +1,6 @@
 <?php
 
-namespace Flagship;
+namespace Flagship\Config;
 
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;

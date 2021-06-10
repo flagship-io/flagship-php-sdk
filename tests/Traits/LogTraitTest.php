@@ -2,9 +2,9 @@
 
 namespace Flagship\Traits;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
-use Flagship\FlagshipConfig;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 

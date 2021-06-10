@@ -2,9 +2,9 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
-use Flagship\FlagshipConfig;
 use Flagship\Hit\Page;
 use Flagship\Model\Modification;
 use Flagship\Utils\ConfigManager;

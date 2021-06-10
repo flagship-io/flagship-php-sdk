@@ -8,7 +8,6 @@ use Flagship\Model\Modification;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\HttpClientInterface;
-use Flagship\Visitor;
 use Flagship\Visitor\VisitorAbstract;
 
 abstract class DecisionManagerAbstract implements DecisionManagerInterface

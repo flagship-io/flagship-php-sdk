@@ -5,9 +5,6 @@ namespace Flagship\Decision;
 use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
-use Flagship\Model\Modification;
-use Flagship\Traits\BuildApiTrait;
-use Flagship\Traits\ValidatorTrait;
 use Flagship\Visitor\VisitorAbstract;
 
 /**

@@ -120,10 +120,9 @@ if (!is_numeric($configArray['pollingInterval'])){
     );
 }
 
-$bucketingDirectory = null;
 
 if (!isset($configArray['bucketingDirectory'])){
-    $bucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
+    $configArray['bucketingDirectory']=null;
     fwrite(
         STDERR,
         "bucketingDirectory field is missing default value will be used" . PHP_EOL

@@ -2,7 +2,7 @@
 
 namespace Flagship\Hit;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,7 @@ class PageTest extends TestCase
         $envId = "envId";
 
         $page = new Page($pageUrl);
-        $config = new FlagshipConfig($envId);
+        $config = new DecisionApiConfig($envId);
 
         $page->setConfig($config)
             ->setDs(FlagshipConstant::SDK_APP)
@@ -45,7 +45,7 @@ class PageTest extends TestCase
         //Test with require HitAbstract fields and with null pageUrl
         $pageUrl = null;
         $page = new Page($pageUrl);
-        $config = new FlagshipConfig('envId');
+        $config = new DecisionApiConfig('envId');
 
         $page->setConfig($config)
             ->setVisitorId('visitorId')

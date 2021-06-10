@@ -2,7 +2,7 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Hit\Page;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -17,7 +17,7 @@ class VisitorTest extends TestCase
     public function testConstruct()
     {
         $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
         $ageKey = 'age';
         $visitorContext = [
@@ -52,7 +52,7 @@ class VisitorTest extends TestCase
     public function testMethods()
     {
         $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
         $visitorContext = [
             'name' => 'visitor_name',
@@ -150,7 +150,7 @@ class VisitorTest extends TestCase
 
     public function testJson()
     {
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
         $context = ["age" => 20];
         $configManager = (new ConfigManager())->setConfig($config);

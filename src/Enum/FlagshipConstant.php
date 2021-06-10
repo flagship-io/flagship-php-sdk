@@ -26,6 +26,7 @@ class FlagshipConstant
     const BASE_API_URL              = "https://decision.flagship.io/v2";
     const HIT_API_URL               = "https://ariane.abtasty.com";
     const BUCKETING_API_URL         = "https://cdn.flagship.io/%s/bucketing.json";
+    const BUCKETING_API_CONTEXT_URL = "https://decision.flagship.io/v2/%s/events";
     const URL_CAMPAIGNS             = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
 
@@ -106,5 +107,5 @@ class FlagshipConstant
     const HEADER_APPLICATION_JSON = 'application/json';
     const TIMEOUT_TYPE_ERROR      = "timeout must be numeric and > 0";
     const LOG_LEVEL_ERROR         = "Loglevel value invalid, please use \Flagship\Enum\LogLevel ";
-    const BUCKETING_DIRECTORY     = "/../../flagship";
+    const BUCKETING_DIRECTORY     = "flagship";
 }

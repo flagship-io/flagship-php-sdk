@@ -2,7 +2,7 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
@@ -83,7 +83,7 @@ class DefaultStrategyTest extends TestCase
             true,
             ['error']
         );
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
 
@@ -162,7 +162,7 @@ class DefaultStrategyTest extends TestCase
     public function testUpdateContextCollection()
     {
         $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
         $visitorContext = [
             'name' => 'visitor_name',
@@ -196,7 +196,7 @@ class DefaultStrategyTest extends TestCase
             'name' => 'visitor_name',
             'age' => 25
         ];
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
         $configManager = (new ConfigManager())->setConfig($config);
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, $visitorContext);
 
@@ -225,7 +225,7 @@ class DefaultStrategyTest extends TestCase
             true,
             ['getCampaignModifications', 'getConfig']
         );
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
 
         $apiManagerStub->expects($this->once())->method('getCampaignModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
@@ -333,7 +333,7 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
         $configManager = (new ConfigManager())->setConfig($config);
@@ -387,7 +387,7 @@ class DefaultStrategyTest extends TestCase
             ['getCampaignModifications']
         );
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
 
         $config->setLogManager($logManagerStub);
 
@@ -432,7 +432,7 @@ class DefaultStrategyTest extends TestCase
             true,
             ['getCampaignModifications', 'getConfig']
         );
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
 
         $apiManagerStub->method('getCampaignModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
@@ -519,7 +519,7 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
 
 
         $config->setLogManager($logManagerStub);
@@ -588,7 +588,7 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
         $apiManagerStub = $this->getMockForAbstractClass(
@@ -662,7 +662,7 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
-        $config = new FlagshipConfig('envId', 'apiKey');
+        $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
         $apiManagerStub = $this->getMockForAbstractClass(
@@ -715,7 +715,7 @@ class DefaultStrategyTest extends TestCase
         $apiKey = "apiKey";
         $visitorId = "visitorId";
 
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $configManager = (new ConfigManager())
             ->setConfig($config)
             ->setTrackingManager($trackerManagerMock);
@@ -820,7 +820,7 @@ class DefaultStrategyTest extends TestCase
         $apiKey = "apiKey";
         $visitorId = "visitorId";
 
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
 
         $config->setLogManager($logManagerMock);
 

@@ -2,7 +2,7 @@
 
 namespace Flagship\Hit;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +29,7 @@ class TransactionTest extends TestCase
         $envId = "envId";
         $ds = FlagshipConstant::SDK_APP;
         $visitorId = "visitorId";
-        $config = new FlagshipConfig($envId);
+        $config = new DecisionApiConfig($envId);
 
         $transaction->setVisitorId($visitorId)->setDs($ds)->setConfig($config);
 
@@ -164,7 +164,7 @@ class TransactionTest extends TestCase
         $transactionId = null;
         $transactionAffiliation = "transactionAffiliation";
         $transaction = new Transaction($transactionId, $transactionAffiliation);
-        $config = new FlagshipConfig('envId');
+        $config = new DecisionApiConfig('envId');
 
         $transaction->setConfig($config)
             ->setVisitorId('visitorId')

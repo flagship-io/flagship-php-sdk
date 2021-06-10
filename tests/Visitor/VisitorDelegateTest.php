@@ -2,7 +2,7 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Hit\Page;
@@ -17,7 +17,7 @@ class VisitorDelegateTest extends TestCase
     public function testConstruct()
     {
         $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
         $ageKey = 'age';
         $visitorContext = [
@@ -75,7 +75,7 @@ class VisitorDelegateTest extends TestCase
         );
 
         $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
 
         $config->setLogManager($logManagerStub);
 
@@ -101,7 +101,7 @@ class VisitorDelegateTest extends TestCase
     public function testMethods()
     {
         $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
-        $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
 
         $visitorContext = [
@@ -194,7 +194,7 @@ class VisitorDelegateTest extends TestCase
 
     public function testJson()
     {
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
         $context = ["age" => 20];
         $configManager = (new ConfigManager())->setConfig($config);
@@ -217,7 +217,7 @@ class VisitorDelegateTest extends TestCase
         $setStatusMethod = Utils::getMethod($instance, 'setStatus');
         $setStatusMethod->invoke($instance, FlagshipStatus::NOT_INITIALIZED);
 
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
         $context = ["age" => 20];
         $configManager = (new ConfigManager())->setConfig($config);

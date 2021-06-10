@@ -2,7 +2,7 @@
 
 namespace Flagship\Hit;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
@@ -34,7 +34,7 @@ class EventTest extends TestCase
         ];
 
         $event = new Event($eventCategory, $eventAction);
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $config->setEnvId($envId);
         $event->setConfig($config)
             ->setVisitorId($visitorId)
@@ -97,7 +97,7 @@ class EventTest extends TestCase
     {
         $eventAction = 'action';
         $event = new Event(EventCategory::ACTION_TRACKING, $eventAction);
-        $event->setConfig(new FlagshipConfig());
+        $event->setConfig(new DecisionApiConfig());
         $this->assertSame(EventCategory::ACTION_TRACKING, $event->getCategory());
 
         $event->setCategory(EventCategory::USER_ENGAGEMENT);
@@ -122,7 +122,7 @@ class EventTest extends TestCase
         $eventCategory = null;
         $eventAction = "eventAction";
         $event = new Event($eventCategory, $eventAction);
-        $config = new FlagshipConfig("envId");
+        $config = new DecisionApiConfig("envId");
         $event->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);

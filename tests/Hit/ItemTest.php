@@ -2,7 +2,7 @@
 
 namespace Flagship\Hit;
 
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,7 @@ class ItemTest extends TestCase
         ];
 
         $item = new Item($transactionId, $itemName, $itemCode);
-        $config = new FlagshipConfig($envId);
+        $config = new DecisionApiConfig($envId);
 
         $item->setVisitorId($visitorId)
             ->setConfig($config)
@@ -119,7 +119,7 @@ class ItemTest extends TestCase
         $itemName = "itemName";
         $itemCode = "itemCode";
         $item = new Item($transactionId, $itemName, $itemCode);
-        $config = new FlagshipConfig('envId');
+        $config = new DecisionApiConfig('envId');
         $item->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);

@@ -3,7 +3,7 @@
 namespace Flagship\Decision;
 
 use Exception;
-use Flagship\Config\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Model\HttpResponse;
@@ -102,7 +102,7 @@ class ApiManagerTest extends TestCase
         };
 
         $manager->setStatusChangedCallable($statusCallback);
-        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
+        $configManager = (new ConfigManager())->setConfig(new DecisionApiConfig());
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
 
@@ -153,7 +153,7 @@ class ApiManagerTest extends TestCase
         $manager->setStatusChangedCallable($statusCallback);
 
         $this->assertFalse($manager->getIsPanicMode());
-        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
+        $configManager = (new ConfigManager())->setConfig(new DecisionApiConfig());
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
 
@@ -227,7 +227,7 @@ class ApiManagerTest extends TestCase
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
         $manager = new ApiManager($httpClientMock);
-        $configManager = (new ConfigManager())->setConfig(new FlagshipConfig());
+        $configManager = (new ConfigManager())->setConfig(new DecisionApiConfig());
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
 
@@ -261,7 +261,7 @@ class ApiManagerTest extends TestCase
         $httpClientMock->method('post')
             ->willThrowException(new Exception($errorMessage, 403));
 
-        $config = new FlagshipConfig("env_id", "api_key");
+        $config = new DecisionApiConfig("env_id", "api_key");
         $logManagerStub->expects($this->once())->method('error')->withConsecutive(
             ["[$flagshipSdk] " . $errorMessage]
         );

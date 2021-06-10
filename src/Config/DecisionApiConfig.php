@@ -3,7 +3,6 @@
 namespace Flagship\Config;
 
 use Flagship\Enum\DecisionMode;
-use Flagship\FlagshipConfig;
 
 class DecisionApiConfig extends FlagshipConfig
 {

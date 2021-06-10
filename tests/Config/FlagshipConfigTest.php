@@ -1,6 +1,6 @@
 <?php
 
-namespace Flagship;
+namespace Flagship\Config;
 
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
@@ -101,7 +101,7 @@ class FlagshipConfigTest extends TestCase
     public function testConstruct($configData)
     {
         $config = new FlagshipConfig($configData['envId'], $configData['apiKey']);
-        $this->assertInstanceOf("Flagship\FlagshipConfig", $config);
+        $this->assertInstanceOf("Flagship\Config\FlagshipConfig", $config);
         $this->assertEquals($config->getEnvId(), $configData['envId']);
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
     }

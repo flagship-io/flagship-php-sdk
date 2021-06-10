@@ -5,7 +5,6 @@ namespace Flagship\Config;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
-use Flagship\FlagshipConfig;
 use Flagship\Utils\FlagshipLogManager;
 use PHPUnit\Framework\TestCase;
 

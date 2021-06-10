@@ -6,9 +6,9 @@ use Exception;
 use Flagship\Api\TrackingManager;
 use Flagship\Config\BucketingConfig;
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Decision\BucketingManager;
-use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Model\HttpResponse;
@@ -92,7 +92,7 @@ class FlagshipTest extends TestCase
         $getConfigManager = Utils::getMethod($instance, 'getConfigManager');
         $configManager = $getConfigManager->invoke($instance);
 
-        $this->assertInstanceOf('Flagship\FlagshipConfig', Flagship::getConfig());
+        $this->assertInstanceOf('Flagship\Config\FlagshipConfig', Flagship::getConfig());
 
         $this->assertSame($envId, Flagship::getConfig()->getEnvId());
         $this->assertSame($apiKey, Flagship::getConfig()->getApiKey());
@@ -100,7 +100,7 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf('Flagship\Utils\ConfigManager', $configManager);
         $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
         $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
-        $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
+        $this->assertInstanceOf('Flagship\Config\FlagshipConfig', $configManager->getConfig());
 
         $this->assertSame(Flagship::getConfig(), $configManager->getConfig());
     }
@@ -163,7 +163,7 @@ class FlagshipTest extends TestCase
 
         Flagship::start($envId, $apiKey);
 
-        $this->assertInstanceOf('Flagship\FlagshipConfig', Flagship::getConfig());
+        $this->assertInstanceOf('Flagship\Config\FlagshipConfig', Flagship::getConfig());
 
         $this->assertSame(Flagship::getConfig(), $configManager->getConfig());
 
@@ -177,7 +177,7 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf('Flagship\Utils\ConfigManager', $configManager);
         $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
         $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
-        $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
+        $this->assertInstanceOf('Flagship\Config\FlagshipConfig', $configManager->getConfig());
 
         $config = new BucketingConfig();
         Flagship::start($envId, $apiKey, $config);
@@ -384,7 +384,7 @@ class FlagshipTest extends TestCase
         $context = ['age' => 20];
         $visitorId = "visitorId";
         $visitor1 = Flagship::newVisitor($visitorId, $context);
-        $this->assertInstanceOf("Flagship\Visitor", $visitor1);
+        $this->assertInstanceOf("Flagship\Visitor\Visitor", $visitor1);
         $this->assertSame($context, $visitor1->getContext());
     }
 

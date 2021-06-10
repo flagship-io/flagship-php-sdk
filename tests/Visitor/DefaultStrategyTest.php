@@ -2,12 +2,12 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\HitType;
-use Flagship\FlagshipConfig;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;

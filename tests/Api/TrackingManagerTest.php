@@ -3,8 +3,8 @@
 namespace Flagship\Api;
 
 use Exception;
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\FlagshipConfig;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
 use Flagship\Model\Modification;

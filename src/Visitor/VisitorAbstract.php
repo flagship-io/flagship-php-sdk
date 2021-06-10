@@ -2,10 +2,10 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Flagship;
-use Flagship\FlagshipConfig;
 use Flagship\Model\Modification;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;

@@ -37,11 +37,13 @@ class BucketingConfigTest extends TestCase
             FlagshipField::FIELD_API_KEY => "apiKey",
             FlagshipField::FIELD_TIMEOUT => 2000,
             FlagshipField::FIELD_LOG_LEVEL => LogLevel::ALL,
-            FlagshipField::FIELD_POLLING_INTERVAL => 2000
+            FlagshipField::FIELD_POLLING_INTERVAL => 2000,
+            FlagshipField::FIELD_BUCKETING_DIRECTORY => "flagship"
         ];
 
         $config = new BucketingConfig($data[FlagshipField::FIELD_ENVIRONMENT_ID], $data[FlagshipField::FIELD_API_KEY]);
-        $config->setTimeout($data[FlagshipField::FIELD_TIMEOUT]);
+        $config->setTimeout($data[FlagshipField::FIELD_TIMEOUT])
+        ->setBucketingDirectory($data[FlagshipField::FIELD_BUCKETING_DIRECTORY]);
 
         $this->assertJsonStringEqualsJsonString(
             json_encode($data),

@@ -2,6 +2,7 @@
 
 namespace Flagship\Decision;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Model\Modification;
@@ -29,13 +30,19 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     private $statusChangedCallable;
 
     /**
+     * @var FlagshipConfig
+     */
+    protected $config;
+
+    /**
      * ApiManager constructor.
      *
      * @param HttpClientInterface $httpClient
      */
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct(HttpClientInterface $httpClient, FlagshipConfig $config)
     {
         $this->httpClient = $httpClient;
+        $this->setConfig($config);
     }
 
     /**
@@ -77,6 +84,24 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
         if (is_callable($statusChangedCallable)) {
             $this->statusChangedCallable = $statusChangedCallable;
         }
+        return $this;
+    }
+
+    /**
+     * @return FlagshipConfig
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param FlagshipConfig $config
+     * @return DecisionManagerAbstract
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
         return $this;
     }
 

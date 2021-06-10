@@ -7,7 +7,10 @@ use Flagship\Flagship;
 
 $envId  =  getenv('FLAGSHIP_ENV_ID');
 $apiKey = getenv('FLAGSHIP_API_KEY');
+$bucketingDirectory = getenv("FLAGSHIP_BUCKETING_DIRECTORY");
 $config = new BucketingConfig();
+
+$config->setBucketingDirectory($bucketingDirectory);
 
 Flagship::start($envId, $apiKey, $config);
 

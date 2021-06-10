@@ -18,9 +18,9 @@ services:
       FLAGSHIP-DOCKER: 1
       FLAGSHIP_ENV_ID: ENV_KEY
       FLAGSHIP_POLLING_INTERVAL: 5000
-      FLAGSHIP_BUCKETING_DIRECTORY: flagship
+      FLAGSHIP_BUCKETING_DIRECTORY: myBucketingDirectory
     volumes:
-      - bucketing-file:/home/app/flagship
+      - bucketing-file:/home/app/myBucketingDirectory
     working_dir: /home/app
 
   app-demo:
@@ -40,8 +40,9 @@ services:
       FLAGSHIP_ENV_ID: ENV_ID
       FLAGSHIP_API_KEY: API_KEY
       FLAGSHIP_POLLING_INTERVAL: 5000
+      FLAGSHIP_BUCKETING_DIRECTORY: myBucketingDirectory
     volumes:
-      - bucketing-file:/home/app/vendor/flagship-io/flagship-php-sdk/flagship
+      - bucketing-file:/home/app/myBucketingDirectory
     working_dir: /home/app
 volumes:
   bucketing-file:

@@ -30,6 +30,23 @@ class BucketingConfigTest extends TestCase
         $this->assertSame($polling, $config->getPollingInterval());
     }
 
+    public function testSetBucketingDirectory()
+    {
+        $config = new BucketingConfig();
+        $myDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
+        $this->assertMatchesRegularExpression(
+            "/\/\.\.\/\.\.\/\.\.\/$myDirectory$/",
+            $config->getBucketingDirectory()
+        );
+
+        $myDirectory = "myDirectory";
+        $config->setBucketingDirectory($myDirectory);
+        $this->assertMatchesRegularExpression(
+            "/\/\.\.\/\.\.\/\.\.\/\.\.\/$myDirectory$/",
+            $config->getBucketingDirectory()
+        );
+    }
+
     public function testJson()
     {
         $data =  [
@@ -42,8 +59,7 @@ class BucketingConfigTest extends TestCase
         ];
 
         $config = new BucketingConfig($data[FlagshipField::FIELD_ENVIRONMENT_ID], $data[FlagshipField::FIELD_API_KEY]);
-        $config->setTimeout($data[FlagshipField::FIELD_TIMEOUT])
-        ->setBucketingDirectory($data[FlagshipField::FIELD_BUCKETING_DIRECTORY]);
+        $config->setTimeout($data[FlagshipField::FIELD_TIMEOUT]);
 
         $this->assertJsonStringEqualsJsonString(
             json_encode($data),

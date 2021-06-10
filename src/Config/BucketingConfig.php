@@ -16,13 +16,18 @@ class BucketingConfig extends FlagshipConfig
     /**
      * @var string
      */
+    private $baseBucketingDirectory;
+
+    /**
+     * @var string
+     */
     private $bucketingDirectory;
 
     public function __construct($envId = null, $apiKey = null)
     {
         parent::__construct($envId, $apiKey);
         $this->setDecisionMode(DecisionMode::BUCKETING);
-        $this->setBucketingDirectory(FlagshipConstant::BUCKETING_DIRECTORY);
+        $this->setBucketingDirectory("");
     }
 
     /**
@@ -62,8 +67,12 @@ class BucketingConfig extends FlagshipConfig
      */
     public function setBucketingDirectory($bucketingDirectory)
     {
+        $this->baseBucketingDirectory = $bucketingDirectory;
         if (empty($bucketingDirectory)) {
-            $bucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
+            $this->baseBucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
+            $bucketingDirectory = __DIR__ . '/../../../../' . FlagshipConstant::BUCKETING_DIRECTORY;
+        } else {
+            $bucketingDirectory = __DIR__ . '/../../../../../' . $bucketingDirectory;
         }
         $this->bucketingDirectory = $bucketingDirectory;
         return $this;
@@ -73,7 +82,7 @@ class BucketingConfig extends FlagshipConfig
     {
         $parent = parent::jsonSerialize();
         $parent[FlagshipField::FIELD_POLLING_INTERVAL] = $this->getPollingInterval();
-        $parent[FlagshipField::FIELD_BUCKETING_DIRECTORY] = $this->getBucketingDirectory();
+        $parent[FlagshipField::FIELD_BUCKETING_DIRECTORY] = $this->baseBucketingDirectory;
         return $parent;
     }
 }

@@ -33,4 +33,5 @@ class FlagshipField
     const FIELD_API_KEY = "apiKey";
     const FIELD_TIMEOUT = "timeout";
     const FIELD_LOG_LEVEL = "logLevel";
+    const FIELD_BUCKETING_DIRECTORY = "bucketingDirectory";
 }

@@ -2,6 +2,8 @@
 
 namespace Flagship\Decision;
 
+use Exception;
+use Flagship\Config\BucketingConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Utils\HttpClientInterface;
@@ -10,17 +12,37 @@ use Flagship\Visitor\VisitorAbstract;
 
 class BucketingManager extends DecisionManagerAbstract
 {
-    private $bucketingDirectory;
     /**
      * @var MurmurHash
      */
     private $murmurHash;
 
-    public function __construct(HttpClientInterface $httpClient, MurmurHash $murmurHash)
+    public function __construct(HttpClientInterface $httpClient, BucketingConfig $config, MurmurHash $murmurHash)
     {
-        parent::__construct($httpClient);
+        parent::__construct($httpClient, $config);
         $this->murmurHash = $murmurHash;
-        $this->bucketingDirectory = __DIR__ . FlagshipConstant::BUCKETING_DIRECTORY;
+    }
+
+    protected function sendContext(VisitorAbstract $visitor)
+    {
+        $envId = $this->getConfig()->getEnvId();
+        $url = sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId);
+        $headers = $this->buildHeader($this->getConfig()->getApiKey());
+        $this->httpClient->setHeaders($headers);
+        $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
+        $postBody = [
+            "visitorId" => $visitor->getVisitorId(),
+            "type" => "CONTEXT",
+            "data" => $visitor->getContext()
+        ];
+        try {
+            $response =  $this->httpClient->post($url, $postBody);
+            if ($response->getStatusCode() >= 400) {
+                $this->logError($this->getConfig(), $response->getBody());
+            }
+        } catch (Exception $exception) {
+            $this->logError($this->getConfig(), $exception->getMessage());
+        }
     }
 
     /**
@@ -28,7 +50,8 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function getCampaigns(VisitorAbstract $visitor)
     {
-        $bucketingFile = $this->bucketingDirectory . "/bucketing.json";
+        $this->sendContext($visitor);
+        $bucketingFile = $this->getConfig()->getBucketingDirectory() . "/bucketing.json";
         if (!file_exists($bucketingFile)) {
             return [];
         }

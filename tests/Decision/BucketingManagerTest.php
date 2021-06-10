@@ -4,9 +4,12 @@ namespace Flagship\Decision;
 
 require_once __dir__ . "/../Assets/File.php";
 
+use Exception;
 use Flagship\Assets\File;
-use Flagship\Config\DecisionApiConfig;
+use Flagship\Config\BucketingConfig;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
@@ -19,10 +22,20 @@ class BucketingManagerTest extends TestCase
 {
     public function testGetCampaignModification()
     {
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            "",
+            false
+        );
+
+        $httpClientMock->expects($this->exactly(6))
+            ->method('post')
+            ->willReturn(new HttpResponse(204, null));
 
         $murmurhash = new MurmurHash();
-        $config = new DecisionApiConfig();
-        $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
+        $config = new BucketingConfig();
+        $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
         $visitorId = "visitor_1";
         $visitorContext = [
             "age" => 20
@@ -74,10 +87,110 @@ class BucketingManagerTest extends TestCase
         $this->assertCount(6, $campaigns);
     }
 
+    public function testSendContext()
+    {
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            ['error'],
+            '',
+            false
+        );
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            "",
+            false
+        );
+
+        $envId = "envId";
+
+        $visitorId = "visitor_1";
+        $visitorContext = [
+            "age" => 20
+        ];
+
+        $postBody = [
+            "visitorId" => $visitorId,
+            "type" => "CONTEXT",
+            "data" => $visitorContext
+        ];
+
+        $errorMessage = "message error";
+        $httpClientMock->expects($this->exactly(2))
+            ->method('post')
+            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), $postBody)
+            ->willReturnOnConsecutiveCalls(new HttpResponse(204, null), new HttpResponse(404, $errorMessage));
+        $sdk = FlagshipConstant::FLAGSHIP_SDK;
+        $logManagerStub->expects($this->once())->method('error')->with("[$sdk] " . $errorMessage);
+
+        $murmurhash = new MurmurHash();
+        $config = new BucketingConfig($envId);
+        $config->setLogManager($logManagerStub);
+
+        $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+
+        $container = new Container();
+        $configManager = new ConfigManager();
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+
+        $bucketingManager->getCampaignModifications($visitor);
+        $bucketingManager->getCampaignModifications($visitor);
+    }
+
+    public function testSendContextWithError()
+    {
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            ['error'],
+            '',
+            false
+        );
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            "",
+            false
+        );
+
+        $envId = "envId";
+
+        $visitorId = "visitor_1";
+        $visitorContext = [
+            "age" => 20
+        ];
+
+        $postBody = [
+            "visitorId" => $visitorId,
+            "type" => "CONTEXT",
+            "data" => $visitorContext
+        ];
+
+        $exception = new Exception("test error");
+        $httpClientMock->expects($this->exactly(1))
+            ->method('post')
+            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), $postBody)
+            ->willThrowException($exception);
+
+        $logManagerStub->expects($this->once())->method('error');
+
+        $murmurhash = new MurmurHash();
+        $config = new BucketingConfig($envId);
+        $config->setLogManager($logManagerStub);
+        $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+
+        $container = new Container();
+        $configManager = new ConfigManager();
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+
+        $bucketingManager->getCampaignModifications($visitor);
+    }
+
     public function testGetVariation()
     {
         $murmurhash = new MurmurHash();
-        $config = new DecisionApiConfig();
+        $config = new BucketingConfig();
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "123456";
 
@@ -141,7 +254,7 @@ class BucketingManagerTest extends TestCase
     public function testIsMatchTargeting()
     {
         $murmurhash = new MurmurHash();
-        $config = new DecisionApiConfig();
+        $config = new BucketingConfig();
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [
@@ -301,7 +414,7 @@ class BucketingManagerTest extends TestCase
     public function testCheckAndTargeting()
     {
         $murmurhash = new MurmurHash();
-        $config = new DecisionApiConfig();
+        $config = new BucketingConfig();
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [
@@ -383,7 +496,7 @@ class BucketingManagerTest extends TestCase
     public function testOperator()
     {
         $murmurhash = new MurmurHash();
-        $config = new DecisionApiConfig();
+        $config = new BucketingConfig();
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [

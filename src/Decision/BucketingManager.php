@@ -36,7 +36,7 @@ class BucketingManager extends DecisionManagerAbstract
             "data" => $visitor->getContext()
         ];
         try {
-            $response =  $this->httpClient->post($url, $postBody);
+            $response =  $this->httpClient->post($url, [], $postBody);
             if ($response->getStatusCode() >= 400) {
                 $this->logError($this->getConfig(), $response->getBody(), [
                     FlagshipConstant::TAG => __FUNCTION__

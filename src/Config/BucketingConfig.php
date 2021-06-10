@@ -70,7 +70,7 @@ class BucketingConfig extends FlagshipConfig
         $this->baseBucketingDirectory = $bucketingDirectory;
         if (empty($bucketingDirectory)) {
             $this->baseBucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
-            $bucketingDirectory = __DIR__ . '/../../../../' . FlagshipConstant::BUCKETING_DIRECTORY;
+            $bucketingDirectory = __DIR__ . '/../../' . FlagshipConstant::BUCKETING_DIRECTORY;
         } else {
             $bucketingDirectory = __DIR__ . '/../../../../../' . $bucketingDirectory;
         }

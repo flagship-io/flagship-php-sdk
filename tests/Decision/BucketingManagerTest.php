@@ -119,7 +119,7 @@ class BucketingManagerTest extends TestCase
         $errorMessage = "message error";
         $httpClientMock->expects($this->exactly(2))
             ->method('post')
-            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), $postBody)
+            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), [], $postBody)
             ->willReturnOnConsecutiveCalls(new HttpResponse(204, null), new HttpResponse(404, $errorMessage));
         $sdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerStub->expects($this->once())->method('error')->with("[$sdk] " . $errorMessage);
@@ -170,7 +170,7 @@ class BucketingManagerTest extends TestCase
         $exception = new Exception("test error");
         $httpClientMock->expects($this->exactly(1))
             ->method('post')
-            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), $postBody)
+            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), [], $postBody)
             ->willThrowException($exception);
 
         $logManagerStub->expects($this->once())->method('error');

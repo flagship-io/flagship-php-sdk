@@ -35,7 +35,7 @@ class BucketingConfigTest extends TestCase
         $config = new BucketingConfig();
         $myDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
         $this->assertMatchesRegularExpression(
-            "/\/\.\.\/\.\.\/\.\.\/$myDirectory$/",
+            "/\/\.\.\/\.\.\/$myDirectory$/",
             $config->getBucketingDirectory()
         );
 

@@ -3,6 +3,7 @@
 namespace Flagship\Visitor;
 
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Page;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -152,7 +153,12 @@ class VisitorTest extends TestCase
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
-        $context = ["age" => 20];
+        $context = ["age" => 20,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,];
         $configManager = (new ConfigManager())->setConfig($config);
         $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $context);
 

@@ -380,9 +380,16 @@ class FlagshipTest extends TestCase
         $config->setLogManager($this->logManagerMock);
 
         Flagship::start($envId, $apiKey, $config);
-
-        $context = ['age' => 20];
         $visitorId = "visitorId";
+        $context = [
+            'age' => 20,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
+        ];
+
         $visitor1 = Flagship::newVisitor($visitorId, $context);
         $this->assertInstanceOf("Flagship\Visitor\Visitor", $visitor1);
         $this->assertSame($context, $visitor1->getContext());

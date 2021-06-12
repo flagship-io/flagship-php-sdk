@@ -54,7 +54,7 @@ class FlagshipConstant
     const VISITOR_ID_ERROR                 = "visitorId must not be null or empty";
     const METHOD_DEACTIVATED_ERROR         = "Method '%s' is deactivated while SDK status is: %s.";
     const METHOD_DEACTIVATED_CONSENT_ERROR = "Method '%s' is deactivated for visitor '%s': visitor did not consent.";
-
+    const FLAGSHIP_PREDEFINED_CONTEXT_ERROR = "Flagship predefined context %s must be %s";
     //Messages Info
     const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";
     const FLAGSHIP_SDK     = "Flagship SDK";
@@ -108,4 +108,8 @@ class FlagshipConstant
     const TIMEOUT_TYPE_ERROR      = "timeout must be numeric and > 0";
     const LOG_LEVEL_ERROR         = "Loglevel value invalid, please use \Flagship\Enum\LogLevel ";
     const BUCKETING_DIRECTORY     = "flagship";
+
+    const FS_CLIENT = "fs_client";
+    const FS_VERSION = "fs_version";
+    const FS_USERS = "fs_users";
 }

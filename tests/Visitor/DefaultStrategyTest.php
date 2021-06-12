@@ -6,6 +6,7 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\HitType;
 use Flagship\Hit\Event;
@@ -122,6 +123,26 @@ class DefaultStrategyTest extends TestCase
         $this->assertArrayHasKey($townKey, $context);
         $this->assertEquals($town, $context[$townKey]);
 
+        //Predefined Context
+
+        $deviceLocation = "here";
+
+        $defaultStrategy->updateContext(FlagshipContext::DEVICE_LOCALE, $deviceLocation);
+        $context = $visitor->getContext();
+
+        $this->assertArrayHasKey("sdk_deviceLanguage", $context);
+        $this->assertEquals($deviceLocation, $context["sdk_deviceLanguage"]);
+
+        //Test predefined with different type
+
+        $deviceType = 10.5;
+
+        $defaultStrategy->updateContext(FlagshipContext::LOCATION_REGION, $deviceType);
+        $context = $visitor->getContext();
+
+        $this->assertArrayNotHasKey("sdk_region", $context);
+
+        // Test Collection
         $collectionContext = [
             'address' => 'visitor_address',
             'browser' => 'chrome'
@@ -177,7 +198,7 @@ class DefaultStrategyTest extends TestCase
             'gender' => 'F'
         ];
         $defaultStrategy->updateContextCollection($newVisitorContext);
-        $this->assertCount(4, $visitor->getContext());
+        $this->assertCount(9, $visitor->getContext());
 
         //Test without Key
 
@@ -186,7 +207,7 @@ class DefaultStrategyTest extends TestCase
         ];
 
         $defaultStrategy->updateContextCollection($newVisitorContext);
-        $this->assertCount(4, $visitor->getContext());
+        $this->assertCount(9, $visitor->getContext());
     }
 
     public function testClearContext()
@@ -202,7 +223,7 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $this->assertCount(2, $visitor->getContext());
+        $this->assertCount(7, $visitor->getContext());
 
         $defaultStrategy->clearContext();
 

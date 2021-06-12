@@ -25,6 +25,16 @@ class DefaultStrategy extends VisitorStrategyAbstract
             );
             return null;
         }
+
+        $contextValue = $this->checkFlagshipContext($key, $value, $this->visitor->getConfig());
+
+        if (!$contextValue) {
+            return null;
+        }
+        if (is_array($contextValue)) {
+            $key = $contextValue['key'];
+            return $this->getVisitor()->context[$key] = $value;
+        }
         return $this->getVisitor()->context[$key] = $value;
     }
 

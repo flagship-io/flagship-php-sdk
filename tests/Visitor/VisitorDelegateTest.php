@@ -4,6 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Hit\Page;
 use Flagship\Model\Modification;
@@ -22,7 +23,12 @@ class VisitorDelegateTest extends TestCase
         $ageKey = 'age';
         $visitorContext = [
             'name' => 'visitor_name',
-            'age' => 25
+            'age' => 25,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
         ];
 
         $configManager = (new ConfigManager())->setConfig($config);
@@ -120,7 +126,7 @@ class VisitorDelegateTest extends TestCase
         $defaultStrategy = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
             ->setMethods([
                 'setContext', 'updateContext', 'updateContextCollection',
-                'clearContext', 'getModification','getModificationInfo', 'synchronizedModifications',
+                'clearContext', 'getModification', 'getModificationInfo', 'synchronizedModifications',
                 'activateModification', 'sendHit'
             ])->disableOriginalConstructor()
             ->getMock();
@@ -129,10 +135,19 @@ class VisitorDelegateTest extends TestCase
 
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, $visitorContext);
 
+        $defaultContext = [
+            FlagshipContext::OS_NAME => PHP_OS,
+            FlagshipContext::DEVICE_TYPE => "server"
+        ];
+
         //test SetContext
-        $defaultStrategy->expects($this->exactly(2))
+        $defaultStrategy->expects($this->exactly(3))
             ->method('updateContextCollection')
-            ->with($visitorContext);
+            ->withConsecutive(
+                [$visitorContext],
+                [$visitorContext],
+                [$defaultContext]
+            );
 
         $visitor->setContext($visitorContext);
 
@@ -196,7 +211,13 @@ class VisitorDelegateTest extends TestCase
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
-        $context = ["age" => 20];
+        $context = ["age" => 20,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
+        ];
         $configManager = (new ConfigManager())->setConfig($config);
         $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $context);
 

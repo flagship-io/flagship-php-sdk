@@ -26,11 +26,9 @@ class EventTest extends TestCase
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
             FlagshipConstant::T_API_ITEM => HitType::EVENT,
+            FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::EVENT_CATEGORY_API_ITEM => $eventCategory,
             FlagshipConstant::EVENT_ACTION_API_ITEM => $eventAction,
-
-        //            FlagshipConstant::EVENT_LABEL_API_ITEM=>$eventLabel,
-        //            FlagshipConstant::EVENT_VALUE_API_ITEM =>$eventValue
         ];
 
         $event = new Event($eventCategory, $eventAction);

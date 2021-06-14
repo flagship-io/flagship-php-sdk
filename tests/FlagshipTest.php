@@ -390,7 +390,7 @@ class FlagshipTest extends TestCase
             FlagshipConstant::FS_USERS => $visitorId,
         ];
 
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
         $this->assertInstanceOf("Flagship\Visitor\Visitor", $visitor1);
         $this->assertSame($context, $visitor1->getContext());
     }
@@ -407,7 +407,7 @@ class FlagshipTest extends TestCase
 
         $context = ['age' => 20];
         $visitorId = "visitorId";
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
         $this->assertSame(null, $visitor1);
     }
 
@@ -417,7 +417,7 @@ class FlagshipTest extends TestCase
         $context = ['age' => 20];
         $visitorId = "visitorId";
 
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
 
         $this->assertSame(null, $visitor1);
     }
@@ -478,7 +478,7 @@ class FlagshipTest extends TestCase
                 case 'Flagship\Utils\ConfigManager':
                     return $configManager;
                 case 'Flagship\Visitor\VisitorDelegate':
-                    return new VisitorDelegate(new Container(), $configManager, $visitorId, []);
+                    return new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
                 default:
                     return null;
             }

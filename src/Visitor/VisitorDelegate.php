@@ -2,26 +2,32 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Hit\HitAbstract;
+use Flagship\Traits\Guid;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
 
 class VisitorDelegate extends VisitorAbstract
 {
+    use Guid;
+
     /**
      * Create a new VisitorDelegate.
      *
      * @param ContainerInterface $dependencyIContainer
      * @param ConfigManager $configManager
      * @param string $visitorId : visitor unique identifier.
+     * @param bool $isAuthenticated
      * @param array $context : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
      */
     public function __construct(
         ContainerInterface $dependencyIContainer,
         ConfigManager $configManager,
         $visitorId,
+        $isAuthenticated = false,
         array $context = []
     ) {
         $this->setDependencyIContainer($dependencyIContainer);
@@ -30,6 +36,11 @@ class VisitorDelegate extends VisitorAbstract
         $this->setContext($context);
         $this->setConfigManager($configManager);
         $this->loadPredefinedContext();
+
+        if ($isAuthenticated && $this->getConfig()->getDecisionMode() == DecisionMode::DECISION_API) {
+            $anonymousId  = $this->newGuid();
+            $this->setAnonymousId($anonymousId);
+        }
     }
 
     private function getRealVisitorIp()
@@ -97,6 +108,22 @@ class VisitorDelegate extends VisitorAbstract
     {
         $this->getStrategy()->clearContext();
         $this->loadPredefinedContext();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function authenticate($visitorId)
+    {
+        $this->getStrategy()->authenticate($visitorId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unauthenticate()
+    {
+        $this->getStrategy()->unauthenticate();
     }
 
     /**

@@ -44,7 +44,7 @@ class BucketingManagerTest extends TestCase
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         //Test File not exist
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
@@ -141,7 +141,7 @@ class BucketingManagerTest extends TestCase
         $container = new Container();
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $bucketingManager->getCampaignModifications($visitor);
         $bucketingManager->getCampaignModifications($visitor);
@@ -197,7 +197,7 @@ class BucketingManagerTest extends TestCase
         $container = new Container();
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $bucketingManager->getCampaignModifications($visitor);
     }
@@ -278,7 +278,7 @@ class BucketingManagerTest extends TestCase
         $container = new Container();
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $isMatchTargetingMethod = Utils::getMethod($bucketingManager, "isMatchTargeting");
 
@@ -439,7 +439,7 @@ class BucketingManagerTest extends TestCase
         $container = new Container();
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $checkAndTargetingMethod = Utils::getMethod($bucketingManager, "checkAndTargeting");
 
@@ -523,7 +523,7 @@ class BucketingManagerTest extends TestCase
         $container = new Container();
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $testOperatorMethod = Utils::getMethod($bucketingManager, "testOperator");
 

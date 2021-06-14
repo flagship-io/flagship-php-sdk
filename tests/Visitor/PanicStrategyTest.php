@@ -63,7 +63,7 @@ class PanicStrategyTest extends TestCase
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
 
         $panicStrategy = new PanicStrategy($visitor);
 

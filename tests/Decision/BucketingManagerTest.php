@@ -42,7 +42,9 @@ class BucketingManagerTest extends TestCase
         ];
         $container = new Container();
         $configManager = new ConfigManager();
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $configManager->setConfig($config);
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         //Test File not exist
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
@@ -107,7 +109,12 @@ class BucketingManagerTest extends TestCase
 
         $visitorId = "visitor_1";
         $visitorContext = [
-            "age" => 20
+            "age" => 20,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
         ];
 
         $postBody = [
@@ -119,8 +126,9 @@ class BucketingManagerTest extends TestCase
         $errorMessage = "message error";
         $httpClientMock->expects($this->exactly(2))
             ->method('post')
-            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), [], $postBody)
+           ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), [], $postBody)
             ->willReturnOnConsecutiveCalls(new HttpResponse(204, null), new HttpResponse(404, $errorMessage));
+
         $sdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerStub->expects($this->once())->method('error')->with("[$sdk] " . $errorMessage);
 
@@ -132,7 +140,8 @@ class BucketingManagerTest extends TestCase
 
         $container = new Container();
         $configManager = new ConfigManager();
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $configManager->setConfig($config);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $bucketingManager->getCampaignModifications($visitor);
         $bucketingManager->getCampaignModifications($visitor);
@@ -158,7 +167,12 @@ class BucketingManagerTest extends TestCase
 
         $visitorId = "visitor_1";
         $visitorContext = [
-            "age" => 20
+            "age" => 20,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
         ];
 
         $postBody = [
@@ -182,7 +196,8 @@ class BucketingManagerTest extends TestCase
 
         $container = new Container();
         $configManager = new ConfigManager();
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $configManager->setConfig($config);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $bucketingManager->getCampaignModifications($visitor);
     }
@@ -262,7 +277,8 @@ class BucketingManagerTest extends TestCase
         ];
         $container = new Container();
         $configManager = new ConfigManager();
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $configManager->setConfig($config);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $isMatchTargetingMethod = Utils::getMethod($bucketingManager, "isMatchTargeting");
 
@@ -422,7 +438,8 @@ class BucketingManagerTest extends TestCase
         ];
         $container = new Container();
         $configManager = new ConfigManager();
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $configManager->setConfig($config);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $checkAndTargetingMethod = Utils::getMethod($bucketingManager, "checkAndTargeting");
 
@@ -505,7 +522,8 @@ class BucketingManagerTest extends TestCase
         ];
         $container = new Container();
         $configManager = new ConfigManager();
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, $visitorContext);
+        $configManager->setConfig($config);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext);
 
         $testOperatorMethod = Utils::getMethod($bucketingManager, "testOperator");
 

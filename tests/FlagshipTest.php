@@ -380,10 +380,17 @@ class FlagshipTest extends TestCase
         $config->setLogManager($this->logManagerMock);
 
         Flagship::start($envId, $apiKey, $config);
-
-        $context = ['age' => 20];
         $visitorId = "visitorId";
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $context = [
+            'age' => 20,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
+        ];
+
+        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
         $this->assertInstanceOf("Flagship\Visitor\Visitor", $visitor1);
         $this->assertSame($context, $visitor1->getContext());
     }
@@ -400,7 +407,7 @@ class FlagshipTest extends TestCase
 
         $context = ['age' => 20];
         $visitorId = "visitorId";
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
         $this->assertSame(null, $visitor1);
     }
 
@@ -410,7 +417,7 @@ class FlagshipTest extends TestCase
         $context = ['age' => 20];
         $visitorId = "visitorId";
 
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
 
         $this->assertSame(null, $visitor1);
     }
@@ -471,7 +478,7 @@ class FlagshipTest extends TestCase
                 case 'Flagship\Utils\ConfigManager':
                     return $configManager;
                 case 'Flagship\Visitor\VisitorDelegate':
-                    return new VisitorDelegate(new Container(), $configManager, $visitorId, []);
+                    return new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
                 default:
                     return null;
             }

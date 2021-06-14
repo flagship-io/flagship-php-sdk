@@ -278,7 +278,7 @@ class Flagship
      * @param array $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return Visitor|null
      */
-    public static function newVisitor($visitorId, array $context = [])
+    public static function newVisitor($visitorId, $isAuthenticated = false, array $context = [])
     {
         if (empty($visitorId) || !self::isReady()) {
             return  null;
@@ -288,6 +288,7 @@ class Flagship
             $instance->getContainer(),
             $instance->getConfigManager(),
             $visitorId,
+            $isAuthenticated,
             $context
         ], true);
         return new Visitor($visitorDelegate);

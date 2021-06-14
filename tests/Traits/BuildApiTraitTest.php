@@ -41,4 +41,46 @@ class BuildApiTraitTest extends TestCase
 
         $this->assertSame(FlagshipConstant::BASE_API_URL . '/' . $url, $apiUrl);
     }
+
+    public function testSetVisitorBodyParams()
+    {
+        $buildApiTraitMock = $this->getMockForTrait(
+            'Flagship\Traits\BuildApiTrait',
+            [],
+            "",
+            false,
+            true,
+            true
+        );
+        $setVisitorBodyParams = Utils::getMethod($buildApiTraitMock, "setVisitorBodyParams");
+
+        $visitorId = "visitorId";
+        $anonymous = "anonymous";
+        $body = $setVisitorBodyParams->invokeArgs($buildApiTraitMock, [$visitorId, $anonymous, []]);
+
+        $postData = [
+            FlagshipConstant::VISITOR_ID_API_ITEM => $anonymous ,
+            FlagshipConstant::CUSTOMER_UID => $visitorId
+        ];
+        $this->assertSame($postData, $body);
+
+        $body = $setVisitorBodyParams->invokeArgs($buildApiTraitMock, [$visitorId, null, []]);
+
+        $postData = [
+            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId ,
+            FlagshipConstant::CUSTOMER_UID => null
+        ];
+        $this->assertSame($postData, $body);
+
+        $visitorId = null;
+        $anonymous = "anonymous";
+
+        $body = $setVisitorBodyParams->invokeArgs($buildApiTraitMock, [$visitorId, $anonymous, []]);
+
+        $postData = [
+            FlagshipConstant::VISITOR_ID_API_ITEM => $anonymous ,
+            FlagshipConstant::CUSTOMER_UID => null
+        ];
+        $this->assertSame($postData, $body);
+    }
 }

@@ -47,7 +47,7 @@ class TrackingManagerTest extends TestCase
             ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
             ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
             ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', []);
+        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 
@@ -58,7 +58,8 @@ class TrackingManagerTest extends TestCase
                 FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
                 FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
                 FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
-                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId()
+                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
+                FlagshipConstant::CUSTOMER_UID => null
             ]
         )->willReturn(new HttpResponse(204, null));
 
@@ -99,7 +100,7 @@ class TrackingManagerTest extends TestCase
             ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
             ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
 
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', []);
+        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 
@@ -111,7 +112,8 @@ class TrackingManagerTest extends TestCase
                 FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
                 FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
                 FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
-                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId()
+                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
+                FlagshipConstant::CUSTOMER_UID => null
             ]
         )->willThrowException($exception);
 

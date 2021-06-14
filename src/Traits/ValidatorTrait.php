@@ -19,10 +19,10 @@ trait ValidatorTrait
 
         $json = ltrim($string);
 
-        if (strpos($json, '{') === 0) {
-            return true;
+        if (strpos($json, '{') !== 0) {
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**

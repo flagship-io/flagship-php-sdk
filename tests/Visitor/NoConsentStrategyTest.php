@@ -65,7 +65,7 @@ class NoConsentStrategyTest extends TestCase
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
 
         $noConsentStrategy = new NoConsentStrategy($visitor);
 
@@ -74,12 +74,25 @@ class NoConsentStrategyTest extends TestCase
         $value = "value";
         $noConsentStrategy->updateContext($key, $value);
 
-        $this->assertSame([$key => $value], $visitor->getContext());
+        $this->assertSame([
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
+            $key => $value,
+            ], $visitor->getContext());
 
         //Test updateContextCollection
         $noConsentStrategy->updateContextCollection(['age' => 20]);
 
-        $this->assertSame([$key => $value, 'age' => 20], $visitor->getContext());
+        $this->assertSame([
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
+            $key => $value, 'age' => 20], $visitor->getContext());
 
         //Test clearContext
         $noConsentStrategy->clearContext();

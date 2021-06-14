@@ -4,6 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
 
 /**
@@ -15,6 +16,7 @@ use Flagship\Traits\LogTrait;
 abstract class HitAbstract
 {
     use LogTrait;
+    use BuildApiTrait;
 
     /**
      * @var string
@@ -35,6 +37,11 @@ abstract class HitAbstract
      * @var FlagshipConfig
      */
     protected $config;
+
+    /**
+     * @var string
+     */
+    protected $anonymousId;
 
     /**
      * HitAbstract constructor.
@@ -170,6 +177,24 @@ abstract class HitAbstract
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getAnonymousId()
+    {
+        return $this->anonymousId;
+    }
+
+    /**
+     * @param string $anonymousId
+     * @return HitAbstract
+     */
+    public function setAnonymousId($anonymousId)
+    {
+        $this->anonymousId = $anonymousId;
+        return $this;
+    }
+
 
     /**
      * Return an associative array of the class with Api parameters as keys
@@ -178,12 +203,13 @@ abstract class HitAbstract
      */
     public function toArray()
     {
-        return [
+        $data = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
             FlagshipConstant::T_API_ITEM => $this->getType()
         ];
+        return $this->setVisitorBodyParams($this->getVisitorId(), $this->getAnonymousId(), $data);
     }
 
     /**

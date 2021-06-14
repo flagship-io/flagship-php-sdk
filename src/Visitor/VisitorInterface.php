@@ -54,6 +54,19 @@ interface VisitorInterface
     public function getModification($key, $defaultValue, $activate = false);
 
     /**
+     * Authenticate anonymous visitor
+     * @param string $visitorId
+     * @return void
+     */
+    public function authenticate($visitorId);
+
+    /**
+     * This function change authenticated Visitor to anonymous visitor
+     * @return void
+     */
+    public function unauthenticate();
+
+    /**
      * @return array
      */
     public function getModifications();

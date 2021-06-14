@@ -28,6 +28,7 @@ class PageTest extends TestCase
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
             FlagshipConstant::T_API_ITEM => HitType::PAGE_VIEW,
+            FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::DL_API_ITEM => $pageUrl
         ];
 

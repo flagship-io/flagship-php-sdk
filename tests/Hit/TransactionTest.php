@@ -38,6 +38,7 @@ class TransactionTest extends TestCase
             FlagshipConstant::DS_API_ITEM => $ds,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
             FlagshipConstant::T_API_ITEM => HitType::TRANSACTION,
+            FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::TID_API_ITEM => $transactionId,
             FlagshipConstant::TA_API_ITEM => $transactionAffiliation
         ];

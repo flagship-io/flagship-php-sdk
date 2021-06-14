@@ -35,6 +35,9 @@ class TrackingManager extends TrackingManagerAbstract
                 FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $visitor->getConfig()->getEnvId()
             ];
+
+            $postData = $this->setVisitorBodyParams($visitor->getVisitorId(), $visitor->getAnonymousId(), $postData);
+
             $response = $this->httpClient->post($url, [], $postData);
             return $response->getStatusCode() == 204;
         } catch (Exception $exception) {

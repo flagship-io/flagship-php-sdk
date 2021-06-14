@@ -2,8 +2,10 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Config\BucketingConfig;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Hit\Page;
 use Flagship\Model\Modification;
@@ -22,12 +24,17 @@ class VisitorDelegateTest extends TestCase
         $ageKey = 'age';
         $visitorContext = [
             'name' => 'visitor_name',
-            'age' => 25
+            'age' => 25,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
         ];
 
         $configManager = (new ConfigManager())->setConfig($config);
 
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $visitorContext);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
 
         //Test default visitorId
         $this->assertEquals($visitorId, $visitorDelegate->getVisitorId());
@@ -61,6 +68,27 @@ class VisitorDelegateTest extends TestCase
         $this->assertSame($modifications, $visitorDelegate->getModifications());
     }
 
+    public function testSetAnonymous()
+    {
+        $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
+        $visitorId = "visitor_id";
+        $configManager = (new ConfigManager())->setConfig($config);
+
+        //With default value
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
+        $this->assertNull($visitorDelegate->getAnonymousId());
+
+        //Test isAuthenticate true and DecisionApiConfig
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, true);
+        $this->assertNotNull($visitorDelegate->getAnonymousId());
+
+        //Test with bucketing mode
+        $configManager->setConfig(new BucketingConfig());
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, true);
+        $this->assertNull($visitorDelegate->getAnonymousId());
+    }
+
     public function testSetVisitorLog()
     {
         //Mock logManger
@@ -87,7 +115,7 @@ class VisitorDelegateTest extends TestCase
 
         $configManager = (new ConfigManager())->setConfig($config);
 
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $visitorContext);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
         $logManagerStub->expects($this->once())
@@ -96,6 +124,46 @@ class VisitorDelegateTest extends TestCase
                 [FlagshipConstant::TAG => "setVisitorId"]
             );
         $visitorDelegate->setVisitorId('');
+    }
+
+    public function testGetRealVisitorIp()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitor_id";
+
+        $configManager = (new ConfigManager())->setConfig($config);
+
+        //Test HTTP_X_REAL_IP
+        $Ip = "127.0.0.1";
+        putenv("HTTP_X_REAL_IP=$Ip");
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
+        $context = $visitorDelegate->getContext();
+        $this->assertSame($Ip, $context["sdk_ip"]);
+        putenv("HTTP_X_REAL_IP");
+
+        //HTTP_CLIENT_IP
+        $Ip = "127.0.0.2";
+        putenv("HTTP_CLIENT_IP=$Ip");
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
+        $context = $visitorDelegate->getContext();
+        $this->assertSame($Ip, $context["sdk_ip"]);
+        putenv("HTTP_CLIENT_IP");
+
+        //HTTP_X_FORWARDED_FOR
+        $Ip = "127.0.0.3";
+        putenv("HTTP_X_FORWARDED_FOR=$Ip");
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
+        $context = $visitorDelegate->getContext();
+        $this->assertSame($Ip, $context["sdk_ip"]);
+        putenv("HTTP_X_FORWARDED_FOR");
+
+        //REMOTE_ADDR
+        $Ip = "127.0.0.4";
+        putenv("REMOTE_ADDR=$Ip");
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
+        $context = $visitorDelegate->getContext();
+        $this->assertSame($Ip, $context["sdk_ip"]);
+        putenv("REMOTE_ADDR");
     }
 
     public function testMethods()
@@ -120,19 +188,29 @@ class VisitorDelegateTest extends TestCase
         $defaultStrategy = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
             ->setMethods([
                 'setContext', 'updateContext', 'updateContextCollection',
-                'clearContext', 'getModification','getModificationInfo', 'synchronizedModifications',
+                'clearContext', 'authenticate', 'unauthenticate', 'getModification',
+                'getModificationInfo', 'synchronizedModifications',
                 'activateModification', 'sendHit'
             ])->disableOriginalConstructor()
             ->getMock();
 
         $containerMock->method('get')->willReturn($defaultStrategy);
 
-        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext);
+
+        $defaultContext = [
+            FlagshipContext::OS_NAME => PHP_OS,
+            FlagshipContext::DEVICE_TYPE => "server"
+        ];
 
         //test SetContext
-        $defaultStrategy->expects($this->exactly(2))
+        $defaultStrategy->expects($this->exactly(3))
             ->method('updateContextCollection')
-            ->with($visitorContext);
+            ->withConsecutive(
+                [$visitorContext],
+                [$visitorContext],
+                [$defaultContext]
+            );
 
         $visitor->setContext($visitorContext);
 
@@ -152,6 +230,16 @@ class VisitorDelegateTest extends TestCase
         //Test clearContext
         $defaultStrategy->expects($this->once())->method('clearContext');
         $visitor->clearContext();
+
+        //Test authenticate
+        $newVisitorId = "newVisitorId";
+        $defaultStrategy->expects($this->once())->method('authenticate')
+            ->with($newVisitorId);
+        $visitor->authenticate($newVisitorId);
+
+        //Test unauthenticate
+        $defaultStrategy->expects($this->once())->method('unauthenticate');
+        $visitor->unauthenticate();
 
         //Test getModification
         $key = "age";
@@ -196,9 +284,15 @@ class VisitorDelegateTest extends TestCase
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
-        $context = ["age" => 20];
+        $context = ["age" => 20,
+            "sdk_osName" => PHP_OS,
+            "sdk_deviceType" => "server",
+            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS => $visitorId,
+        ];
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $context);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $context);
 
         $this->assertJsonStringEqualsJsonString(
             json_encode([
@@ -221,7 +315,7 @@ class VisitorDelegateTest extends TestCase
         $visitorId = "visitor_id";
         $context = ["age" => 20];
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $context);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $context);
 
         $getStrategyMethod = Utils::getMethod($visitorDelegate, 'getStrategy');
         $strategy = $getStrategyMethod->invoke($visitorDelegate);

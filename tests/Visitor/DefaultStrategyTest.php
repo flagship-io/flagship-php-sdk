@@ -2,10 +2,12 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Config\BucketingConfig;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\HitType;
 use Flagship\Hit\Event;
@@ -71,6 +73,7 @@ class DefaultStrategyTest extends TestCase
                 ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
         ]]];
     }
+
     public function testUpdateContext()
     {
         //Mock logManger
@@ -94,7 +97,7 @@ class DefaultStrategyTest extends TestCase
         ];
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
 
         $defaultStrategy = new DefaultStrategy($visitor);
         //Test number value
@@ -122,6 +125,26 @@ class DefaultStrategyTest extends TestCase
         $this->assertArrayHasKey($townKey, $context);
         $this->assertEquals($town, $context[$townKey]);
 
+        //Predefined Context
+
+        $deviceLocation = "here";
+
+        $defaultStrategy->updateContext(FlagshipContext::DEVICE_LOCALE, $deviceLocation);
+        $context = $visitor->getContext();
+
+        $this->assertArrayHasKey("sdk_deviceLanguage", $context);
+        $this->assertEquals($deviceLocation, $context["sdk_deviceLanguage"]);
+
+        //Test predefined with different type
+
+        $deviceType = 10.5;
+
+        $defaultStrategy->updateContext(FlagshipContext::LOCATION_REGION, $deviceType);
+        $context = $visitor->getContext();
+
+        $this->assertArrayNotHasKey("sdk_region", $context);
+
+        // Test Collection
         $collectionContext = [
             'address' => 'visitor_address',
             'browser' => 'chrome'
@@ -169,7 +192,7 @@ class DefaultStrategyTest extends TestCase
             'age' => 25
         ];
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
 
         $defaultStrategy = new DefaultStrategy($visitor);
         $newVisitorContext = [
@@ -177,7 +200,7 @@ class DefaultStrategyTest extends TestCase
             'gender' => 'F'
         ];
         $defaultStrategy->updateContextCollection($newVisitorContext);
-        $this->assertCount(4, $visitor->getContext());
+        $this->assertCount(9, $visitor->getContext());
 
         //Test without Key
 
@@ -186,7 +209,7 @@ class DefaultStrategyTest extends TestCase
         ];
 
         $defaultStrategy->updateContextCollection($newVisitorContext);
-        $this->assertCount(4, $visitor->getContext());
+        $this->assertCount(9, $visitor->getContext());
     }
 
     public function testClearContext()
@@ -198,15 +221,128 @@ class DefaultStrategyTest extends TestCase
         ];
         $config = new DecisionApiConfig('envId', 'apiKey');
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, $visitorContext);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $this->assertCount(2, $visitor->getContext());
+        $this->assertCount(7, $visitor->getContext());
 
         $defaultStrategy->clearContext();
 
         $this->assertCount(0, $visitor->getContext());
+    }
+
+    public function testAuthenticate()
+    {
+        //Mock logManger
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        $sdk = FlagshipConstant::FLAGSHIP_SDK;
+        $authenticateName = "authenticate";
+        $logManagerStub->expects($this->exactly(2))
+            ->method('error')
+            ->withConsecutive(["[$sdk] " . sprintf(
+                FlagshipConstant::VISITOR_ID_ERROR,
+                $authenticateName
+            )], ["[$sdk] " . sprintf(
+                FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
+                $authenticateName
+            ), [FlagshipConstant::TAG => $authenticateName]]);
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
+        $defaultStrategy = new DefaultStrategy($visitor);
+        $newVisitorId = "new_visitor_id";
+        $defaultStrategy->authenticate($newVisitorId);
+        $this->assertSame($visitorId, $visitor->getAnonymousId());
+        $this->assertSame($newVisitorId, $visitor->getVisitorId());
+
+        //Test authenticate with null visitorId
+
+        $defaultStrategy->authenticate(null);
+        $this->assertSame($visitorId, $visitor->getAnonymousId());
+        $this->assertSame($newVisitorId, $visitor->getVisitorId());
+
+        //Test with bcuketing mode
+        $newVisitorId2 = "new_visitor_id";
+        $visitor->setConfig((new BucketingConfig())->setLogManager($logManagerStub));
+        $defaultStrategy->authenticate($newVisitorId2);
+        $this->assertSame($visitorId, $visitor->getAnonymousId());
+        $this->assertSame($newVisitorId, $visitor->getVisitorId());
+    }
+
+    public function testUnauthenticate()
+    {
+        //Mock logManger
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
+        $sdk = FlagshipConstant::FLAGSHIP_SDK;
+        $unauthenticateName = "unauthenticate";
+        $logManagerStub->expects($this->exactly(2))
+            ->method('error')
+            ->withConsecutive(
+                ["[$sdk] " . sprintf(
+                    FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
+                    $unauthenticateName
+                ), [FlagshipConstant::TAG => $unauthenticateName]],
+                [
+                    "[$sdk] " . FlagshipConstant::FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE,
+                    [FlagshipConstant::TAG => $unauthenticateName]
+                ]
+            );
+
+        $visitorId = "visitor_id";
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false);
+
+        $visitor->setConfig((new BucketingConfig())->setLogManager($logManagerStub));
+        $defaultStrategy = new DefaultStrategy($visitor);
+        $defaultStrategy->unauthenticate();
+
+        //Test Visitor not authenticate yet
+        $config->setLogManager($logManagerStub);
+        $visitor->setConfig($config);
+        $defaultStrategy->unauthenticate();
+
+        //Test valid data
+        $newVisitorId = "newVisitorId";
+        $defaultStrategy->authenticate($newVisitorId);
+
+        $anonymous = $visitor->getAnonymousId();
+        $defaultStrategy->unauthenticate();
+        $this->assertNull($visitor->getAnonymousId());
+        $this->assertSame($anonymous, $visitor->getVisitorId());
     }
 
     /**
@@ -233,7 +369,7 @@ class DefaultStrategyTest extends TestCase
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
@@ -337,7 +473,7 @@ class DefaultStrategyTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
@@ -390,7 +526,6 @@ class DefaultStrategyTest extends TestCase
         );
 
 
-
         $config->setLogManager($logManagerStub);
 
         $configManager = (new ConfigManager())
@@ -402,7 +537,7 @@ class DefaultStrategyTest extends TestCase
 
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $trackerManagerStub->expects($this->exactly(2))
@@ -442,7 +577,7 @@ class DefaultStrategyTest extends TestCase
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
 
         $defaultStrategyMock = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
             ->setMethods(['logError'])
@@ -535,7 +670,7 @@ class DefaultStrategyTest extends TestCase
         $logManagerStub->expects($this->exactly(2))->method('error')
             ->withConsecutive($paramsExpected);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
@@ -621,7 +756,7 @@ class DefaultStrategyTest extends TestCase
             ->setDecisionManager($apiManagerStub)
             ->setTrackingManager($trackerManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
@@ -685,7 +820,7 @@ class DefaultStrategyTest extends TestCase
             ->setDecisionManager($apiManagerStub);
 
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $defaultStrategy->synchronizedModifications();

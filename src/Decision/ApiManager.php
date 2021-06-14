@@ -39,6 +39,7 @@ class ApiManager extends DecisionManagerAbstract
 
             $postData = [
                 "visitorId" => $visitor->getVisitorId(),
+                "anonymousId" => $visitor->getAnonymousId(),
                 "trigger_hit" => false,
                 "context" => $visitor->getContext()
             ];

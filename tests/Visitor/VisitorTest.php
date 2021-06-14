@@ -28,7 +28,7 @@ class VisitorTest extends TestCase
 
         $configManager = (new ConfigManager())->setConfig($config);
 
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $visitorContext);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
 
         $visitor = new Visitor($visitorDelegate);
         $this->assertEquals($visitorId, $visitor->getVisitorId());
@@ -65,7 +65,8 @@ class VisitorTest extends TestCase
         $visitorDelegateMock = $this->getMockBuilder('Flagship\Visitor\VisitorDelegate')
             ->setMethods([
                 'getContext', 'setContext', 'updateContext', 'updateContextCollection',
-                'clearContext', 'getModification','getModifications','getModificationInfo', 'synchronizedModifications',
+                'clearContext', 'authenticate', 'unauthenticate',
+                'getModification','getModifications','getModificationInfo', 'synchronizedModifications',
                 'activateModification', 'sendHit'
                 ])
             ->setConstructorArgs([new Container(),$configManager, $visitorId, $visitorContext])->getMock();
@@ -102,6 +103,16 @@ class VisitorTest extends TestCase
         //Test clearContext
         $visitorDelegateMock->expects($this->once())->method('clearContext');
         $visitor->clearContext();
+
+        //Test authenticate
+        $newVisitorId = "newVisitorId";
+        $visitorDelegateMock->expects($this->once())->method('authenticate')
+            ->with($newVisitorId);
+        $visitor->authenticate($newVisitorId);
+
+        //Test unauthenticate
+        $visitorDelegateMock->expects($this->once())->method('unauthenticate');
+        $visitor->unauthenticate();
 
         //Test getModification
         $key = "age";
@@ -160,7 +171,7 @@ class VisitorTest extends TestCase
             FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
             FlagshipConstant::FS_USERS => $visitorId,];
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, $context);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $context);
 
         $visitor = new Visitor($visitorDelegate);
 

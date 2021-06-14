@@ -126,6 +126,22 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    public function authenticate($visitorId)
+    {
+        $this->getVisitorDelegate()->authenticate($visitorId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unauthenticate()
+    {
+        $this->getVisitorDelegate()->unauthenticate();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getModification($key, $defaultValue, $activate = false)
     {
         return $this->getVisitorDelegate()->getModification($key, $defaultValue, $activate);

@@ -2,6 +2,7 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Hit\HitAbstract;
@@ -54,6 +55,61 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function clearContext()
     {
         $this->getVisitor()->context = [];
+    }
+
+    private function logDeactivate($functionName)
+    {
+        $this->logError(
+            $this->getVisitor()->getConfig(),
+            sprintf(
+                FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
+                $functionName
+            ),
+            [FlagshipConstant::TAG => $functionName]
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function authenticate($visitorId)
+    {
+        if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
+            $this->logDeactivate(__FUNCTION__);
+            return;
+        }
+        if (empty($visitorId)) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                FlagshipConstant::VISITOR_ID_ERROR,
+                [FlagshipConstant::TAG => __FUNCTION__]
+            );
+            return;
+        }
+        $this->getVisitor()->setAnonymousId($this->getVisitor()->getVisitorId());
+        $this->getVisitor()->setVisitorId($visitorId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unauthenticate()
+    {
+        if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
+            $this->logDeactivate(__FUNCTION__);
+            return;
+        }
+        $anonymousId = $this->getVisitor()->getAnonymousId();
+        if (!$anonymousId) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                FlagshipConstant::FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE,
+                [FlagshipConstant::TAG => __FUNCTION__]
+            );
+            return;
+        }
+        $this->getVisitor()->setVisitorId($anonymousId);
+        $this->getVisitor()->setAnonymousId(null);
     }
 
     /**
@@ -249,6 +305,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $hit->setConfig($this->getVisitor()->getConfig())
             ->setVisitorId($this->getVisitor()->getVisitorId())
+            ->setAnonymousId($this->getVisitor()->getAnonymousId())
             ->setDs(FlagshipConstant::SDK_APP);
 
         if (!$hit->isReady()) {

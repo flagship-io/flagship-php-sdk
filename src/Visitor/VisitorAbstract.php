@@ -9,7 +9,7 @@ use Flagship\Flagship;
 use Flagship\Model\Modification;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
-use Flagship\Utils\Container;
+use Flagship\Utils\ContainerInterface;
 use JsonSerializable;
 
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
@@ -24,6 +24,11 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
      * @var string
      */
     private $visitorId;
+
+    /**
+     * @var string
+     */
+    private $anonymousId;
     /**
      * @var array
      */
@@ -43,11 +48,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
     protected $hasConsented = false;
 
     /**
-     * @var callable
-     */
-    protected $getStrategyCallable;
-    /**
-     * @var Container
+     * @var ContainerInterface
      */
     private $dependencyIContainer;
 
@@ -104,6 +105,24 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
         } else {
             $this->visitorId = $visitorId;
         }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnonymousId()
+    {
+        return $this->anonymousId;
+    }
+
+    /**
+     * @param string $anonymousId
+     * @return VisitorAbstract
+     */
+    public function setAnonymousId($anonymousId)
+    {
+        $this->anonymousId = $anonymousId;
         return $this;
     }
 
@@ -190,21 +209,17 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
     }
 
     /**
-     * @return Container
+     * @return ContainerInterface
      */
     public function getDependencyIContainer()
     {
         return $this->dependencyIContainer;
     }
 
-    public function setDependencyIContainer(Container $dependencyIContainer)
+    public function setDependencyIContainer(ContainerInterface $dependencyIContainer)
     {
         $this->dependencyIContainer = $dependencyIContainer;
     }
-
-
-
-
 
     /**
      * @inheritDoc

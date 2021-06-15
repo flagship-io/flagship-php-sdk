@@ -50,6 +50,13 @@ $router->group(
 );
 
 $router->group(
+    ['prefix' => 'authenticate','middleware' => 'CheckFlagshipSession|flagshipVisitor'],
+    function () use ($router) {
+        $router->put('/', 'AuthController@authenticate');
+    }
+) ;
+
+$router->group(
     ['prefix' => 'flag', 'middleware' => ['CheckFlagshipSession','startFlagship','flagshipVisitor']],
     function () use ($router) {
         $router->get('/{key}/activate', 'FlagController@activeModification');

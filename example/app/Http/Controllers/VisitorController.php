@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Casts\TypeCastInterface;
+use App\Traits\ErrorFormatTrait;
 use App\Rules\TypeCheck;
 use Exception;
 use Flagship\Flagship;
-use Flagship\Visitor;
+use Flagship\Visitor\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class VisitorController extends Controller
 {
+    use ErrorFormatTrait;
+
     public function index(Request $request)
     {
         $visitor = $request->session()->get('visitor');
@@ -40,9 +43,9 @@ class VisitorController extends Controller
             $request->session()->put('visitor', $visitor);
             return response()->json($visitor->getModifications());
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()], 422);
+            return response()->json($this->formatError($exception->errors()), 422);
         } catch (Exception $exception) {
-            return response()->json(['error' => $exception->getMessage()], 422);
+            return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
 
@@ -57,7 +60,9 @@ class VisitorController extends Controller
 
             return response()->json($visitor);
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()], 422);
+            return response()->json($this->formatError($exception->errors()), 422);
+        } catch (Exception $exception) {
+            return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
 
@@ -76,7 +81,9 @@ class VisitorController extends Controller
 
             return response()->json($visitor);
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()], 422);
+            return response()->json($this->formatError($exception->errors()), 422);
+        } catch (Exception $exception) {
+            return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
 }

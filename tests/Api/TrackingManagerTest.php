@@ -59,7 +59,7 @@ class TrackingManagerTest extends TestCase
                 FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
                 FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-                FlagshipConstant::CUSTOMER_UID => null
+                FlagshipConstant::ANONYMOUS_ID => null
             ]
         )->willReturn(new HttpResponse(204, null));
 
@@ -113,7 +113,7 @@ class TrackingManagerTest extends TestCase
                 FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
                 FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-                FlagshipConstant::CUSTOMER_UID => null
+                FlagshipConstant::ANONYMOUS_ID => null
             ]
         )->willThrowException($exception);
 

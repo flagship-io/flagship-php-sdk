@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Casts\TypeCastInterface;
 use App\Rules\TypeCheck;
+use App\Traits\ErrorFormatTrait;
 use Exception;
 use Flagship\Config\BucketingConfig;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Flagship;
-use Flagship\FlagshipConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class EnvController extends Controller
 {
+    use ErrorFormatTrait;
+
     public function index(Request $request)
     {
         $config = $request->session()->get('flagshipConfig');
@@ -62,9 +64,9 @@ class EnvController extends Controller
             $request->session()->put('flagshipConfig', $config);
             return response()->json($this->getEnvJson($config));
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()], 422);
+            return response()->json($this->formatError($exception->errors()), 422);
         } catch (Exception $exception) {
-            return response()->json(['error' => $exception->getMessage()], 500);
+            return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
 

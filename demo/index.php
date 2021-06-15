@@ -19,7 +19,7 @@ $context = [
     "isPhp" => true
 ];
 
-$visitor = Flagship::newVisitor($visitor_Id, $context);
+$visitor = Flagship::newVisitor($visitor_Id, false, $context);
 
 while (true) {
     echo "============================================================" .  PHP_EOL;

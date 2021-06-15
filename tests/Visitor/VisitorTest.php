@@ -65,7 +65,7 @@ class VisitorTest extends TestCase
         $visitorDelegateMock = $this->getMockBuilder('Flagship\Visitor\VisitorDelegate')
             ->setMethods([
                 'getContext', 'setContext', 'updateContext', 'updateContextCollection',
-                'clearContext', 'authenticate', 'unauthenticate',
+                'clearContext', 'authenticate', 'unauthenticate','getAnonymousId',
                 'getModification','getModifications','getModificationInfo', 'synchronizedModifications',
                 'activateModification', 'sendHit'
                 ])
@@ -103,6 +103,10 @@ class VisitorTest extends TestCase
         //Test clearContext
         $visitorDelegateMock->expects($this->once())->method('clearContext');
         $visitor->clearContext();
+
+        //Test getAnonymousId
+        $visitorDelegateMock->expects($this->once())->method('getAnonymousId');
+        $visitor->getAnonymousId();
 
         //Test authenticate
         $newVisitorId = "newVisitorId";

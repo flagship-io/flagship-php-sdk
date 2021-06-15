@@ -99,6 +99,11 @@ class Visitor implements VisitorInterface, JsonSerializable
         return $this;
     }
 
+    public function getAnonymousId()
+    {
+        return $this->getVisitorDelegate()->getAnonymousId();
+    }
+
     /**
      * @inheritDoc
      */

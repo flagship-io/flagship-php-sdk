@@ -2,10 +2,13 @@
 
 namespace Controller;
 
+use App\Traits\ErrorFormatTrait;
 use TestCase;
 
 class EnvControllerTest extends TestCase
 {
+    use ErrorFormatTrait;
+
     public function testUpdate()
     {
         $data = [
@@ -37,9 +40,11 @@ class EnvControllerTest extends TestCase
             "polling_interval" => null
         ];
         $this->put('/env', $data);
-        $this->assertJsonStringEqualsJsonString('{"error":{"polling_interval":["The polling interval must be a number."]}}', $this->response->getContent());
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($this->formatError(["polling_interval"=>["The polling interval must be a number."]])),
+            $this->response->getContent()
+        );
     }
-
 
     public function testIndex()
     {

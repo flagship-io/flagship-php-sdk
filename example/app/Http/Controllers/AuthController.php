@@ -28,4 +28,17 @@ class AuthController extends Controller
             return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
+
+    public function unauthenticate(Visitor $visitor)
+    {
+        try {
+            $visitor->unauthenticate();
+            return response()->json([
+                "visitorId" => $visitor->getVisitorId(),
+                "anonymousId" => $visitor->getAnonymousId()
+            ]);
+        } catch (Exception $exception) {
+            return response()->json($this->formatError($exception->getMessage()), 500);
+        }
+    }
 }

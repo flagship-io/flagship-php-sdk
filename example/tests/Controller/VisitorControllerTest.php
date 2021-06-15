@@ -2,11 +2,13 @@
 
 namespace Controller;
 
+use App\Traits\ErrorFormatTrait;
 use TestCase;
 
 class VisitorControllerTest extends TestCase
 {
     use GeneralMockTrait;
+    use ErrorFormatTrait;
 
     public function testIndex()
     {
@@ -42,7 +44,7 @@ class VisitorControllerTest extends TestCase
         ]);
 
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"visitor_id":["The visitor id field is required."]}}',
+            json_encode($this->formatError(["visitor_id" => ["The visitor id field is required."]])),
             $this->response->getContent()
         );
     }
@@ -59,14 +61,16 @@ class VisitorControllerTest extends TestCase
         $this->put('/visitor/context/key', []);
 
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"type":["The type field is required."], "value": ["The value field is required."]}}',
+            json_encode($this->formatError([
+                "type" => ["The type field is required."],
+                "value" => ["The value field is required."]])),
             $this->response->getContent()
         );
 
         //Test type check
         $this->put('/visitor/context/key', ['type' => 'double', 'value' => 'valueString']);
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"value":["The value is not double"]}}',
+            json_encode($this->formatError(["value" => ["The value is not double"]])),
             $this->response->getContent()
         );
     }
@@ -89,14 +93,14 @@ class VisitorControllerTest extends TestCase
         $this->put('/visitor/consent', []);
 
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"value": ["The value field is required."]}}',
+            json_encode($this->formatError(["value" => ["The value field is required."]])),
             $this->response->getContent()
         );
 
         //Test type check
         $this->put('/visitor/consent', ['value' => 'valueString']);
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"value":["The value is not bool"]}}',
+            json_encode($this->formatError(["value" => ["The value is not bool"]])),
             $this->response->getContent()
         );
     }

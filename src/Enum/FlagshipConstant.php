@@ -74,7 +74,7 @@ class FlagshipConstant
     const TAG_SEND_HIT = "SEND HIT";
 
     //Api items
-
+    const ANONYMOUS_ID = "aid";
     const CUSTOMER_ENV_ID_API_ITEM = "cid";
     const VISITOR_ID_API_ITEM = "vid";
     const CUSTOMER_UID = "cuid";

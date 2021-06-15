@@ -36,12 +36,17 @@ class TrackingManager extends TrackingManagerAbstract
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $visitor->getConfig()->getEnvId()
             ];
 
-            $postData = $this->setVisitorBodyParams($visitor->getVisitorId(), $visitor->getAnonymousId(), $postData);
+            $postData = $this->setVisitorBodyParams(
+                $visitor->getVisitorId(),
+                $visitor->getAnonymousId(),
+                $postData,
+                FlagshipConstant::ANONYMOUS_ID
+            );
 
             $response = $this->httpClient->post($url, [], $postData);
             return $response->getStatusCode() == 204;
         } catch (Exception $exception) {
-            $this->logError($visitor->getConfig(), $exception->getMessage());
+            $this->logError($visitor->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
         return false;
     }
@@ -58,7 +63,7 @@ class TrackingManager extends TrackingManagerAbstract
             $url = FlagshipConstant::HIT_API_URL;
             $this->httpClient->post($url, [], $hit->toArray());
         } catch (Exception $exception) {
-            $this->logError($hit->getConfig(), $exception->getMessage());
+            $this->logError($hit->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
     }
 }

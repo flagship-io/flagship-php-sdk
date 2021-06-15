@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use App\Traits\ErrorFormatTrait;
 use TestCase;
 use App\Http\Controllers\HitController;
 use Flagship\Hit\Event;
@@ -13,6 +14,7 @@ use Flagship\Hit\Transaction;
 class HitControllerTest extends TestCase
 {
     use GeneralMockTrait;
+    use ErrorFormatTrait;
 
     public function testSendHitPageAndScreen()
     {
@@ -64,7 +66,7 @@ class HitControllerTest extends TestCase
         ]);
 
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"ea":["The ea field is required."],"ec":["The ec field is required."]}}',
+            json_encode($this->formatError(["ea" => ["The ea field is required."],"ec" => ["The ec field is required."]])),
             $this->response->content()
         );
     }
@@ -100,7 +102,7 @@ class HitControllerTest extends TestCase
         ]);
 
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"tid":["The tid field is required."],"ta":["The ta field is required."]}}',
+            json_encode($this->formatError(["tid"=>["The tid field is required."],"ta"=>["The ta field is required."]])),
             $this->response->content()
         );
     }
@@ -132,7 +134,10 @@ class HitControllerTest extends TestCase
         ]);
 
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"tid":["The tid field is required."],"ic":["The ic field is required."],"in":["The in field is required."]}}',
+            json_encode($this->formatError([
+                "tid"=>["The tid field is required."],
+                "ic"=>["The ic field is required."],
+                "in"=>["The in field is required."]])),
             $this->response->content()
         );
     }

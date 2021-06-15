@@ -38,17 +38,21 @@ trait BuildApiTrait
      * @param array $postData
      * @return array
      */
-    protected function setVisitorBodyParams($visitorId, $anonymousId, array $postData)
-    {
+    protected function setVisitorBodyParams(
+        $visitorId,
+        $anonymousId,
+        array $postData,
+        $idConstant = FlagshipConstant::CUSTOMER_UID
+    ) {
         if ($visitorId && $anonymousId) {
             $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $anonymousId;
-            $postData[FlagshipConstant::CUSTOMER_UID] = $visitorId;
+            $postData[$idConstant] = $visitorId;
         } elseif ($visitorId && !$anonymousId) {
             $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $visitorId;
-            $postData[FlagshipConstant::CUSTOMER_UID] = null;
+            $postData[$idConstant] = null;
         } else {
             $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $anonymousId;
-            $postData[FlagshipConstant::CUSTOMER_UID] = null;
+            $postData[$idConstant] = null;
         }
         return $postData;
     }

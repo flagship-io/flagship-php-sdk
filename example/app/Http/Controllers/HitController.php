@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ErrorFormatTrait;
 use Exception;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Transaction;
-use Flagship\Visitor;
+use Flagship\Visitor\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class HitController extends Controller
 {
+    use ErrorFormatTrait;
+
     const PAGE        = "PAGE";
     const SCREEN      = "SCREEN";
     const EVENT       = "EVENT";
@@ -94,9 +97,9 @@ class HitController extends Controller
 
             return response()->json($visitor->getConfig());
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()], 422);
+            return response()->json($this->formatError($exception->errors()), 422);
         } catch (Exception $exception) {
-            return response()->json(['error' => $exception->getMessage()], 422);
+            return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
 

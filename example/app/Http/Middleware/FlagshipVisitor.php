@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Flagship\Visitor;
+use Flagship\Visitor\Visitor;
 use Illuminate\Support\Facades\Log;
 
 class FlagshipVisitor

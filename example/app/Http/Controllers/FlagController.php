@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use App\Casts\TypeCastInterface;
 use App\Rules\CheckBoolean;
 use App\Rules\TypeCheck;
+use App\Traits\ErrorFormatTrait;
 use Exception;
-use Flagship\Visitor;
+use Flagship\Visitor\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class FlagController extends Controller
 {
+    use ErrorFormatTrait;
 
     public function getModification($key, Request $request, Visitor $visitor, TypeCastInterface $typeCast)
     {
@@ -35,22 +37,29 @@ class FlagController extends Controller
             ];
             return response()->json($result);
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()], 422);
+            return response()->json($this->formatError($exception->errors()), 422);
         } catch (Exception $exception) {
-            return response()->json(['error' => $exception->getMessage()], 422);
+            return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
 
     public function getModificationInfo($key, Visitor $visitor)
     {
-        $response = $visitor->getModificationInfo($key);
-        return response()->json($response);
+        try {
+            $response = $visitor->getModificationInfo($key);
+            return response()->json($response);
+        } catch (Exception $exception) {
+            return response()->json($this->formatError($exception->getMessage()), 500);
+        }
     }
 
     public function activeModification($key, Visitor $visitor)
     {
-        $visitor->activateModification($key);
-
-        return response()->json('successful operation');
+        try {
+            $visitor->activateModification($key);
+            return response()->json('successful operation');
+        } catch (Exception $exception) {
+            return response()->json($this->formatError($exception->getMessage()), 500);
+        }
     }
 }

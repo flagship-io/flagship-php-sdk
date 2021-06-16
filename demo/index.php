@@ -30,6 +30,6 @@ while (true) {
         break;
     }
     $visitor->synchronizedModifications();
-     print_r($visitor->getModifications());
+    print_r($visitor->getModifications());
     sleep(10);
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1623922531">
-  <project timestamp="1623922531">
+<coverage generated="1623939244">
+  <project timestamp="1623939244">
     <package name="Flagship\Api">
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Api/TrackingManager.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
           <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="24" coveredelements="24"/>
         </class>
@@ -32,7 +32,7 @@
         <line num="60" type="stmt" count="2"/>
         <metrics loc="61" ncloc="51" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="24" coveredelements="24"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Api/TrackingManagerAbstract.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManagerAbstract.php">
         <class name="TrackingManagerAbstract" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
           <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" elements="5" coveredelements="5"/>
         </class>
@@ -45,7 +45,7 @@
       </file>
     </package>
     <package name="Flagship\Decision">
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Decision/ApiManager.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Decision/ApiManager.php">
         <class name="ApiManager" namespace="Flagship\Decision" fullPackage="Flagship" package="Flagship">
           <metrics methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="73" coveredstatements="73" elements="78" coveredelements="78"/>
         </class>
@@ -129,7 +129,7 @@
         <line num="169" type="stmt" count="4"/>
         <metrics loc="171" ncloc="135" classes="1" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="73" coveredstatements="73" elements="78" coveredelements="78"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Decision/DecisionManagerAbstract.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Decision/DecisionManagerAbstract.php">
         <class name="DecisionManagerAbstract" namespace="Flagship\Decision">
           <metrics methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" elements="10" coveredelements="10"/>
         </class>
@@ -146,11 +146,11 @@
         <metrics loc="59" ncloc="35" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" elements="10" coveredelements="10"/>
       </file>
     </package>
-    <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Decision/DecisionManagerInterface.php">
+    <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Decision/DecisionManagerInterface.php">
       <metrics loc="17" ncloc="11" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
     <package name="Flagship\Enum">
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Enum/DecisionMode.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/DecisionMode.php">
         <class name="DecisionMode" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
           <metrics methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="6" coveredelements="6"/>
         </class>
@@ -162,37 +162,37 @@
         <line num="27" type="stmt" count="2"/>
         <metrics loc="29" ncloc="18" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="6" coveredelements="6"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Enum/EventCategory.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/EventCategory.php">
         <class name="EventCategory" namespace="Flagship\Enum">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
         <metrics loc="9" ncloc="9" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Enum/FlagshipConstant.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/FlagshipConstant.php">
         <class name="FlagshipConstant" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
         <metrics loc="105" ncloc="80" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Enum/FlagshipField.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/FlagshipField.php">
         <class name="FlagshipField" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
         <metrics loc="24" ncloc="19" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Enum/FlagshipStatus.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/FlagshipStatus.php">
         <class name="FlagshipStatus" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
         <metrics loc="21" ncloc="11" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Enum/HitType.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/HitType.php">
         <class name="HitType" namespace="Flagship\Enum">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
         <metrics loc="41" ncloc="16" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Enum/LogLevel.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/LogLevel.php">
         <class name="LogLevel" namespace="Flagship\Enum">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
@@ -200,7 +200,7 @@
       </file>
     </package>
     <package name="Flagship">
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Flagship.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Flagship.php">
         <class name="Flagship" namespace="Flagship">
           <metrics methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="80" coveredstatements="80" elements="93" coveredelements="93"/>
         </class>
@@ -299,7 +299,7 @@
         <line num="265" type="stmt" count="1"/>
         <metrics loc="267" ncloc="182" classes="1" methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="80" coveredstatements="80" elements="93" coveredelements="93"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/FlagshipConfig.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/FlagshipConfig.php">
         <class name="FlagshipConfig" namespace="Flagship" fullPackage="Flagship" package="Flagship">
           <metrics methods="14" coveredmethods="14" conditionals="0" coveredconditionals="0" statements="32" coveredstatements="32" elements="46" coveredelements="46"/>
         </class>
@@ -351,7 +351,7 @@
         <line num="192" type="stmt" count="1"/>
         <metrics loc="194" ncloc="108" classes="1" methods="14" coveredmethods="14" conditionals="0" coveredconditionals="0" statements="32" coveredstatements="32" elements="46" coveredelements="46"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Visitor.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor.php">
         <class name="Visitor" namespace="Flagship" fullPackage="Flagship" package="Flagship">
           <metrics methods="22" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="162" coveredstatements="162" elements="184" coveredelements="184"/>
         </class>
@@ -543,7 +543,7 @@
       </file>
     </package>
     <package name="Flagship\Hit">
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Hit/Event.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Hit/Event.php">
         <class name="Event" namespace="Flagship\Hit" fullPackage="Flagship" package="Flagship">
           <metrics methods="12" coveredmethods="12" conditionals="0" coveredconditionals="0" statements="40" coveredstatements="40" elements="52" coveredelements="52"/>
         </class>
@@ -601,7 +601,7 @@
         <line num="192" type="stmt" count="1"/>
         <metrics loc="194" ncloc="114" classes="1" methods="12" coveredmethods="12" conditionals="0" coveredconditionals="0" statements="40" coveredstatements="40" elements="52" coveredelements="52"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Hit/HitAbstract.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Hit/HitAbstract.php">
         <class name="HitAbstract" namespace="Flagship\Hit" fullPackage="Flagship" package="Flagship">
           <metrics methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="40" coveredstatements="40" elements="53" coveredelements="53"/>
         </class>
@@ -660,7 +660,7 @@
         <line num="197" type="stmt" count="7"/>
         <metrics loc="206" ncloc="117" classes="1" methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="40" coveredstatements="40" elements="53" coveredelements="53"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Hit/Item.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Hit/Item.php">
         <class name="Item" namespace="Flagship\Hit" fullPackage="Flagship" package="Flagship">
           <metrics methods="16" coveredmethods="16" conditionals="0" coveredconditionals="0" statements="51" coveredstatements="51" elements="67" coveredelements="67"/>
         </class>
@@ -733,7 +733,7 @@
         <line num="249" type="stmt" count="1"/>
         <metrics loc="251" ncloc="146" classes="1" methods="16" coveredmethods="16" conditionals="0" coveredconditionals="0" statements="51" coveredstatements="51" elements="67" coveredelements="67"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Hit/Page.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Hit/Page.php">
         <class name="Page" namespace="Flagship\Hit" fullPackage="Flagship" package="Flagship">
           <metrics methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" elements="19" coveredelements="19"/>
         </class>
@@ -758,7 +758,7 @@
         <line num="79" type="stmt" count="2"/>
         <metrics loc="81" ncloc="50" classes="1" methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" elements="19" coveredelements="19"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Hit/Screen.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Hit/Screen.php">
         <class name="Screen" namespace="Flagship\Hit" fullPackage="Flagship" package="Flagship">
           <metrics methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" elements="19" coveredelements="19"/>
         </class>
@@ -783,7 +783,7 @@
         <line num="81" type="stmt" count="1"/>
         <metrics loc="83" ncloc="50" classes="1" methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" elements="19" coveredelements="19"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Hit/Transaction.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Hit/Transaction.php">
         <class name="Transaction" namespace="Flagship\Hit" fullPackage="Flagship" package="Flagship">
           <metrics methods="24" coveredmethods="24" conditionals="0" coveredconditionals="0" statements="91" coveredstatements="91" elements="115" coveredelements="115"/>
         </class>
@@ -906,7 +906,7 @@
       </file>
     </package>
     <package name="Flagship\Model">
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Model/HttpResponse.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Model/HttpResponse.php">
         <class name="HttpResponse" namespace="Flagship\Model" fullPackage="Flagship" package="Flagship">
           <metrics methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="14" coveredelements="14"/>
         </class>
@@ -926,7 +926,7 @@
         <line num="59" type="stmt" count="1"/>
         <metrics loc="61" ncloc="38" classes="1" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="14" coveredelements="14"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Model/Modification.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Model/Modification.php">
         <class name="Modification" namespace="Flagship\Model" fullPackage="Flagship" package="Flagship">
           <metrics methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="38" coveredelements="38"/>
         </class>
@@ -972,7 +972,7 @@
       </file>
     </package>
     <package name="Flagship\Traits">
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Traits/BuildApiTrait.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Traits/BuildApiTrait.php">
         <class name="BuildApiTrait" namespace="Flagship\Traits">
           <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" elements="8" coveredelements="8"/>
         </class>
@@ -986,7 +986,7 @@
         <line num="32" type="stmt" count="7"/>
         <metrics loc="34" ncloc="24" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" elements="8" coveredelements="8"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Traits/LogTrait.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Traits/LogTrait.php">
         <class name="LogTrait" namespace="Flagship\Traits">
           <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
         </class>
@@ -1004,7 +1004,7 @@
         <line num="38" type="stmt" count="5"/>
         <metrics loc="39" ncloc="29" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Traits/ValidatorTrait.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Traits/ValidatorTrait.php">
         <class name="ValidatorTrait" namespace="Flagship\Traits">
           <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="4" coveredelements="4"/>
         </class>
@@ -1016,7 +1016,7 @@
       </file>
     </package>
     <package name="Flagship\Utils">
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Utils/ConfigManager.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/ConfigManager.php">
         <class name="ConfigManager" namespace="Flagship\Utils">
           <metrics methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="15" coveredelements="15"/>
         </class>
@@ -1037,7 +1037,7 @@
         <line num="76" type="stmt" count="13"/>
         <metrics loc="78" ncloc="48" classes="1" methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="15" coveredelements="15"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Utils/Container.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/Container.php">
         <class name="Container" namespace="Flagship\Utils">
           <metrics methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" elements="37" coveredelements="37"/>
         </class>
@@ -1080,7 +1080,7 @@
         <line num="78" type="stmt" count="1"/>
         <metrics loc="81" ncloc="68" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" elements="37" coveredelements="37"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Utils/FlagshipLogManager.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/FlagshipLogManager.php">
         <class name="FlagshipLogManager" namespace="Flagship\Utils">
           <metrics methods="10" coveredmethods="10" conditionals="0" coveredconditionals="0" statements="32" coveredstatements="32" elements="42" coveredelements="42"/>
         </class>
@@ -1128,7 +1128,7 @@
         <line num="101" type="stmt" count="9"/>
         <metrics loc="103" ncloc="76" classes="1" methods="10" coveredmethods="10" conditionals="0" coveredconditionals="0" statements="32" coveredstatements="32" elements="42" coveredelements="42"/>
       </file>
-      <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Utils/HttpClient.php">
+      <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/HttpClient.php">
         <class name="HttpClient" namespace="Flagship\Utils">
           <metrics methods="14" coveredmethods="14" conditionals="0" coveredconditionals="0" statements="70" coveredstatements="70" elements="84" coveredelements="84"/>
         </class>
@@ -1219,10 +1219,10 @@
         <metrics loc="226" ncloc="152" classes="1" methods="14" coveredmethods="14" conditionals="0" coveredconditionals="0" statements="70" coveredstatements="70" elements="84" coveredelements="84"/>
       </file>
     </package>
-    <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Utils/ContainerInterface.php">
+    <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/ContainerInterface.php">
       <metrics loc="8" ncloc="8" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <file name="/home/runner/work/flagship-php-sdk-dev/flagship-php-sdk-dev/src/Utils/HttpClientInterface.php">
+    <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/HttpClientInterface.php">
       <metrics loc="49" ncloc="17" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
     <metrics files="32" loc="3631" ncloc="2312" classes="29" methods="197" coveredmethods="197" conditionals="0" coveredconditionals="0" statements="828" coveredstatements="828" elements="1025" coveredelements="1025"/>

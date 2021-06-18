@@ -55,7 +55,7 @@ class BucketingManager extends DecisionManagerAbstract
     protected function getCampaigns(VisitorAbstract $visitor)
     {
         $this->sendContext($visitor);
-        $bucketingFile = $this->getConfig()->getBucketingDirectory() . "/bucketing.json";
+        $bucketingFile = $this->getConfig()->getBucketingDirectoryPath() . "/bucketing.json";
         if (!file_exists($bucketingFile)) {
             return [];
         }

@@ -21,13 +21,13 @@ class BucketingConfig extends FlagshipConfig
     /**
      * @var string
      */
-    private $bucketingDirectory;
+    private $bucketingDirectoryPath;
 
     public function __construct($envId = null, $apiKey = null)
     {
         parent::__construct($envId, $apiKey);
         $this->setDecisionMode(DecisionMode::BUCKETING);
-        $this->setBucketingDirectory("");
+        $this->setBucketingDirectoryPath("");
     }
 
     /**
@@ -56,25 +56,27 @@ class BucketingConfig extends FlagshipConfig
     /**
      * @return string
      */
-    public function getBucketingDirectory()
+    public function getBucketingDirectoryPath()
     {
-        return $this->bucketingDirectory;
+        return $this->bucketingDirectoryPath;
     }
 
     /**
-     * @param string $bucketingDirectory
+     * Define the directory path  where the SDK will find the bucketing file from polling process
+     *     Note: Default path is `/webroot/vendor/flagship-io/flagship`
+     * @param string $bucketingDirectoryPath : directory path
      * @return BucketingConfig
      */
-    public function setBucketingDirectory($bucketingDirectory)
+    public function setBucketingDirectoryPath($bucketingDirectoryPath)
     {
-        $this->baseBucketingDirectory = $bucketingDirectory;
-        if (empty($bucketingDirectory)) {
+        $this->baseBucketingDirectory = $bucketingDirectoryPath;
+        if (empty($bucketingDirectoryPath)) {
             $this->baseBucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
-            $bucketingDirectory = __DIR__ . '/../../' . FlagshipConstant::BUCKETING_DIRECTORY;
+            $bucketingDirectoryPath = __DIR__ . '/../../' . FlagshipConstant::BUCKETING_DIRECTORY;
         } else {
-            $bucketingDirectory = __DIR__ . '/../../../../../' . $bucketingDirectory;
+            $bucketingDirectoryPath = __DIR__ . '/../../../../../' . $bucketingDirectoryPath;
         }
-        $this->bucketingDirectory = $bucketingDirectory;
+        $this->bucketingDirectoryPath = $bucketingDirectoryPath;
         return $this;
     }
 

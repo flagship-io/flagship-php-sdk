@@ -36,14 +36,14 @@ class BucketingConfigTest extends TestCase
         $myDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
         $this->assertRegExp(
             "/\/\.\.\/\.\.\/$myDirectory$/",
-            $config->getBucketingDirectory()
+            $config->getBucketingDirectoryPath()
         );
 
         $myDirectory = "myDirectory";
-        $config->setBucketingDirectory($myDirectory);
+        $config->setBucketingDirectoryPath($myDirectory);
         $this->assertRegExp(
             "/\/\.\.\/\.\.\/\.\.\/\.\.\/$myDirectory$/",
-            $config->getBucketingDirectory()
+            $config->getBucketingDirectoryPath()
         );
     }
 

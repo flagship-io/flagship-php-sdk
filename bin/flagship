@@ -144,6 +144,9 @@ function getFromConfigFile($filePath)
 
 $configArray = getParams();
 
+if (!$configArray){
+    die(1);
+}
 $envId = $configArray['envId'];
 $bucketingDirectory = $configArray['bucketingDirectory'];
 $pollingInterval = $configArray['pollingInterval'];

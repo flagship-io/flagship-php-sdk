@@ -76,7 +76,7 @@ function getFromArgument()
 
     $bucketingDirectoryPath = getopt(null, ["bucketingPath:"]);
     if ($bucketingDirectoryPath) {
-        $configArray['bucketingDirectory'] = $bucketingDirectoryPath;
+        $configArray['bucketingDirectory'] = $bucketingDirectoryPath["bucketingPath"];
     }
     else{
         $configArray['bucketingDirectory'] = null;

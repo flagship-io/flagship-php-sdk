@@ -15,10 +15,10 @@ function startPolling($envId, $pollingInterval, $bucketingDirectory = null, $con
 
 function getParams()
 {
-    $fileArgument = getopt(null, ["file:"]);
+    $fileArgument = getopt(null, ["config:"]);
 
-    if ($fileArgument['file']) {
-        $fileConfig = $fileArgument['file'];
+    if ($fileArgument['config']) {
+        $fileConfig = $fileArgument['config'];
     }
 
     if (!$fileConfig) {
@@ -55,7 +55,10 @@ function getFromArgument()
 
     $pollingInterval = getopt(null, ["pollingInterval:"]);
 
-    if (!$pollingInterval) {
+    if ($pollingInterval) {
+        $configArray["pollingInterval"] = $pollingInterval["pollingInterval"];
+    }
+    else{
         $configArray['pollingInterval'] = FlagshipConstant::REQUEST_TIME_OUT * 1000;
         fwrite(
             STDERR,
@@ -63,7 +66,7 @@ function getFromArgument()
         );
     }
 
-    if (!is_numeric($pollingInterval)) {
+    if (!is_numeric($configArray["pollingInterval"])) {
         $configArray['pollingInterval'] = FlagshipConstant::REQUEST_TIME_OUT * 1000;
         fwrite(
             STDERR,
@@ -71,9 +74,11 @@ function getFromArgument()
         );
     }
 
-
     $bucketingDirectoryPath = getopt(null, ["bucketingPath:"]);
-    if (!$bucketingDirectoryPath) {
+    if ($bucketingDirectoryPath) {
+        $configArray['bucketingDirectory'] = $bucketingDirectoryPath;
+    }
+    else{
         $configArray['bucketingDirectory'] = null;
         fwrite(
             STDERR,

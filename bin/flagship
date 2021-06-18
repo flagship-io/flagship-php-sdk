@@ -12,128 +12,145 @@ function startPolling($envId, $pollingInterval, $bucketingDirectory = null, $con
     $bucketingPolling = new BucketingPolling($envId, $pollingInterval, new HttpClient(), $bucketingDirectory, $configFile);
     $bucketingPolling->startPolling();
 }
-$isRunning =  getenv('FLAGSHIP-DOCKER');
 
-if ($isRunning){
-    $envId = getenv('FLAGSHIP_ENV_ID');
-    if (!$envId){
-        fwrite(
-            STDERR,
-            "FLAGSHIP_ENV_ID field is missing" . PHP_EOL
-        );
-        die(1);
+function getParams()
+{
+    $fileArgument = getopt(null, ["file:"]);
+
+    if ($fileArgument['file']) {
+        $fileConfig = $fileArgument['file'];
     }
 
-    $pollingInterval = getenv('FLAGSHIP_POLLING_INTERVAL');
-
-    if (!$pollingInterval){
-        $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT * 1000;
-        fwrite(
-            STDERR,
-            "FLAGSHIP_POLLING_INTERVAL field is missing default value will be used 2000ms" . PHP_EOL
-        );
+    if (!$fileConfig) {
+        $fileConfig = 'flagship.json';
     }
 
-    $bucketingDirectory = getenv('FLAGSHIP_BUCKETING_DIRECTORY');
-
-    if (!$bucketingDirectory){
-        fwrite(
-            STDERR,
-            "FLAGSHIP_BUCKETING_DIRECTORY field is missing default value will be used" . PHP_EOL
-        );
+    if (file_exists($fileConfig)) {
+        return getFromConfigFile($fileConfig);
     }
 
-    $configFile = getenv('FLAGSHIP_CONFIG_FILE');
-
-    if (!$configFile){
-        fwrite(
-            STDERR,
-            "FLAGSHIP_CONFIG_FILE field is missing" . PHP_EOL
-        );
+    $configArray = getFromArgument();
+    if ($configArray) {
+        return $configArray;
     }
-
-    startPolling($envId, $pollingInterval, $bucketingDirectory, $configFile);
-
-    die(0);
-}
-
-$fileConfig = null;
-
-// argument --file=flagship.json
-if (isset($argv[1])) {
-   $fileArgument = getopt(null, ["file:"]);
-
-   if (isset($fileArgument['file'])){
-       $fileConfig =$fileArgument['file'];
-   }
-}
-
-if (!$fileConfig){
-    $fileConfig = 'flagship.json';
-}
-
-if (!file_exists($fileConfig)){
     fwrite(
         STDERR,
         "flagship config file not found" . PHP_EOL
     );
-    die(1);
+    return null;
 }
 
-$fileContent = file_get_contents($fileConfig);
+function getFromArgument()
+{
+    $envId = getopt(null, ["envId:"]);
+    if (!$envId) {
+        fwrite(
+            STDERR,
+            "envId argument is required" . PHP_EOL
+        );
+        return null;
+    }
+    $configArray = [];
+    $configArray['envId'] = $envId['envId'];
 
-$configArray = json_decode($fileContent, true);
+    $pollingInterval = getopt(null, ["pollingInterval:"]);
 
-if (!$configArray){
-    fwrite(
-        STDERR,
-        "flagship config malformed" . PHP_EOL
-    );
-    die(1);
+    if (!$pollingInterval) {
+        $configArray['pollingInterval'] = FlagshipConstant::REQUEST_TIME_OUT * 1000;
+        fwrite(
+            STDERR,
+            "pollingInterval field is missing, default value will be used 2000ms" . PHP_EOL
+        );
+    }
+
+    if (!is_numeric($pollingInterval)) {
+        $configArray['pollingInterval'] = FlagshipConstant::REQUEST_TIME_OUT * 1000;
+        fwrite(
+            STDERR,
+            "pollingInterval is not numeric, default value will be used 2000ms" . PHP_EOL
+        );
+    }
+
+
+    $bucketingDirectoryPath = getopt(null, ["bucketingPath:"]);
+    if (!$bucketingDirectoryPath) {
+        $configArray['bucketingDirectory'] = null;
+        fwrite(
+            STDERR,
+            "bucketingDirectory field is missing default value will be used" . PHP_EOL
+        );
+    }
+
+    return $configArray;
 }
 
-if (!isset($configArray['envId'])){
-    fwrite(
-        STDERR,
-        "envId field is missing" . PHP_EOL
-    );
-    die(1);
+/**
+ * @param $filePath
+ * @return mixed|null
+ */
+function getFromConfigFile($filePath)
+{
+    $fileContent = file_get_contents($filePath);
+
+    $configArray = json_decode($fileContent, true);
+
+    if (!$configArray || !is_array($configArray)) {
+        fwrite(
+            STDERR,
+            "flagship config malformed" . PHP_EOL
+        );
+
+        return null;
+    }
+
+    $configArray["fileConfigPath"] = $filePath;
+
+    if (!isset($configArray['envId'])) {
+        fwrite(
+            STDERR,
+            "envId field is missing" . PHP_EOL
+        );
+        return null;
+    }
+
+    if (!isset($configArray['pollingInterval'])) {
+
+        $configArray['pollingInterval'] = FlagshipConstant::REQUEST_TIME_OUT * 1000;
+
+        fwrite(
+            STDERR,
+            "pollingInterval field is missing, default value will be used 2000ms" . PHP_EOL
+        );
+    }
+
+    if (!is_numeric($configArray['pollingInterval'])) {
+        $configArray['pollingInterval'] = FlagshipConstant::REQUEST_TIME_OUT * 1000;
+        fwrite(
+            STDERR,
+            "pollingInterval is not numeric, default value will be used 2000ms" . PHP_EOL
+        );
+    }
+
+
+    if (!isset($configArray['bucketingDirectory'])) {
+        $configArray['bucketingDirectory'] = null;
+        fwrite(
+            STDERR,
+            "bucketingDirectory field is missing default value will be used" . PHP_EOL
+        );
+    }
+    return $configArray;
 }
 
-$pollingInterval = null;
-
-if (!isset($configArray['pollingInterval'])){
-
-    $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT * 1000;
-
-    fwrite(
-        STDERR,
-        "pollingInterval field is missing, default value will be used 2000ms" . PHP_EOL
-    );
-}
-
-if (!is_numeric($configArray['pollingInterval'])){
-    $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT * 1000;
-    fwrite(
-        STDERR,
-        "pollingInterval is not numeric, default value will be used 2000ms" . PHP_EOL
-    );
-}
-
-
-if (!isset($configArray['bucketingDirectory'])){
-    $configArray['bucketingDirectory']=null;
-    fwrite(
-        STDERR,
-        "bucketingDirectory field is missing default value will be used" . PHP_EOL
-    );
-}
+$configArray = getParams();
 
 $envId = $configArray['envId'];
 $bucketingDirectory = $configArray['bucketingDirectory'];
+$pollingInterval = $configArray['pollingInterval'];
 
-if (!$pollingInterval){
-    $pollingInterval = $configArray['pollingInterval'];
+$fileConfig = null;
+
+if (isset($configArray["fileConfigPath"])){
+    $fileConfig = $configArray["fileConfigPath"];
 }
-
 startPolling($envId, $pollingInterval, $bucketingDirectory, $fileConfig);

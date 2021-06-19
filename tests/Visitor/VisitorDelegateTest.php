@@ -125,47 +125,6 @@ class VisitorDelegateTest extends TestCase
             );
         $visitorDelegate->setVisitorId('');
     }
-
-    public function testGetRealVisitorIp()
-    {
-        $config = new DecisionApiConfig();
-        $visitorId = "visitor_id";
-
-        $configManager = (new ConfigManager())->setConfig($config);
-
-        //Test HTTP_X_REAL_IP
-        $Ip = "127.0.0.1";
-        putenv("HTTP_X_REAL_IP=$Ip");
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
-        $context = $visitorDelegate->getContext();
-        $this->assertSame($Ip, $context["sdk_ip"]);
-        putenv("HTTP_X_REAL_IP");
-
-        //HTTP_CLIENT_IP
-        $Ip = "127.0.0.2";
-        putenv("HTTP_CLIENT_IP=$Ip");
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
-        $context = $visitorDelegate->getContext();
-        $this->assertSame($Ip, $context["sdk_ip"]);
-        putenv("HTTP_CLIENT_IP");
-
-        //HTTP_X_FORWARDED_FOR
-        $Ip = "127.0.0.3";
-        putenv("HTTP_X_FORWARDED_FOR=$Ip");
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
-        $context = $visitorDelegate->getContext();
-        $this->assertSame($Ip, $context["sdk_ip"]);
-        putenv("HTTP_X_FORWARDED_FOR");
-
-        //REMOTE_ADDR
-        $Ip = "127.0.0.4";
-        putenv("REMOTE_ADDR=$Ip");
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId);
-        $context = $visitorDelegate->getContext();
-        $this->assertSame($Ip, $context["sdk_ip"]);
-        putenv("REMOTE_ADDR");
-    }
-
     public function testMethods()
     {
         $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
@@ -200,7 +159,6 @@ class VisitorDelegateTest extends TestCase
 
         $defaultContext = [
             FlagshipContext::OS_NAME => PHP_OS,
-            FlagshipContext::DEVICE_TYPE => "server"
         ];
 
         //test SetContext

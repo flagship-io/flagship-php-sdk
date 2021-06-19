@@ -43,41 +43,11 @@ class VisitorDelegate extends VisitorAbstract
         }
     }
 
-    private function getRealVisitorIp()
-    {
-        $realIp = getenv('HTTP_X_REAL_IP');
-        $clientIp = getenv('HTTP_CLIENT_IP');
-        $forwardedIp = getenv('HTTP_X_FORWARDED_FOR');
-
-        switch (true) {
-            case (!empty($realIp)):
-                $ip = $realIp;
-                break;
-            case (!empty($clientIp)):
-                $ip =  $clientIp;
-                break;
-            case (!empty($forwardedIp)):
-                $ip =  $forwardedIp;
-                break;
-            default:
-                $ip = getenv('REMOTE_ADDR');
-                break;
-        }
-        return $ip;
-    }
-
     private function loadPredefinedContext()
     {
         $defaultContext = [
             FlagshipContext::OS_NAME => PHP_OS,
-            FlagshipContext::DEVICE_TYPE => "server"
         ];
-
-        $ip = $this->getRealVisitorIp();
-        if ($ip) {
-            $defaultContext [FlagshipContext::IP] = $ip;
-        }
-
         $this->updateContextCollection($defaultContext);
 
         $this->context[FlagshipConstant::FS_CLIENT] = FlagshipConstant::SDK_LANGUAGE;

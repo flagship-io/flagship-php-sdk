@@ -161,6 +161,4 @@ $fileConfig = null;
 if (isset($configArray["fileConfigPath"])){
     $fileConfig = $configArray["fileConfigPath"];
 }
-
-var_dump($configArray);
 startPolling($envId, $pollingInterval, $bucketingDirectory, $fileConfig);

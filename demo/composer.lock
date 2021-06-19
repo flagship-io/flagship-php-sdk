@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/flagship-io/flagship-php-sdk.git",
-                "reference": "9722c72995c364e318ed6f4a003289fd1d627711"
+                "reference": "54233899ffe26a2d0c0512ea60d0f114f03fe6fb"
             },
             "require": {
                 "ext-curl": "*",
@@ -64,7 +64,7 @@
                 "flagship-php",
                 "sdk"
             ],
-            "time": "2021-06-18T21:17:30+00:00"
+            "time": "2021-06-19T12:19:48+00:00"
         },
         {
             "name": "psr/log",

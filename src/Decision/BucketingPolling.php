@@ -99,6 +99,7 @@ class BucketingPolling
                     STDERR,
                     $exception->getMessage() . PHP_EOL
                 );
+                sleep($this->pollingInterval / 1000);
             }
         } while ($condition);
     }

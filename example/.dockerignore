@@ -3,4 +3,3 @@ vendor
 reports
 storage/logs/*
 storage/framework/sessions/*
-storage/app/flagship

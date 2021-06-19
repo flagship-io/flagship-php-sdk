@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+cd .. & vendor/bin/flagship --config=storage/app/flagship/flagship.json

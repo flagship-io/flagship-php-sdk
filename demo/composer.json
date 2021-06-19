@@ -17,6 +17,6 @@
     }
   ],
   "require": {
-    "flagship-io/flagship-php-sdk": "dev-feature/sdk_v2"
+    "flagship-io/flagship-php-sdk": "dev-qa"
   }
 }

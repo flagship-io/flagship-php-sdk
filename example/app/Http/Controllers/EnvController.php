@@ -12,6 +12,7 @@ use Flagship\Flagship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
 
 class EnvController extends Controller
 {
@@ -36,7 +37,8 @@ class EnvController extends Controller
                 'api_key' => 'required',
                 'timeout' => 'required|numeric',
                 'bucketing' => ['nullable', new TypeCheck('bool')],
-                'polling_interval' => 'numeric'
+                'polling_interval' => 'numeric',
+                "bucketing_path" => "nullable|string"
             ]);
 
             $bucketing = false;
@@ -60,6 +62,19 @@ class EnvController extends Controller
             $config->setLogManager($logManager);
 
             Flagship::start($config->getEnvId(), $config->getApiKey(), $config);
+
+            $configArray = [
+                "envId" => $data["environment_id"],
+            ];
+
+            if (!empty($data['bucketing_path'])) {
+                $configArray['bucketingPath'] = $data['bucketing_path'];
+            }
+            if (!isset($data['polling_interval']) || $data['polling_interval'] == 0) {
+                $configArray["pollingInterval"] = 2000;
+            }
+
+            Storage::put("flagship/flagship.json", json_encode($configArray));
 
             $request->session()->put('flagshipConfig', $config);
             return response()->json($this->getEnvJson($config));

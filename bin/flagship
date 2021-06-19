@@ -76,10 +76,10 @@ function getFromArgument()
 
     $bucketingDirectoryPath = getopt(null, ["bucketingPath:"]);
     if ($bucketingDirectoryPath) {
-        $configArray['bucketingDirectory'] = $bucketingDirectoryPath["bucketingPath"];
+        $configArray['bucketingPath'] = $bucketingDirectoryPath["bucketingPath"];
     }
     else{
-        $configArray['bucketingDirectory'] = null;
+        $configArray['bucketingPath'] = null;
         fwrite(
             STDERR,
             "bucketingDirectory field is missing default value will be used" . PHP_EOL
@@ -137,8 +137,8 @@ function getFromConfigFile($filePath)
     }
 
 
-    if (!isset($configArray['bucketingDirectory'])) {
-        $configArray['bucketingDirectory'] = null;
+    if (!isset($configArray['bucketingPath'])) {
+        $configArray['bucketingPath'] = null;
         fwrite(
             STDERR,
             "bucketingDirectory field is missing default value will be used" . PHP_EOL
@@ -153,7 +153,7 @@ if (!$configArray){
     die(1);
 }
 $envId = $configArray['envId'];
-$bucketingDirectory = $configArray['bucketingDirectory'];
+$bucketingDirectory = $configArray['bucketingPath'];
 $pollingInterval = $configArray['pollingInterval'];
 
 $fileConfig = null;

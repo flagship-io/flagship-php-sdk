@@ -61,7 +61,6 @@ class NotReadyStrategyTest extends TestCase
         $this->assertSame([
 
             "sdk_osName" => PHP_OS,
-            "sdk_deviceType" => "server",
             FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
             FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
             FlagshipConstant::FS_USERS => $visitorId,
@@ -73,7 +72,6 @@ class NotReadyStrategyTest extends TestCase
 
         $this->assertSame([
             "sdk_osName" => PHP_OS,
-            "sdk_deviceType" => "server",
             FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
             FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
             FlagshipConstant::FS_USERS => $visitorId,

@@ -61,7 +61,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     }
 
     /**
-     * Return True or False if the visitor has consented for private data usage.
+     * Return True if the visitor has consented for private data usage, otherwise return False.
      * @return bool
      */
     public function hasConsented()
@@ -72,10 +72,12 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * Set if visitor has consented for private data usage.
      * @param bool $hasConsented True if the visitor has consented false otherwise.
+     * @return $this
      */
     public function setConsent($hasConsented)
     {
         $this->getVisitorDelegate()->setConsent($hasConsented);
+        return $this;
     }
 
     /**

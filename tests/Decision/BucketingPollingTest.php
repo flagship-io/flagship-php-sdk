@@ -95,7 +95,7 @@ class BucketingPollingTest extends TestCase
                           "pollingInterval": 2000,
                           "timeout": 0,
                           "logLevel": 9,
-                          "bucketingDirectory": "flagship"
+                          "bucketingPath": "flagship"
                         }';
 
         $bucketingPolling->startPolling();

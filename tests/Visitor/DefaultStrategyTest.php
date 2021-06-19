@@ -200,7 +200,7 @@ class DefaultStrategyTest extends TestCase
             'gender' => 'F'
         ];
         $defaultStrategy->updateContextCollection($newVisitorContext);
-        $this->assertCount(9, $visitor->getContext());
+        $this->assertCount(8, $visitor->getContext());
 
         //Test without Key
 
@@ -209,7 +209,7 @@ class DefaultStrategyTest extends TestCase
         ];
 
         $defaultStrategy->updateContextCollection($newVisitorContext);
-        $this->assertCount(9, $visitor->getContext());
+        $this->assertCount(8, $visitor->getContext());
     }
 
     public function testClearContext()
@@ -225,7 +225,7 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $this->assertCount(7, $visitor->getContext());
+        $this->assertCount(6, $visitor->getContext());
 
         $defaultStrategy->clearContext();
 

@@ -65,8 +65,8 @@ class BucketingPolling
             ) {
                 $this->pollingInterval = $configArray['pollingInterval'];
             }
-            if (!empty($configArray['bucketingDirectory'])) {
-                $this->bucketingDirectory = $this->getBucketingDirectory($configArray['bucketingDirectory']);
+            if (!empty($configArray['bucketingPath'])) {
+                $this->bucketingDirectory = $this->getBucketingDirectory($configArray['bucketingPath']);
             }
         }
     }

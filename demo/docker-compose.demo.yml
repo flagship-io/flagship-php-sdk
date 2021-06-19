@@ -11,14 +11,12 @@ services:
     image: flagship-io-polling/flagship-php-sdk:php-7.4
     container_name: app-polling
     tty: true
+    env_file:
+      - ./.env
     environment:
       SERVICE_NAME: app-polling
       SERVICE_TAGS: dev
       XDEBUG_MODE: coverage
-      FLAGSHIP-DOCKER: 1
-      FLAGSHIP_ENV_ID: ENV_KEY
-      FLAGSHIP_POLLING_INTERVAL: 5000
-      FLAGSHIP_BUCKETING_DIRECTORY: myBucketingDirectory
     volumes:
       - bucketing-file:/home/app/myBucketingDirectory
     working_dir: /home/app
@@ -32,15 +30,12 @@ services:
     image: flagship-io-demo/flagship-php-sdk:php-7.4
     container_name: app-demo
     tty: true
+    env_file:
+      - ./.env
     environment:
       SERVICE_NAME: app-demo
       SERVICE_TAGS: dev
       XDEBUG_MODE: coverage
-      FLAGSHIP-DOCKER: 1
-      FLAGSHIP_ENV_ID: ENV_ID
-      FLAGSHIP_API_KEY: API_KEY
-      FLAGSHIP_POLLING_INTERVAL: 5000
-      FLAGSHIP_BUCKETING_DIRECTORY: myBucketingDirectory
     volumes:
       - bucketing-file:/home/app/myBucketingDirectory
     working_dir: /home/app

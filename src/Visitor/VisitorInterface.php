@@ -80,8 +80,12 @@ interface VisitorInterface
     public function getModificationInfo($key);
 
     /**
-     * This function calls the decision api and update all the campaigns modifications
-     * from the server according to the visitor context.
+     * In DecisionApi Mode this function calls the Flagship Decision API to run
+     * campaign assignments according to the current user context
+     * and retrieve applicable modifications. <br/>
+     * In bucketing Mode, it checks bucketing file,
+     * validates campaigns targeting the visitor,
+     * assigns a variation and retrieve applicable modifications
      * @return void
      */
     public function synchronizedModifications();

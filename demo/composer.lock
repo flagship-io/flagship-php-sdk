@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba5d3772ebd550d77af931714820247e",
+    "content-hash": "29787bcd44d2670666541116d7c64a19",
     "packages": [
         {
             "name": "flagship-io/flagship-php-sdk",
             "version": "dev-feature/sdk_v2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/flagship-io/flagship-php-sdk-dev.git",
-                "reference": "7f696b464ad731b584e8198d17924b212d793140"
+                "url": "https://github.com/flagship-io/flagship-php-sdk.git",
+                "reference": "9722c72995c364e318ed6f4a003289fd1d627711"
             },
             "require": {
                 "ext-curl": "*",
@@ -50,9 +50,21 @@
                 ]
             },
             "license": [
-                "MIT"
+                "Apache-2.0"
             ],
-            "time": "2021-06-04T17:34:21+00:00"
+            "authors": [
+                {
+                    "name": "Flagship.io"
+                }
+            ],
+            "description": "Flagship PHP SDK",
+            "homepage": "https://github.com/flagship-io/flagship-php-sdk",
+            "keywords": [
+                "flagship",
+                "flagship-php",
+                "sdk"
+            ],
+            "time": "2021-06-18T21:17:30+00:00"
         },
         {
             "name": "psr/log",
@@ -113,9 +125,7 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {
-        "php": "^7.3|^8.0"
-    },
+    "platform": [],
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
 }

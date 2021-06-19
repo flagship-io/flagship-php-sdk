@@ -4,5 +4,5 @@
   "pollingInterval": 5000,
   "timeout": 2000,
   "logLevel": 9,
-  "bucketingDirectory": ""
+  "bucketingPath": "myDirectory"
 }

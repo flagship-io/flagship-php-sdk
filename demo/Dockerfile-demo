@@ -17,7 +17,7 @@ RUN composer config -g github-oauth.github.com ${GITHUB_TOKEN}
 
 RUN composer install
 
-CMD ["php","index.php"]
+CMD ["php","script1.php"]
 
 
 

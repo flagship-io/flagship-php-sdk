@@ -5,6 +5,7 @@ namespace Flagship\Assets {
     class File
     {
         public static $fileExist = false;
+        public static $isDir = false;
         public static $fileContent = null;
         public static $fileName = null;
         public static $fwriteData = null;
@@ -19,6 +20,11 @@ namespace Flagship\Decision{
     function file_exists($filename)
     {
         return File::$fileExist;
+    }
+
+    function is_dir($filename)
+    {
+        return File::$isDir;
     }
 
     function file_get_contents($filename)

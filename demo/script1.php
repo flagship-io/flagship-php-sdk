@@ -25,10 +25,10 @@ Flagship::start($envId, $apiKey, $config);
 
 $visitor_Id = "visitor_1";
 $context = [
-    "isPhp" => true
+    "age" => 21
 ];
 
-$visitor = Flagship::newVisitor($visitor_Id, $context);
+$visitor = Flagship::newVisitor($visitor_Id, false, $context);
 while (true) {
     echo "============================================================" . PHP_EOL;
     echo 'visitor context';

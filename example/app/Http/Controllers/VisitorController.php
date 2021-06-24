@@ -36,7 +36,7 @@ class VisitorController extends Controller
                 "visitor_id" => "string|required",
                 "context" => 'array'
             ]);
-            $visitor = Flagship::newVisitor($data['visitor_id'], $data['context']);
+            $visitor = Flagship::newVisitor($data['visitor_id'], false, $data['context']);
 
             $visitor->synchronizedModifications();
 

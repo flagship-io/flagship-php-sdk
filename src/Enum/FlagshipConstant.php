@@ -35,7 +35,7 @@ class FlagshipConstant
     /**
      * SDK version
      */
-    const SDK_VERSION = "v1";
+    const SDK_VERSION = "v2";
 
     //Message Error
     const INITIALIZATION_PARAM_ERROR = "Params 'envId' and 'apiKey' must not be null or empty.";

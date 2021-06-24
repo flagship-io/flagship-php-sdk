@@ -120,15 +120,44 @@ class FlagshipConfigTest extends TestCase
         $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
     }
 
-    public function testSetStatusChangedCallable()
+    public function testSetStatusChangedCallback()
     {
+        $logManagerMock = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            '',
+            false,
+            true,
+            true,
+            ['error', 'info']
+        );
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $logManagerMock->expects($this->once())
+            ->method('error')
+            ->with(
+                "[$flagshipSdk] " .
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, []),
+                [
+                    FlagshipConstant::TAG => "setStatusChangedCallback"
+                ]
+            );
+
         $config = new DecisionApiConfig();
-        $this->assertNull($config->getStatusChangedCallable());
+
+        $config->setLogManager($logManagerMock);
+
+        $this->assertNull($config->getStatusChangedCallback());
+
+        $config->setStatusChangedCallback([]);
+
+        $this->assertNull($config->getStatusChangedCallback());
+
         $callable = function () {
         };
-        $config->setStatusChangedCallable($callable);
+        $config->setStatusChangedCallback($callable);
 
-        $this->assertSame($callable, $config->getStatusChangedCallable());
+        $this->assertSame($callable, $config->getStatusChangedCallback());
     }
 
     public function testJson()

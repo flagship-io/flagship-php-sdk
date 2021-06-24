@@ -104,7 +104,7 @@ class ApiManagerTest extends TestCase
             echo $status;
         };
 
-        $manager->setStatusChangedCallable($statusCallback);
+        $manager->setStatusChangedCallback($statusCallback);
         $configManager = (new ConfigManager())->setConfig($config);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
@@ -154,7 +154,7 @@ class ApiManagerTest extends TestCase
             echo $status;
         };
 
-        $manager->setStatusChangedCallable($statusCallback);
+        $manager->setStatusChangedCallback($statusCallback);
 
         $this->assertFalse($manager->getIsPanicMode());
         $configManager = (new ConfigManager())->setConfig($config);

@@ -13,7 +13,7 @@ $bucketingDirectory = getenv("FLAGSHIP_BUCKETING_DIRECTORY");
 $config = new BucketingConfig();
 
 
-$config->setStatusChangedCallable(function ($status) {
+$config->setStatusChangedCallback(function ($status) {
     if ($status === FlagshipStatus::READY) {
         echo "SDK is ready";
     }

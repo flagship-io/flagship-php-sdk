@@ -38,19 +38,19 @@ class EnvController extends Controller
                 'timeout' => 'required|numeric',
                 'bucketing' => ['nullable', new TypeCheck('bool')],
                 'polling_interval' => 'numeric',
-                "bucketing_path" => "nullable|string"
             ]);
 
             $bucketing = false;
             if (isset($data['bucketing'])) {
                 $bucketing = $typeCast->castToType($data['bucketing'], 'bool');
             }
-
+            $bucketingPath = "storage/app/flagship";
             if ($bucketing) {
                 $config = new BucketingConfig($data['environment_id'], $data["api_key"]);
                 if (isset($data['polling_interval'])) {
                     $config->setPollingInterval($data['polling_interval']);
                 }
+                $config->setBucketingDirectoryPath($bucketingPath);
             } else {
                 $config = new DecisionApiConfig($data['environment_id'], $data["api_key"]);
             }
@@ -65,17 +65,13 @@ class EnvController extends Controller
 
             $configArray = [
                 "envId" => $data["environment_id"],
+                "bucketingPath" => $bucketingPath
             ];
 
-            if (!empty($data['bucketing_path'])) {
-                $configArray['bucketingPath'] = $data['bucketing_path'];
-            }
             if (!isset($data['polling_interval']) || $data['polling_interval'] == 0) {
                 $configArray["pollingInterval"] = 2000;
             }
-
             Storage::put("flagship/flagship.json", json_encode($configArray));
-
             $request->session()->put('flagshipConfig', $config);
             return response()->json($this->getEnvJson($config));
         } catch (ValidationException $exception) {

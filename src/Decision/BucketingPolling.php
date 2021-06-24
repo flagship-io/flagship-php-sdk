@@ -86,7 +86,7 @@ class BucketingPolling
 
                 $bucketingFile = $this->bucketingDirectory . "/bucketing.json";
 
-                if (!is_dir($bucketingFile)) {
+                if (!is_dir($this->bucketingDirectory)) {
                     mkdir($this->bucketingDirectory, 0777, true);
                 }
                 if ($response->getBody()) {

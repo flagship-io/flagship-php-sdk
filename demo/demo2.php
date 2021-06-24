@@ -3,19 +3,19 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Flagship\Config\BucketingConfig;
+use Flagship\Enum\FlagshipStatus;
 use Flagship\Flagship;
 
 $envId = getenv('FLAGSHIP_ENV_ID');
 $apiKey = getenv('FLAGSHIP_API_KEY');
 $bucketingDirectory = getenv("FLAGSHIP_BUCKETING_DIRECTORY");
 
-$config = new \Flagship\Config\DecisionApiConfig();
-$config = new \Flagship\Config\BucketingConfig();
+$config = new BucketingConfig();
 
 $onStatusChanged =
 
-$config->setStatusChangedCallable(function ($status) {
-    if ($status === \Flagship\Enum\FlagshipStatus::READY) {
+$config->setStatusChangedCallback(function ($status) {
+    if ($status === FlagshipStatus::READY) {
         echo "SDK is ready";
     }
 });

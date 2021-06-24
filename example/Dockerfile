@@ -8,11 +8,6 @@ RUN apk add php7-xml php7-simplexml php7-session php7-tokenizer php7-openssl
 
 COPY . /var/www/html
 
-COPY ./process/apache_process /var/www/html/apache_process
-COPY ./process/polling_process /var/www/html/polling_process
-COPY ./start_processes.sh /var/www/html/start_processes.sh
-
-
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -22,9 +17,6 @@ ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_PID_FILE /var/run/apache2/apache2.pid
 
 RUN chown -R www-data:www-data /var/www/html
-RUN chmod +x /var/www/html/start_processes.sh
-RUN chmod +x /var/www/html/polling_process
-RUN chmod +x /var/www/html/apache_process
 RUN chmod -R 777 /var/www/html/storage
 
 RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/apache2/httpd.conf
@@ -47,5 +39,5 @@ VOLUME /var/www/html/storage
 
 EXPOSE 80
 
-CMD sh start_processes.sh
+CMD /usr/sbin/httpd -DFOREGROUND
 

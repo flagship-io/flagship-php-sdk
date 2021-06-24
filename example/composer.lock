@@ -372,7 +372,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/flagship-io/flagship-php-sdk.git",
-                "reference": "614c0c9be04c17d4216396b6303943d458fe5f46"
+                "reference": "2121e7368e1ae3a0135acd63f79620c49cb63f63"
             },
             "require": {
                 "ext-curl": "*",
@@ -424,7 +424,7 @@
                 "flagship-php",
                 "sdk"
             ],
-            "time": "2021-06-24T09:20:53+00:00"
+            "time": "2021-06-24T11:02:35+00:00"
         },
         {
             "name": "graham-campbell/result-type",

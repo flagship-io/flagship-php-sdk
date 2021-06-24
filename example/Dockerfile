@@ -35,8 +35,6 @@ RUN cp .env.example /var/www/html/.env
 
 RUN composer install
 
-VOLUME /var/www/html/storage
-
 EXPOSE 80
 
 CMD /usr/sbin/httpd -DFOREGROUND

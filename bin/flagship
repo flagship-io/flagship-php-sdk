@@ -17,7 +17,7 @@ function getParams()
 {
     $fileArgument = getopt(null, ["config:"]);
 
-    if ($fileArgument['config']) {
+    if (!empty($fileArgument['config'])) {
         $fileConfig = $fileArgument['config'];
     }
 

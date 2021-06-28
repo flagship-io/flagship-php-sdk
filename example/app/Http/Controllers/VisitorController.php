@@ -34,9 +34,13 @@ class VisitorController extends Controller
         try {
             $data = $this->validate($request, [
                 "visitor_id" => "string|required",
+                "consent" => 'required|boolean',
                 "context" => 'array'
             ]);
+
             $visitor = Flagship::newVisitor($data['visitor_id'], false, $data['context']);
+
+            $visitor->setConsent($data['consent']);
 
             $visitor->synchronizedModifications();
 

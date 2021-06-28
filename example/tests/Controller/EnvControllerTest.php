@@ -19,6 +19,7 @@ class EnvControllerTest extends TestCase
             "polling_interval" => 0
         ];
         $this->put('/env', $data);
+        $data["polling_interval"] = null;
         $this->assertJsonStringEqualsJsonString(json_encode($data), $this->response->getContent());
 
         $data = [
@@ -57,6 +58,7 @@ class EnvControllerTest extends TestCase
         ];
         $this->put('/env', $data);
         $this->get('/env');
+        $data["polling_interval"] = null;
         $this->assertJsonStringEqualsJsonString(json_encode($data), $this->response->getContent());
     }
 }

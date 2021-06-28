@@ -26,14 +26,16 @@ class VisitorControllerTest extends TestCase
 
     public function testUpdate()
     {
-        $data = $this->startFlagShip();
+        $this->startFlagShip();
         $visitorId = "visitor_id";
         $context = [
             "age" => 20
         ];
 
+
         $this->put('/visitor', [
             'visitor_id' => $visitorId,
+            'consent' => false,
             'context' => $context,
         ]);
 
@@ -41,10 +43,22 @@ class VisitorControllerTest extends TestCase
 
         $this->put('/visitor', [
             'context' => $context,
+            'consent' => false,
         ]);
 
         $this->assertJsonStringEqualsJsonString(
             json_encode($this->formatError(["visitor_id" => ["The visitor id field is required."]])),
+            $this->response->getContent()
+        );
+
+
+        $this->put('/visitor', [
+            'visitor_id' => $visitorId,
+            'context' => $context,
+        ]);
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($this->formatError(["consent" => ["The consent field is required."]])),
             $this->response->getContent()
         );
     }

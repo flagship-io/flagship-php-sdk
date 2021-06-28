@@ -88,7 +88,7 @@ class EnvController extends Controller
             "api_key" => $config->getApiKey(),
             "timeout" => $config->getTimeOut(),
             "bucketing" => $config instanceof  BucketingConfig,
-            "polling_interval" => $config instanceof  BucketingConfig ? $config->getPollingInterval() : 0,
+            "polling_interval" => $config instanceof  BucketingConfig ? $config->getPollingInterval() : null,
         ];
     }
 }

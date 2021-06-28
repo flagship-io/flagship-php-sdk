@@ -47,7 +47,7 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @var callable
      */
-    private $statusChangedCallable;
+    private $statusChangedCallback;
 
 
     /**
@@ -74,7 +74,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * Specify the environment id provided by Flagship, to use.
      *
      * @param string $envId environment id.
-     * @return FlagshipConfig
+     * @return $this
      */
     public function setEnvId($envId)
     {
@@ -94,7 +94,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * Specify the secure api key provided by Flagship, to use.
      *
      * @param string $apiKey secure api key.
-     * @return FlagshipConfig
+     * @return $this
      */
     public function setApiKey($apiKey)
     {
@@ -115,7 +115,7 @@ abstract class FlagshipConfig implements JsonSerializable
      *
      * @param int $decisionMode decision mode value e.g DecisionMode::DECISION_API
      * @see \Flagship\Enum\DecisionMode Enum Decision mode
-     * @return FlagshipConfig
+     * @return $this
      */
     protected function setDecisionMode($decisionMode)
     {
@@ -137,7 +137,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * Specify timeout for api request.
      *
      * @param int $timeout : Milliseconds for connect and read timeouts. Default is 2000ms.
-     * @return FlagshipConfig
+     * @return $this
      */
     public function setTimeout($timeout)
     {
@@ -160,7 +160,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * Specify a custom implementation of LogManager in order to receive logs from the SDK.
      *
      * @param LoggerInterface $logManager custom implementation of LogManager.
-     * @return FlagshipConfig
+     * @return $this
      */
     public function setLogManager(LoggerInterface $logManager)
     {
@@ -180,7 +180,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * Set the maximum log level to display
      * @see \Flagship\Enum\LogLevel Loglevel enum list
      * @param int $logLevel
-     * @return FlagshipConfig
+     * @return $this
      */
     public function setLogLevel($logLevel)
     {
@@ -195,20 +195,28 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @return callable
      */
-    public function getStatusChangedCallable()
+    public function getStatusChangedCallback()
     {
-        return $this->statusChangedCallable;
+        return $this->statusChangedCallback;
     }
 
     /**
      * Define a callable in order to get callback when the SDK status has changed.
-     * @param callable $statusChangedCallable callback
-     * @return FlagshipConfig
+     * @param callable $statusChangedCallback callback
+     * @return $this
      */
-    public function setStatusChangedCallable($statusChangedCallable)
+    public function setStatusChangedCallback($statusChangedCallback)
     {
-        if (is_callable($statusChangedCallable)) {
-            $this->statusChangedCallable = $statusChangedCallable;
+        if (is_callable($statusChangedCallback)) {
+            $this->statusChangedCallback = $statusChangedCallback;
+        } else {
+            $this->logError(
+                $this,
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, $statusChangedCallback),
+                [
+                    FlagshipConstant::TAG => __FUNCTION__
+                ]
+            );
         }
         return $this;
     }

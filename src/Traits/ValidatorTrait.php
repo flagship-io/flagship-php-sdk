@@ -52,6 +52,9 @@ trait ValidatorTrait
     protected function checkFlagshipContext($key, $value, FlagshipConfig $config)
     {
         if (!$this->isJsonObject($key)) {
+            if ($key == "fs_client" || $key == "fs_version" || $key == "fs_users") {
+                return null;
+            }
             return $value;
         }
 

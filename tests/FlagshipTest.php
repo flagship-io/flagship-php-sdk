@@ -231,7 +231,7 @@ class FlagshipTest extends TestCase
         $callback = function ($status) {
             echo $status;
         };
-        $config->setStatusChangedCallable($callback);
+        $config->setStatusChangedCallback($callback);
         $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
 
@@ -338,7 +338,7 @@ class FlagshipTest extends TestCase
             echo $status;
         };
 
-        $config->setStatusChangedCallable($callback);
+        $config->setStatusChangedCallback($callback);
 
         $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
@@ -428,7 +428,7 @@ class FlagshipTest extends TestCase
         $callback = function ($status) {
             echo $status;
         };
-        $config->setStatusChangedCallable($callback);
+        $config->setStatusChangedCallback($callback);
         $this->expectOutputString('14'); //Callback status STARTING then READY
         Flagship::start('envId', 'apiKey', $config);
     }

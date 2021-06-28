@@ -35,7 +35,7 @@ class FlagshipConstant
     /**
      * SDK version
      */
-    const SDK_VERSION = "v1";
+    const SDK_VERSION = "v2";
 
     //Message Error
     const INITIALIZATION_PARAM_ERROR = "Params 'envId' and 'apiKey' must not be null or empty.";
@@ -57,6 +57,7 @@ class FlagshipConstant
     const METHOD_DEACTIVATED_BUCKETING_ERROR = "Method '%s' is deactivated on Bucketing mode.";
     const FLAGSHIP_PREDEFINED_CONTEXT_ERROR = "Flagship predefined context %s must be %s";
     const FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE =  "Visitor is not authentificated yet";
+    const IS_NOT_CALLABLE_ERROR = "'%s' is not callable";
     //Messages Info
     const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";
     const FLAGSHIP_SDK = "Flagship SDK";

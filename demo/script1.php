@@ -13,7 +13,7 @@ $bucketingDirectory = getenv("FLAGSHIP_BUCKETING_DIRECTORY");
 $config = new BucketingConfig();
 
 
-$config->setStatusChangedCallable(function ($status) {
+$config->setStatusChangedCallback(function ($status) {
     if ($status === FlagshipStatus::READY) {
         echo "SDK is ready";
     }
@@ -25,10 +25,10 @@ Flagship::start($envId, $apiKey, $config);
 
 $visitor_Id = "visitor_1";
 $context = [
-    "isPhp" => true
+    "age" => 21
 ];
 
-$visitor = Flagship::newVisitor($visitor_Id, $context);
+$visitor = Flagship::newVisitor($visitor_Id, false, $context);
 while (true) {
     echo "============================================================" . PHP_EOL;
     echo 'visitor context';

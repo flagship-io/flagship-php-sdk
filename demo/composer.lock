@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29787bcd44d2670666541116d7c64a19",
+    "content-hash": "f9bab2588ddb7a99a366987a284f28ca",
     "packages": [
         {
             "name": "flagship-io/flagship-php-sdk",
-            "version": "dev-feature/sdk_v2",
+            "version": "dev-qa",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flagship-io/flagship-php-sdk.git",
-                "reference": "54233899ffe26a2d0c0512ea60d0f114f03fe6fb"
+                "reference": "579485242b81a260932212767b31d69dc9e468e8"
             },
             "require": {
                 "ext-curl": "*",
@@ -64,7 +64,7 @@
                 "flagship-php",
                 "sdk"
             ],
-            "time": "2021-06-19T12:19:48+00:00"
+            "time": "2021-06-24T14:51:49+00:00"
         },
         {
             "name": "psr/log",
@@ -127,5 +127,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }

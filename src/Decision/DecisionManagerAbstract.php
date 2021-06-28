@@ -27,7 +27,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @var callable
      */
-    private $statusChangedCallable;
+    private $statusChangedCallback;
 
     /**
      * @var FlagshipConfig
@@ -76,13 +76,13 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
 
     /**
      * Define a callable in order to get callback when the SDK status has changed.
-     * @param callable $statusChangedCallable callback
+     * @param callable $statusChangedCallback callback
      * @return DecisionManagerAbstract
      */
-    public function setStatusChangedCallable($statusChangedCallable)
+    public function setStatusChangedCallback($statusChangedCallback)
     {
-        if (is_callable($statusChangedCallable)) {
-            $this->statusChangedCallable = $statusChangedCallable;
+        if (is_callable($statusChangedCallback)) {
+            $this->statusChangedCallback = $statusChangedCallback;
         }
         return $this;
     }
@@ -107,7 +107,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
 
     protected function updateFlagshipStatus($newStatus)
     {
-        $callable = $this->statusChangedCallable;
+        $callable = $this->statusChangedCallback;
         if ($callable) {
             call_user_func($callable, $newStatus);
         }

@@ -86,7 +86,7 @@ class BucketingPolling
 
                 $bucketingFile = $this->bucketingDirectory . "/bucketing.json";
 
-                if (!file_exists($bucketingFile)) {
+                if (!is_dir($this->bucketingDirectory)) {
                     mkdir($this->bucketingDirectory, 0777, true);
                 }
                 if ($response->getBody()) {
@@ -99,6 +99,7 @@ class BucketingPolling
                     STDERR,
                     $exception->getMessage() . PHP_EOL
                 );
+                sleep($this->pollingInterval / 1000);
             }
         } while ($condition);
     }

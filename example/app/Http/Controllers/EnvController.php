@@ -12,6 +12,7 @@ use Flagship\Flagship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
 
 class EnvController extends Controller
 {
@@ -36,19 +37,20 @@ class EnvController extends Controller
                 'api_key' => 'required',
                 'timeout' => 'required|numeric',
                 'bucketing' => ['nullable', new TypeCheck('bool')],
-                'polling_interval' => 'numeric'
+                'polling_interval' => 'numeric',
             ]);
 
             $bucketing = false;
             if (isset($data['bucketing'])) {
                 $bucketing = $typeCast->castToType($data['bucketing'], 'bool');
             }
-
+            $bucketingPath = "storage/app/flagship";
             if ($bucketing) {
                 $config = new BucketingConfig($data['environment_id'], $data["api_key"]);
                 if (isset($data['polling_interval'])) {
                     $config->setPollingInterval($data['polling_interval']);
                 }
+                $config->setBucketingDirectoryPath($bucketingPath);
             } else {
                 $config = new DecisionApiConfig($data['environment_id'], $data["api_key"]);
             }
@@ -61,6 +63,15 @@ class EnvController extends Controller
 
             Flagship::start($config->getEnvId(), $config->getApiKey(), $config);
 
+            $configArray = [
+                "envId" => $data["environment_id"],
+                "bucketingPath" => $bucketingPath
+            ];
+
+            if (!isset($data['polling_interval']) || $data['polling_interval'] == 0) {
+                $configArray["pollingInterval"] = 2000;
+            }
+            Storage::put("flagship/flagship.json", json_encode($configArray));
             $request->session()->put('flagshipConfig', $config);
             return response()->json($this->getEnvJson($config));
         } catch (ValidationException $exception) {
@@ -77,7 +88,7 @@ class EnvController extends Controller
             "api_key" => $config->getApiKey(),
             "timeout" => $config->getTimeOut(),
             "bucketing" => $config instanceof  BucketingConfig,
-            "polling_interval" => $config instanceof  BucketingConfig ? $config->getPollingInterval() : 0,
+            "polling_interval" => $config instanceof  BucketingConfig ? $config->getPollingInterval() : null,
         ];
     }
 }

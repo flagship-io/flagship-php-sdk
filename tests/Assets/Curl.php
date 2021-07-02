@@ -9,6 +9,7 @@ namespace Flagship\Assets {
         public static $errorMessage = '';
         public static $curlHttpCodeInfo = '';
         public static $extension = true;
+        public static $curlHttpContentType = "application/json";
     }
 }
 
@@ -54,6 +55,10 @@ namespace Flagship\Utils {
 
     function curl_getinfo($handle, $option)
     {
-        return Curl::$curlHttpCodeInfo;
+        if ($option == CURLINFO_HTTP_CODE){
+            return Curl::$curlHttpCodeInfo;
+        }
+        return  Curl::$curlHttpContentType;
+
     }
 }

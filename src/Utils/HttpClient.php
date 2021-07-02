@@ -131,6 +131,7 @@ class HttpClient implements HttpClientInterface
 
         $httpStatusCode = $this->getInfo(CURLINFO_HTTP_CODE);
         $httpError = in_array(floor($httpStatusCode / 100), [4, 5]);
+        $httpContentType = $this->getInfo(CURLINFO_CONTENT_TYPE);
 
         curl_close($this->curl);
 
@@ -145,8 +146,10 @@ class HttpClient implements HttpClientInterface
             ];
             throw new Exception(json_encode($message), $curlErrorCode);
         }
-
-        $response = $this->parseResponse($rawResponse);
+        $response = $rawResponse;
+        if ($httpContentType == "application/json") {
+            $response = $this->parseResponse($rawResponse);
+        }
         return new HttpResponse($httpStatusCode, $response);
     }
 

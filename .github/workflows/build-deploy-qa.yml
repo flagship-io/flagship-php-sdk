@@ -52,7 +52,6 @@ jobs:
         working-directory: ./example
 
     steps:
-      - run: ls -ha
       - uses: actions/checkout@v2
       
       - name: Set up QEMU
@@ -73,5 +72,5 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ github.repository }}:qa
-          context: .
-          file: ./Dockerfile
+          context: ./example/.
+          file: ./exampleDockerfile

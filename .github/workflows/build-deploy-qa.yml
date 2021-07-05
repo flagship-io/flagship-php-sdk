@@ -47,6 +47,9 @@ jobs:
 
     needs: testqa
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./example
 
     steps:
       - uses: actions/checkout@v2
@@ -70,4 +73,4 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:qa
           context: .
-          file: ./example/Dockerfile
+          file: ./Dockerfile

@@ -73,4 +73,4 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:qa
           context: ./example/.
-          file: ./exampleDockerfile
+          file: ./example/Dockerfile

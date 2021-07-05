@@ -22,7 +22,7 @@
             technology: "PHP",
             branch: "master",
             environment: "prod",
-            features: FSFeatures.V1,
+            features: FSFeatures.All,
         },
     });
 </script>

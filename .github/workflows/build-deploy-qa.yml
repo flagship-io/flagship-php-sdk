@@ -52,6 +52,7 @@ jobs:
         working-directory: ./example
 
     steps:
+      - run: ls -ha
       - uses: actions/checkout@v2
       
       - name: Set up QEMU

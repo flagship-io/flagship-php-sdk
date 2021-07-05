@@ -50,17 +50,6 @@ class VisitorControllerTest extends TestCase
             json_encode($this->formatError(["visitor_id" => ["The visitor id field is required."]])),
             $this->response->getContent()
         );
-
-
-        $this->put('/visitor', [
-            'visitor_id' => $visitorId,
-            'context' => $context,
-        ]);
-
-        $this->assertJsonStringEqualsJsonString(
-            json_encode($this->formatError(["consent" => ["The consent field is required."]])),
-            $this->response->getContent()
-        );
     }
 
     public function testUpdateContext()

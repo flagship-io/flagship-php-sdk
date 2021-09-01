@@ -47,11 +47,8 @@ trait BuildApiTrait
         if ($visitorId && $anonymousId) {
             $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $anonymousId;
             $postData[$idConstant] = $visitorId;
-        } elseif ($visitorId && !$anonymousId) {
-            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $visitorId;
-            $postData[$idConstant] = null;
         } else {
-            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $anonymousId;
+            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $visitorId ?: $anonymousId;
             $postData[$idConstant] = null;
         }
         return $postData;

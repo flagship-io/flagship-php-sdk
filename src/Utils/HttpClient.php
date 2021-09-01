@@ -172,14 +172,14 @@ class HttpClient implements HttpClientInterface
 
     /**
      * @param  $url
-     * @param  array $params
+     * @param  array $query
      * @param  array $data
      * @return HttpResponse
      * @throws Exception
      */
-    public function post($url, array $params = [], array $data = [])
+    public function post($url, array $query = [], array $data = [])
     {
-        $this->setUrl($url, $params);
+        $this->setUrl($url, $query);
         $this->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
         $this->setOpt(CURLOPT_POST, true);
         $this->setOpt(CURLOPT_POSTFIELDS, json_encode($data));

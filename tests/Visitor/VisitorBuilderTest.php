@@ -5,7 +5,6 @@ namespace Flagship\Visitor;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\ConfigManager;
-use Flagship\Utils\Container;
 use PHPUnit\Framework\TestCase;
 
 class VisitorBuilderTest extends TestCase
@@ -27,6 +26,10 @@ class VisitorBuilderTest extends TestCase
             }
         };
 
+        $trackerManager = $this->getMockBuilder('Flagship\Api\TrackingManager')
+            ->setMethods(['sendConsentHit'])
+            ->disableOriginalConstructor()->getMock();
+
         $containerMock = $this->getMockBuilder(
             'Flagship\Utils\Container'
         )->setMethods(['get'])->disableOriginalConstructor()->getMock();
@@ -38,6 +41,7 @@ class VisitorBuilderTest extends TestCase
         $configManager = new ConfigManager();
         $config = new DecisionApiConfig();
         $configManager->setConfig($config);
+        $configManager->setTrackingManager($trackerManager);
 
         $visitor = VisitorBuilder::builder($visitorId, $configManager, $containerMock)->build();
 

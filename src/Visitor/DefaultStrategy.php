@@ -11,7 +11,15 @@ use Flagship\Traits\ValidatorTrait;
 
 class DefaultStrategy extends VisitorStrategyAbstract
 {
-    use ValidatorTrait;
+    /**
+     * @inheritDoc
+     */
+    public function setConsent($hasConsented)
+    {
+        $this->getVisitor()->hasConsented = $hasConsented;
+
+        $this->getTrackingManager(__FUNCTION__)->sendConsentHit($this->getVisitor(), $this->getConfig());
+    }
 
     /**
      * @inheritDoc
@@ -217,59 +225,16 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
     /**
-     * This function return true if decisionManager is not null,
-     * otherwise log an error and return false
-     *
-     * @param string $process : Process name
-     * @return bool
-     */
-    private function hasDecisionManager($process)
-    {
-        if (!$this->getVisitor()->getConfigManager()->getDecisionManager()) {
-            $this->logError(
-                $this->getVisitor()->getConfig(),
-                FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::TAG => $process]
-            );
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * @inheritDoc
      */
     public function synchronizedModifications()
     {
-        if (!$this->hasDecisionManager(FlagshipConstant::TAG_SYNCHRONIZED_MODIFICATION)) {
+        $decisionManager = $this->getDecisionManager(__FUNCTION__);
+        if (!$decisionManager) {
             return;
         }
-        $modifications = $this->getVisitor()
-            ->getConfigManager()
-            ->getDecisionManager()
-            ->getCampaignModifications($this->getVisitor());
-
+        $modifications = $decisionManager->getCampaignModifications($this->getVisitor());
         $this->getVisitor()->setModifications($modifications);
-    }
-
-    /**
-     * This function return true if trackingManager is not null,
-     * otherwise log an error and return false
-     *
-     * @return bool
-     */
-    private function hasTrackingManager($process)
-    {
-        $check = $this->getVisitor()->getConfigManager()->getTrackingManager();
-
-        if (!$check) {
-            $this->logError(
-                $this->getVisitor()->getConfig(),
-                FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::TAG => $process]
-            );
-        }
-        return (bool)$check;
     }
 
     /**
@@ -286,12 +251,11 @@ class DefaultStrategy extends VisitorStrategyAbstract
             );
             return ;
         }
-
-        if (!$this->hasTrackingManager(FlagshipConstant::TAG_ACTIVE_MODIFICATION)) {
+        $trackingManager =  $this->getTrackingManager(__FUNCTION__);
+        if (!$trackingManager) {
             return ;
         }
-
-        $this->getVisitor()->getConfigManager()->getTrackingManager()->sendActive($this->getVisitor(), $modification);
+        $trackingManager->sendActive($this->getVisitor(), $modification);
     }
 
     /**
@@ -299,7 +263,9 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function sendHit(HitAbstract $hit)
     {
-        if (!$this->hasTrackingManager(FlagshipConstant::TAG_SEND_HIT)) {
+        $trackingManager =  $this->getTrackingManager(__FUNCTION__);
+
+        if (!$trackingManager) {
             return;
         }
 
@@ -317,7 +283,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
 
-        $this->getVisitor()->getConfigManager()->getTrackingManager()->sendHit($hit);
+        $trackingManager->sendHit($hit);
     }
 
     /**

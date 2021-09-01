@@ -12,6 +12,12 @@ use Flagship\Hit\HitAbstract;
 interface VisitorInterface
 {
     /**
+     * Set if visitor has consented for private data usage.
+     * @param bool $hasConsented True if the visitor has consented false otherwise.
+     * @return void
+     */
+    public function setConsent($hasConsented);
+    /**
      * Update the visitor context values, matching the given keys, used for targeting.
      *
      * A new context value associated with this key will be created if there is no previous matching value.

@@ -38,7 +38,10 @@ class VisitorController extends Controller
                 "context" => 'array'
             ]);
 
-            $visitor = Flagship::newVisitor($data['visitor_id'], false, $data['context']);
+            $visitor = Flagship::newVisitor($data['visitor_id'])
+                ->context($data['context'])
+                ->hasConsented(!empty($data['consent']))
+                ->build();
 
             $visitor->setConsent(!empty($data['consent']));
 

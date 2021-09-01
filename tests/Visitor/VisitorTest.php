@@ -26,7 +26,12 @@ class VisitorTest extends TestCase
             'age' => 25
         ];
 
-        $configManager = (new ConfigManager())->setConfig($config);
+        $decisionManagerMock = $this->getMockBuilder('Flagship\Api\TrackingManager')
+            ->setMethods(['sendConsentHit'])
+            ->disableOriginalConstructor()->getMock();
+
+
+        $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($decisionManagerMock);
 
         $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
 
@@ -69,7 +74,7 @@ class VisitorTest extends TestCase
                 'getModification','getModifications','getModificationInfo', 'synchronizedModifications',
                 'activateModification', 'sendHit'
                 ])
-            ->setConstructorArgs([new Container(),$configManager, $visitorId, $visitorContext])->getMock();
+            ->setConstructorArgs([new Container(),$configManager, $visitorId, false, $visitorContext, true])->getMock();
 
         $visitor = new Visitor($visitorDelegateMock);
 
@@ -175,7 +180,7 @@ class VisitorTest extends TestCase
             FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
             FlagshipConstant::FS_USERS => $visitorId,];
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $context);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $context, true);
 
         $visitor = new Visitor($visitorDelegate);
 
@@ -183,7 +188,7 @@ class VisitorTest extends TestCase
             json_encode([
                 'visitorId' => $visitorId,
                 'context' => $context,
-                'hasConsent' => false
+                'hasConsent' => true
             ]),
             json_encode($visitor)
         );

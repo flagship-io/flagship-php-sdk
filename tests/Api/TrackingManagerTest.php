@@ -39,7 +39,7 @@ class TrackingManagerTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
 
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
         $modification = new Modification();
         $modification
@@ -90,7 +90,7 @@ class TrackingManagerTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
         $modification = new Modification();
 
@@ -220,7 +220,7 @@ class TrackingManagerTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
 
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
         $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
 
@@ -267,7 +267,7 @@ class TrackingManagerTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
         $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
 

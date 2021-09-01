@@ -107,7 +107,7 @@ class ApiManagerTest extends TestCase
         $manager->setStatusChangedCallback($statusCallback);
         $configManager = (new ConfigManager())->setConfig($config);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
 
         //Test Change Status to FlagshipStatus::READY_PANIC_ON
@@ -159,7 +159,7 @@ class ApiManagerTest extends TestCase
         $this->assertFalse($manager->getIsPanicMode());
         $configManager = (new ConfigManager())->setConfig($config);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         //Test Change Status to FlagshipStatus::READY_PANIC_ON
         $this->expectOutputString((string)FlagshipStatus::READY_PANIC_ON);
@@ -234,7 +234,7 @@ class ApiManagerTest extends TestCase
         $manager = new ApiManager($httpClientMock, $config);
         $configManager = (new ConfigManager())->setConfig($config);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $modifications = $manager->getCampaignModifications($visitor);
 
@@ -277,7 +277,7 @@ class ApiManagerTest extends TestCase
 
         $apiManager = new ApiManager($httpClientMock, $config);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, 'visitor_id', false, ['age' => 15]);
+        $visitor = new VisitorDelegate(new Container(), $configManager, 'visitor_id', false, ['age' => 15], true);
         $value = $apiManager->getCampaignModifications($visitor);
 
         $this->assertSame([], $value);

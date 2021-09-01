@@ -5,6 +5,9 @@ namespace Flagship\Visitor;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
 
+/**
+ * This class represents a Visitor builder.
+ */
 class VisitorBuilder
 {
     private $isAuthenticated;
@@ -37,6 +40,13 @@ class VisitorBuilder
         $this->context = [];
         $this->hasConsented = false;
     }
+
+    /**
+     * @param $visitorId
+     * @param $configManager
+     * @param $container
+     * @return VisitorBuilder
+     */
     public static function builder($visitorId, $configManager, $container)
     {
         return new VisitorBuilder($visitorId, $configManager, $container);

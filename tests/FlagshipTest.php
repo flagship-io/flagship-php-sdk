@@ -16,6 +16,7 @@ use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\MurmurHash;
+use Flagship\Visitor\Visitor;
 use Flagship\Visitor\VisitorDelegate;
 use Psr\Log\LoggerInterface;
 use Flagship\Utils\Utils;
@@ -381,18 +382,9 @@ class FlagshipTest extends TestCase
 
         Flagship::start($envId, $apiKey, $config);
         $visitorId = "visitorId";
-        $context = [
-            'age' => 20,
-            "sdk_osName" => PHP_OS,
-            "sdk_deviceType" => "server",
-            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,
-        ];
 
-        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
-        $this->assertInstanceOf("Flagship\Visitor\Visitor", $visitor1);
-        $this->assertSame($context, $visitor1->getContext());
+        $visitor1 = Flagship::newVisitor($visitorId);
+        $this->assertInstanceOf("Flagship\Visitor\VisitorBuilder", $visitor1);
     }
 
     public function testNewVisitorFailed()
@@ -479,6 +471,8 @@ class FlagshipTest extends TestCase
                     return $configManager;
                 case 'Flagship\Visitor\VisitorDelegate':
                     return new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
+                case 'Flagship\Visitor\Visitor':
+                    return  new Visitor($args[1][0]);
                 default:
                     return null;
             }
@@ -503,7 +497,7 @@ class FlagshipTest extends TestCase
 
         Flagship::start($envId, $apiKey, $config);
 
-        $visitor = Flagship::newVisitor('Visitor_1');
+        $visitor = Flagship::newVisitor('Visitor_1')->build();
 
         $visitor->synchronizedModifications();
 

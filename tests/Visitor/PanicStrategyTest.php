@@ -42,12 +42,12 @@ class PanicStrategyTest extends TestCase
             return ["[$flagshipSdk] " . sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FlagshipStatus::READY_PANIC_ON
+                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
             ),
             [FlagshipConstant::TAG => $functionName]];
         };
 
-        $logManagerStub->expects($this->exactly(7))->method('error')
+        $logManagerStub->expects($this->exactly(8))->method('error')
             ->withConsecutive(
                 $logMessageBuild('updateContext'),
                 $logMessageBuild('updateContextCollection'),
@@ -55,7 +55,8 @@ class PanicStrategyTest extends TestCase
                 $logMessageBuild('getModification'),
                 $logMessageBuild('getModificationInfo'),
                 $logMessageBuild('activateModification'),
-                $logMessageBuild('sendHit')
+                $logMessageBuild('sendHit'),
+                $logMessageBuild('setConsent')
             );
 
         $apiManagerStub->expects($this->once())->method('getCampaignModifications');
@@ -63,7 +64,7 @@ class PanicStrategyTest extends TestCase
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $panicStrategy = new PanicStrategy($visitor);
 
@@ -96,5 +97,8 @@ class PanicStrategyTest extends TestCase
 
         //Test sendHit
         $panicStrategy->sendHit(new Page('http://localhost'));
+
+        //Test setConsent
+        $panicStrategy->setConsent(true);
     }
 }

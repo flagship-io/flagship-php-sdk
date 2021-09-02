@@ -5,8 +5,6 @@ on:
     branches: [feature/updateConsent]
 jobs:
   deployqa:
-
-    needs: testqa
     runs-on: ubuntu-latest
     defaults:
       run:

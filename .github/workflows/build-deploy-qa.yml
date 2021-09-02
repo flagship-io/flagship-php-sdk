@@ -2,7 +2,7 @@ name: Build and deploy CI for QA
 
 on:
   push:
-    branches: [main, feature/sdk_v2]
+    branches: [feature/updateConsent]
 jobs:
   deployqa:
 

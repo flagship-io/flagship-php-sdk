@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1630670152">
-  <project timestamp="1630670152">
+<coverage generated="1630670373">
+  <project timestamp="1630670373">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">

@@ -460,22 +460,30 @@ class FlagshipTest extends TestCase
             $args = func_get_args();
             switch ($args[0]) {
                 case 'Flagship\DecisionApiConfig':
-                    return $config;
+                    $returnValue = $config;
+                    break;
                 case 'Psr\Log\LoggerInterface':
-                    return $this->logManagerMock;
+                    $returnValue = $this->logManagerMock;
+                    break;
                 case 'Flagship\Decision\ApiManager':
-                    return $apiManager;
+                    $returnValue = $apiManager;
+                    break;
                 case 'Flagship\Api\TrackingManager':
-                    return $trackingManager;
+                    $returnValue = $trackingManager;
+                    break;
                 case 'Flagship\Utils\ConfigManager':
-                    return $configManager;
+                    $returnValue = $configManager;
+                    break;
                 case 'Flagship\Visitor\VisitorDelegate':
-                    return new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
+                    $returnValue = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
+                    break;
                 case 'Flagship\Visitor\Visitor':
-                    return  new Visitor($args[1][0]);
+                    $returnValue =  new Visitor($args[1][0]);
+                    break;
                 default:
-                    return null;
+                    $returnValue = null;
             }
+            return $returnValue ;
         };
 
         $containerMock = $this->getMockBuilder(

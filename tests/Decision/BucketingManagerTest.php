@@ -523,7 +523,6 @@ class BucketingManagerTest extends TestCase
         $container = new Container();
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
         $testOperatorMethod = Utils::getMethod($bucketingManager, "testOperator");
 

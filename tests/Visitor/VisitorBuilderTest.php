@@ -16,14 +16,25 @@ class VisitorBuilderTest extends TestCase
             $params = $args[1];
             switch ($args[0]) {
                 case 'Flagship\Visitor\NotReadyStrategy':
-                    return new NotReadyStrategy($params[0]);
+                    $returnValue = new NotReadyStrategy($params[0]);
+                    break;
                 case 'Flagship\Visitor\VisitorDelegate':
-                    return new VisitorDelegate($params[0], $params[1], $params[2], $params[3], $params [4], $params[5]);
+                    $returnValue = new VisitorDelegate(
+                        $params[0],
+                        $params[1],
+                        $params[2],
+                        $params[3],
+                        $params [4],
+                        $params[5]
+                    );
+                    break;
                 case 'Flagship\Visitor\Visitor':
-                    return new Visitor($args[1][0]);
+                    $returnValue = new Visitor($args[1][0]);
+                    break;
                 default:
-                    return null;
+                    $returnValue = null;
             }
+            return $returnValue;
         };
 
         $trackerManager = $this->getMockBuilder('Flagship\Api\TrackingManager')

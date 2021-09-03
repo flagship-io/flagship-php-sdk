@@ -212,7 +212,7 @@ abstract class FlagshipConfig implements JsonSerializable
         } else {
             $this->logError(
                 $this,
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, $statusChangedCallback),
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($statusChangedCallback)),
                 [
                     FlagshipConstant::TAG => __FUNCTION__
                 ]

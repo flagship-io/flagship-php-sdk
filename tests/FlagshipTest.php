@@ -470,7 +470,7 @@ class FlagshipTest extends TestCase
                 case 'Flagship\Utils\ConfigManager':
                     return $configManager;
                 case 'Flagship\Visitor\VisitorDelegate':
-                    return new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
+                    return new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
                 case 'Flagship\Visitor\Visitor':
                     return  new Visitor($args[1][0]);
                 default:

@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class TrackingManagerTest extends TestCase
 {
-    const psrLog = 'Psr\Log\LoggerInterface';
+    const PSR_LOG_INTERFACE = 'Psr\Log\LoggerInterface';
 
     public function testConstruct()
     {
@@ -80,7 +80,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            self::psrLog,
+            self::PSR_LOG_INTERFACE,
             ['error'],
             '',
             false
@@ -163,7 +163,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            self::psrLog,
+            self::PSR_LOG_INTERFACE,
             ['error'],
             '',
             false
@@ -257,7 +257,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            self::psrLog,
+            self::PSR_LOG_INTERFACE,
             ['error'],
             '',
             false

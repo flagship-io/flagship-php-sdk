@@ -273,7 +273,8 @@ class Flagship
     }
 
     /**
-     * Return a Visitor Builder class.
+     * Initialize the builder and Return a \Flagship\Visitor\VisitorBuilder
+     * or null if the SDK hasn't started successfully.
      *
      * @param string $visitorId : Unique visitor identifier.
      * @return VisitorBuilder|null

@@ -89,7 +89,7 @@ class BucketingPolling
 
                 if ($this->lastModified) {
                     $this->httpClient->setHeaders([
-                        'if-modified-since' => $this->lastModified
+                        'if-modified-since' => gmdate("'D, d M Y H:i:s \G\M\T'", strtotime($this->lastModified))
                     ]);
                 }
 

@@ -24,12 +24,13 @@ class BucketingPollingTest extends TestCase
 
         File::$fileContent = null;
 
-        $httpClientMock->expects($this->exactly(2))
+        $httpClientMock->expects($this->exactly(3))
             ->method('get')
             ->with($url)
             ->willReturnOnConsecutiveCalls(
                 new HttpResponse(204, null),
-                new HttpResponse(204, $body)
+                new HttpResponse(204, $body, ["last-modified" => "2021-09-06 13:43:26"]),
+                new HttpResponse(304, null, ["last-modified" => "2021-09-06 13:43:26"])
             );
 
         $bucketingPolling = new BucketingPolling($envId, $pollingInterval, $httpClientMock);
@@ -39,6 +40,10 @@ class BucketingPollingTest extends TestCase
         File::$fileExist = false;
 
         $this->assertNull(File::$fileContent);
+
+        $bucketingPolling->startPolling();
+
+        $this->assertSame(File::$fileContent, json_encode($body));
 
         $bucketingPolling->startPolling();
 

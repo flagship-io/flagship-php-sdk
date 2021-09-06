@@ -13,6 +13,10 @@ class BucketingPolling
     private $pollingInterval;
     private $bucketingDirectory;
     /**
+     * @var string
+     */
+    private $lastModified;
+    /**
      * @var HttpClient
      */
     private $httpClient;
@@ -82,6 +86,13 @@ class BucketingPolling
                 $this->checkAndUpdateConfigField();
                 echo 'Polling start' . PHP_EOL;
                 $url = sprintf(FlagshipConstant::BUCKETING_API_URL, $this->envId);
+
+                if ($this->lastModified) {
+                    $this->httpClient->setHeaders([
+                        'if-modified-since' => $this->lastModified
+                    ]);
+                }
+
                 $response = $this->httpClient->get($url);
 
                 $bucketingFile = $this->bucketingDirectory . "/bucketing.json";
@@ -89,6 +100,12 @@ class BucketingPolling
                 if (!is_dir($this->bucketingDirectory)) {
                     mkdir($this->bucketingDirectory, 0777, true);
                 }
+
+                $responseHeaders = $response->getHeaders();
+                if (isset($responseHeaders["last-modified"])) {
+                    $this->lastModified = $responseHeaders["last-modified"];
+                }
+
                 if ($response->getBody()) {
                     file_put_contents($bucketingFile, json_encode($response->getBody()));
                 }

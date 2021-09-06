@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1630942867">
-  <project timestamp="1630942867">
+<coverage generated="1630943535">
+  <project timestamp="1630943535">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -1463,6 +1463,7 @@
         <line num="133" type="stmt" count="3"/>
         <line num="134" type="stmt" count="3"/>
         <line num="135" type="stmt" count="3"/>
+        <line num="136" type="stmt" count="3"/>
         <line num="138" type="stmt" count="3"/>
         <line num="140" type="stmt" count="3"/>
         <line num="142" type="stmt" count="3"/>
@@ -1475,7 +1476,6 @@
         <line num="152" type="stmt" count="2"/>
         <line num="153" type="stmt" count="2"/>
         <line num="154" type="stmt" count="2"/>
-        <line num="156" type="stmt" count="2"/>
         <line num="157" type="stmt" count="2"/>
         <line num="158" type="stmt" count="2"/>
         <line num="159" type="stmt" count="1"/>

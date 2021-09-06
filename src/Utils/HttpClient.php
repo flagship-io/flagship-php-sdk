@@ -35,6 +35,7 @@ class HttpClient implements HttpClientInterface
         $this->curl = curl_init();
         $this->setTimeout();
         $this->setOpt(CURLOPT_RETURNTRANSFER, true);
+        $this->setOpt(CURLOPT_FILETIME, true);
     }
 
     /**
@@ -133,6 +134,7 @@ class HttpClient implements HttpClientInterface
         $httpError = in_array(floor($httpStatusCode / 100), [4, 5]);
         $httpContentType = $this->getInfo(CURLINFO_CONTENT_TYPE);
 
+
         curl_close($this->curl);
 
         $this->curl = null;
@@ -150,7 +152,13 @@ class HttpClient implements HttpClientInterface
         if ($httpContentType == "application/json") {
             $response = $this->parseResponse($rawResponse);
         }
-        return new HttpResponse($httpStatusCode, $response);
+
+        $lastModified = $this->getInfo(CURLINFO_FILETIME);
+        $responseHeaders = [];
+        if ($lastModified !== - 1) {
+            $responseHeaders["last-modified"] = date('Y-m-d H:i:s', $lastModified);
+        }
+        return new HttpResponse($httpStatusCode, $response, $responseHeaders);
     }
 
     /**

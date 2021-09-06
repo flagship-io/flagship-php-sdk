@@ -10,17 +10,23 @@ class HttpResponse
 {
     private $statusCode;
     private $body;
+    /**
+     * @var array
+     */
+    private $headers;
 
     /**
      * HttpResponse constructor.
      * @param $statusCode
      * @param $body
+     * @param array $headers
      */
-    public function __construct($statusCode, $body)
+    public function __construct($statusCode, $body, array $headers = [])
     {
 
         $this->statusCode = $statusCode;
         $this->body = $body;
+        $this->headers = $headers;
     }
 
     /**
@@ -57,5 +63,13 @@ class HttpResponse
     {
         $this->body = $body;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
     }
 }

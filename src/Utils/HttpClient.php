@@ -133,7 +133,7 @@ class HttpClient implements HttpClientInterface
         $httpStatusCode = $this->getInfo(CURLINFO_HTTP_CODE);
         $httpError = in_array(floor($httpStatusCode / 100), [4, 5]);
         $httpContentType = $this->getInfo(CURLINFO_CONTENT_TYPE);
-
+        $lastModified = $this->getInfo(CURLINFO_FILETIME);
 
         curl_close($this->curl);
 
@@ -153,7 +153,7 @@ class HttpClient implements HttpClientInterface
             $response = $this->parseResponse($rawResponse);
         }
 
-        $lastModified = $this->getInfo(CURLINFO_FILETIME);
+
         $responseHeaders = [];
         if ($lastModified !== - 1) {
             $responseHeaders["last-modified"] = date('Y-m-d H:i:s', $lastModified);

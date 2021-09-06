@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1630670526">
-  <project timestamp="1630670526">
+<coverage generated="1630933880">
+  <project timestamp="1630933880">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -713,12 +713,12 @@
         <line num="264" type="stmt" count="12"/>
         <line num="270" type="method" name="getContainer" crap="1" count="8"/>
         <line num="272" type="stmt" count="8"/>
-        <line num="281" type="method" name="newVisitor" crap="3" count="4"/>
-        <line num="283" type="stmt" count="4"/>
-        <line num="284" type="stmt" count="2"/>
-        <line num="287" type="stmt" count="2"/>
-        <line num="289" type="stmt" count="2"/>
-        <metrics loc="291" ncloc="199" classes="1" methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="89" coveredstatements="89" elements="102" coveredelements="102"/>
+        <line num="282" type="method" name="newVisitor" crap="3" count="4"/>
+        <line num="284" type="stmt" count="4"/>
+        <line num="285" type="stmt" count="2"/>
+        <line num="288" type="stmt" count="2"/>
+        <line num="290" type="stmt" count="2"/>
+        <metrics loc="292" ncloc="199" classes="1" methods="13" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="89" coveredstatements="89" elements="102" coveredelements="102"/>
       </file>
     </package>
     <package name="Flagship\Hit">
@@ -2083,6 +2083,6 @@
     <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/VisitorInterface.php">
       <metrics loc="113" ncloc="31" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="48" loc="5684" ncloc="3798" classes="44" methods="314" coveredmethods="314" conditionals="0" coveredconditionals="0" statements="1472" coveredstatements="1472" elements="1786" coveredelements="1786"/>
+    <metrics files="48" loc="5685" ncloc="3798" classes="44" methods="314" coveredmethods="314" conditionals="0" coveredconditionals="0" statements="1472" coveredstatements="1472" elements="1786" coveredelements="1786"/>
   </project>
 </coverage>

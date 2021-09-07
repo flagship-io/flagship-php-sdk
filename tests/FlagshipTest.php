@@ -159,8 +159,6 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
         $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
         $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
-
-
     }
 
     public function testStartWithLog()

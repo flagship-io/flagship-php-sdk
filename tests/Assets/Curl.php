@@ -55,10 +55,9 @@ namespace Flagship\Utils {
 
     function curl_getinfo($handle, $option)
     {
-        if ($option == CURLINFO_HTTP_CODE){
+        if ($option == CURLINFO_HTTP_CODE) {
             return Curl::$curlHttpCodeInfo;
         }
         return  Curl::$curlHttpContentType;
-
     }
 }

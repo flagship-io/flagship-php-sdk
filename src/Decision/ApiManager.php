@@ -42,7 +42,7 @@ class ApiManager extends DecisionManagerAbstract
             $postData = [
                 "visitorId" => $visitor->getVisitorId(),
                 "trigger_hit" => false,
-                "context" => count($visitor->getContext())>0?$visitor->getContext():null
+                "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null
             ];
 
             $response = $this->httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => "true"], $postData);

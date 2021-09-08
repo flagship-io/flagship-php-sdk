@@ -19,7 +19,15 @@ class PanicStrategy extends DefaultStrategy
      */
     public function setConsent($hasConsented)
     {
-        $this->log(__FUNCTION__);
+        $this->visitor->hasConsented = $hasConsented;
+        $this->logError(
+            $this->getVisitor()->getConfig(),
+            sprintf(
+                FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
+                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
+            ),
+            [FlagshipConstant::TAG => __FUNCTION__]
+        );
     }
 
     /**

@@ -47,6 +47,16 @@ class PanicStrategyTest extends TestCase
             [FlagshipConstant::TAG => $functionName]];
         };
 
+        $logMessageBuildConsent = function ($functionName) {
+            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+            return [
+                "[$flagshipSdk] " . sprintf(
+                    FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
+                    FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
+                ),
+                [FlagshipConstant::TAG => $functionName]];
+        };
+
         $logManagerStub->expects($this->exactly(8))->method('error')
             ->withConsecutive(
                 $logMessageBuild('updateContext'),
@@ -56,7 +66,7 @@ class PanicStrategyTest extends TestCase
                 $logMessageBuild('getModificationInfo'),
                 $logMessageBuild('activateModification'),
                 $logMessageBuild('sendHit'),
-                $logMessageBuild('setConsent')
+                $logMessageBuildConsent('setConsent')
             );
 
         $apiManagerStub->expects($this->once())->method('getCampaignModifications');
@@ -100,5 +110,6 @@ class PanicStrategyTest extends TestCase
 
         //Test setConsent
         $panicStrategy->setConsent(true);
+        $this->assertSame(true, $visitor->hasConsented());
     }
 }

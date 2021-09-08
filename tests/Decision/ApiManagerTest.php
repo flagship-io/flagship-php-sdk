@@ -29,7 +29,19 @@ class ApiManagerTest extends TestCase
 
     public function testGetCampaignModifications()
     {
-        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            "",
+            false
+        );
+
+        $trackingManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            "",
+            false
+        );
         $modificationValue1 = [
             "background" => "bleu ciel",
             "btnColor" => "#EE3300",
@@ -95,23 +107,46 @@ class ApiManagerTest extends TestCase
             "campaigns" => $campaigns
         ];
 
-        $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
+        $httpPost = $httpClientMock->expects($this->exactly(2))
+            ->method('post')
+            ->willReturn(new HttpResponse(204, $body));
 
         $config = new DecisionApiConfig();
         $manager = new ApiManager($httpClientMock, $config);
 
         $statusCallback = function ($status) {
-            echo $status;
+            // test status change
+            $this->assertSame(FlagshipStatus::READY, $status);
         };
 
         $manager->setStatusChangedCallback($statusCallback);
-        $configManager = (new ConfigManager())->setConfig($config);
+        $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackingManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
+        $postData = [
+            "visitorId" => $visitor->getVisitorId(),
+            "anonymousId" => $visitor->getAnonymousId(),
+            "trigger_hit" => false,
+            "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null
+        ];
 
-        //Test Change Status to FlagshipStatus::READY_PANIC_ON
-        $this->expectOutputString((string)FlagshipStatus::READY);
+        $url = FlagshipConstant::BASE_API_URL . $config->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS . '/';
+
+        $query = [
+            FlagshipConstant::EXPOSE_ALL_KEYS => "true",
+            FlagshipConstant::SEND_CONTEXT_EVENT => "false"
+        ];
+
+        $httpPost->withConsecutive(
+            [
+                $url, [FlagshipConstant::EXPOSE_ALL_KEYS => "true"], $postData
+            ],
+            [
+                $url, $query, $postData
+            ]
+        );
+
 
         $modifications = $manager->getCampaignModifications($visitor);
 
@@ -132,6 +167,10 @@ class ApiManagerTest extends TestCase
 
         //Test reference
         $this->assertSame($campaigns[2]['variation']['reference'], $modifications[6]->getIsReference());
+
+        // Test with consent = false
+        $visitor->setConsent(false);
+        $manager->getCampaignModifications($visitor);
     }
 
     public function testGetCampaignModificationsWithPanicMode()

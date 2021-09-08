@@ -32,6 +32,7 @@ class FlagshipConstant
     const URL_ACTIVATE_MODIFICATION = 'activate';
 
     const EXPOSE_ALL_KEYS = "exposeAllKeys";
+    const SEND_CONTEXT_EVENT = "sendContextEvent";
 
     /**
      * SDK version

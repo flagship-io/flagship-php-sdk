@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1630945118">
-  <project timestamp="1630945118">
+<coverage generated="1631117829">
+  <project timestamp="1631117829">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -186,12 +186,12 @@
     <package name="Flagship\Decision">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Decision/ApiManager.php">
         <class name="ApiManager" namespace="Flagship\Decision" fullPackage="Flagship" package="Flagship">
-          <metrics methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="28" coveredelements="28"/>
+          <metrics methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="29" coveredstatements="29" elements="32" coveredelements="32"/>
         </class>
         <line num="19" type="method" name="__construct" crap="1" count="19"/>
         <line num="21" type="stmt" count="19"/>
         <line num="22" type="stmt" count="19"/>
-        <line num="31" type="method" name="getCampaigns" crap="4" count="5"/>
+        <line num="31" type="method" name="getCampaigns" crap="5" count="5"/>
         <line num="34" type="stmt" count="5"/>
         <line num="35" type="stmt" count="5"/>
         <line num="36" type="stmt" count="5"/>
@@ -202,21 +202,25 @@
         <line num="43" type="stmt" count="5"/>
         <line num="44" type="stmt" count="5"/>
         <line num="45" type="stmt" count="5"/>
-        <line num="47" type="stmt" count="5"/>
-        <line num="48" type="stmt" count="4"/>
-        <line num="49" type="stmt" count="4"/>
-        <line num="51" type="stmt" count="4"/>
+        <line num="46" type="stmt" count="5"/>
+        <line num="48" type="stmt" count="5"/>
+        <line num="49" type="stmt" count="1"/>
+        <line num="50" type="stmt" count="1"/>
+        <line num="51" type="stmt" count="5"/>
+        <line num="52" type="stmt" count="4"/>
         <line num="53" type="stmt" count="4"/>
-        <line num="54" type="stmt" count="4"/>
-        <line num="56" type="stmt" count="1"/>
-        <line num="57" type="stmt" count="1"/>
-        <line num="58" type="stmt" count="1"/>
-        <line num="59" type="stmt" count="1"/>
+        <line num="55" type="stmt" count="4"/>
+        <line num="57" type="stmt" count="4"/>
+        <line num="58" type="stmt" count="4"/>
+        <line num="60" type="stmt" count="1"/>
         <line num="61" type="stmt" count="1"/>
-        <line num="67" type="method" name="getCampaignModifications" crap="1" count="5"/>
-        <line num="69" type="stmt" count="5"/>
-        <line num="70" type="stmt" count="5"/>
-        <metrics loc="72" ncloc="57" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="28" coveredelements="28"/>
+        <line num="62" type="stmt" count="1"/>
+        <line num="63" type="stmt" count="1"/>
+        <line num="65" type="stmt" count="1"/>
+        <line num="71" type="method" name="getCampaignModifications" crap="1" count="5"/>
+        <line num="73" type="stmt" count="5"/>
+        <line num="74" type="stmt" count="5"/>
+        <metrics loc="76" ncloc="61" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="29" coveredstatements="29" elements="32" coveredelements="32"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Decision/BucketingManager.php">
         <class name="BucketingManager" namespace="Flagship\Decision">
@@ -583,7 +587,7 @@
         <class name="FlagshipConstant" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
-        <metrics loc="121" ncloc="96" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        <metrics loc="123" ncloc="98" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/FlagshipContext.php">
         <class name="FlagshipContext" namespace="Flagship\Enum">
@@ -1308,11 +1312,11 @@
         <line num="55" type="method" name="setDecisionManager" crap="1" count="21"/>
         <line num="57" type="stmt" count="21"/>
         <line num="58" type="stmt" count="21"/>
-        <line num="64" type="method" name="getTrackingManager" crap="1" count="17"/>
-        <line num="66" type="stmt" count="17"/>
-        <line num="73" type="method" name="setTrackingManager" crap="1" count="24"/>
-        <line num="75" type="stmt" count="24"/>
-        <line num="76" type="stmt" count="24"/>
+        <line num="64" type="method" name="getTrackingManager" crap="1" count="18"/>
+        <line num="66" type="stmt" count="18"/>
+        <line num="73" type="method" name="setTrackingManager" crap="1" count="25"/>
+        <line num="75" type="stmt" count="25"/>
+        <line num="76" type="stmt" count="25"/>
         <metrics loc="78" ncloc="48" classes="1" methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="15" coveredelements="15"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/Container.php">
@@ -1577,10 +1581,10 @@
         <class name="DefaultStrategy" namespace="Flagship\Visitor">
           <metrics methods="15" coveredmethods="15" conditionals="0" coveredconditionals="0" statements="151" coveredstatements="151" elements="166" coveredelements="166"/>
         </class>
-        <line num="17" type="method" name="setConsent" crap="1" count="9"/>
-        <line num="19" type="stmt" count="9"/>
-        <line num="21" type="stmt" count="9"/>
-        <line num="22" type="stmt" count="9"/>
+        <line num="17" type="method" name="setConsent" crap="1" count="10"/>
+        <line num="19" type="stmt" count="10"/>
+        <line num="21" type="stmt" count="10"/>
+        <line num="22" type="stmt" count="10"/>
         <line num="27" type="method" name="updateContext" crap="5" count="39"/>
         <line num="29" type="stmt" count="39"/>
         <line num="30" type="stmt" count="2"/>
@@ -1798,44 +1802,52 @@
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/PanicStrategy.php">
         <class name="PanicStrategy" namespace="Flagship\Visitor">
-          <metrics methods="9" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="26" coveredstatements="26" elements="35" coveredelements="35"/>
+          <metrics methods="9" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" elements="43" coveredelements="43"/>
         </class>
         <line num="20" type="method" name="setConsent" crap="1" count="1"/>
         <line num="22" type="stmt" count="1"/>
         <line num="23" type="stmt" count="1"/>
-        <line num="28" type="method" name="updateContext" crap="1" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="1"/>
+        <line num="29" type="stmt" count="1"/>
         <line num="30" type="stmt" count="1"/>
         <line num="31" type="stmt" count="1"/>
-        <line num="36" type="method" name="updateContextCollection" crap="1" count="1"/>
+        <line num="36" type="method" name="updateContext" crap="1" count="1"/>
         <line num="38" type="stmt" count="1"/>
         <line num="39" type="stmt" count="1"/>
-        <line num="44" type="method" name="clearContext" crap="1" count="1"/>
+        <line num="44" type="method" name="updateContextCollection" crap="1" count="1"/>
         <line num="46" type="stmt" count="1"/>
         <line num="47" type="stmt" count="1"/>
-        <line num="52" type="method" name="getModification" crap="1" count="1"/>
+        <line num="52" type="method" name="clearContext" crap="1" count="1"/>
         <line num="54" type="stmt" count="1"/>
         <line num="55" type="stmt" count="1"/>
-        <line num="61" type="method" name="getModificationInfo" crap="1" count="1"/>
+        <line num="60" type="method" name="getModification" crap="1" count="1"/>
+        <line num="62" type="stmt" count="1"/>
         <line num="63" type="stmt" count="1"/>
-        <line num="64" type="stmt" count="1"/>
-        <line num="70" type="method" name="activateModification" crap="1" count="1"/>
+        <line num="69" type="method" name="getModificationInfo" crap="1" count="1"/>
+        <line num="71" type="stmt" count="1"/>
         <line num="72" type="stmt" count="1"/>
-        <line num="73" type="stmt" count="1"/>
-        <line num="78" type="method" name="sendHit" crap="1" count="1"/>
+        <line num="78" type="method" name="activateModification" crap="1" count="1"/>
         <line num="80" type="stmt" count="1"/>
         <line num="81" type="stmt" count="1"/>
-        <line num="83" type="method" name="log" crap="1" count="1"/>
-        <line num="85" type="stmt" count="1"/>
-        <line num="86" type="stmt" count="1"/>
-        <line num="87" type="stmt" count="1"/>
+        <line num="86" type="method" name="sendHit" crap="1" count="1"/>
         <line num="88" type="stmt" count="1"/>
         <line num="89" type="stmt" count="1"/>
-        <line num="90" type="stmt" count="1"/>
-        <line num="91" type="stmt" count="1"/>
-        <line num="92" type="stmt" count="1"/>
+        <line num="91" type="method" name="log" crap="1" count="1"/>
         <line num="93" type="stmt" count="1"/>
         <line num="94" type="stmt" count="1"/>
-        <metrics loc="95" ncloc="68" classes="1" methods="9" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="26" coveredstatements="26" elements="35" coveredelements="35"/>
+        <line num="95" type="stmt" count="1"/>
+        <line num="96" type="stmt" count="1"/>
+        <line num="97" type="stmt" count="1"/>
+        <line num="98" type="stmt" count="1"/>
+        <line num="99" type="stmt" count="1"/>
+        <line num="100" type="stmt" count="1"/>
+        <line num="101" type="stmt" count="1"/>
+        <line num="102" type="stmt" count="1"/>
+        <metrics loc="103" ncloc="76" classes="1" methods="9" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" elements="43" coveredelements="43"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/Visitor.php">
         <class name="Visitor" namespace="Flagship\Visitor">
@@ -1903,8 +1915,8 @@
         <class name="VisitorAbstract" namespace="Flagship\Visitor">
           <metrics methods="18" coveredmethods="18" conditionals="0" coveredconditionals="0" statements="45" coveredstatements="45" elements="63" coveredelements="63"/>
         </class>
-        <line num="58" type="method" name="getConfigManager" crap="1" count="20"/>
-        <line num="60" type="stmt" count="20"/>
+        <line num="58" type="method" name="getConfigManager" crap="1" count="21"/>
+        <line num="60" type="stmt" count="21"/>
         <line num="67" type="method" name="setModifications" crap="1" count="10"/>
         <line num="69" type="stmt" count="10"/>
         <line num="70" type="stmt" count="10"/>
@@ -1951,11 +1963,11 @@
         <line num="188" type="stmt" count="2"/>
         <line num="189" type="stmt" count="2"/>
         <line num="191" type="stmt" count="40"/>
-        <line num="197" type="method" name="hasConsented" crap="1" count="11"/>
-        <line num="199" type="stmt" count="11"/>
-        <line num="206" type="method" name="setConsent" crap="1" count="9"/>
-        <line num="208" type="stmt" count="9"/>
-        <line num="209" type="stmt" count="9"/>
+        <line num="197" type="method" name="hasConsented" crap="1" count="16"/>
+        <line num="199" type="stmt" count="16"/>
+        <line num="206" type="method" name="setConsent" crap="1" count="10"/>
+        <line num="208" type="stmt" count="10"/>
+        <line num="209" type="stmt" count="10"/>
         <line num="214" type="method" name="getDependencyIContainer" crap="1" count="40"/>
         <line num="216" type="stmt" count="40"/>
         <line num="219" type="method" name="setDependencyIContainer" crap="1" count="41"/>
@@ -2071,20 +2083,20 @@
         <line num="24" type="stmt" count="39"/>
         <line num="29" type="method" name="getVisitor" crap="1" count="39"/>
         <line num="31" type="stmt" count="39"/>
-        <line num="37" type="method" name="getConfigManager" crap="1" count="20"/>
-        <line num="39" type="stmt" count="20"/>
-        <line num="45" type="method" name="getConfig" crap="1" count="9"/>
-        <line num="47" type="stmt" count="9"/>
-        <line num="54" type="method" name="getTrackingManager" crap="2" count="14"/>
-        <line num="56" type="stmt" count="14"/>
-        <line num="58" type="stmt" count="14"/>
+        <line num="37" type="method" name="getConfigManager" crap="1" count="21"/>
+        <line num="39" type="stmt" count="21"/>
+        <line num="45" type="method" name="getConfig" crap="1" count="10"/>
+        <line num="47" type="stmt" count="10"/>
+        <line num="54" type="method" name="getTrackingManager" crap="2" count="15"/>
+        <line num="56" type="stmt" count="15"/>
+        <line num="58" type="stmt" count="15"/>
         <line num="59" type="stmt" count="3"/>
         <line num="60" type="stmt" count="3"/>
         <line num="61" type="stmt" count="3"/>
         <line num="62" type="stmt" count="3"/>
         <line num="63" type="stmt" count="3"/>
         <line num="64" type="stmt" count="3"/>
-        <line num="65" type="stmt" count="14"/>
+        <line num="65" type="stmt" count="15"/>
         <line num="72" type="method" name="getDecisionManager" crap="2" count="10"/>
         <line num="74" type="stmt" count="10"/>
         <line num="75" type="stmt" count="10"/>
@@ -2101,6 +2113,6 @@
     <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/VisitorInterface.php">
       <metrics loc="113" ncloc="31" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="48" loc="5724" ncloc="3827" classes="44" methods="315" coveredmethods="315" conditionals="0" coveredconditionals="0" statements="1489" coveredstatements="1489" elements="1804" coveredelements="1804"/>
+    <metrics files="48" loc="5738" ncloc="3841" classes="44" methods="315" coveredmethods="315" conditionals="0" coveredconditionals="0" statements="1501" coveredstatements="1501" elements="1816" coveredelements="1816"/>
   </project>
 </coverage>

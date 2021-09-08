@@ -55,6 +55,7 @@ class FlagshipConstant
     const PANIC_MODE_ERROR = "'%s' deactivated while panic mode is on.";
     const VISITOR_ID_ERROR = "visitorId must not be null or empty";
     const METHOD_DEACTIVATED_ERROR = "Method '%s' is deactivated while SDK status is: %s.";
+    const METHOD_DEACTIVATED_SEND_CONSENT_ERROR = "Send consent hit is deactivated while SDK status is: %s.";
     const METHOD_DEACTIVATED_CONSENT_ERROR = "Method '%s' is deactivated for visitor '%s': visitor did not consent.";
     const METHOD_DEACTIVATED_BUCKETING_ERROR = "Method '%s' is deactivated on Bucketing mode.";
     const FLAGSHIP_PREDEFINED_CONTEXT_ERROR = "Flagship predefined context %s must be %s";

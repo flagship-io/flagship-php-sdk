@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1623939571">
-  <project timestamp="1623939571">
+<coverage generated="1631694468">
+  <project timestamp="1631694468">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -49,7 +49,7 @@
         <class name="ApiManager" namespace="Flagship\Decision" fullPackage="Flagship" package="Flagship">
           <metrics methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="73" coveredstatements="73" elements="78" coveredelements="78"/>
         </class>
-        <line num="33" type="method" name="getCampaigns" crap="3" count="4"/>
+        <line num="33" type="method" name="getCampaigns" crap="4" count="4"/>
         <line num="36" type="stmt" count="4"/>
         <line num="37" type="stmt" count="4"/>
         <line num="38" type="stmt" count="4"/>
@@ -172,7 +172,7 @@
         <class name="FlagshipConstant" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
-        <metrics loc="105" ncloc="80" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        <metrics loc="104" ncloc="79" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Enum/FlagshipField.php">
         <class name="FlagshipField" namespace="Flagship\Enum" fullPackage="Flagship" package="Flagship">
@@ -196,7 +196,7 @@
         <class name="LogLevel" namespace="Flagship\Enum">
           <metrics methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
         </class>
-        <metrics loc="50" ncloc="20" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        <metrics loc="48" ncloc="18" classes="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
     </package>
     <package name="Flagship">
@@ -818,7 +818,7 @@
         <line num="148" type="stmt" count="1"/>
         <line num="154" type="method" name="getCurrency" crap="1" count="1"/>
         <line num="156" type="stmt" count="1"/>
-        <line num="166" type="method" name="setCurrency" crap="4" count="1"/>
+        <line num="166" type="method" name="setCurrency" crap="3" count="1"/>
         <line num="168" type="stmt" count="1"/>
         <line num="169" type="stmt" count="1"/>
         <line num="170" type="stmt" count="1"/>
@@ -1130,7 +1130,7 @@
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/HttpClient.php">
         <class name="HttpClient" namespace="Flagship\Utils">
-          <metrics methods="14" coveredmethods="14" conditionals="0" coveredconditionals="0" statements="70" coveredstatements="70" elements="84" coveredelements="84"/>
+          <metrics methods="14" coveredmethods="14" conditionals="0" coveredconditionals="0" statements="74" coveredstatements="74" elements="88" coveredelements="88"/>
         </class>
         <line num="26" type="method" name="__construct" crap="2" count="24"/>
         <line num="28" type="stmt" count="24"/>
@@ -1174,49 +1174,53 @@
         <line num="115" type="stmt" count="3"/>
         <line num="116" type="stmt" count="3"/>
         <line num="117" type="stmt" count="3"/>
-        <line num="126" type="method" name="exec" crap="3" count="3"/>
+        <line num="126" type="method" name="exec" crap="4" count="3"/>
         <line num="128" type="stmt" count="3"/>
         <line num="129" type="stmt" count="3"/>
         <line num="130" type="stmt" count="3"/>
         <line num="132" type="stmt" count="3"/>
         <line num="133" type="stmt" count="3"/>
-        <line num="135" type="stmt" count="3"/>
-        <line num="137" type="stmt" count="3"/>
-        <line num="139" type="stmt" count="3"/>
-        <line num="141" type="stmt" count="1"/>
+        <line num="134" type="stmt" count="3"/>
+        <line num="136" type="stmt" count="3"/>
+        <line num="138" type="stmt" count="3"/>
+        <line num="140" type="stmt" count="3"/>
         <line num="142" type="stmt" count="1"/>
         <line num="143" type="stmt" count="1"/>
-        <line num="145" type="stmt" count="1"/>
+        <line num="144" type="stmt" count="1"/>
         <line num="146" type="stmt" count="1"/>
+        <line num="147" type="stmt" count="1"/>
         <line num="149" type="stmt" count="2"/>
         <line num="150" type="stmt" count="2"/>
-        <line num="162" type="method" name="get" crap="1" count="1"/>
-        <line num="164" type="stmt" count="1"/>
-        <line num="165" type="stmt" count="1"/>
-        <line num="166" type="stmt" count="1"/>
+        <line num="151" type="stmt" count="2"/>
+        <line num="152" type="stmt" count="2"/>
+        <line num="153" type="stmt" count="2"/>
+        <line num="165" type="method" name="get" crap="1" count="1"/>
         <line num="167" type="stmt" count="1"/>
-        <line num="177" type="method" name="post" crap="1" count="2"/>
-        <line num="179" type="stmt" count="2"/>
-        <line num="180" type="stmt" count="2"/>
-        <line num="181" type="stmt" count="2"/>
+        <line num="168" type="stmt" count="1"/>
+        <line num="169" type="stmt" count="1"/>
+        <line num="170" type="stmt" count="1"/>
+        <line num="180" type="method" name="post" crap="1" count="2"/>
         <line num="182" type="stmt" count="2"/>
         <line num="183" type="stmt" count="2"/>
-        <line num="194" type="method" name="getInfo" crap="1" count="3"/>
-        <line num="196" type="stmt" count="3"/>
-        <line num="199" type="method" name="parseResponse" crap="1" count="2"/>
-        <line num="201" type="stmt" count="2"/>
-        <line num="213" type="method" name="buildUrl" crap="5" count="4"/>
-        <line num="215" type="stmt" count="4"/>
-        <line num="216" type="stmt" count="4"/>
-        <line num="217" type="stmt" count="1"/>
-        <line num="218" type="stmt" count="1"/>
-        <line num="219" type="stmt" count="1"/>
+        <line num="184" type="stmt" count="2"/>
+        <line num="185" type="stmt" count="2"/>
+        <line num="186" type="stmt" count="2"/>
+        <line num="197" type="method" name="getInfo" crap="1" count="3"/>
+        <line num="199" type="stmt" count="3"/>
+        <line num="202" type="method" name="parseResponse" crap="1" count="2"/>
+        <line num="204" type="stmt" count="2"/>
+        <line num="216" type="method" name="buildUrl" crap="5" count="4"/>
+        <line num="218" type="stmt" count="4"/>
+        <line num="219" type="stmt" count="4"/>
         <line num="220" type="stmt" count="1"/>
         <line num="221" type="stmt" count="1"/>
         <line num="222" type="stmt" count="1"/>
         <line num="223" type="stmt" count="1"/>
-        <line num="224" type="stmt" count="4"/>
-        <metrics loc="226" ncloc="152" classes="1" methods="14" coveredmethods="14" conditionals="0" coveredconditionals="0" statements="70" coveredstatements="70" elements="84" coveredelements="84"/>
+        <line num="224" type="stmt" count="1"/>
+        <line num="225" type="stmt" count="1"/>
+        <line num="226" type="stmt" count="1"/>
+        <line num="227" type="stmt" count="4"/>
+        <metrics loc="229" ncloc="155" classes="1" methods="14" coveredmethods="14" conditionals="0" coveredconditionals="0" statements="74" coveredstatements="74" elements="88" coveredelements="88"/>
       </file>
     </package>
     <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/ContainerInterface.php">
@@ -1225,6 +1229,6 @@
     <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Utils/HttpClientInterface.php">
       <metrics loc="49" ncloc="17" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="32" loc="3631" ncloc="2312" classes="29" methods="197" coveredmethods="197" conditionals="0" coveredconditionals="0" statements="828" coveredstatements="828" elements="1025" coveredelements="1025"/>
+    <metrics files="32" loc="3631" ncloc="2312" classes="29" methods="197" coveredmethods="197" conditionals="0" coveredconditionals="0" statements="832" coveredstatements="832" elements="1029" coveredelements="1029"/>
   </project>
 </coverage>

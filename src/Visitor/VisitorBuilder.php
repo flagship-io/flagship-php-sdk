@@ -10,8 +10,18 @@ use Flagship\Utils\ContainerInterface;
  */
 class VisitorBuilder
 {
+    /**
+     * @var bool
+     */
     private $isAuthenticated;
+    /**
+     * @var bool
+     */
     private $hasConsented;
+
+    /**
+     * @var array
+     */
     private $context;
     /**
      * @var string
@@ -56,7 +66,7 @@ class VisitorBuilder
      * Specify if the visitor is authenticated or anonymous.
      *
      * @param bool $isAuthenticated : true for an authenticated visitor, false for an anonymous visitor.
-     * @return $this
+     * @return VisitorBuilder
      */
     public function isAuthenticated($isAuthenticated)
     {
@@ -70,7 +80,7 @@ class VisitorBuilder
      * cache will be deactivated and cleared.
      *
      * @param bool $hasConsented : Set to true when the visitor has consented, false otherwise.
-     * @return $this
+     * @return VisitorBuilder
      */
     public function hasConsented($hasConsented)
     {
@@ -82,7 +92,7 @@ class VisitorBuilder
      * Specify visitor initial context key / values used for targeting.
      * Context key must be String, and value type must be one of the following : Number, Boolean, String.
      * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
-     * @return $this
+     * @return VisitorBuilder
      */
     public function context(array $context)
     {

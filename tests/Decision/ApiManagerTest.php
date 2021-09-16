@@ -131,7 +131,7 @@ class ApiManagerTest extends TestCase
             "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null
         ];
 
-        $url = FlagshipConstant::BASE_API_URL . $config->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS . '/';
+        $url = FlagshipConstant::BASE_API_URL . $config->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS;
 
         $query = [
             FlagshipConstant::EXPOSE_ALL_KEYS => "true",

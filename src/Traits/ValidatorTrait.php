@@ -4,6 +4,7 @@ namespace Flagship\Traits;
 
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipContext;
 
 trait ValidatorTrait
 {
@@ -49,39 +50,33 @@ trait ValidatorTrait
         return $check;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     * @param FlagshipConfig $config
+     * @return bool|null
+     */
     protected function checkFlagshipContext($key, $value, FlagshipConfig $config)
     {
-        if (!$this->isJsonObject($key)) {
-            if ($key == "fs_client" || $key == "fs_version" || $key == "fs_users") {
-                return null;
-            }
-            return $value;
+        $type = FlagshipContext::getType($key);
+
+        if (!$type) {
+            return null;
         }
 
-        $flagshipConstant = json_decode($key, true);
+        $check = $this->checkType($type, $value);
 
-        if (
-            !isset($flagshipConstant['key'])
-            || !isset($flagshipConstant['type'])
-            || $flagshipConstant['key'] == "fs_client"
-            || $flagshipConstant['key'] == "fs_version"
-            || $flagshipConstant['key'] == "fs_users"
-        ) {
-            return  null;
-        }
-
-        if (!$this->checkType($flagshipConstant['type'], $value)) {
+        if (!$check) {
             $this->logError(
                 $config,
                 sprintf(
                     FlagshipConstant::FLAGSHIP_PREDEFINED_CONTEXT_ERROR,
-                    $flagshipConstant['key'],
-                    $flagshipConstant['type']
+                    $key,
+                    $type
                 )
             );
-            return null;
         }
-        return $flagshipConstant;
+        return $check;
     }
 
     /**

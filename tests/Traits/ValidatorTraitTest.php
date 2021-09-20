@@ -121,26 +121,8 @@ class ValidatorTraitTest extends TestCase
         $config = new BucketingConfig();
         $config->setLogManager($logManagerStub);
         $value = "linux";
-        $contexts = $checkFlagshipContext->invokeArgs($validatorTraitMock, ['item',$value, $config]);
-        $this->assertSame($contexts, $value);
-
-        $contexts = $checkFlagshipContext->invokeArgs(
-            $validatorTraitMock,
-            [FlagshipContext::FLAGSHIP_VERSION,$value, $config]
-        );
-        $this->assertNull($contexts);
-
-        $contexts = $checkFlagshipContext->invokeArgs(
-            $validatorTraitMock,
-            [FlagshipContext::FLAGSHIP_VISITOR,$value, $config]
-        );
-        $this->assertNull($contexts);
-
-        $contexts = $checkFlagshipContext->invokeArgs(
-            $validatorTraitMock,
-            [FlagshipContext::FLAGSHIP_CLIENT,$value, $config]
-        );
-        $this->assertNull($contexts);
+        $check = $checkFlagshipContext->invokeArgs($validatorTraitMock, ['item',$value, $config]);
+        $this->assertNull($check);
 
         $sdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerStub->expects($this->once())->method('error')
@@ -151,18 +133,18 @@ class ValidatorTraitTest extends TestCase
                     "string"
                 ));
         $value = 1;
-        $contexts = $checkFlagshipContext->invokeArgs(
+        $check = $checkFlagshipContext->invokeArgs(
             $validatorTraitMock,
             [FlagshipContext::OS_NAME,$value, $config]
         );
-        $this->assertNull($contexts);
+        $this->assertFalse($check);
 
         $value = "mac";
-        $contexts = $checkFlagshipContext->invokeArgs(
+        $check = $checkFlagshipContext->invokeArgs(
             $validatorTraitMock,
             [FlagshipContext::OS_NAME,$value, $config]
         );
-        $this->assertSame([ 'key' => "sdk_osName", "type" => "string"], $contexts);
+        $this->assertTrue($check);
     }
 
     public function testIsJsonObject()

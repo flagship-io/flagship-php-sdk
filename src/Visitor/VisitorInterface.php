@@ -25,6 +25,7 @@ interface VisitorInterface
      *
      * @param string $key : context key.
      * @param numeric|string|bool $value : context value.
+     * @return void
      */
     public function updateContext($key, $value);
 

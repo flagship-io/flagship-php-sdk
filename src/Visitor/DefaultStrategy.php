@@ -32,19 +32,20 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 FlagshipConstant::CONTEXT_PARAM_ERROR,
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_UPDATE_CONTEXT]
             );
-            return null;
+            return ;
         }
 
-        $contextValue = $this->checkFlagshipContext($key, $value, $this->visitor->getConfig());
+        if (preg_match("/^fs_/i", $key)) {
+            return ;
+        }
 
-        if (!$contextValue) {
-            return null;
+        $check = $this->checkFlagshipContext($key, $value, $this->visitor->getConfig());
+
+        if ($check !== null && !$check) {
+            return ;
         }
-        if (is_array($contextValue)) {
-            $key = $contextValue['key'];
-            return $this->getVisitor()->context[$key] = $value;
-        }
-        return $this->getVisitor()->context[$key] = $value;
+
+        $this->getVisitor()->context[$key] = $value;
     }
 
     /**

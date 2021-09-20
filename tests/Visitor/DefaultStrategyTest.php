@@ -144,6 +144,12 @@ class DefaultStrategyTest extends TestCase
 
         $this->assertArrayNotHasKey("sdk_region", $context);
 
+        //Test predefined fs_
+
+        $defaultStrategy->updateContext(FlagshipContext::FLAGSHIP_VERSION, "2");
+
+        $this->assertSame($context, $visitor->getContext());
+
         // Test Collection
         $collectionContext = [
             'address' => 'visitor_address',

@@ -16,11 +16,6 @@ use Flagship\Visitor\VisitorAbstract;
  */
 class ApiManager extends DecisionManagerAbstract
 {
-    public function __construct(HttpClientInterface $httpClient, DecisionApiConfig $config)
-    {
-        parent::__construct($httpClient, $config);
-    }
-
     /**
      * This function will fetch campaigns modifications from the server according to the visitor context and
      * return an associative array of campaigns

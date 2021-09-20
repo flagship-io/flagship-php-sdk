@@ -145,10 +145,10 @@ class FlagshipContext
 
     /**
      * @param $context string
-     * @return string
+     * @return string|null
      */
     public static function getType($context)
     {
-        return self::$predefinedContext[$context];
+        return isset(self::$predefinedContext[$context]) ? self::$predefinedContext[$context] : null;
     }
 }

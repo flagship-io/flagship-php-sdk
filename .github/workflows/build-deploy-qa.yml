@@ -2,7 +2,7 @@ name: Build and deploy CI for QA
 
 on:
   push:
-    branches: [feature/updateConsent]
+    branches: [feature/sdk_v2]
 jobs:
   deployqa:
     runs-on: ubuntu-latest

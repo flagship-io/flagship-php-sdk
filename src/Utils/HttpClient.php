@@ -35,6 +35,7 @@ class HttpClient implements HttpClientInterface
         $this->curl = curl_init();
         $this->setTimeout();
         $this->setOpt(CURLOPT_RETURNTRANSFER, true);
+        $this->setOpt(CURLOPT_FILETIME, true);
     }
 
     /**
@@ -132,6 +133,7 @@ class HttpClient implements HttpClientInterface
         $httpStatusCode = $this->getInfo(CURLINFO_HTTP_CODE);
         $httpError = in_array(floor($httpStatusCode / 100), [4, 5]);
         $httpContentType = $this->getInfo(CURLINFO_CONTENT_TYPE);
+        $lastModified = $this->getInfo(CURLINFO_FILETIME);
 
         curl_close($this->curl);
 
@@ -150,7 +152,13 @@ class HttpClient implements HttpClientInterface
         if ($httpContentType == "application/json") {
             $response = $this->parseResponse($rawResponse);
         }
-        return new HttpResponse($httpStatusCode, $response);
+
+
+        $responseHeaders = [];
+        if ($lastModified !== - 1) {
+            $responseHeaders["last-modified"] = date('Y-m-d H:i:s', $lastModified);
+        }
+        return new HttpResponse($httpStatusCode, $response, $responseHeaders);
     }
 
     /**
@@ -172,14 +180,14 @@ class HttpClient implements HttpClientInterface
 
     /**
      * @param  $url
-     * @param  array $params
+     * @param  array $query
      * @param  array $data
      * @return HttpResponse
      * @throws Exception
      */
-    public function post($url, array $params = [], array $data = [])
+    public function post($url, array $query = [], array $data = [])
     {
-        $this->setUrl($url, $params);
+        $this->setUrl($url, $query);
         $this->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
         $this->setOpt(CURLOPT_POST, true);
         $this->setOpt(CURLOPT_POSTFIELDS, json_encode($data));

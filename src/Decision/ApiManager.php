@@ -34,8 +34,7 @@ class ApiManager extends DecisionManagerAbstract
             $headers = $this->buildHeader($this->getConfig()->getApiKey());
             $this->httpClient->setHeaders($headers);
             $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
-            $url = $this->buildDecisionApiUrl($this->getConfig()->getEnvId() . '/' .
-                FlagshipConstant::URL_CAMPAIGNS . '/');
+            $url = $this->buildDecisionApiUrl($this->getConfig()->getEnvId() . FlagshipConstant::URL_CAMPAIGNS);
 
             $postData = [
                 "visitorId" => $visitor->getVisitorId(),
@@ -43,8 +42,12 @@ class ApiManager extends DecisionManagerAbstract
                 "trigger_hit" => false,
                 "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null
             ];
+            $query = [FlagshipConstant::EXPOSE_ALL_KEYS => "true"];
 
-            $response = $this->httpClient->post($url, [FlagshipConstant::EXPOSE_ALL_KEYS => "true"], $postData);
+            if (!$visitor->hasConsented()) {
+                $query[FlagshipConstant::SEND_CONTEXT_EVENT] = "false";
+            }
+            $response = $this->httpClient->post($url, $query, $postData);
             $body = $response->getBody();
             $hasPanicMode = !empty($body["panic"]);
 

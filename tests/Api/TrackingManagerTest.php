@@ -4,7 +4,9 @@ namespace Flagship\Api;
 
 use Exception;
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\HitType;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
 use Flagship\Model\Modification;
@@ -16,6 +18,8 @@ use PHPUnit\Framework\TestCase;
 
 class TrackingManagerTest extends TestCase
 {
+    const PSR_LOG_INTERFACE = 'Psr\Log\LoggerInterface';
+
     public function testConstruct()
     {
         $httpClient = new HttpClient();
@@ -37,7 +41,7 @@ class TrackingManagerTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
 
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
         $modification = new Modification();
         $modification
@@ -76,7 +80,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
+            self::PSR_LOG_INTERFACE,
             ['error'],
             '',
             false
@@ -88,7 +92,7 @@ class TrackingManagerTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
         $modification = new Modification();
 
@@ -102,20 +106,8 @@ class TrackingManagerTest extends TestCase
 
         $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
 
-        $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
-
         $exception = new Exception();
-        $httpClientMock->expects($this->once())->method('post')->with(
-            $url,
-            [],
-            [
-                FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
-                FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
-                FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
-                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-                FlagshipConstant::ANONYMOUS_ID => null
-            ]
-        )->willThrowException($exception);
+        $httpClientMock->expects($this->once())->method('post')->willThrowException($exception);
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerStub->expects($this->once())
@@ -171,7 +163,7 @@ class TrackingManagerTest extends TestCase
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
+            self::PSR_LOG_INTERFACE,
             ['error'],
             '',
             false
@@ -214,5 +206,81 @@ class TrackingManagerTest extends TestCase
         $page->getConfig()->setLogManager($logManagerStub);
 
         $trackingManager->sendHit($page);
+    }
+
+    public function testSendConsentHit()
+    {
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $trackingManager = new TrackingManager($httpClientMock);
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config)->setTrackingManager($trackingManager);
+
+        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
+
+        $url = FlagshipConstant::HIT_CONSENT_URL;
+
+        $httpClientMock->expects($this->once())->method('post')->with(
+            $url,
+            [],
+            [
+                FlagshipConstant::T_API_ITEM => HitType::EVENT,
+                FlagshipConstant::EVENT_LABEL_API_ITEM =>
+                    FlagshipConstant::SDK_LANGUAGE . ":" . $visitor->hasConsented(),
+                FlagshipConstant::EVENT_ACTION_API_ITEM => "fs_content",
+                FlagshipConstant::EVENT_CATEGORY_API_ITEM => EventCategory::USER_ENGAGEMENT,
+                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
+                FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
+                FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
+                FlagshipConstant::CUSTOMER_UID => $visitor->getAnonymousId()
+            ]
+        )->willReturn(new HttpResponse(204, null));
+
+        $trackingManager->sendConsentHit($visitor, $config);
+    }
+
+    public function testSendConsentHitThrowException()
+    {
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            self::PSR_LOG_INTERFACE,
+            ['error'],
+            '',
+            false
+        );
+
+        $trackingManager = new TrackingManager($httpClientMock);
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config)->setTrackingManager($trackingManager);
+
+        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
+
+        $exception = new Exception();
+        $httpClientMock->expects($this->once())->method('post')->willThrowException($exception);
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $logManagerStub->expects($this->once())
+            ->method('error')
+            ->with("[$flagshipSdk] " . $exception->getMessage());
+
+        $trackingManager->sendConsentHit($visitor, $config);
     }
 }

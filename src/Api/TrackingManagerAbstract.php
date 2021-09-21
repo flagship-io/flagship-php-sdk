@@ -2,6 +2,7 @@
 
 namespace Flagship\Api;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\Modification;
 use Flagship\Utils\HttpClientInterface;
@@ -50,4 +51,11 @@ abstract class TrackingManagerAbstract
      * @return mixed
      */
     abstract public function sendHit(HitAbstract $hit);
+
+    /**
+     * @param VisitorAbstract $visitor
+     * @param FlagshipConfig $config
+     * @return void
+     */
+    abstract public function sendConsentHit(VisitorAbstract $visitor, FlagshipConfig $config);
 }

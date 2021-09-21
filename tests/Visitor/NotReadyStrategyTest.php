@@ -48,7 +48,7 @@ class NotReadyStrategyTest extends TestCase
 
         $configManager = (new ConfigManager())->setConfig($config);
         $visitorId = "visitorId";
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $notReadyStrategy = new NotReadyStrategy($visitor);
 

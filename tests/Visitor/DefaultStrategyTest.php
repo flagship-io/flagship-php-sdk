@@ -97,7 +97,7 @@ class DefaultStrategyTest extends TestCase
         ];
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
 
         $defaultStrategy = new DefaultStrategy($visitor);
         //Test number value
@@ -143,6 +143,12 @@ class DefaultStrategyTest extends TestCase
         $context = $visitor->getContext();
 
         $this->assertArrayNotHasKey("sdk_region", $context);
+
+        //Test predefined fs_
+
+        $defaultStrategy->updateContext(FlagshipContext::FLAGSHIP_VERSION, "2");
+
+        $this->assertSame($context, $visitor->getContext());
 
         // Test Collection
         $collectionContext = [
@@ -192,7 +198,7 @@ class DefaultStrategyTest extends TestCase
             'age' => 25
         ];
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
 
         $defaultStrategy = new DefaultStrategy($visitor);
         $newVisitorContext = [
@@ -221,7 +227,7 @@ class DefaultStrategyTest extends TestCase
         ];
         $config = new DecisionApiConfig('envId', 'apiKey');
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
@@ -268,7 +274,7 @@ class DefaultStrategyTest extends TestCase
 
         $configManager = (new ConfigManager())
             ->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
         $defaultStrategy = new DefaultStrategy($visitor);
         $newVisitorId = "new_visitor_id";
         $defaultStrategy->authenticate($newVisitorId);
@@ -324,7 +330,7 @@ class DefaultStrategyTest extends TestCase
 
         $configManager = (new ConfigManager())
             ->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $visitor->setConfig((new BucketingConfig())->setLogManager($logManagerStub));
         $defaultStrategy = new DefaultStrategy($visitor);
@@ -369,7 +375,7 @@ class DefaultStrategyTest extends TestCase
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
@@ -473,7 +479,7 @@ class DefaultStrategyTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
@@ -481,7 +487,7 @@ class DefaultStrategyTest extends TestCase
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->with(
                 "[$flagshipSdk] " . FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_SYNCHRONIZED_MODIFICATION]
+                [FlagshipConstant::TAG => "synchronizedModifications"]
             );
 
         $defaultStrategy->synchronizedModifications();
@@ -537,7 +543,7 @@ class DefaultStrategyTest extends TestCase
 
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $trackerManagerStub->expects($this->exactly(2))
@@ -577,7 +583,7 @@ class DefaultStrategyTest extends TestCase
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($apiManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $defaultStrategyMock = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
             ->setMethods(['logError'])
@@ -670,7 +676,7 @@ class DefaultStrategyTest extends TestCase
         $logManagerStub->expects($this->exactly(2))->method('error')
             ->withConsecutive($paramsExpected);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
@@ -756,7 +762,7 @@ class DefaultStrategyTest extends TestCase
             ->setDecisionManager($apiManagerStub)
             ->setTrackingManager($trackerManagerStub);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
@@ -820,7 +826,7 @@ class DefaultStrategyTest extends TestCase
             ->setDecisionManager($apiManagerStub);
 
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, []);
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $defaultStrategy->synchronizedModifications();
@@ -829,7 +835,7 @@ class DefaultStrategyTest extends TestCase
 
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
             "[$flagshipSdk] " . FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-            [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]
+            [FlagshipConstant::TAG => "activateModification"]
         );
 
         //Call error
@@ -861,7 +867,7 @@ class DefaultStrategyTest extends TestCase
 
         $configManager->setDecisionManager($apiManager);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, true);
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $pageUrl = 'https://locahost';
@@ -964,7 +970,7 @@ class DefaultStrategyTest extends TestCase
         $configManager = (new ConfigManager())
             ->setConfig($config);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId);
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, true, [], true);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 

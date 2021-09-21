@@ -45,7 +45,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
     /**
      * @var bool
      */
-    protected $hasConsented = false;
+    public $hasConsented = false;
 
     /**
      * @var ContainerInterface
@@ -205,7 +205,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
      */
     public function setConsent($hasConsented)
     {
-        $this->hasConsented = $hasConsented;
+        $this->getStrategy()->setConsent($hasConsented);
     }
 
     /**

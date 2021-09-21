@@ -71,6 +71,7 @@ class HttpClientTest extends TestCase
         Curl::$curlErrorCode = 0;
         Curl::$curlHttpCodeInfo = 204;
 
+
         $response = $client->post($url, [], []);
 
         $this->assertInstanceOf('Flagship\Model\HttpResponse', $response);
@@ -95,10 +96,12 @@ class HttpClientTest extends TestCase
         Curl::$response = '"Test-response"';
         Curl::$curlErrorCode = 0;
         Curl::$curlHttpCodeInfo = 204;
+        Curl::$curlLastModifies = 1630935806;
 
         $response = $client->get($url, []);
         $this->assertInstanceOf('Flagship\Model\HttpResponse', $response);
         $this->assertSame(json_decode(Curl::$response), $response->getBody());
         $this->assertSame(Curl::$curlHttpCodeInfo, $response->getStatusCode());
+        $this->assertSame("2021-09-06 13:43:26", $response->getHeaders()['last-modified']);
     }
 }

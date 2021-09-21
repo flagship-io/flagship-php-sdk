@@ -17,6 +17,22 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
+    public function setConsent($hasConsented)
+    {
+        $this->visitor->hasConsented = $hasConsented;
+        $this->logError(
+            $this->getVisitor()->getConfig(),
+            sprintf(
+                FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
+                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
+            ),
+            [FlagshipConstant::TAG => __FUNCTION__]
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function updateContext($key, $value)
     {
         $this->log(__FUNCTION__);
@@ -76,7 +92,11 @@ class PanicStrategy extends DefaultStrategy
     {
         $this->logError(
             $this->getVisitor()->getConfig(),
-            sprintf(FlagshipConstant::METHOD_DEACTIVATED_ERROR, $functionName, FlagshipStatus::READY_PANIC_ON),
+            sprintf(
+                FlagshipConstant::METHOD_DEACTIVATED_ERROR,
+                $functionName,
+                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
+            ),
             [FlagshipConstant::TAG => $functionName]
         );
     }

@@ -41,4 +41,18 @@ class FlagshipStatus
      * @var int
      */
     const READY = 4 ;
+
+    private static $listStatus = ["NOT_INITIALIZED","STARTING", "POLLING", "READY_PANIC_ON", "READY"];
+
+    /**
+     * @param int $status
+     * @return string|null
+     */
+    public static function getStatusName($status)
+    {
+        if (!is_int($status) || $status < 0 || $status > 4) {
+            return null;
+        }
+        return self::$listStatus[$status];
+    }
 }

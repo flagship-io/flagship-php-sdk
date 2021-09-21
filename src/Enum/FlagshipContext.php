@@ -8,115 +8,147 @@ class FlagshipContext
      * Current device locale
      * @var string
      */
-    const DEVICE_LOCALE = '{"key":"sdk_deviceLanguage", "type":"string"}';
+    const DEVICE_LOCALE = 'sdk_deviceLanguage';
     /**
      * Current device type  tablet, pc, server, iot, other
      * @var string
      */
-    const DEVICE_TYPE = '{"key":"sdk_deviceType", "type":"string"}';
+    const DEVICE_TYPE = 'sdk_deviceType';
     /**
      * Current device model
      * @var string
      */
-    const DEVICE_MODEL = '{"key":"sdk_deviceModel", "type":"string"}';
+    const DEVICE_MODEL = 'sdk_deviceModel';
     /**
      * Current visitor city
      * @var string
      */
-    const LOCATION_CITY = '{"key":"sdk_city", "type":"string"}';
+    const LOCATION_CITY = 'sdk_city';
     /**
      * Current visitor region
      * @var string
      */
-    const LOCATION_REGION = '{"key":"sdk_region", "type":"string"}';
+    const LOCATION_REGION = 'sdk_region';
 
     /**
      * Current visitor country
      * @var string
      */
-    const LOCATION_COUNTRY = '{"key":"sdk_country", "type":"string"}';
+    const LOCATION_COUNTRY = 'sdk_country';
 
     /**
      * Current visitor latitude
      * @var float
      */
-    const LOCATION_LAT = '{"key":"sdk_lat", "type":"float"}';
+    const LOCATION_LAT = 'sdk_lat';
 
     /**
      * Current visitor longitude
      * @var float
      */
-    const LOCATION_LONG = '{"key":"sdk_long", "type":"float"}';
+    const LOCATION_LONG = 'sdk_long';
 
     /**
      * Device public ip
      * @var string
      */
-    const IP = '{"key":"sdk_ip", "type":"string"}';
+    const IP = 'sdk_ip';
 
     /**
      * OS name
      * @var string
      */
-    const OS_NAME = '{"key":"sdk_osName", "type":"string"}';
+    const OS_NAME = 'sdk_osName';
 
     /**
      * OS version name
      * @var string
      */
-    const OS_VERSION_NAME = '{"key":"sdk_osVersionName", "type":"string"}';
+    const OS_VERSION_NAME = 'sdk_osVersionName';
 
     /**
      * OS version code
      * @var float
      */
-    const OS_VERSION_CODE = '{"key":"sdk_osVersionCode", "type":"float"}';
+    const OS_VERSION_CODE = 'sdk_osVersionCode';
 
     /**
      * Carrier operator
      * @var string
      */
-    const CARRIER_NAME = '{"key":"sdk_carrierName", "type":"string"}';
+    const CARRIER_NAME = 'sdk_carrierName';
 
     /**
      * Internet connexion type : 4G, 5G, Fiber
      * @var string
      */
-    const INTERNET_CONNECTION = '{"key":"sdk_internetConnection", "type":"string"}';
+    const INTERNET_CONNECTION = 'sdk_internetConnection';
 
     /**
      * Customer app version name
      * @var string
      */
-    const APP_VERSION_NAME = '{"key":"sdk_versionName", "type":"string"}';
+    const APP_VERSION_NAME = 'sdk_versionName';
 
     /**
      * Customer app version code
      * @var float
      */
-    const APP_VERSION_CODE = '{"key":"sdk_versionCode", "type":"float"}';
+    const APP_VERSION_CODE = 'sdk_versionCode';
 
     /**
      * Current customer app interface name
      * @var string
      */
-    const INTERFACE_NAME = '{"key":"sdk_interfaceName", "type":"string"}';
+    const INTERFACE_NAME = 'sdk_interfaceName';
 
     /**
      * Flagship SDK client name
      * @var string
      */
-    const FLAGSHIP_CLIENT = '{"key":"fs_client", "type":"string"}';
+    const FLAGSHIP_CLIENT = 'fs_client';
 
     /**
      * Flagship SDK version name
      * @var string
      */
-    const FLAGSHIP_VERSION = '{"key":"fs_version", "type":"string"}';
+    const FLAGSHIP_VERSION = 'fs_version';
 
     /**
      * Current visitor id
      * @var string
      */
-    const FLAGSHIP_VISITOR = '{"key":"fs_users", "type":"string"}';
+    const FLAGSHIP_VISITOR = 'fs_users';
+
+    private static $predefinedContext = [
+        self::DEVICE_LOCALE => "string",
+        self::DEVICE_TYPE => "string",
+        self::DEVICE_MODEL => "string",
+        self::LOCATION_CITY => "string",
+        self::LOCATION_REGION => "string",
+        self::LOCATION_COUNTRY => "string",
+        self::LOCATION_LAT => "float",
+        self::LOCATION_LONG => "float",
+        self::IP => "string",
+        self::OS_NAME => "string",
+        self::OS_VERSION_NAME => "string",
+        self::OS_VERSION_CODE => "float",
+        self::CARRIER_NAME => "string",
+        self::INTERNET_CONNECTION => "string",
+        self::APP_VERSION_NAME => "string",
+        self::APP_VERSION_CODE => "float",
+        self::INTERFACE_NAME => "string",
+        self::FLAGSHIP_CLIENT => "string",
+        self::FLAGSHIP_VERSION => "string",
+        self::FLAGSHIP_VISITOR => "string"
+        ];
+
+    /**
+     * @param $context string
+     * @return string|null
+     */
+    public static function getType($context)
+    {
+        return isset(self::$predefinedContext[$context]) ? self::$predefinedContext[$context] : null;
+    }
 }

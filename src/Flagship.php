@@ -13,6 +13,7 @@ use Flagship\Traits\LogTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Visitor\Visitor;
+use Flagship\Visitor\VisitorBuilder;
 
 /**
  * Flagship main singleton.
@@ -272,25 +273,20 @@ class Flagship
     }
 
     /**
-     * Create a new visitor with a context.
+     * Initialize the builder and Return a \Flagship\Visitor\VisitorBuilder
+     * or null if the SDK hasn't started successfully.
      *
      * @param string $visitorId : Unique visitor identifier.
-     * @param array $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
-     * @return Visitor|null
+     * @return VisitorBuilder|null
      */
-    public static function newVisitor($visitorId, $isAuthenticated = false, array $context = [])
+    public static function newVisitor($visitorId)
     {
         if (empty($visitorId) || !self::isReady()) {
             return  null;
         }
+
         $instance = self::getInstance();
-        $visitorDelegate = $instance->getContainer()->get('Flagship\Visitor\VisitorDelegate', [
-            $instance->getContainer(),
-            $instance->getConfigManager(),
-            $visitorId,
-            $isAuthenticated,
-            $context
-        ], true);
-        return new Visitor($visitorDelegate);
+
+        return VisitorBuilder::builder($visitorId, $instance->getConfigManager(), $instance->getContainer());
     }
 }

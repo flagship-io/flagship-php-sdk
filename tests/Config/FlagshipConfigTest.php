@@ -137,7 +137,7 @@ class FlagshipConfigTest extends TestCase
             ->method('error')
             ->with(
                 "[$flagshipSdk] " .
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, []),
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
                 [
                     FlagshipConstant::TAG => "setStatusChangedCallback"
                 ]

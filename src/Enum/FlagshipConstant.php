@@ -27,10 +27,12 @@ class FlagshipConstant
     const HIT_API_URL = "https://ariane.abtasty.com";
     const BUCKETING_API_URL = "https://cdn.flagship.io/%s/bucketing.json";
     const BUCKETING_API_CONTEXT_URL = "https://decision.flagship.io/v2/%s/events";
+    const HIT_CONSENT_URL = "https://ariane.abtasty.com";
     const URL_CAMPAIGNS = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
 
     const EXPOSE_ALL_KEYS = "exposeAllKeys";
+    const SEND_CONTEXT_EVENT = "sendContextEvent";
 
     /**
      * SDK version
@@ -53,6 +55,7 @@ class FlagshipConstant
     const PANIC_MODE_ERROR = "'%s' deactivated while panic mode is on.";
     const VISITOR_ID_ERROR = "visitorId must not be null or empty";
     const METHOD_DEACTIVATED_ERROR = "Method '%s' is deactivated while SDK status is: %s.";
+    const METHOD_DEACTIVATED_SEND_CONSENT_ERROR = "Send consent hit is deactivated while SDK status is: %s.";
     const METHOD_DEACTIVATED_CONSENT_ERROR = "Method '%s' is deactivated for visitor '%s': visitor did not consent.";
     const METHOD_DEACTIVATED_BUCKETING_ERROR = "Method '%s' is deactivated on Bucketing mode.";
     const FLAGSHIP_PREDEFINED_CONTEXT_ERROR = "Flagship predefined context %s must be %s";

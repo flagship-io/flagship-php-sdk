@@ -28,7 +28,8 @@ class VisitorDelegate extends VisitorAbstract
         ConfigManager $configManager,
         $visitorId,
         $isAuthenticated = false,
-        array $context = []
+        array $context = [],
+        $hasConsented = false
     ) {
         $this->setDependencyIContainer($dependencyIContainer);
         $this->setConfig($configManager->getConfig());
@@ -36,6 +37,11 @@ class VisitorDelegate extends VisitorAbstract
         $this->setContext($context);
         $this->setConfigManager($configManager);
         $this->loadPredefinedContext();
+
+        if (!$hasConsented) {
+            $this->setConsent($hasConsented);
+        }
+        $this->hasConsented = $hasConsented;
 
         if ($isAuthenticated && $this->getConfig()->getDecisionMode() == DecisionMode::DECISION_API) {
             $anonymousId  = $this->newGuid();

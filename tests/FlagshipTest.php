@@ -16,6 +16,7 @@ use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\MurmurHash;
+use Flagship\Visitor\Visitor;
 use Flagship\Visitor\VisitorDelegate;
 use Psr\Log\LoggerInterface;
 use Flagship\Utils\Utils;
@@ -381,18 +382,9 @@ class FlagshipTest extends TestCase
 
         Flagship::start($envId, $apiKey, $config);
         $visitorId = "visitorId";
-        $context = [
-            'age' => 20,
-            "sdk_osName" => PHP_OS,
-            "sdk_deviceType" => "server",
-            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,
-        ];
 
-        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
-        $this->assertInstanceOf("Flagship\Visitor\Visitor", $visitor1);
-        $this->assertSame($context, $visitor1->getContext());
+        $visitor1 = Flagship::newVisitor($visitorId);
+        $this->assertInstanceOf("Flagship\Visitor\VisitorBuilder", $visitor1);
     }
 
     public function testNewVisitorFailed()
@@ -468,20 +460,30 @@ class FlagshipTest extends TestCase
             $args = func_get_args();
             switch ($args[0]) {
                 case 'Flagship\DecisionApiConfig':
-                    return $config;
+                    $returnValue = $config;
+                    break;
                 case 'Psr\Log\LoggerInterface':
-                    return $this->logManagerMock;
+                    $returnValue = $this->logManagerMock;
+                    break;
                 case 'Flagship\Decision\ApiManager':
-                    return $apiManager;
+                    $returnValue = $apiManager;
+                    break;
                 case 'Flagship\Api\TrackingManager':
-                    return $trackingManager;
+                    $returnValue = $trackingManager;
+                    break;
                 case 'Flagship\Utils\ConfigManager':
-                    return $configManager;
+                    $returnValue = $configManager;
+                    break;
                 case 'Flagship\Visitor\VisitorDelegate':
-                    return new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
+                    $returnValue = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
+                    break;
+                case 'Flagship\Visitor\Visitor':
+                    $returnValue =  new Visitor($args[1][0]);
+                    break;
                 default:
-                    return null;
+                    $returnValue = null;
             }
+            return $returnValue ;
         };
 
         $containerMock = $this->getMockBuilder(
@@ -503,7 +505,7 @@ class FlagshipTest extends TestCase
 
         Flagship::start($envId, $apiKey, $config);
 
-        $visitor = Flagship::newVisitor('Visitor_1');
+        $visitor = Flagship::newVisitor('Visitor_1')->build();
 
         $visitor->synchronizedModifications();
 

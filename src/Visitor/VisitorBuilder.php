@@ -48,7 +48,7 @@ class VisitorBuilder
         $this->dependencyIContainer =  $dependencyIContainer;
         $this->isAuthenticated =  false;
         $this->context = [];
-        $this->hasConsented = false;
+        $this->hasConsented = true;
     }
 
     /**

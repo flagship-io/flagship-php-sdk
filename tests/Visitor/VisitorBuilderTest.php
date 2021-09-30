@@ -57,7 +57,7 @@ class VisitorBuilderTest extends TestCase
         $visitor = VisitorBuilder::builder($visitorId, $configManager, $containerMock)->build();
 
         $this->assertEquals($visitorId, $visitor->getVisitorId());
-        $this->assertFalse($visitor->hasConsented());
+        $this->assertTrue($visitor->hasConsented());
         $this->assertNull($visitor->getAnonymousId());
 
         $context = [

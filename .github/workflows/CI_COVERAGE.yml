@@ -2,9 +2,7 @@ name: CI PHP 8
 
 on:
   push:
-    branches: [ main, feature/updateConsent]
-  pull_request:
-    branches: [ main ]
+    branches: [ main, feature/sdk_v2]
 
 jobs:
   build:
@@ -51,6 +49,11 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test -- -c phpunit.8.xml
-
+    - uses: codecov/codecov-action@v1
+      with:
+        file: ./clover.xml
+        flags: unittests
+        name: codecov-flagship-php-coverage
+        fail_ci_if_error: true
 
 

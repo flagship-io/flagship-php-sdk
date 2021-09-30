@@ -51,5 +51,11 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test -- -c phpunit.8.xml
+    - uses: codecov/codecov-action@v1
+      with:
+        ile: ./clover.xml
+        flags: unittests
+        name: codecov-flagship-php-coverage
+        fail_ci_if_error: true
 
 

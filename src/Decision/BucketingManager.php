@@ -36,7 +36,7 @@ class BucketingManager extends DecisionManagerAbstract
             "data" => $visitor->getContext()
         ];
         try {
-            $response =  $this->httpClient->post($url, [], $postBody);
+            $response = $this->httpClient->post($url, [], $postBody);
             if ($response->getStatusCode() >= 400) {
                 $this->logError($this->getConfig(), $response->getBody(), [
                     FlagshipConstant::TAG => __FUNCTION__
@@ -202,7 +202,7 @@ class BucketingManager extends DecisionManagerAbstract
      */
     private function checkAndTargeting($innerTargetings, VisitorAbstract $visitor)
     {
-        $isMatching = true;
+        $isMatching = false;
         foreach ($innerTargetings as $innerTargeting) {
             $key = $innerTargeting['key'];
             $operator = $innerTargeting["operator"];
@@ -211,25 +211,61 @@ class BucketingManager extends DecisionManagerAbstract
 
             switch ($key) {
                 case "fs_all_users":
+                    $isMatching = true;
                     continue 2;
                 case "fs_users":
                     $contextValue = $visitor->getVisitorId();
                     break;
                 default:
                     if (!isset($visitorContext[$key])) {
-                        return false;
+                        $isMatching = false;
+                        break 2;
                     }
                     $contextValue = $visitorContext[$key];
                     break;
             }
 
-            $checkOperator = $this->testOperator($operator, $contextValue, $targetingValue);
-            if (!$checkOperator) {
-                return false;
+            $isMatching = $this->testOperator($operator, $contextValue, $targetingValue);
+            if (!$isMatching) {
+                break;
             }
         }
 
         return $isMatching;
+    }
+
+    private function isANDListOperator($operator)
+    {
+        return in_array($operator, ['NOT_EQUALS', 'NOT_CONTAINS']);
+    }
+
+    private function testListOperatorLoop($operator, $contextValue, array $targetingValue, $initialCheck)
+    {
+        $check = $initialCheck;
+        foreach ($targetingValue as $value) {
+            $check = $this->testOperator($operator, $contextValue, $value);
+            if ($check !== $initialCheck) {
+                break;
+            }
+        }
+        return $check;
+    }
+
+    /**
+     * @param string $operator
+     * @param mixed $contextValue
+     * @param array $targetingValue
+     * @return bool
+     */
+    private function testListOperator($operator, $contextValue, array $targetingValue)
+    {
+        $andOperator = $this->isANDListOperator($operator);
+        if ($andOperator) {
+            $check = $this->testListOperatorLoop($operator, $contextValue, $targetingValue, true);
+        } else {
+            $check = $this->testListOperatorLoop($operator, $contextValue, $targetingValue, false);
+        }
+        return $check;
     }
 
     /**
@@ -241,6 +277,9 @@ class BucketingManager extends DecisionManagerAbstract
     private function testOperator($operator, $contextValue, $targetingValue)
     {
 
+        if (is_array($targetingValue)) {
+            return $this->testListOperator($operator, $contextValue, $targetingValue);
+        }
         switch ($operator) {
             case "EQUALS":
                 $check = $contextValue === $targetingValue;
@@ -249,12 +288,10 @@ class BucketingManager extends DecisionManagerAbstract
                 $check = $contextValue !== $targetingValue;
                 break;
             case "CONTAINS":
-                $targetingValueSting = join("|", $targetingValue);
-                $check = (bool)preg_match("/{$targetingValueSting}/i", $contextValue);
+                $check = strpos(strval($contextValue), strval($targetingValue)) !== false;
                 break;
             case "NOT_CONTAINS":
-                $targetingValueSting = join("|", $targetingValue);
-                $check = !preg_match("/{$targetingValueSting}/i", $contextValue);
+                $check = strpos(strval($contextValue), strval($targetingValue)) === false;
                 break;
             case "GREATER_THAN":
                 $check = $contextValue > $targetingValue;

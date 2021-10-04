@@ -454,6 +454,15 @@ class BucketingManagerTest extends TestCase
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertTrue($output);
 
+        //test key = fs_all_users and not match key
+        $innerTargetings = [$targetingAllUsers,[
+            "notMatchKey" => "anyValue",
+            "operator" => "EQUALS",
+            'value' => ''
+        ]];
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertFalse($output);
+
         //test key = fs_users
         $targetingFsUsers = [
             "key" => "fs_users",
@@ -546,11 +555,21 @@ class BucketingManagerTest extends TestCase
         $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
+        $contextValue = 5;
+        $targetingValue = [5,1,2,3];
+        $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
+        $this->assertTrue($output);
+
         /* Test NOT_EQUALS */
 
         //Test different values
         $contextValue = 5;
         $targetingValue = 6;
+        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
+        $this->assertTrue($output);
+
+        $contextValue = 5;
+        $targetingValue = [6,1,2,3];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
@@ -563,6 +582,11 @@ class BucketingManagerTest extends TestCase
         //Test same type
         $contextValue = 5;
         $targetingValue = 5;
+        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
+        $this->assertFalse($output);
+
+        $contextValue = 5;
+        $targetingValue = [1,2,3,5,6];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
@@ -585,6 +609,18 @@ class BucketingManagerTest extends TestCase
         $targetingValue = ["abc", "dfg", "hij", "klm"];
         $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
         $this->assertTrue($output);
+
+        //Test contextValue contains targetingValue
+        $contextValue = "nopq_hij";
+        $targetingValue = "hij";
+        $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
+        $this->assertTrue($output);
+
+        //Test contextValue contains targetingValue
+        $contextValue = "nopq_hij";
+        $targetingValue = "hidf";
+        $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
+        $this->assertFalse($output);
 
         /* Test NOT_CONTAINS */
 

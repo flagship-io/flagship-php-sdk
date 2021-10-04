@@ -456,7 +456,7 @@ class BucketingManagerTest extends TestCase
 
         //test key = fs_all_users and not match key
         $innerTargetings = [$targetingAllUsers,[
-            "notMatchKey" => "anyValue",
+            "key" => "anyValue",
             "operator" => "EQUALS",
             'value' => ''
         ]];

@@ -35,6 +35,8 @@ RUN cp .env.example /var/www/html/.env
 
 RUN composer install
 
+RUN composer update flagship-io/flagship-php-sdk
+
 EXPOSE 80
 
 CMD /usr/sbin/httpd -DFOREGROUND

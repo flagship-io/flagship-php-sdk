@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": "^7.3|^8.0",
-        "flagship-io/flagship-php-sdk": "dev-feature/updateConsent",
+        "flagship-io/flagship-php-sdk": "dev-feature/sdk_v2",
         "illuminate/session": "^8.40",
         "irazasyed/larasupport": "^1.7",
         "laravel/lumen-framework": "^8.0"

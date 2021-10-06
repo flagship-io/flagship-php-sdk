@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "738d24c2f19c3448c4e1e97ee3ca9c5d",
+    "content-hash": "43e499b2a6bf5167f6dad1a4d6380661",
     "packages": [
         {
             "name": "brick/math",
@@ -372,11 +372,11 @@
         },
         {
             "name": "flagship-io/flagship-php-sdk",
-            "version": "dev-feature/updateConsent",
+            "version": "dev-feature/sdk_v2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flagship-io/flagship-php-sdk.git",
-                "reference": "01991981af41b90543b3954f3fe2ff21646527c5"
+                "reference": "a7ec8dd75fdd4412c27accd4a28bddcd569b9785"
             },
             "require": {
                 "ext-curl": "*",
@@ -428,7 +428,7 @@
                 "flagship-php",
                 "sdk"
             ],
-            "time": "2021-09-01T21:15:40+00:00"
+            "time": "2021-10-04T19:16:42+00:00"
         },
         {
             "name": "graham-campbell/result-type",

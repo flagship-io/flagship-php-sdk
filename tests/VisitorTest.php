@@ -254,7 +254,7 @@ class VisitorTest extends TestCase
      * @dataProvider modifications
      * @param Modification[] $modifications
      */
-    public function testSynchronizedModifications($modifications)
+    public function testSynchronizeModifications($modifications)
     {
 
         $apiManagerStub = $this->getMockForAbstractClass(
@@ -276,7 +276,7 @@ class VisitorTest extends TestCase
 
         $visitor = new Visitor($configManager, "visitorId", []);
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         $this->assertSame($modifications, $visitor->getModifications());
 
@@ -369,7 +369,7 @@ class VisitorTest extends TestCase
      * @dataProvider modifications
      * @param Modification[] $modifications
      */
-    public function testSynchronizedModificationsWithoutDecisionManager($modifications)
+    public function testSynchronizeModificationsWithoutDecisionManager($modifications)
     {
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
@@ -395,7 +395,7 @@ class VisitorTest extends TestCase
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_SYNCHRONIZED_MODIFICATION]
             );
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
     }
 
     /**
@@ -425,7 +425,7 @@ class VisitorTest extends TestCase
             ->setMethods(['logError'])
             ->setConstructorArgs([$configManager, "visitorId", []])->getMock();
 
-        $visitorMock->synchronizedModifications();
+        $visitorMock->synchronizeModifications();
 
         //Test getModification key is null
         //Return DefaultValue
@@ -527,7 +527,7 @@ class VisitorTest extends TestCase
 
         $visitor = new Visitor($configManager, "visitorId", []);
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         $modification = $modifications[0];
 
@@ -622,7 +622,7 @@ class VisitorTest extends TestCase
             ->method('sendActive')
             ->with($visitor, $modifications[0]);
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         $visitor->activateModification($modifications[0]->getKey());
 
@@ -686,7 +686,7 @@ class VisitorTest extends TestCase
 
         $visitor = new Visitor($configManager, "visitorId", []);
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
@@ -753,7 +753,7 @@ class VisitorTest extends TestCase
             ->method('sendActive')
             ->with($visitor, $modifications[0]);
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         $visitor->getModification($modifications[0]->getKey(), 'defaultValue', true);
     }

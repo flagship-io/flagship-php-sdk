@@ -353,7 +353,7 @@ class Visitor implements JsonSerializable
      * from the server according to the visitor context.
      * @return void
      */
-    public function synchronizedModifications()
+    public function synchronizeModifications()
     {
         if (!$this->hasDecisionManager(FlagshipConstant::TAG_SYNCHRONIZED_MODIFICATION)) {
             return;

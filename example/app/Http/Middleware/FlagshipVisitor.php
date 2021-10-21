@@ -23,7 +23,7 @@ class FlagshipVisitor
             Log::error('Flagship', $message);
             return response()->json($message, 422);
         }
-//        $visitor->synchronizedModifications();
+//        $visitor->synchronizeModifications();
         app()->instance(Visitor::class, $visitor);
         return $next($request);
     }

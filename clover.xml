@@ -488,7 +488,7 @@
         <line num="345" type="stmt" count="2"/>
         <line num="346" type="stmt" count="2"/>
         <line num="348" type="stmt" count="8"/>
-        <line num="356" type="method" name="synchronizedModifications" crap="2" count="7"/>
+        <line num="356" type="method" name="synchronizeModifications" crap="2" count="7"/>
         <line num="358" type="stmt" count="7"/>
         <line num="359" type="stmt" count="1"/>
         <line num="361" type="stmt" count="6"/>

@@ -2,7 +2,7 @@ name: Unit test & coverage
 
 on:
   push:
-    branches: [main]
+    branches: [main,ci]
 
 jobs:
   test:
@@ -23,4 +23,7 @@ jobs:
       - name: Run tests
         run: vendor/bin/phpunit --coverage-clover coverage.xml
 
-      - uses: codecov/codecov-action@v1
+      - name: Codecov upload
+        uses: codecov/codecov-action@v1
+        with:
+          file: coverage.xml

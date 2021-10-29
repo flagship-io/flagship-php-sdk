@@ -18,7 +18,7 @@ jobs:
           ini-values: post_max_size=256M, max_execution_time=180
 
       - name: Install packages
-        run: composer validate --strict
+        run: composer install
 
       - name: Run tests
         run: vendor/bin/phpunit --coverage-clover coverage.xml

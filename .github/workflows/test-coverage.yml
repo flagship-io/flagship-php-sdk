@@ -2,7 +2,7 @@ name: Unit test & coverage
 
 on:
   push:
-    branches: [ci]
+    branches: [main]
 
 jobs:
   test:

@@ -1,0 +1,16 @@
+name: Unit test & coverage
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run tests
+        run: vendor/bin/phpunit --coverage-clover coverage.xml
+
+      - uses: codecov/codecov-action@v1

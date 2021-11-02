@@ -92,6 +92,7 @@ class VisitorDelegate extends VisitorAbstract
     public function authenticate($visitorId)
     {
         $this->getStrategy()->authenticate($visitorId);
+        $this->loadPredefinedContext();
     }
 
     /**
@@ -100,6 +101,7 @@ class VisitorDelegate extends VisitorAbstract
     public function unauthenticate()
     {
         $this->getStrategy()->unauthenticate();
+        $this->loadPredefinedContext();
     }
 
     /**

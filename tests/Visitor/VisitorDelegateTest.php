@@ -177,7 +177,7 @@ class VisitorDelegateTest extends TestCase
         ];
 
         //test SetContext
-        $defaultStrategy->expects($this->exactly(3))
+        $defaultStrategy->expects($this->exactly(5))
             ->method('updateContextCollection')
             ->withConsecutive(
                 [$visitorContext],

@@ -93,7 +93,7 @@ class HitController extends Controller
             $hit->setUserIP($data['uip']);
         }
         if (isset($data['ul'])) {
-            $hit->setUserLanguage($data['ul']);
+            $hit->setLocal($data['ul']);
         }
         return $hit;
     }

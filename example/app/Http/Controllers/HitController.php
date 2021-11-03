@@ -83,6 +83,18 @@ class HitController extends Controller
                     $hit->setItemCategory($data['iv']);
                 }
         }
+        if (isset($data['re_he']) && isset($data['re_wi'])) {
+            $hit->setScreenResolution($data['re_he'] . "X" . $data['re_wi']);
+        }
+        if (isset($data['sn'])) {
+            $hit->setSessionNumber($data['sn']);
+        }
+        if (isset($data['uip'])) {
+            $hit->setUserIP($data['uip']);
+        }
+        if (isset($data['ul'])) {
+            $hit->setUserLanguage($data['ul']);
+        }
         return $hit;
     }
 
@@ -92,7 +104,6 @@ class HitController extends Controller
             $data = $this->hitValidation($request);
 
             $hit = $this->getHit($data);
-
             $visitor->sendHit($hit);
 
             return response()->json($visitor->getConfig());
@@ -151,7 +162,12 @@ class HitController extends Controller
             'dl' => [Rule::requiredIf(
                 $request->get('t') == self::PAGE ||
                 $request->get('t') === self::SCREEN
-            )]
+            )],
+            're_he' => "required_with:re_wi|numeric",
+            're_wi' => 'required_with:re_he|numeric',
+            'sn' => "nullable",
+            'ul' => "nullable",
+            'uip' => "nullable|ip"
         ]);
     }
 }

@@ -19,11 +19,11 @@ class BucketingConfigTest extends TestCase
         $config = new BucketingConfig($envId, $apiKey);
 
         //Test default value
-        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT * 1000, $config->getPollingInterval());
+        $this->assertSame(FlagshipConstant::DEFAULT_POLLING_INTERVAL * 1000, $config->getPollingInterval());
 
         //Test set with alpha
         $config->setPollingInterval('abc');
-        $this->assertSame(FlagshipConstant::REQUEST_TIME_OUT * 1000, $config->getPollingInterval());
+        $this->assertSame(FlagshipConstant::DEFAULT_POLLING_INTERVAL * 1000, $config->getPollingInterval());
 
         $polling = 5000;
         $config->setPollingInterval($polling);
@@ -54,7 +54,7 @@ class BucketingConfigTest extends TestCase
             FlagshipField::FIELD_API_KEY => "apiKey",
             FlagshipField::FIELD_TIMEOUT => 2000,
             FlagshipField::FIELD_LOG_LEVEL => LogLevel::ALL,
-            FlagshipField::FIELD_POLLING_INTERVAL => 2000,
+            FlagshipField::FIELD_POLLING_INTERVAL => 1000,
             FlagshipField::FIELD_BUCKETING_DIRECTORY => "flagship"
         ];
 

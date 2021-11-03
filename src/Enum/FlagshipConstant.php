@@ -15,6 +15,8 @@ class FlagshipConstant
      */
     const REQUEST_TIME_OUT = 2;
 
+    const DEFAULT_POLLING_INTERVAL = 1;
+
     /**
      * SDK language
      */

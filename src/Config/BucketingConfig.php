@@ -11,7 +11,7 @@ class BucketingConfig extends FlagshipConfig
     /**
      * @var int
      */
-    private $pollingInterval = FlagshipConstant::REQUEST_TIME_OUT;
+    private $pollingInterval = FlagshipConstant::DEFAULT_POLLING_INTERVAL;
 
     /**
      * @var string

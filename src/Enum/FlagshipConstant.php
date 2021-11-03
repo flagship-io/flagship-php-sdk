@@ -107,6 +107,10 @@ class FlagshipConstant
     const EVENT_ACTION_API_ITEM = "ea";
     const EVENT_LABEL_API_ITEM = "el";
     const EVENT_VALUE_API_ITEM = "ev";
+    const USER_IP_API_ITEM = "uip";
+    const SCREEN_RESOLUTION_API_ITEM = "sr";
+    const USER_LANGUAGE = "ul";
+    const SESSION_NUMBER = "sn";
 
     const HEADER_X_API_KEY = 'x-api-key';
     const HEADER_CONTENT_TYPE = 'Content-Type';

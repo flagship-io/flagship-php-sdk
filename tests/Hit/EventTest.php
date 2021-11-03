@@ -20,12 +20,20 @@ class EventTest extends TestCase
         $eventCategory = EventCategory::USER_ENGAGEMENT;
         $eventLabel = "eventLabel";
         $eventValue = 458;
+        $userIp = "127.0.0.1";
+        $screenResolution = "200X200";
+        $userLanguage = "Fr";
+        $sessionNumber = 1;
 
         $eventArray = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
             FlagshipConstant::T_API_ITEM => HitType::EVENT,
+            FlagshipConstant::USER_IP_API_ITEM => $userIp,
+            FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $screenResolution,
+            FlagshipConstant::USER_LANGUAGE => $userLanguage,
+            FlagshipConstant::SESSION_NUMBER => $sessionNumber,
             FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::EVENT_CATEGORY_API_ITEM => $eventCategory,
             FlagshipConstant::EVENT_ACTION_API_ITEM => $eventAction,
@@ -36,7 +44,11 @@ class EventTest extends TestCase
         $config->setEnvId($envId);
         $event->setConfig($config)
             ->setVisitorId($visitorId)
-            ->setDs(FlagshipConstant::SDK_APP);
+            ->setDs(FlagshipConstant::SDK_APP)
+            ->setUserLanguage($userLanguage)
+            ->setUserIP($userIp)
+            ->setScreenResolution($screenResolution)
+            ->setSessionNumber($sessionNumber);
 
         $this->assertSame($eventArray, $event->toArray());
 

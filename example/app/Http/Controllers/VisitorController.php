@@ -24,7 +24,8 @@ class VisitorController extends Controller
         $array = [
             'visitor_id' => $visitor->getVisitorId(),
             'context' => $visitor->getContext(),
-            'hasConsented' => $visitor->hasConsented()
+            'consent' => $visitor->hasConsented(),
+            'modification' => $visitor->getModifications()
         ];
         return response()->json($array);
     }

@@ -27,6 +27,10 @@ class ScreenTest extends TestCase
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
             FlagshipConstant::T_API_ITEM => HitType::SCREEN_VIEW,
+            FlagshipConstant::USER_IP_API_ITEM => null,
+            FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => null,
+            FlagshipConstant::USER_LANGUAGE => null,
+            FlagshipConstant::SESSION_NUMBER => null,
             FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::DL_API_ITEM => $screenName
         ];

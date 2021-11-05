@@ -37,10 +37,10 @@ class HitController extends Controller
             case self::EVENT:
                 $hit = new Event($data['ec'], $data['ea']);
                 if (isset($data['ev'])) {
-                    $hit->setEventValue($data['ev']);
+                    $hit->setValue($data['ev']);
                 }
                 if (isset($data['el'])) {
-                    $hit->setEventLabel($data['el']);
+                    $hit->setLabel($data['el']);
                 }
                 break;
 

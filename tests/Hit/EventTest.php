@@ -52,12 +52,12 @@ class EventTest extends TestCase
 
         $this->assertSame($eventArray, $event->toArray());
 
-        $event->setEventLabel($eventLabel);
+        $event->setLabel($eventLabel);
         $eventArray[FlagshipConstant::EVENT_LABEL_API_ITEM] = $eventLabel;
 
         $this->assertSame($eventArray, $event->toArray());
 
-        $event->setEventValue($eventValue);
+        $event->setValue($eventValue);
         $eventArray[FlagshipConstant::EVENT_VALUE_API_ITEM] = $eventValue;
 
         $this->assertSame($eventArray, $event->toArray());
@@ -95,10 +95,10 @@ class EventTest extends TestCase
         $event->setAction(455);
 
         //Test label validation with no string
-        $event->setEventLabel([]);
+        $event->setLabel([]);
 
         //Test value validation with no numeric
-        $event->setEventValue('abc');
+        $event->setValue('abc');
 
         $this->assertSame($eventArray, $event->toArray());
     }

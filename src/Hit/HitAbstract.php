@@ -57,7 +57,7 @@ abstract class HitAbstract
     /**
      * @var string
      */
-    protected $local;
+    protected $locale;
 
     /**
      * @var numeric
@@ -260,19 +260,19 @@ abstract class HitAbstract
      * User language
      * @return string
      */
-    public function getLocal()
+    public function getLocale()
     {
-        return $this->local;
+        return $this->locale;
     }
 
     /**
      * Define User language
-     * @param string $local
+     * @param string $locale
      * @return HitAbstract
      */
-    public function setLocal($local)
+    public function setLocale($locale)
     {
-        $this->local = $local;
+        $this->locale = $locale;
         return $this;
     }
 
@@ -313,7 +313,7 @@ abstract class HitAbstract
             FlagshipConstant::T_API_ITEM => $this->getType(),
             FlagshipConstant::USER_IP_API_ITEM => $this->getUserIP(),
             FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $this->getScreenResolution(),
-            FlagshipConstant::USER_LANGUAGE => $this->getLocal(),
+            FlagshipConstant::USER_LANGUAGE => $this->getLocale(),
             FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber()
         ];
         return $this->setVisitorBodyParams($this->getVisitorId(), $this->getAnonymousId(), $data);

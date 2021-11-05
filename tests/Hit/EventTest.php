@@ -45,7 +45,7 @@ class EventTest extends TestCase
         $event->setConfig($config)
             ->setVisitorId($visitorId)
             ->setDs(FlagshipConstant::SDK_APP)
-            ->setLocal($userLanguage)
+            ->setLocale($userLanguage)
             ->setUserIP($userIp)
             ->setScreenResolution($screenResolution)
             ->setSessionNumber($sessionNumber);

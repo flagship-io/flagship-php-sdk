@@ -144,7 +144,7 @@ class VisitorTest extends TestCase
 
         //Test value ==null
         $visitor->updateContext('os', null);
-        $this->assertArrayNotHasKey('os', $visitor->getContext());
+        $this->assertArrayHasKey('os', $visitor->getContext());
 
         $visitor->setContext([]);
 
@@ -162,11 +162,11 @@ class VisitorTest extends TestCase
 
         //Test value is empty
         $visitor->updateContext("computer", "");
-        $this->assertCount(0, $visitor->getContext());
+        $this->assertCount(1, $visitor->getContext());
 
         //Test value and key are empty
         $visitor->updateContext("", "");
-        $this->assertCount(0, $visitor->getContext());
+        $this->assertCount(1, $visitor->getContext());
     }
 
 

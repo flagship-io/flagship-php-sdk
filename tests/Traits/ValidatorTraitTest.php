@@ -40,10 +40,10 @@ class ValidatorTraitTest extends TestCase
             true
         );
         // Value is empty
-        $this->assertFalse($validatorTraitMock->isValueValid(''));
+        $this->assertTrue($validatorTraitMock->isValueValid(''));
 
         // Value is null
-        $this->assertFalse($validatorTraitMock->isValueValid(null));
+        $this->assertTrue($validatorTraitMock->isValueValid(null));
 
         //Value is not valid
         $this->assertFalse($validatorTraitMock->isValueValid([]));

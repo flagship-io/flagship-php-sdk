@@ -8,7 +8,7 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 use Flagship\Hit\HitAbstract;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
 use Flagship\Visitor\VisitorAbstract;
@@ -25,7 +25,7 @@ class TrackingManager extends TrackingManagerAbstract
     /**
      * @inheritDoc
      */
-    public function sendActive(VisitorAbstract $visitor, Modification $modification)
+    public function sendActive(VisitorAbstract $visitor, FlagDTO $modification)
     {
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());

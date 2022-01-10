@@ -4,7 +4,7 @@ namespace Flagship\Api;
 
 use Flagship\Config\FlagshipConfig;
 use Flagship\Hit\HitAbstract;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor\VisitorAbstract;
 
@@ -41,10 +41,10 @@ abstract class TrackingManagerAbstract
      * Send to server that this user has seen this modification
      *
      * @param VisitorAbstract $visitor
-     * @param Modification $modification
+     * @param FlagDTO $modification
      * @return bool
      */
-    abstract public function sendActive(VisitorAbstract $visitor, Modification $modification);
+    abstract public function sendActive(VisitorAbstract $visitor, FlagDTO $modification);
 
     /**
      * @param  HitAbstract $hit

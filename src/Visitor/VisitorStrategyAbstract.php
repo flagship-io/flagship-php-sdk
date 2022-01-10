@@ -9,7 +9,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 
-abstract class VisitorStrategyAbstract implements VisitorInterface
+abstract class VisitorStrategyAbstract implements VisitorCoreInterface
 {
     use ValidatorTrait;
 

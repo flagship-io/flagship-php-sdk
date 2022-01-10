@@ -15,7 +15,7 @@ use Flagship\Hit\Item;
 use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Transaction;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
@@ -24,47 +24,47 @@ use PHPUnit\Framework\TestCase;
 class DefaultStrategyTest extends TestCase
 {
     /**
-     * @return \array[][]|Modification[]
+     * @return \array[][]|FlagDTO[]
      */
     public function modifications()
     {
         return [[[
-            (new Modification())
+            (new FlagDTO())
                 ->setKey('background')
                 ->setValue('EE3300')
                 ->setIsReference(false)
                 ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
                 ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
                 ->setVariationId('c1e3t1nvfu1ncqfcdcq0'),
-            (new Modification())
+            (new FlagDTO())
                 ->setKey('borderColor')
                 ->setValue('blue')
                 ->setIsReference(false)
                 ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
                 ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
                 ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
-            (new Modification())
+            (new FlagDTO())
                 ->setKey('Null')
                 ->setValue(null)
                 ->setIsReference(false)
                 ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
                 ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
                 ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
-            (new Modification())
+            (new FlagDTO())
                 ->setKey('Empty')
                 ->setValue("")
                 ->setIsReference(false)
                 ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
                 ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
                 ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
-            (new Modification())
+            (new FlagDTO())
                 ->setKey('isBool')
                 ->setValue(false)
                 ->setIsReference(false)
                 ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
                 ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
                 ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
-            (new Modification())
+            (new FlagDTO())
                 ->setKey('Number')
                 ->setValue(5)
                 ->setIsReference(false)
@@ -353,7 +353,7 @@ class DefaultStrategyTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param FlagDTO[] $modifications
      */
     public function testSynchronizeModifications($modifications)
     {
@@ -464,7 +464,7 @@ class DefaultStrategyTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param FlagDTO[] $modifications
      */
     public function testSynchronizeModificationsWithoutDecisionManager($modifications)
     {
@@ -498,7 +498,7 @@ class DefaultStrategyTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param FlagDTO[] $modifications
      */
     public function testGetModificationWithActive($modifications)
     {
@@ -565,7 +565,7 @@ class DefaultStrategyTest extends TestCase
     /**
      *
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param FlagDTO[] $modifications
      */
     public function testGetModificationLog($modifications)
     {
@@ -641,7 +641,7 @@ class DefaultStrategyTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param FlagDTO[] $modifications
      */
     public function testGetModificationInfo($modifications)
     {
@@ -719,7 +719,7 @@ class DefaultStrategyTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param FlagDTO[] $modifications
      */
     public function testActivateModification($modifications)
     {
@@ -794,7 +794,7 @@ class DefaultStrategyTest extends TestCase
 
     /**
      * @dataProvider modifications
-     * @param Modification[] $modifications
+     * @param FlagDTO[] $modifications
      */
     public function testActivateModificationWithoutTrackerManager($modifications)
     {

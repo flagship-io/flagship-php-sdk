@@ -6,7 +6,7 @@ use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Hit\HitAbstract;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\ValidatorTrait;
 
 class DefaultStrategy extends VisitorStrategyAbstract
@@ -125,7 +125,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * Return the Modification that matches the key, otherwise return null
      *
      * @param  $key
-     * @return Modification|null
+     * @return FlagDTO|null
      */
     private function getObjetModification($key)
     {
@@ -183,10 +183,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
     /**
      * Build the Campaign of Modification
      *
-     * @param  Modification $modification Modification containing information
+     * @param  FlagDTO $modification Modification containing information
      * @return array JSON encoded string
      */
-    private function parseToCampaign(Modification $modification)
+    private function parseToCampaign(FlagDTO $modification)
     {
         return [
             FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
@@ -225,17 +225,30 @@ class DefaultStrategy extends VisitorStrategyAbstract
         return $this->parseToCampaign($modification);
     }
 
+    private function synchronizeFlags($functionName)
+    {
+        $decisionManager = $this->getDecisionManager($functionName);
+        if (!$decisionManager) {
+            return;
+        }
+        $flagsDTO = $decisionManager->getCampaignModifications($this->getVisitor());
+        $this->getVisitor()->setFlagsDTO($flagsDTO);
+    }
+
     /**
      * @inheritDoc
      */
     public function synchronizeModifications()
     {
-        $decisionManager = $this->getDecisionManager(__FUNCTION__);
-        if (!$decisionManager) {
-            return;
-        }
-        $modifications = $decisionManager->getCampaignModifications($this->getVisitor());
-        $this->getVisitor()->setModifications($modifications);
+        $this->synchronizeFlags(__FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchFlags()
+    {
+        $this->synchronizeFlags(__FUNCTION__);
     }
 
     /**

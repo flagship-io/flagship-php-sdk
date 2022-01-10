@@ -8,7 +8,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Hit\Page;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\Utils;
@@ -68,7 +68,7 @@ class VisitorDelegateTest extends TestCase
         $this->assertSame($config, $visitorDelegate->getConfig());
 
         $modifications = [
-            new Modification()
+            new FlagDTO()
         ];
 
         $visitorDelegate->setModifications($modifications);

@@ -9,7 +9,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
@@ -43,7 +43,7 @@ class TrackingManagerTest extends TestCase
         $configManager = new ConfigManager();
         $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
         $modification
             ->setKey('background')
             ->setValue('EE3300')
@@ -94,7 +94,7 @@ class TrackingManagerTest extends TestCase
         $configManager = new ConfigManager();
         $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
 
         $modification
             ->setKey('background')
@@ -129,7 +129,7 @@ class TrackingManagerTest extends TestCase
 
         $trackingManager = new TrackingManager($httpClientMock);
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
         $modification
             ->setKey('background')
             ->setValue('EE3300')
@@ -175,7 +175,7 @@ class TrackingManagerTest extends TestCase
 
         $config->setLogManager($logManagerStub);
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
 
         $modification
             ->setKey('background')

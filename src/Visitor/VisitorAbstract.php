@@ -6,7 +6,7 @@ use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Flagship;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
@@ -35,9 +35,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
     public $context = [];
 
     /**
-     * @var Modification[]
+     * @var FlagDTO[]
      */
-    protected $modifications = [];
+    protected $flagsDTO = [];
     /**
      * @var ConfigManager
      */
@@ -61,15 +61,41 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
     }
 
     /**
-     * @param Modification[] $modifications
+     * @deprecated use setFlagsDTO instead
+     * @param FlagDTO[] $modifications
      * @return VisitorAbstract
      */
     public function setModifications($modifications)
     {
-        $this->modifications = $modifications;
+        $this->flagsDTO = $modifications;
+        return $this;
+    }
+    /**
+     * @deprecated use getFlagsDTO instead
+     * @return array
+     */
+    public function getModifications()
+    {
+        return $this->flagsDTO;
+    }
+
+    /**
+     * @param FlagDTO[] $flagsDTO
+     * @return VisitorAbstract
+     */
+    public function setFlagsDTO($flagsDTO)
+    {
+        $this->flagsDTO = $flagsDTO;
         return $this;
     }
 
+    /**
+     * @return FlagDTO[]
+     */
+    public function getFlagsDTO()
+    {
+        return $this->flagsDTO;
+    }
     /**
      * @param ConfigManager $configManager
      * @return VisitorAbstract
@@ -164,14 +190,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
     {
         $this->config = $config;
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getModifications()
-    {
-        return $this->modifications;
     }
 
     /**

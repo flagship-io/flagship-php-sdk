@@ -5,7 +5,7 @@ namespace Flagship\Visitor;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Page;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use PHPUnit\Framework\TestCase;
@@ -60,7 +60,7 @@ class NoConsentStrategyTest extends TestCase
         $modificationValue = 20;
         $apiManagerStub->expects($this->once())
             ->method('getCampaignModifications')
-            ->willReturn([(new Modification())->setKey($modificationKey)->setValue($modificationValue)]);
+            ->willReturn([(new FlagDTO())->setKey($modificationKey)->setValue($modificationValue)]);
 
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($apiManagerStub);

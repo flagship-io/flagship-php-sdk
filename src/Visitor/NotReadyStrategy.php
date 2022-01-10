@@ -18,7 +18,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function synchronizedModifications()
+    public function synchronizeModifications()
     {
         $this->log(__FUNCTION__);
     }

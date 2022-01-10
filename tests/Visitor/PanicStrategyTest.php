@@ -90,7 +90,7 @@ class PanicStrategyTest extends TestCase
         $panicStrategy->clearContext();
 
         //Test synchronizedModifications
-        $panicStrategy->synchronizedModifications();
+        $panicStrategy->synchronizeModifications();
 
         //Test getModification
         $defaultValue = "defaultValue";

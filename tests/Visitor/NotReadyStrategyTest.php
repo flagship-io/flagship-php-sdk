@@ -39,7 +39,7 @@ class NotReadyStrategyTest extends TestCase
 
         $logManagerStub->expects($this->exactly(5))->method('error')
             ->withConsecutive(
-                $logMessageBuild('synchronizedModifications'),
+                $logMessageBuild('synchronizeModifications'),
                 $logMessageBuild('getModification'),
                 $logMessageBuild('getModificationInfo'),
                 $logMessageBuild('activateModification'),
@@ -85,7 +85,7 @@ class NotReadyStrategyTest extends TestCase
         $this->assertCount(0, $visitor->getContext());
 
         //Test synchronizedModifications
-        $notReadyStrategy->synchronizedModifications();
+        $notReadyStrategy->synchronizeModifications();
 
         //Test getModification
         $defaultValue = "defaultValue";

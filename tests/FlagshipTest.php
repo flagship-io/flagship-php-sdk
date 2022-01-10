@@ -507,11 +507,11 @@ class FlagshipTest extends TestCase
 
         $visitor = Flagship::newVisitor('Visitor_1')->build();
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         $this->assertSame(FlagshipStatus::READY_PANIC_ON, Flagship::getStatus());
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
     }

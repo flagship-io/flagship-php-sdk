@@ -163,7 +163,7 @@ class VisitorDelegateTest extends TestCase
             ->setMethods([
                 'setContext', 'updateContext', 'updateContextCollection',
                 'clearContext', 'authenticate', 'unauthenticate', 'getModification',
-                'getModificationInfo', 'synchronizedModifications',
+                'getModificationInfo', 'synchronizeModifications',
                 'activateModification', 'sendHit'
             ])->disableOriginalConstructor()
             ->getMock();
@@ -234,9 +234,9 @@ class VisitorDelegateTest extends TestCase
 
         //Test synchronizedModifications
         $defaultStrategy->expects($this->once())
-            ->method('synchronizedModifications');
+            ->method('synchronizeModifications');
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         //Test activateModification
         $key = "age";

@@ -46,7 +46,7 @@ class VisitorController extends Controller
 
             $visitor->setConsent(!empty($data['consent']));
 
-            $visitor->synchronizedModifications();
+            $visitor->synchronizeModifications();
 
             $request->session()->put('visitor', $visitor);
             return response()->json($visitor->getModifications());
@@ -85,7 +85,7 @@ class VisitorController extends Controller
 
             $visitor->updateContext($key, $value);
 
-            $visitor->synchronizedModifications();
+            $visitor->synchronizeModifications();
 
             return response()->json($visitor);
         } catch (ValidationException $exception) {

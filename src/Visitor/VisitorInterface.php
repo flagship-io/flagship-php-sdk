@@ -95,7 +95,7 @@ interface VisitorInterface
      * assigns a variation and retrieve applicable modifications
      * @return void
      */
-    public function synchronizedModifications();
+    public function synchronizeModifications();
 
     /**
      * Report this user has seen this modification.

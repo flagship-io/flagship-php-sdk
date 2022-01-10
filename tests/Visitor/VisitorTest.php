@@ -71,7 +71,7 @@ class VisitorTest extends TestCase
             ->setMethods([
                 'getContext', 'setContext', 'updateContext', 'updateContextCollection',
                 'clearContext', 'authenticate', 'unauthenticate','getAnonymousId',
-                'getModification','getModifications','getModificationInfo', 'synchronizedModifications',
+                'getModification','getModifications','getModificationInfo', 'synchronizeModifications',
                 'activateModification', 'sendHit'
                 ])
             ->setConstructorArgs([new Container(),$configManager, $visitorId, false, $visitorContext, true])->getMock();
@@ -150,9 +150,9 @@ class VisitorTest extends TestCase
 
         //Test synchronizedModifications
         $visitorDelegateMock->expects($this->once())
-            ->method('synchronizedModifications');
+            ->method('synchronizeModifications');
 
-        $visitor->synchronizedModifications();
+        $visitor->synchronizeModifications();
 
         //Test activateModification
         $key = "age";

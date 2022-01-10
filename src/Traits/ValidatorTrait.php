@@ -99,7 +99,7 @@ trait ValidatorTrait
      */
     protected function isValueValid($value)
     {
-        return (is_numeric($value) || is_bool($value) || (is_string($value) && !empty($value)));
+        return (is_numeric($value) || is_bool($value) || is_string($value) || is_null($value));
     }
 
     /**

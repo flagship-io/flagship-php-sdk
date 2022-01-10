@@ -47,10 +47,10 @@ class ValidatorTraitTest extends TestCase
 
         $isValueValid = Utils::getMethod($validatorTraitMock, "isValueValid");
         // Value is empty
-        $this->assertFalse($isValueValid->invokeArgs($validatorTraitMock, ['']));
+        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, ['']));
 
         // Value is null
-        $this->assertFalse($isValueValid->invokeArgs($validatorTraitMock, [null]));
+        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [null]));
 
         //Value is not valid
         $this->assertFalse($isValueValid->invokeArgs($validatorTraitMock, [[]]));

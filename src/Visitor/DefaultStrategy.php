@@ -228,7 +228,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     /**
      * @inheritDoc
      */
-    public function synchronizedModifications()
+    public function synchronizeModifications()
     {
         $decisionManager = $this->getDecisionManager(__FUNCTION__);
         if (!$decisionManager) {

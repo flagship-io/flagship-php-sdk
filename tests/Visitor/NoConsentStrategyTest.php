@@ -98,7 +98,7 @@ class NoConsentStrategyTest extends TestCase
         $this->assertCount(0, $visitor->getContext());
 
         //Test synchronizedModifications
-        $noConsentStrategy->synchronizedModifications();
+        $noConsentStrategy->synchronizeModifications();
 
         //Test getModification
         $defaultValue = 15;

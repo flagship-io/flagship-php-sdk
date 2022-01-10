@@ -162,8 +162,8 @@ class DefaultStrategyTest extends TestCase
         $this->assertArrayNotHasKey('extra_info', $visitor->getContext());
 
         //Test value ==null
-        $defaultStrategy->updateContext('os', null);
-        $this->assertArrayNotHasKey('os', $visitor->getContext());
+        $visitor->updateContext('os', null);
+        $this->assertArrayHasKey('os', $visitor->getContext());
 
         $visitor->setContext([]);
 
@@ -180,12 +180,12 @@ class DefaultStrategyTest extends TestCase
         $this->assertCount(0, $visitor->getContext());
 
         //Test value is empty
-        $defaultStrategy->updateContext("computer", "");
-        $this->assertCount(0, $visitor->getContext());
+        $visitor->updateContext("computer", "");
+        $this->assertCount(1, $visitor->getContext());
 
         //Test value and key are empty
-        $defaultStrategy->updateContext("", "");
-        $this->assertCount(0, $visitor->getContext());
+        $visitor->updateContext("", "");
+        $this->assertCount(1, $visitor->getContext());
     }
 
     public function testUpdateContextCollection()
@@ -355,7 +355,7 @@ class DefaultStrategyTest extends TestCase
      * @dataProvider modifications
      * @param Modification[] $modifications
      */
-    public function testSynchronizedModifications($modifications)
+    public function testSynchronizeModifications($modifications)
     {
 
         $apiManagerStub = $this->getMockForAbstractClass(
@@ -379,7 +379,7 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $defaultStrategy->synchronizedModifications();
+        $defaultStrategy->synchronizeModifications();
 
         $this->assertSame($modifications, $defaultStrategy->getModifications());
 
@@ -462,8 +462,11 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame($defaultValue, $modificationValue);
     }
 
-
-    public function testSynchronizedModificationsWithoutDecisionManager()
+    /**
+     * @dataProvider modifications
+     * @param Modification[] $modifications
+     */
+    public function testSynchronizeModificationsWithoutDecisionManager($modifications)
     {
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
@@ -487,10 +490,10 @@ class DefaultStrategyTest extends TestCase
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->with(
                 "[$flagshipSdk] " . FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::TAG => "synchronizedModifications"]
+                [FlagshipConstant::TAG => "synchronizeModifications"]
             );
 
-        $defaultStrategy->synchronizedModifications();
+        $defaultStrategy->synchronizeModifications();
     }
 
     /**
@@ -550,7 +553,7 @@ class DefaultStrategyTest extends TestCase
             ->method('sendActive')
             ->withConsecutive([$visitor, $modifications[0]], [$visitor, $modifications[2]]);
 
-        $defaultStrategy->synchronizedModifications();
+        $defaultStrategy->synchronizeModifications();
 
         $defaultStrategy->getModification($modifications[0]->getKey(), 'defaultValue', true);
 
@@ -589,7 +592,7 @@ class DefaultStrategyTest extends TestCase
             ->setMethods(['logError'])
             ->setConstructorArgs([$visitor])->getMock();
 
-        $defaultStrategyMock->synchronizedModifications();
+        $defaultStrategyMock->synchronizeModifications();
 
         //Test getModification key is null
         //Return DefaultValue
@@ -680,7 +683,7 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $defaultStrategy->synchronizedModifications();
+        $defaultStrategy->synchronizeModifications();
 
         $modification = $modifications[0];
 
@@ -770,7 +773,7 @@ class DefaultStrategyTest extends TestCase
             ->method('sendActive')
             ->with($visitor, $modifications[0]);
 
-        $defaultStrategy->synchronizedModifications();
+        $defaultStrategy->synchronizeModifications();
 
         $defaultStrategy->activateModification($modifications[0]->getKey());
 
@@ -829,7 +832,7 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $defaultStrategy->synchronizedModifications();
+        $defaultStrategy->synchronizeModifications();
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 

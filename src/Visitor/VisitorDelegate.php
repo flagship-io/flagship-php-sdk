@@ -123,9 +123,9 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function synchronizedModifications()
+    public function synchronizeModifications()
     {
-        $this->getStrategy()->synchronizedModifications();
+        $this->getStrategy()->synchronizeModifications();
     }
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1636125458">
-  <project timestamp="1636125458">
+<coverage generated="1641809315">
+  <project timestamp="1641809315">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -1741,7 +1741,7 @@
         <line num="221" type="stmt" count="1"/>
         <line num="222" type="stmt" count="1"/>
         <line num="225" type="stmt" count="1"/>
-        <line num="231" type="method" name="synchronizedModifications" crap="2" count="10"/>
+        <line num="231" type="method" name="synchronizeModifications" crap="2" count="10"/>
         <line num="233" type="stmt" count="10"/>
         <line num="234" type="stmt" count="10"/>
         <line num="235" type="stmt" count="1"/>
@@ -1810,7 +1810,7 @@
         <class name="NotReadyStrategy" namespace="Flagship\Visitor" fullPackage="Flagship" package="Flagship">
           <metrics methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="16" elements="22" coveredelements="22"/>
         </class>
-        <line num="21" type="method" name="synchronizedModifications" crap="1" count="1"/>
+        <line num="21" type="method" name="synchronizeModifications" crap="1" count="1"/>
         <line num="23" type="stmt" count="1"/>
         <line num="24" type="stmt" count="1"/>
         <line num="29" type="method" name="getModification" crap="1" count="1"/>
@@ -1930,7 +1930,7 @@
         <line num="154" type="stmt" count="1"/>
         <line num="160" type="method" name="getModificationInfo" crap="1" count="1"/>
         <line num="162" type="stmt" count="1"/>
-        <line num="168" type="method" name="synchronizedModifications" crap="1" count="2"/>
+        <line num="168" type="method" name="synchronizeModifications" crap="1" count="2"/>
         <line num="170" type="stmt" count="2"/>
         <line num="171" type="stmt" count="2"/>
         <line num="177" type="method" name="activateModification" crap="1" count="1"/>
@@ -2077,9 +2077,9 @@
         <line num="60" type="stmt" count="41"/>
         <line num="61" type="stmt" count="41"/>
         <line num="62" type="stmt" count="41"/>
-        <line num="67" type="method" name="updateContext" crap="1" count="1"/>
-        <line num="69" type="stmt" count="1"/>
-        <line num="70" type="stmt" count="1"/>
+        <line num="67" type="method" name="updateContext" crap="1" count="2"/>
+        <line num="69" type="stmt" count="2"/>
+        <line num="70" type="stmt" count="2"/>
         <line num="75" type="method" name="updateContextCollection" crap="1" count="40"/>
         <line num="77" type="stmt" count="40"/>
         <line num="78" type="stmt" count="40"/>
@@ -2099,7 +2099,7 @@
         <line num="112" type="stmt" count="1"/>
         <line num="118" type="method" name="getModificationInfo" crap="1" count="1"/>
         <line num="120" type="stmt" count="1"/>
-        <line num="126" type="method" name="synchronizedModifications" crap="1" count="2"/>
+        <line num="126" type="method" name="synchronizeModifications" crap="1" count="2"/>
         <line num="128" type="stmt" count="2"/>
         <line num="129" type="stmt" count="2"/>
         <line num="135" type="method" name="activateModification" crap="1" count="1"/>

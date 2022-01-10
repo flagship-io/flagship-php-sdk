@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1641809315">
-  <project timestamp="1641809315">
+<coverage generated="1641809801">
+  <project timestamp="1641809801">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
           <metrics methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="47" coveredstatements="47" elements="50" coveredelements="50"/>
         </class>
         <line num="28" type="method" name="sendActive" crap="2" count="2"/>
-        <line num="31" type="stmt" count="2"/> 
+        <line num="31" type="stmt" count="2"/>
         <line num="32" type="stmt" count="2"/>
         <line num="33" type="stmt" count="2"/>
         <line num="34" type="stmt" count="2"/>

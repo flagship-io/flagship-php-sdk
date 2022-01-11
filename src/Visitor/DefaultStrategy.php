@@ -5,6 +5,7 @@ namespace Flagship\Visitor;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 use Flagship\Traits\ValidatorTrait;
@@ -306,5 +307,77 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function getModifications()
     {
         return $this->getVisitor()->getModifications();
+    }
+
+    public function userExposed($key, FlagDTO $flag, $hasSameType)
+    {
+        $functionName = 'userExposed';
+        if (!$flag) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::GET_FLAG_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            return ;
+        }
+        if ($flag->getValue() && !$hasSameType) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::USER_EXPOSED_CAST_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            return ;
+        }
+        $trackingManager =  $this->getTrackingManager(__FUNCTION__);
+        $trackingManager->sendActive($this->getVisitor(), $flag);
+    }
+
+    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    {
+        $functionName = 'getFlag value';
+        if (!$flag) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::GET_FLAG_MISSING_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            return  $defaultValue;
+        }
+
+        if (!$this->hasSameType($flag->getValue(), $defaultValue)) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::GET_FLAG_CAST_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            if (!$flag->getValue() && $userExposed) {
+                $this->userExposed($key, $flag, true);
+            }
+            return  $defaultValue;
+        }
+        if ($userExposed) {
+            $this->userExposed($key, $flag, true);
+        }
+        return  $flag->getValue();
+    }
+
+    /**
+     * @param string $key
+     * @param FlagMetadata $metadata
+     * @param bool $hasSameType
+     * @return FlagMetadata
+     */
+    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    {
+        $functionName = 'flag.metadata';
+        if (!$hasSameType && $metadata->getCampaignId()) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            return  FlagMetadata::getEmpty();
+        }
+        return  $metadata;
     }
 }

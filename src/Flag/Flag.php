@@ -3,10 +3,13 @@
 namespace Flagship\Flag;
 
 use Flagship\Model\FlagDTO;
+use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Visitor\VisitorAbstract;
 
 class Flag implements FlagInterface
 {
+    use HasSameTypeTrait;
+
     /**
      * @var string
      */
@@ -24,26 +27,38 @@ class Flag implements FlagInterface
      */
     private $defaultValue;
 
+    /**
+     * @var FlagMetadata
+     */
+    private $metadata;
+
     /***
      * @param string $key
      * @param VisitorAbstract $visitorDelegate
      * @param FlagDTO $flagDTO
      * @param mixed $defaultValue
+     * @param FlagMetadata $flagMetadata
      */
-    public function __construct($key, VisitorAbstract $visitorDelegate, FlagDTO $flagDTO, $defaultValue)
-    {
+    public function __construct(
+        $key,
+        VisitorAbstract $visitorDelegate,
+        $defaultValue,
+        FlagMetadata $flagMetadata,
+        FlagDTO $flagDTO = null
+    ) {
         $this->key = $key;
         $this->visitorDelegate = $visitorDelegate;
         $this->flagDTO = $flagDTO;
         $this->defaultValue = $defaultValue;
+        $this->metadata = $flagMetadata;
     }
 
     /**
      * @inheritDoc
      */
-    public function value($userExposed)
+    public function value($userExposed = true)
     {
-        // TODO: Implement value() method.
+        return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $this->flagDTO, $userExposed);
     }
 
     /**
@@ -51,7 +66,7 @@ class Flag implements FlagInterface
      */
     public function exists()
     {
-        // TODO: Implement exists() method.
+        return $this->flagDTO && $this->hasSameType($this->flagDTO->getValue(), $this->defaultValue);
     }
 
     /**
@@ -59,7 +74,11 @@ class Flag implements FlagInterface
      */
     public function userExposed()
     {
-        // TODO: Implement userExposed() method.
+        $this->visitorDelegate->userExposed(
+            $this->key,
+            $this->flagDTO,
+            $this->hasSameType($this->flagDTO->getValue(), $this->defaultValue)
+        );
     }
 
     /**
@@ -67,6 +86,14 @@ class Flag implements FlagInterface
      */
     public function getMetadata()
     {
-        // TODO: Implement getMetadata() method.
+        if (!$this->flagDTO) {
+            return $this->metadata;
+        }
+
+        return  $this->visitorDelegate->getFlagMetadata(
+            $this->key,
+            $this->metadata,
+            !$this->flagDTO->getValue() || $this->hasSameType($this->flagDTO->getValue(), $this->defaultValue)
+        );
     }
 }

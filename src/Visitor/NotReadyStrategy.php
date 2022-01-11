@@ -4,7 +4,9 @@ namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\LogTrait;
 
 /**
@@ -55,6 +57,37 @@ class NotReadyStrategy extends DefaultStrategy
     public function sendHit(HitAbstract $hit)
     {
         $this->log(__FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchFlags()
+    {
+        $this->log(__FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    {
+        $this->log(__FUNCTION__);
+        return $defaultValue;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function userExposed($key, FlagDTO $flag, $hasSameType)
+    {
+        $this->log(__FUNCTION__);
+    }
+
+    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    {
+        $this->log(__FUNCTION__);
+        return FlagMetadata::getEmpty();
     }
 
     private function log($functionName)

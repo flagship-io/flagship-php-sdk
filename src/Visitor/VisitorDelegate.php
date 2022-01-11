@@ -5,7 +5,11 @@ namespace Flagship\Visitor;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
+use Flagship\Flag\Flag;
+use Flagship\Flag\FlagInterface;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\Guid;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
@@ -143,5 +147,64 @@ class VisitorDelegate extends VisitorAbstract
     public function sendHit(HitAbstract $hit)
     {
         $this->getStrategy()->sendHit($hit);
+    }
+
+    public function fetchFlags()
+    {
+        $this->getStrategy()->fetchFlags();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function userExposed($key, FlagDTO $flag, $hasSameType)
+    {
+        $this->getStrategy()->userExposed($key, $flag, $hasSameType);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    {
+        return $this->getStrategy()->getFlagValue($key, $defaultValue, $flag, $userExposed);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    {
+        return $this->getStrategy()->getFlagMetadata($key, $metadata, $hasSameType);
+    }
+
+    protected function findFlagDTO($key)
+    {
+        foreach ($this->getFlagsDTO() as $flagDTO) {
+            if ($flagDTO->getKey() === $key) {
+                return $flagDTO;
+            }
+        }
+        return null;
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getFlag($key, $defaultValue)
+    {
+        $flagDTO = $this->findFlagDTO($key);
+
+        if ($flagDTO) {
+            $metadata = new FlagMetadata(
+                $flagDTO->getCampaignId(),
+                $flagDTO->getVariationGroupId(),
+                $flagDTO->getVariationId(),
+                $flagDTO->getIsReference(),
+                ""
+            );
+        } else {
+            $metadata = new FlagMetadata("", "", "", false, "");
+        }
+        return new Flag($key, $this, $defaultValue, $metadata, $flagDTO);
     }
 }

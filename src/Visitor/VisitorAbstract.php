@@ -12,7 +12,7 @@ use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
 use JsonSerializable;
 
-abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
+abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, VisitorFlagInterface
 {
     use ValidatorTrait;
 
@@ -105,8 +105,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable
         $this->configManager = $configManager;
         return $this;
     }
-
-
 
     /**
      * @return string

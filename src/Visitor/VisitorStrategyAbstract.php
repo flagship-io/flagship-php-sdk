@@ -6,6 +6,8 @@ use Flagship\Api\TrackingManagerAbstract;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Flag\FlagMetadata;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 
@@ -81,4 +83,29 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface
         }
         return $decisionManager;
     }
+
+    /**
+     * @param string $key
+     * @param FlagDTO $flag
+     * @param bool $hasSameType
+     * @return void
+     */
+    abstract public function userExposed($key, FlagDTO $flag, $hasSameType);
+
+    /**
+     * @param string $key
+     * @param mixed $defaultValue
+     * @param FlagDTO $flag
+     * @param bool $userExposed
+     * @return mixed
+     */
+    abstract public function getFlagValue($key, $defaultValue, FlagDTO $flag, $userExposed);
+
+    /**
+     * @param string $key
+     * @param FlagMetadata $metadata
+     * @param bool $hasSameType
+     * @return FlagMetadata
+     */
+    abstract public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType);
 }

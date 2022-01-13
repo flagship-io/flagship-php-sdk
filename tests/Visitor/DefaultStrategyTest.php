@@ -1304,4 +1304,45 @@ class DefaultStrategyTest extends TestCase
 
         $this->assertEquals($value, $defaultValue);
     }
+
+    public function testGetFlagMetadata()
+    {
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $key = "key";
+        $metadata = new FlagMetadata("campaignID", "varGroupID", "varID", true, "");
+
+        $functionName = "flag.metadata";
+
+        $metadataValue = $defaultStrategy->getFlagMetadata($key, $metadata, true);
+        $this->assertEquals($metadata, $metadataValue);
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
+        $logManagerStub->expects($this->exactly(1))->method('error')
+            ->withConsecutive(
+                ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
+                    [FlagshipConstant::TAG => $functionName]]
+            );
+        $metadataValue = $defaultStrategy->getFlagMetadata($key, $metadata, false);
+        $this->assertEquals(FlagMetadata::getEmpty(), $metadataValue);
+    }
 }

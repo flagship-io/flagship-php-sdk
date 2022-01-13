@@ -221,6 +221,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     public function setConsent($hasConsented)
     {
+        $this->hasConsented = $hasConsented;
         $this->getStrategy()->setConsent($hasConsented);
     }
 

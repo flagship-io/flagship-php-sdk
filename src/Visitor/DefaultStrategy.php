@@ -17,9 +17,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function setConsent($hasConsented)
     {
-        $this->getVisitor()->hasConsented = $hasConsented;
-
-        $this->getTrackingManager(__FUNCTION__)->sendConsentHit($this->getVisitor(), $this->getConfig());
+        $trackingManager = $this->getTrackingManager(__FUNCTION__);
+        if ($trackingManager) {
+            $trackingManager->sendConsentHit($this->getVisitor(), $this->getConfig());
+        }
     }
 
     /**

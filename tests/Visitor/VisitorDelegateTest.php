@@ -164,7 +164,7 @@ class VisitorDelegateTest extends TestCase
             ->setMethods([
                 'setContext', 'updateContext', 'updateContextCollection',
                 'clearContext', 'authenticate', 'unauthenticate', 'getModification',
-                'getModificationInfo', 'synchronizeModifications',
+                'getModificationInfo', 'synchronizeModifications', 'setConsent',
                 'activateModification', 'sendHit', 'fetchFlags','userExposed', 'getFlagValue', 'getFlagMetadata'
             ])->disableOriginalConstructor()
             ->getMock();

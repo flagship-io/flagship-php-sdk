@@ -105,6 +105,13 @@ class BucketingManagerTest extends TestCase
             false
         );
 
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
         $envId = "envId";
 
         $visitorId = "visitor_1";
@@ -140,7 +147,7 @@ class BucketingManagerTest extends TestCase
 
         $container = new Container();
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
         $bucketingManager->getCampaignModifications($visitor);
@@ -160,6 +167,13 @@ class BucketingManagerTest extends TestCase
             'Flagship\Utils\HttpClientInterface',
             ['post'],
             "",
+            false
+        );
+
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
             false
         );
 
@@ -196,7 +210,7 @@ class BucketingManagerTest extends TestCase
 
         $container = new Container();
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
         $bucketingManager->getCampaignModifications($visitor);

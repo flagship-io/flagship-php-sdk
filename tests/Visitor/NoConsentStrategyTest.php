@@ -34,6 +34,13 @@ class NoConsentStrategyTest extends TestCase
             ['error']
         );
 
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
@@ -64,7 +71,7 @@ class NoConsentStrategyTest extends TestCase
             ->willReturn([(new FlagDTO())->setKey($modificationKey)->setValue($modificationValue)]);
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($apiManagerStub)->setTrackingManager($trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 

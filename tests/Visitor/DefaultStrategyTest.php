@@ -253,6 +253,13 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
         $visitorId = "visitor_id";
         $visitorContext = [
             'name' => 'visitor_name',
@@ -275,7 +282,7 @@ class DefaultStrategyTest extends TestCase
             ), [FlagshipConstant::TAG => $authenticateName]]);
 
         $configManager = (new ConfigManager())
-            ->setConfig($config);
+            ->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
         $defaultStrategy = new DefaultStrategy($visitor);
         $newVisitorId = "new_visitor_id";
@@ -310,6 +317,13 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
         $sdk = FlagshipConstant::FLAGSHIP_SDK;
         $unauthenticateName = "unauthenticate";
         $logManagerStub->expects($this->exactly(2))
@@ -331,7 +345,7 @@ class DefaultStrategyTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $configManager = (new ConfigManager())
-            ->setConfig($config);
+            ->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $visitor->setConfig((new BucketingConfig())->setLogManager($logManagerStub));
@@ -812,11 +826,18 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
         $config = new DecisionApiConfig('envId', 'apiKey');
 
 
         $config->setLogManager($logManagerStub);
-        $configManager = (new ConfigManager())->setConfig($config);
+        $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
         $configManager->setDecisionManager($apiManagerStub);
 
         $paramsExpected = [];

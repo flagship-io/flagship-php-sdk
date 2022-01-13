@@ -102,7 +102,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function userExposed($key, FlagDTO $flag, $hasSameType)
+    public function userExposed($key, $hasSameType, FlagDTO $flag = null)
     {
         $this->log(__FUNCTION__);
     }

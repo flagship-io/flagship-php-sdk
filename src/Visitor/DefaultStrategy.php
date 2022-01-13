@@ -309,7 +309,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         return $this->getVisitor()->getModifications();
     }
 
-    public function userExposed($key, FlagDTO $flag, $hasSameType)
+    public function userExposed($key, $hasSameType, FlagDTO $flag = null)
     {
         $functionName = 'userExposed';
         if (!$flag) {
@@ -351,12 +351,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 [FlagshipConstant::TAG => $functionName]
             );
             if (!$flag->getValue() && $userExposed) {
-                $this->userExposed($key, $flag, true);
+                $this->userExposed($key, true, $flag);
             }
             return  $defaultValue;
         }
         if ($userExposed) {
-            $this->userExposed($key, $flag, true);
+            $this->userExposed($key, true, $flag);
         }
         return  $flag->getValue();
     }

@@ -76,8 +76,8 @@ class Flag implements FlagInterface
     {
         $this->visitorDelegate->userExposed(
             $this->key,
-            $this->flagDTO,
-            $this->hasSameType($this->flagDTO->getValue(), $this->defaultValue)
+            $this->hasSameType($this->flagDTO->getValue(), $this->defaultValue),
+            $this->flagDTO
         );
     }
 

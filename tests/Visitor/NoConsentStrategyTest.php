@@ -49,11 +49,12 @@ class NoConsentStrategyTest extends TestCase
                 [FlagshipConstant::TAG => $functionName]];
         };
 
-        $logManagerStub->expects($this->exactly(3))->method('error')
+        $logManagerStub->expects($this->exactly(4))->method('error')
             ->withConsecutive(
                 $logMessageBuild('activateModification'),
                 $logMessageBuild('activateModification'),
-                $logMessageBuild('sendHit')
+                $logMessageBuild('sendHit'),
+                $logMessageBuild('userExposed')
             );
 
         $modificationKey = "age";
@@ -111,5 +112,8 @@ class NoConsentStrategyTest extends TestCase
 
         //Test sendHit
         $noConsentStrategy->sendHit(new Page('http://localhost'));
+
+        //Test userExposed
+        $noConsentStrategy->userExposed('key', true, null);
     }
 }

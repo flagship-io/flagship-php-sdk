@@ -55,8 +55,8 @@ class FlagTest extends TestCase
 
         $visitorDelegateMock->expects($this->once())->method('userExposed')->with(
             $key,
-            $flagDTO,
-            true
+            true,
+            $flagDTO
         );
 
         $flag->userExposed();
@@ -99,13 +99,5 @@ class FlagTest extends TestCase
         $metadataValue = $flag->getMetadata();
 
         $this->assertSame($metadataValue, $metadata);
-    }
-
-    public function testExists()
-    {
-    }
-
-    public function testGetMetadata()
-    {
     }
 }

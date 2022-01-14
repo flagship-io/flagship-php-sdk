@@ -32,6 +32,7 @@ interface VisitorInterface extends VisitorCoreInterface
      *                                          activateModification() later.
 
      * @return string|bool|numeric|array : modification value or default value.
+     * @deprecated use getFlag instead
      */
     public function getModification($key, $defaultValue, $activate = false);
 

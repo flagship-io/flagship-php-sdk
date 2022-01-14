@@ -234,7 +234,7 @@ class TrackingManagerTest extends TestCase
             [
                 FlagshipConstant::T_API_ITEM => HitType::EVENT,
                 FlagshipConstant::EVENT_LABEL_API_ITEM =>
-                    FlagshipConstant::SDK_LANGUAGE . ":" . $visitor->hasConsented(),
+                    FlagshipConstant::SDK_LANGUAGE . ":" . ($visitor->hasConsented() ? "true" : "false"),
                 FlagshipConstant::EVENT_ACTION_API_ITEM => "fs_content",
                 FlagshipConstant::EVENT_CATEGORY_API_ITEM => EventCategory::USER_ENGAGEMENT,
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),

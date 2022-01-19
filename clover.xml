@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1642159446">
-  <project timestamp="1642159446">
+<coverage generated="1642582254">
+  <project timestamp="1642582254">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -2034,7 +2034,7 @@
         <line num="85" type="method" name="hasConsented" crap="1" count="1"/>
         <line num="87" type="stmt" count="1"/>
         <line num="88" type="stmt" count="1"/>
-        <line num="97" type="method" name="context" crap="1" count="1"/>
+        <line num="97" type="method" name="withContext" crap="1" count="1"/>
         <line num="99" type="stmt" count="1"/>
         <line num="100" type="stmt" count="1"/>
         <line num="107" type="method" name="build" crap="1" count="2"/>

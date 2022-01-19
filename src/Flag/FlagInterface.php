@@ -5,20 +5,22 @@ namespace Flagship\Flag;
 interface FlagInterface
 {
     /**
-     * Return the current flag value if the flag key exists in Flagship and activate it if needed.
+     * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,
+     * or if types are different.
+     *
      * @param bool $userExposed
-     * @return mixed
+     * @return bool|numeric|string|array
      */
-    public function value($userExposed);
+    public function getValue($userExposed);
 
     /**
-     * Return true if the flag exists, false otherwise.
+     * This method will return true if a Flag exists in Flagship.
      * @return bool
      */
     public function exists();
 
     /**
-     * Activate the current key
+     * Tells Flagship the user have been exposed and have seen this flag.
      * @return void
      */
     public function userExposed();

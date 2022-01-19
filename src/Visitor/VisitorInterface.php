@@ -37,8 +37,8 @@ interface VisitorInterface extends VisitorCoreInterface
     public function getModification($key, $defaultValue, $activate = false);
 
     /**
-     * @param string $key
-     * @param string|bool|numeric|array $defaultValue
+     * @param string $key key associated to the flag
+     * @param string|bool|numeric|array $defaultValue flag default value.
      * @return FlagInterface
      */
     public function getFlag($key, $defaultValue);

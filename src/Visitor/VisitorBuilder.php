@@ -94,7 +94,7 @@ class VisitorBuilder
      * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return VisitorBuilder
      */
-    public function context(array $context)
+    public function withContext(array $context)
     {
         $this->context = $context;
         return $this;

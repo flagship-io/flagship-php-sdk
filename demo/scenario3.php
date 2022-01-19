@@ -17,8 +17,8 @@ $visitor->fetchFlags();
 
 $flag = $visitor->getFlag("qa_flag", 10);
 
-var_dump("value:", $flag->value());
-var_dump("value:", $flag->value(false));
+var_dump("value:", $flag->getValue());
+var_dump("value:", $flag->getValue(false));
 
 var_dump("exist:", $flag->exists());
 
@@ -28,10 +28,10 @@ $flag->userExposed();
 
 $flag = $visitor->getFlag("qa_flag", "default");
 
-var_dump("value 2:", $flag->value());
+var_dump("value 2:", $flag->getValue());
 
 $flag = $visitor->getFlag("qa_flag", null);
 
-var_dump("value 3:", $flag->value());
+var_dump("value 3:", $flag->getValue());
 
 var_dump("metadata2:", json_encode($flag->getMetadata()));

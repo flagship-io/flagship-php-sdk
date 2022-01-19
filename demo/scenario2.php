@@ -18,7 +18,7 @@ $visitor->fetchFlags();
 
 $flag = $visitor->getFlag("qa_flag", 10);
 
-var_dump("value:", $flag->value());
+var_dump("value:", $flag->getValue());
 
 var_dump("exist:", $flag->exists());
 

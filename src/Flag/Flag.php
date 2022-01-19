@@ -56,7 +56,7 @@ class Flag implements FlagInterface
     /**
      * @inheritDoc
      */
-    public function value($userExposed = true)
+    public function getValue($userExposed = true)
     {
         return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $this->flagDTO, $userExposed);
     }

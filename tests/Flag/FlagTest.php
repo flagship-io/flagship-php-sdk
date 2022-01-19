@@ -45,10 +45,10 @@ class FlagTest extends TestCase
                false]
         )->willReturn($flagDTO->getValue());
 
-        $value = $flag->value();
+        $value = $flag->getValue();
         $this->assertEquals($value, $flagDTO->getValue());
 
-        $value = $flag->value(false);
+        $value = $flag->getValue(false);
         $this->assertEquals($value, $flagDTO->getValue());
 
         $this->assertTrue($flag->exists());

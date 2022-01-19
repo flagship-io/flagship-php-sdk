@@ -180,4 +180,10 @@ class FlagshipConfigTest extends TestCase
         $config->setLogManager($logManager);
         $this->assertSame($logManager, $config->getLogManager());
     }
+
+    public function testBuilder()
+    {
+        $this->assertInstanceOf("Flagship\Config\DecisionApiConfig", FlagshipConfig::decisionApi());
+        $this->assertInstanceOf("Flagship\Config\BucketingConfig", FlagshipConfig::bucketing());
+    }
 }

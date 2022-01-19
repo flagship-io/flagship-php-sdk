@@ -233,4 +233,14 @@ abstract class FlagshipConfig implements JsonSerializable
             FlagshipField::FIELD_LOG_LEVEL => $this->getLogLevel()
         ];
     }
+
+    public static function bucketing()
+    {
+        return new BucketingConfig();
+    }
+
+    public static function decisionApi()
+    {
+        return new DecisionApiConfig();
+    }
 }

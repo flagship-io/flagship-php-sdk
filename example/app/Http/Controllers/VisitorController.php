@@ -40,7 +40,7 @@ class VisitorController extends Controller
             ]);
 
             $visitor = Flagship::newVisitor($data['visitor_id'])
-                ->context($data['context'])
+                ->withContext($data['context'])
                 ->hasConsented(!empty($data['consent']))
                 ->build();
 

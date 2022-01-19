@@ -72,7 +72,7 @@ class VisitorBuilderTest extends TestCase
         $visitor = VisitorBuilder::builder($visitorId, $configManager, $containerMock)
             ->isAuthenticated(true)
             ->hasConsented(true)
-            ->context($context)->build();
+            ->withContext($context)->build();
 
         $this->assertSame($context, $visitor->getContext());
         $this->assertTrue($visitor->hasConsented());

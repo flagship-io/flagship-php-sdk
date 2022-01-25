@@ -197,7 +197,7 @@ class VisitorDelegate extends VisitorAbstract
                 $flagDTO->getVariationGroupId(),
                 $flagDTO->getVariationId(),
                 $flagDTO->getIsReference(),
-                ""
+                $flagDTO->getCampaignType()
             );
         } else {
             $metadata = new FlagMetadata("", "", "", false, "");

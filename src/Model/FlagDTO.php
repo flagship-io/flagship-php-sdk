@@ -38,6 +38,11 @@ class FlagDTO implements JsonSerializable
     private $value;
 
     /**
+     * @var string
+     */
+    private $campaignType;
+
+    /**
      * @return string
      */
     public function getKey()
@@ -142,6 +147,24 @@ class FlagDTO implements JsonSerializable
     public function setValue($value)
     {
         $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCampaignType()
+    {
+        return $this->campaignType;
+    }
+
+    /**
+     * @param string $campaignType
+     * @return FlagDTO
+     */
+    public function setCampaignType($campaignType)
+    {
+        $this->campaignType = $campaignType;
         return $this;
     }
 

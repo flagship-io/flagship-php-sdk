@@ -93,7 +93,7 @@ class BucketingManager extends DecisionManagerAbstract
                 $variationGroups,
                 $campaign[FlagshipField::FIELD_ID],
                 $visitor,
-                $campaign[FlagshipField::FIELD_TYPE]
+                $campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]
             );
             $visitorCampaigns = array_merge($visitorCampaigns, $currentCampaigns);
         }

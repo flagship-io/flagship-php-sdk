@@ -46,8 +46,18 @@ class TrackingManager extends TrackingManagerAbstract
                 FlagshipConstant::ANONYMOUS_ID
             );
 
-            $response = $this->httpClient->post($url, [], $postData);
-            return $response->getStatusCode() == 204;
+            $bodyArg = escapeshellarg(json_encode($postData));
+            $headersArg = escapeshellarg(json_encode($headers));
+            $timeoutArg = $visitor->getConfig()->getTimeout();
+            $args = " --url=$url";
+            $args .= " --body=$bodyArg";
+            $args .= " --header=$headersArg";
+            $args .= " --timeout=$timeoutArg";
+
+            shell_exec("php " . __DIR__ . "/MakeRequest.php $args 2>&1 | tee -a ./mylog 2>/dev/null >/dev/null &");
+
+//            $response = $this->httpClient->post($url, [], $postData);
+            return true;
         } catch (Exception $exception) {
             $this->logError($visitor->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }

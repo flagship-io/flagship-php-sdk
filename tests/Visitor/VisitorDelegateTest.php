@@ -288,7 +288,10 @@ class VisitorDelegateTest extends TestCase
             ->setCampaignId('campaignID')
             ->setVariationGroupId("varGroupID")
             ->setVariationId('varID')
-            ->setIsReference(true)->setValue("value");
+            ->setIsReference(true)->setValue("value")
+        ->setCampaignType("ab");
+
+
         $flagsDTO = [
             $flagDTO
         ];
@@ -301,7 +304,7 @@ class VisitorDelegateTest extends TestCase
             "variationGroupId" => $flagDTO->getVariationGroupId(),
             "variationId" => $flagDTO->getVariationId(),
             "isReference" => $flagDTO->getIsReference(),
-            "campaignType" => ""
+            "campaignType" => $flagDTO->getCampaignType()
         ];
         $metadata = Utils::getProperty($flag, 'metadata')->getValue($flag);
         $this->assertJsonStringEqualsJsonString(json_encode($metadata), json_encode($metadataJson));

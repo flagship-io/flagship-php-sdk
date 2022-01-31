@@ -314,7 +314,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     {
         $functionName = 'userExposed';
         if (!$flag) {
-            $this->logError(
+            $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_FLAG_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]
@@ -322,7 +322,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return ;
         }
         if ($flag->getValue() && !$hasSameType) {
-            $this->logError(
+            $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::USER_EXPOSED_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]
@@ -337,7 +337,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     {
         $functionName = 'getFlag value';
         if (!$flag) {
-            $this->logError(
+            $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_FLAG_MISSING_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]
@@ -346,7 +346,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         if (!$this->hasSameType($flag->getValue(), $defaultValue)) {
-            $this->logError(
+            $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_FLAG_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]
@@ -372,7 +372,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     {
         $functionName = 'flag.metadata';
         if (!$hasSameType && $metadata->getCampaignId()) {
-            $this->logError(
+            $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]

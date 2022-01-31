@@ -1190,7 +1190,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error','info']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -1230,7 +1230,7 @@ class DefaultStrategyTest extends TestCase
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
-        $logManagerStub->expects($this->exactly(2))->method('error')
+        $logManagerStub->expects($this->exactly(2))->method('info')
             ->withConsecutive(
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_FLAG_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]],
@@ -1252,7 +1252,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error','info']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -1294,7 +1294,7 @@ class DefaultStrategyTest extends TestCase
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
-        $logManagerStub->expects($this->exactly(4))->method('error')
+        $logManagerStub->expects($this->exactly(4))->method('info')
             ->withConsecutive(
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_FLAG_MISSING_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]],
@@ -1335,7 +1335,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error','info']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -1358,7 +1358,7 @@ class DefaultStrategyTest extends TestCase
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
-        $logManagerStub->expects($this->exactly(1))->method('error')
+        $logManagerStub->expects($this->exactly(1))->method('info')
             ->withConsecutive(
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]]

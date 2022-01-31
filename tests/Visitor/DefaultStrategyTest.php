@@ -750,7 +750,7 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $defaultStrategyMock = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
-            ->setMethods(['logError'])
+            ->setMethods(['logError','logInfo'])
             ->setConstructorArgs([$visitor])->getMock();
 
         $defaultStrategyMock->synchronizeModifications();
@@ -767,12 +767,17 @@ class DefaultStrategyTest extends TestCase
             ], [], []
         ];
 
-        $defaultStrategyMock->expects($this->exactly(3))
-            ->method('logError')
+        $defaultStrategyMock->expects($this->exactly(2))
+            ->method('logInfo')
             ->withConsecutive(
-                $expectedParams[0],
                 $expectedParams[1],
                 $expectedParams[2]
+            );
+
+        $defaultStrategyMock->expects($this->exactly(1))
+            ->method('logError')
+            ->withConsecutive(
+                $expectedParams[0]
             );
 
         $defaultStrategyMock->getModification($key, $defaultValue);
@@ -899,7 +904,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error','info']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -947,7 +952,7 @@ class DefaultStrategyTest extends TestCase
 
         $paramsExpected = [];
         $logManagerStub->expects($this->exactly(1))
-            ->method('error')
+            ->method('info')
             ->withConsecutive($paramsExpected);
 
         //Test key not exist

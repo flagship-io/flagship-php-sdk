@@ -153,7 +153,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $modification = $this->getObjetModification($key);
         if (!$modification) {
-            $this->logError(
+            $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
@@ -162,7 +162,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         if (gettype($modification->getValue()) !== gettype($defaultValue)) {
-            $this->logError(
+            $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
@@ -245,7 +245,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     {
         $modification = $this->getObjetModification($key);
         if (!$modification) {
-            $this->logError(
+            $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]

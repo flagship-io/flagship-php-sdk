@@ -35,6 +35,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     }
 
     /**
+     *
      * @return FlagshipConfig
      */
     public function getConfig()
@@ -43,6 +44,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     }
 
     /**
+     * visitor unique identifier
      * @return string
      */
     public function getVisitorId()
@@ -51,6 +53,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     }
 
     /**
+     * Set visitor unique identifier
      * @param string $visitorId
      * @return Visitor
      */
@@ -81,6 +84,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     }
 
     /**
+     * Get the current context
      * @return array
      */
     public function getContext()

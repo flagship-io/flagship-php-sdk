@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1642583227">
-  <project timestamp="1642583227">
+<coverage generated="1643643583">
+  <project timestamp="1643643583">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -1264,18 +1264,18 @@
         <class name="LogTrait" namespace="Flagship\Traits">
           <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
         </class>
-        <line num="16" type="method" name="logError" crap="4" count="42"/>
-        <line num="18" type="stmt" count="42"/>
+        <line num="16" type="method" name="logError" crap="4" count="40"/>
+        <line num="18" type="stmt" count="40"/>
         <line num="19" type="stmt" count="16"/>
-        <line num="21" type="stmt" count="28"/>
-        <line num="22" type="stmt" count="28"/>
-        <line num="23" type="stmt" count="28"/>
-        <line num="30" type="method" name="logInfo" crap="4" count="7"/>
-        <line num="32" type="stmt" count="7"/>
-        <line num="33" type="stmt" count="1"/>
-        <line num="35" type="stmt" count="7"/>
-        <line num="36" type="stmt" count="7"/>
-        <line num="37" type="stmt" count="7"/>
+        <line num="21" type="stmt" count="26"/>
+        <line num="22" type="stmt" count="26"/>
+        <line num="23" type="stmt" count="26"/>
+        <line num="30" type="method" name="logInfo" crap="4" count="10"/>
+        <line num="32" type="stmt" count="10"/>
+        <line num="33" type="stmt" count="2"/>
+        <line num="35" type="stmt" count="9"/>
+        <line num="36" type="stmt" count="9"/>
+        <line num="37" type="stmt" count="9"/>
         <metrics loc="38" ncloc="28" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Traits/ValidatorTrait.php">

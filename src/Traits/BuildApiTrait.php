@@ -12,7 +12,7 @@ trait BuildApiTrait
      *
      * @return array
      */
-    private function buildHeader($apiKey)
+    protected function buildHeader($apiKey)
     {
         return [
             FlagshipConstant::HEADER_X_API_KEY => $apiKey,
@@ -27,8 +27,30 @@ trait BuildApiTrait
      *
      * @return string
      */
-    private function buildDecisionApiUrl($url)
+    protected function buildDecisionApiUrl($url)
     {
         return FlagshipConstant::BASE_API_URL . '/' . $url;
+    }
+
+    /**
+     * @param string $visitorId
+     * @param string $anonymousId
+     * @param array $postData
+     * @return array
+     */
+    protected function setVisitorBodyParams(
+        $visitorId,
+        $anonymousId,
+        array $postData,
+        $idConstant = FlagshipConstant::CUSTOMER_UID
+    ) {
+        if ($visitorId && $anonymousId) {
+            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $anonymousId;
+            $postData[$idConstant] = $visitorId;
+        } else {
+            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $visitorId ?: $anonymousId;
+            $postData[$idConstant] = null;
+        }
+        return $postData;
     }
 }

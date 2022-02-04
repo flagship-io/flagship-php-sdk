@@ -2,9 +2,11 @@
 
 namespace Controller;
 
-use Flagship\FlagshipConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Utils\ConfigManager;
-use Flagship\Visitor;
+use Flagship\Utils\Container;
+use Flagship\Visitor\Visitor;
+use Flagship\Visitor\VisitorDelegate;
 use Illuminate\Support\Facades\Session;
 
 trait GeneralMockTrait
@@ -25,13 +27,16 @@ trait GeneralMockTrait
      * @param $apiKey
      * @return \PHPUnit\Framework\MockObject\MockObject|Visitor
      */
-    public function getVisitorMock($envId, $apiKey)
+    public function getVisitorMock($envId, $apiKey, $visitorId = "visitorId")
     {
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $configManager = new ConfigManager();
         $configManager->setConfig($config);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
         $visitor = $this->getMockBuilder(Visitor::class)
-            ->setConstructorArgs([$configManager, 'visitorId', []])->getMock();
+            ->onlyMethods(['getConfig','sendHit'])
+            ->setConstructorArgs([$visitorDelegate])
+            ->getMock();
         $visitor->method('getConfig')->willReturn($config);
         Session::put('visitor', $visitor);
         return $visitor;

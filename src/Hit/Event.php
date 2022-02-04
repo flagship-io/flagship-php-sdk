@@ -28,12 +28,12 @@ class Event extends HitAbstract
     /**
      * @var string
      */
-    private $eventLabel;
+    private $label;
 
     /**
      * @var float
      */
-    private $eventValue;
+    private $value;
 
     /**
      * Event constructor.
@@ -109,23 +109,23 @@ class Event extends HitAbstract
      *
      * @return string
      */
-    public function getEventLabel()
+    public function getLabel()
     {
-        return $this->eventLabel;
+        return $this->label;
     }
 
     /**
      * Specify additional description of event.
      *
-     * @param  string $eventLabel : event label.
+     * @param  string $label : event label.
      * @return Event
      */
-    public function setEventLabel($eventLabel)
+    public function setLabel($label)
     {
-        if (!$this->isNoEmptyString($eventLabel, 'eventLabel')) {
+        if (!$this->isNoEmptyString($label, 'eventLabel')) {
             return $this;
         }
-        $this->eventLabel = $eventLabel;
+        $this->label = $label;
         return $this;
     }
 
@@ -134,9 +134,9 @@ class Event extends HitAbstract
      *
      * @return float
      */
-    public function getEventValue()
+    public function getValue()
     {
-        return $this->eventValue;
+        return $this->value;
     }
 
     /**
@@ -144,15 +144,15 @@ class Event extends HitAbstract
      *      (e.g. you earn 10 to 100 euros depending on the quality of lead generated).
      *      NOTE: this value must be non-negative.
      *
-     * @param  float $eventValue : event value
+     * @param  float $value : event value
      * @return Event
      */
-    public function setEventValue($eventValue)
+    public function setValue($value)
     {
-        if (!$this->isNumeric($eventValue, 'eventValue')) {
+        if (!$this->isNumeric($value, 'eventValue')) {
             return $this;
         }
-        $this->eventValue = $eventValue;
+        $this->value = $value;
         return $this;
     }
 
@@ -165,12 +165,12 @@ class Event extends HitAbstract
         $arrayParent[FlagshipConstant::EVENT_CATEGORY_API_ITEM] = $this->getCategory();
         $arrayParent[FlagshipConstant::EVENT_ACTION_API_ITEM] = $this->getAction();
 
-        if ($this->getEventLabel()) {
-            $arrayParent[FlagshipConstant::EVENT_LABEL_API_ITEM] = $this->getEventLabel();
+        if ($this->getLabel()) {
+            $arrayParent[FlagshipConstant::EVENT_LABEL_API_ITEM] = $this->getLabel();
         }
 
-        if ($this->getEventValue()) {
-            $arrayParent[FlagshipConstant::EVENT_VALUE_API_ITEM] = $this->getEventValue();
+        if ($this->getValue()) {
+            $arrayParent[FlagshipConstant::EVENT_VALUE_API_ITEM] = $this->getValue();
         }
 
         return $arrayParent;

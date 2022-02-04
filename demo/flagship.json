@@ -1,0 +1,8 @@
+{
+  "envId" : "",
+  "apiKey" : "",
+  "pollingInterval": 5000,
+  "timeout": 2000,
+  "logLevel": 9,
+  "bucketingPath": "myDirectory"
+}

@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ErrorFormatTrait;
 use Exception;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Transaction;
-use Flagship\Visitor;
+use Flagship\Visitor\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class HitController extends Controller
 {
+    use ErrorFormatTrait;
+
     const PAGE        = "PAGE";
     const SCREEN      = "SCREEN";
     const EVENT       = "EVENT";
@@ -34,10 +37,10 @@ class HitController extends Controller
             case self::EVENT:
                 $hit = new Event($data['ec'], $data['ea']);
                 if (isset($data['ev'])) {
-                    $hit->setEventValue($data['ev']);
+                    $hit->setValue($data['ev']);
                 }
                 if (isset($data['el'])) {
-                    $hit->setEventLabel($data['el']);
+                    $hit->setLabel($data['el']);
                 }
                 break;
 
@@ -80,6 +83,18 @@ class HitController extends Controller
                     $hit->setItemCategory($data['iv']);
                 }
         }
+        if (isset($data['re_he']) && isset($data['re_wi'])) {
+            $hit->setScreenResolution($data['re_he'] . "X" . $data['re_wi']);
+        }
+        if (isset($data['sn'])) {
+            $hit->setSessionNumber($data['sn']);
+        }
+        if (isset($data['uip'])) {
+            $hit->setUserIP($data['uip']);
+        }
+        if (isset($data['ul'])) {
+            $hit->setLocale($data['ul']);
+        }
         return $hit;
     }
 
@@ -89,14 +104,13 @@ class HitController extends Controller
             $data = $this->hitValidation($request);
 
             $hit = $this->getHit($data);
-
             $visitor->sendHit($hit);
 
             return response()->json($visitor->getConfig());
         } catch (ValidationException $exception) {
-            return response()->json(['error' => $exception->errors()], 422);
+            return response()->json($this->formatError($exception->errors()), 422);
         } catch (Exception $exception) {
-            return response()->json(['error' => $exception->getMessage()], 422);
+            return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
 
@@ -148,7 +162,12 @@ class HitController extends Controller
             'dl' => [Rule::requiredIf(
                 $request->get('t') == self::PAGE ||
                 $request->get('t') === self::SCREEN
-            )]
+            )],
+            're_he' => "required_with:re_wi|numeric",
+            're_wi' => 'required_with:re_he|numeric',
+            'sn' => "nullable",
+            'ul' => "nullable",
+            'uip' => "nullable|ip"
         ]);
     }
 }

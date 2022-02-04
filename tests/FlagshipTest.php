@@ -4,13 +4,20 @@ namespace Flagship;
 
 use Exception;
 use Flagship\Api\TrackingManager;
+use Flagship\Config\BucketingConfig;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
+use Flagship\Decision\BucketingManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\FlagshipLogManager;
+use Flagship\Utils\MurmurHash;
+use Flagship\Visitor\Visitor;
+use Flagship\Visitor\VisitorDelegate;
 use Psr\Log\LoggerInterface;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
@@ -71,9 +78,11 @@ class FlagshipTest extends TestCase
         //Test Start Flagship
         $envId = "end_id";
         $apiKey = "apiKey";
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
+
         Flagship::start($envId, $apiKey, $config);
+
         $this->assertSame($config, Flagship::getConfig());
         $this->assertTrue(Flagship::isReady());
         $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
@@ -83,7 +92,7 @@ class FlagshipTest extends TestCase
         $getConfigManager = Utils::getMethod($instance, 'getConfigManager');
         $configManager = $getConfigManager->invoke($instance);
 
-        $this->assertInstanceOf('Flagship\FlagshipConfig', Flagship::getConfig());
+        $this->assertInstanceOf('Flagship\Config\DecisionApiConfig', Flagship::getConfig());
 
         $this->assertSame($envId, Flagship::getConfig()->getEnvId());
         $this->assertSame($apiKey, Flagship::getConfig()->getApiKey());
@@ -91,7 +100,7 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf('Flagship\Utils\ConfigManager', $configManager);
         $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
         $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
-        $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
+        $this->assertInstanceOf('Flagship\Config\DecisionApiConfig', $configManager->getConfig());
 
         $this->assertSame(Flagship::getConfig(), $configManager->getConfig());
     }
@@ -100,18 +109,27 @@ class FlagshipTest extends TestCase
     {
         //Test Start Flagship without config argument
 
-        $config = new FlagshipConfig('confEnvId', 'ConfigApiKey');
+        $config = new DecisionApiConfig('confEnvId', 'ConfigApiKey');
 
-        $apiManager = new ApiManager(new HttpClient());
+        $apiManager = new ApiManager(new HttpClient(), $config);
 
         $trackingManager = new TrackingManager(new HttpClient());
 
         $configManager = new ConfigManager();
 
-        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager) {
+        $bucketingConfig = new BucketingConfig();
+        $bucketingManager = new BucketingManager(new HttpClient(), $bucketingConfig, new MurmurHash());
+
+        $containerGetMethod = function () use (
+            $config,
+            $apiManager,
+            $trackingManager,
+            $configManager,
+            $bucketingManager
+) {
             $args = func_get_args();
             switch ($args[0]) {
-                case 'Flagship\FlagshipConfig':
+                case 'Flagship\Config\DecisionApiConfig':
                     return $config;
                 case 'Psr\Log\LoggerInterface':
                     return $this->logManagerMock;
@@ -121,6 +139,8 @@ class FlagshipTest extends TestCase
                     return $trackingManager;
                 case 'Flagship\Utils\ConfigManager':
                     return $configManager;
+                case 'Flagship\Decision\BucketingManager':
+                    return $bucketingManager;
                 default:
                     return null;
             }
@@ -144,7 +164,7 @@ class FlagshipTest extends TestCase
 
         Flagship::start($envId, $apiKey);
 
-        $this->assertInstanceOf('Flagship\FlagshipConfig', Flagship::getConfig());
+        $this->assertInstanceOf('Flagship\Config\DecisionApiConfig', Flagship::getConfig());
 
         $this->assertSame(Flagship::getConfig(), $configManager->getConfig());
 
@@ -158,7 +178,11 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf('Flagship\Utils\ConfigManager', $configManager);
         $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
         $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
-        $this->assertInstanceOf('Flagship\FlagshipConfig', $configManager->getConfig());
+        $this->assertInstanceOf('Flagship\Config\DecisionApiConfig', $configManager->getConfig());
+
+        $config = new BucketingConfig();
+        Flagship::start($envId, $apiKey, $config);
+        $this->assertInstanceOf('Flagship\Decision\BucketingManager', $configManager->getDecisionManager());
     }
 
     public function testStartWithLog()
@@ -166,7 +190,7 @@ class FlagshipTest extends TestCase
         //Test Start Flagship
         $envId = "end_id";
         $apiKey = "apiKey";
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $logManager = new FlagshipLogManager();
         $config->setLogManager($logManager);
 
@@ -202,21 +226,29 @@ class FlagshipTest extends TestCase
         //Test Start Flagship failed with empty envKey
         $envId = "";
         $apiKey = "apiKey";
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
 
+        $callback = function ($status) {
+            echo $status;
+        };
+        $config->setStatusChangedCallback($callback);
+        $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
+        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
 
         //Test Start Flagship failed with empty apiKey
         $envId = "envId";
         $apiKey = "";
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
+
+        $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
+
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
         $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
@@ -224,9 +256,12 @@ class FlagshipTest extends TestCase
         //Test Start Flagship failed with empty apiKey
         $envId = "";
         $apiKey = "";
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
+
+        $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
+
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
         $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
@@ -238,7 +273,7 @@ class FlagshipTest extends TestCase
         $envId = null;
         $apiKey = "apiKey";
 
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $logManager = new FlagshipLogManager();
         $config->setLogManager($logManager);
 
@@ -274,12 +309,12 @@ class FlagshipTest extends TestCase
         $envId = "envId";
         $apiKey = "apiKey";
 
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $logManager = new FlagshipLogManager();
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
-            ->setMethods(['logInfo', 'logError', 'getContainer'])
+            ->setMethods(['logInfo', 'logError', 'getContainer','setConfigManager'])
             ->disableOriginalConstructor()->getMock();
 
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
@@ -289,7 +324,8 @@ class FlagshipTest extends TestCase
 
         $exception = new Exception();
 
-        $flagshipMock->method('getContainer')->willThrowException($exception);
+        $flagshipMock->method('getContainer')->willReturn($this->containerInitialization());
+        $flagshipMock->method('setConfigManager')->willThrowException($exception);
 
         $flagshipMock->expects($this->once())->method('logError')
             ->with(
@@ -299,22 +335,29 @@ class FlagshipTest extends TestCase
             );
         $flagshipMock->expects($this->never())->method('logInfo');
 
+        $callback = function ($status) {
+            echo $status;
+        };
+
+        $config->setStatusChangedCallback($callback);
+
+        $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
     }
 
     public function testGetStatus()
     {
         //Test Status default is NO_READY
-        $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
+        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
 
-        //Test FlagshipConfig is null
+        //Test DecisionApiConfig is null
         $this->assertFalse(Flagship::isReady());
 
         //Test Start Flagship
         $envId = "end_id";
         $apiKey = "apiKey";
 
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
 
         Flagship::start($envId, $apiKey, $config);
@@ -334,16 +377,14 @@ class FlagshipTest extends TestCase
         //Test Start Flagship
         $envId = "end_id";
         $apiKey = "apiKey";
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
 
         Flagship::start($envId, $apiKey, $config);
-
-        $context = ['age' => 20];
         $visitorId = "visitorId";
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
-        $this->assertInstanceOf("Flagship\Visitor", $visitor1);
-        $this->assertSame($context['age'], $visitor1->getContext()['age']);
+
+        $visitor1 = Flagship::newVisitor($visitorId);
+        $this->assertInstanceOf("Flagship\Visitor\VisitorBuilder", $visitor1);
     }
 
     public function testNewVisitorFailed()
@@ -351,14 +392,14 @@ class FlagshipTest extends TestCase
         //Test Start Flagship with a empty envId
         $envId = "";
         $apiKey = "apiKey";
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
 
         Flagship::start($envId, $apiKey, $config);
 
         $context = ['age' => 20];
         $visitorId = "visitorId";
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
         $this->assertSame(null, $visitor1);
     }
 
@@ -368,8 +409,110 @@ class FlagshipTest extends TestCase
         $context = ['age' => 20];
         $visitorId = "visitorId";
 
-        $visitor1 = Flagship::newVisitor($visitorId, $context);
+        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
 
         $this->assertSame(null, $visitor1);
+    }
+
+    public function testStatusCallback()
+    {
+        $config = new DecisionApiConfig();
+        $callback = function ($status) {
+            echo $status;
+        };
+        $config->setStatusChangedCallback($callback);
+        $this->expectOutputString('14'); //Callback status STARTING then READY
+        Flagship::start('envId', 'apiKey', $config);
+    }
+
+    public function testGetPanicModeStatus()
+    {
+        $config = new DecisionApiConfig();
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
+
+        $visitorId = "visitorId";
+
+        $body = [
+            "visitorId" => $visitorId,
+            "campaigns" => [],
+            "panic" => true
+        ];
+
+        $httpClientMock->expects($this->exactly(2))->method('post')
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(204, $body),
+                new HttpResponse(204, [
+                    "visitorId" => $visitorId,
+                    "campaigns" => [],
+                ])
+            );
+
+        $apiManager = new ApiManager($httpClientMock, $config);
+
+        $trackingManager = new TrackingManager(new HttpClient());
+
+        $configManager = new ConfigManager();
+
+        $visitorId = 'Visitor_1';
+
+        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager, $visitorId) {
+            $args = func_get_args();
+            switch ($args[0]) {
+                case 'Flagship\DecisionApiConfig':
+                    $returnValue = $config;
+                    break;
+                case 'Psr\Log\LoggerInterface':
+                    $returnValue = $this->logManagerMock;
+                    break;
+                case 'Flagship\Decision\ApiManager':
+                    $returnValue = $apiManager;
+                    break;
+                case 'Flagship\Api\TrackingManager':
+                    $returnValue = $trackingManager;
+                    break;
+                case 'Flagship\Utils\ConfigManager':
+                    $returnValue = $configManager;
+                    break;
+                case 'Flagship\Visitor\VisitorDelegate':
+                    $returnValue = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
+                    break;
+                case 'Flagship\Visitor\Visitor':
+                    $returnValue =  new Visitor($args[1][0]);
+                    break;
+                default:
+                    $returnValue = null;
+            }
+            return $returnValue ;
+        };
+
+        $containerMock = $this->getMockBuilder(
+            'Flagship\Utils\Container'
+        )->setMethods(['get'])->disableOriginalConstructor()->getMock();
+
+        $containerMock->method('get')
+            ->will($this->returnCallback($containerGetMethod));
+
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
+        $instance = $instanceMethod->invoke(null);
+
+        Utils::setPrivateProperty($instance, 'container', $containerMock);
+
+        $config->setLogManager($this->logManagerMock);
+
+        $envId = "end_id";
+        $apiKey = "apiKey";
+
+        Flagship::start($envId, $apiKey, $config);
+
+        $visitor = Flagship::newVisitor('Visitor_1')->build();
+
+        $visitor->synchronizeModifications();
+
+        $this->assertSame(FlagshipStatus::READY_PANIC_ON, Flagship::getStatus());
+
+        $visitor->synchronizeModifications();
+
+        $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
     }
 }

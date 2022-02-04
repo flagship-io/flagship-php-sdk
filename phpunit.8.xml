@@ -30,6 +30,7 @@
         <report>
             <clover outputFile="clover.xml" />
             <html outputDirectory="reports/coverage"/>
+            <junit outputFile="test-report.xml"/>
         </report>
     </coverage>
 </phpunit>

@@ -1,0 +1,43 @@
+version: '3'
+services:
+
+  #PHP Service
+  app-polling:
+    build:
+      args:
+        GITHUB_TOKEN: GITHUB_TOKEN
+      context: .
+      dockerfile: ./Dockerfile-polling
+    image: flagship-io-polling/flagship-php-sdk:php-7.4
+    container_name: app-polling
+    tty: true
+    env_file:
+      - ./.env
+    environment:
+      SERVICE_NAME: app-polling
+      SERVICE_TAGS: dev
+      XDEBUG_MODE: coverage
+    volumes:
+      - bucketing-file:/home/app/myBucketingDirectory
+    working_dir: /home/app
+
+  app-demo:
+    build:
+      args:
+        GITHUB_TOKEN: GITHUB_TOKEN
+      context: .
+      dockerfile: ./Dockerfile-demo
+    image: flagship-io-demo/flagship-php-sdk:php-7.4
+    container_name: app-demo
+    tty: true
+    env_file:
+      - ./.env
+    environment:
+      SERVICE_NAME: app-demo
+      SERVICE_TAGS: dev
+      XDEBUG_MODE: coverage
+    volumes:
+      - bucketing-file:/home/app/myBucketingDirectory
+    working_dir: /home/app
+volumes:
+  bucketing-file:

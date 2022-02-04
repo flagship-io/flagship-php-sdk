@@ -2,9 +2,9 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
-use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class ScreenTest extends TestCase
@@ -15,7 +15,7 @@ class ScreenTest extends TestCase
         $screenName = 'screenName';
         $visitorId = "visitorId";
         $envId = "envId";
-        $config = new FlagshipConfig($envId);
+        $config = new DecisionApiConfig($envId);
 
         $screen = new Screen($screenName);
         $screen->setConfig($config)
@@ -27,6 +27,11 @@ class ScreenTest extends TestCase
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
             FlagshipConstant::T_API_ITEM => HitType::SCREEN_VIEW,
+            FlagshipConstant::USER_IP_API_ITEM => null,
+            FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => null,
+            FlagshipConstant::USER_LANGUAGE => null,
+            FlagshipConstant::SESSION_NUMBER => null,
+            FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::DL_API_ITEM => $screenName
         ];
 
@@ -47,7 +52,7 @@ class ScreenTest extends TestCase
         //Test with require HitAbstract fields and with null screenName
         $screenName = null;
         $screen = new Screen($screenName);
-        $config = new FlagshipConfig('envId');
+        $config = new DecisionApiConfig('envId');
         $screen->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);

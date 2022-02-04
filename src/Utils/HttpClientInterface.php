@@ -41,9 +41,9 @@ interface HttpClientInterface
      * send a http post request
      *
      * @param  $url
-     * @param  array $params Collection key, value of http params
+     * @param  array $query Collection key, value of http params
      * @param  array $data   Collection key, value of http post body
      * @return HttpResponse
      */
-    public function post($url, array $params = [], array $data = []);
+    public function post($url, array $query = [], array $data = []);
 }

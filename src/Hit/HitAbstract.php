@@ -2,8 +2,9 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\FlagshipConfig;
+use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
 
 /**
@@ -15,6 +16,7 @@ use Flagship\Traits\LogTrait;
 abstract class HitAbstract
 {
     use LogTrait;
+    use BuildApiTrait;
 
     /**
      * @var string
@@ -35,6 +37,32 @@ abstract class HitAbstract
      * @var FlagshipConfig
      */
     protected $config;
+
+    /**
+     * @var string
+     */
+    protected $anonymousId;
+
+    /**
+     * The User IP address
+     * @var string
+     */
+    protected $userIP;
+
+    /**
+     * @var string
+     */
+    protected $screenResolution;
+
+    /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
+     * @var numeric
+     */
+    protected $sessionNumber;
 
     /**
      * HitAbstract constructor.
@@ -170,6 +198,106 @@ abstract class HitAbstract
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getAnonymousId()
+    {
+        return $this->anonymousId;
+    }
+
+    /**
+     * @param string $anonymousId
+     * @return HitAbstract
+     */
+    public function setAnonymousId($anonymousId)
+    {
+        $this->anonymousId = $anonymousId;
+        return $this;
+    }
+
+    /**
+     * The User IP address
+     * @return string
+     */
+    public function getUserIP()
+    {
+        return $this->userIP;
+    }
+
+    /**
+     * Define the User IP address
+     * @param string $userIP
+     * @return HitAbstract
+     */
+    public function setUserIP($userIP)
+    {
+        $this->userIP = $userIP;
+        return $this;
+    }
+
+    /**
+     * Screen Resolution.
+     * @return string
+     */
+    public function getScreenResolution()
+    {
+        return $this->screenResolution;
+    }
+
+    /**
+     * Screen Resolution
+     * @param string $screenResolution
+     * @return HitAbstract
+     */
+    public function setScreenResolution($screenResolution)
+    {
+        $this->screenResolution = $screenResolution;
+        return $this;
+    }
+
+    /**
+     * User language
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * Define User language
+     * @param string $locale
+     * @return HitAbstract
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+        return $this;
+    }
+
+    /**
+     * Session number. Number of sessions the current visitor has logged, including the current session
+     * @return float|int|string
+     */
+    public function getSessionNumber()
+    {
+        return $this->sessionNumber;
+    }
+
+    /**
+     * Define Session number. Number of sessions the current visitor has logged, including the current session
+     * @param float|int|string $sessionNumber
+     * @return HitAbstract
+     */
+    public function setSessionNumber($sessionNumber)
+    {
+        $this->sessionNumber = $sessionNumber;
+        return $this;
+    }
+
+
+
 
     /**
      * Return an associative array of the class with Api parameters as keys
@@ -178,12 +306,17 @@ abstract class HitAbstract
      */
     public function toArray()
     {
-        return [
+        $data = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-            FlagshipConstant::T_API_ITEM => $this->getType()
+            FlagshipConstant::T_API_ITEM => $this->getType(),
+            FlagshipConstant::USER_IP_API_ITEM => $this->getUserIP(),
+            FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $this->getScreenResolution(),
+            FlagshipConstant::USER_LANGUAGE => $this->getLocale(),
+            FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber()
         ];
+        return $this->setVisitorBodyParams($this->getVisitorId(), $this->getAnonymousId(), $data);
     }
 
     /**

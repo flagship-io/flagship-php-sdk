@@ -8,6 +8,7 @@ namespace Flagship\Assets {
         public static $curlErrorCode = 0;
         public static $errorMessage = '';
         public static $curlHttpCodeInfo = '';
+        public static $curlLastModifies = -1;
         public static $extension = true;
         public static $curlHttpContentType = "application/json";
     }
@@ -55,9 +56,17 @@ namespace Flagship\Utils {
 
     function curl_getinfo($handle, $option)
     {
-        if ($option == CURLINFO_HTTP_CODE) {
-            return Curl::$curlHttpCodeInfo;
+        switch ($option) {
+            case CURLINFO_HTTP_CODE:
+                $value = Curl::$curlHttpCodeInfo;
+                break;
+            case CURLINFO_FILETIME:
+                $value = Curl::$curlLastModifies;
+                break;
+            default:
+                $value = Curl::$curlHttpContentType;
+                break;
         }
-        return  Curl::$curlHttpContentType;
+        return $value;
     }
 }

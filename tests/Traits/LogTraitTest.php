@@ -2,9 +2,9 @@
 
 namespace Flagship\Traits;
 
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
-use Flagship\FlagshipConfig;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
@@ -39,7 +39,7 @@ class LogTraitTest extends TestCase
                 $context
             );
 
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $config->setLogManager($logManagerMock);
         $logError = Utils::getMethod($logTraitMock, "logError");
         $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
@@ -55,7 +55,7 @@ class LogTraitTest extends TestCase
         $config->setLogLevel(LogLevel::WARNING);
         $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
 
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $config->setLogLevel(LogLevel::INFO);
         $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
     }
@@ -88,7 +88,7 @@ class LogTraitTest extends TestCase
                 "[$flagshipSdk] " . $message,
                 $context
             );
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $config->setLogManager($logManagerMock);
 
         $logInfo = Utils::getMethod($logTraitMock, "logInfo");
@@ -105,7 +105,7 @@ class LogTraitTest extends TestCase
         $config->setLogLevel(LogLevel::NOTICE);
         $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
 
-        $config = new FlagshipConfig();
+        $config = new DecisionApiConfig();
         $config->setLogLevel(LogLevel::INFO);
         $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
     }

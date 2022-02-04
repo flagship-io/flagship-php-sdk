@@ -30,6 +30,7 @@
       "Flagship\\": "tests"
     }
   },
+  "bin": ["bin/flagship"],
   "scripts": {
     "test": "phpunit",
     "check-style": "phpcs --standard=PSR12 -n src tests",

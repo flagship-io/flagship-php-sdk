@@ -50,6 +50,16 @@ $app->singleton(
 
 $app->bind(App\Casts\TypeCastInterface::class, App\Casts\TypeCast::class);
 
+$app->singleton('filesystem', function ($app) {
+    return $app->loadComponent(
+        'filesystems',
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        'filesystem'
+    );
+});
+
+$app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Register Config Files
@@ -62,6 +72,8 @@ $app->bind(App\Casts\TypeCastInterface::class, App\Casts\TypeCast::class);
 */
 
 $app->configure('app');
+
+$app->configure('filesystems');
 
 /*
 |--------------------------------------------------------------------------

@@ -2,9 +2,9 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
-use Flagship\FlagshipConfig;
 use PHPUnit\Framework\TestCase;
 
 class TransactionTest extends TestCase
@@ -29,7 +29,7 @@ class TransactionTest extends TestCase
         $envId = "envId";
         $ds = FlagshipConstant::SDK_APP;
         $visitorId = "visitorId";
-        $config = new FlagshipConfig($envId);
+        $config = new DecisionApiConfig($envId);
 
         $transaction->setVisitorId($visitorId)->setDs($ds)->setConfig($config);
 
@@ -38,6 +38,11 @@ class TransactionTest extends TestCase
             FlagshipConstant::DS_API_ITEM => $ds,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
             FlagshipConstant::T_API_ITEM => HitType::TRANSACTION,
+            FlagshipConstant::USER_IP_API_ITEM => null,
+            FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => null,
+            FlagshipConstant::USER_LANGUAGE => null,
+            FlagshipConstant::SESSION_NUMBER => null,
+            FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::TID_API_ITEM => $transactionId,
             FlagshipConstant::TA_API_ITEM => $transactionAffiliation
         ];
@@ -164,7 +169,7 @@ class TransactionTest extends TestCase
         $transactionId = null;
         $transactionAffiliation = "transactionAffiliation";
         $transaction = new Transaction($transactionId, $transactionAffiliation);
-        $config = new FlagshipConfig('envId');
+        $config = new DecisionApiConfig('envId');
 
         $transaction->setConfig($config)
             ->setVisitorId('visitorId')

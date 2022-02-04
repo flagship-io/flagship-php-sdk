@@ -3,12 +3,17 @@
 namespace Flagship;
 
 use Exception;
+use Flagship\Config\BucketingConfig;
+use Flagship\Config\DecisionApiConfig;
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
+use Flagship\Visitor\Visitor;
+use Flagship\Visitor\VisitorBuilder;
 
 /**
  * Flagship main singleton.
@@ -40,10 +45,14 @@ class Flagship
     /**
      * @var int
      */
-    private $status = FlagshipStatus::NOT_READY;
+    private $status = FlagshipStatus::NOT_INITIALIZED;
 
+    /**
+     * Flagship constructor.
+     */
     private function __construct()
     {
+        //private singleton constructor
     }
 
     /**
@@ -51,6 +60,7 @@ class Flagship
      */
     private function __clone()
     {
+        //private singleton clone
     }
 
     /**
@@ -70,11 +80,11 @@ class Flagship
 
 
     /**
-     * Start the flagship SDK, with a custom configuration implementation
+     * Start the flagship SDK
      *
      * @param $envId  : Environment id provided by Flagship.
      * @param $apiKey : Secure api key provided by Flagship.
-     * @param FlagshipConfig|null $config : (optional) SDK configuration.
+     * @param BucketingConfig|DecisionApiConfig|null $config : (optional) SDK configuration.
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
     {
@@ -83,24 +93,34 @@ class Flagship
             $container = $flagship->getContainer();
 
             if (!$config) {
-                $config = $container->get('Flagship\FlagshipConfig', [$envId, $apiKey]);
+                $config = $container->get('Flagship\Config\DecisionApiConfig', [$envId, $apiKey]);
             }
-
             $config->setEnvId($envId);
             $config->setApiKey($apiKey);
+
+            $flagship->setConfig($config);
+
+            $flagship->setStatus(FlagshipStatus::STARTING);
 
             if (!$config->getLogManager()) {
                 $logManager = $container->get('Psr\Log\LoggerInterface');
                 $config->setLogManager($logManager);
             }
 
-            $decisionManager = null;
+            $httpClient = $container->get('Flagship\Utils\HttpClientInterface');
 
-            switch ($config->getDecisionMode()) {
-                case DecisionMode::DECISION_API:
-                    $decisionManager = $container->get('Flagship\Decision\ApiManager');
-                    break;
+            if ($config->getDecisionMode() === DecisionMode::BUCKETING) {
+                $murmurHash = $container->get('Flagship\Utils\MurmurHash');
+                $decisionManager = $container->get(
+                    'Flagship\Decision\BucketingManager',
+                    [$httpClient, $config, $murmurHash]
+                );
+            } else {
+                $decisionManager = $container->get('Flagship\Decision\ApiManager', [$httpClient, $config]);
             }
+
+            //Will trigger setStatus method of Flagship if decisionManager want update status
+            $decisionManager->setStatusChangedCallback([$flagship,'setStatus']);
 
             $configManager = $container->get('Flagship\Utils\ConfigManager');
 
@@ -109,8 +129,6 @@ class Flagship
             $trackingManager = $container->get('Flagship\Api\TrackingManager');
 
             $configManager->setTrackingManager($trackingManager);
-
-            $flagship->setConfig($config);
 
             $configManager->setConfig($config);
 
@@ -132,9 +150,11 @@ class Flagship
                 );
                 $flagship->setStatus(FlagshipStatus::READY);
             } else {
-                $flagship->setStatus(FlagshipStatus::NOT_READY);
+                $flagship->setStatus(FlagshipStatus::NOT_INITIALIZED);
             }
         } catch (Exception $exception) {
+            self::getInstance()->setStatus(FlagshipStatus::NOT_INITIALIZED);
+
             self::getInstance()->logError(
                 $config,
                 $exception->getMessage(),
@@ -151,17 +171,17 @@ class Flagship
      */
     private function containerInitialization()
     {
-        $container = new Container();
+        $newContainer = new Container();
 
-        $container->bind(
+        $newContainer->bind(
             'Flagship\Utils\HttpClientInterface',
             'Flagship\Utils\HttpClient'
         );
-        $container->bind(
+        $newContainer->bind(
             'Psr\Log\LoggerInterface',
             'Flagship\Utils\FlagshipLogManager'
         );
-        return $container;
+        return $newContainer;
     }
 
     /**
@@ -220,8 +240,7 @@ class Flagship
 
     /**
      * Return current status of Flagship SDK.
-     * e.g. FlagshipStatus::READY or FlagshipStatus::NOT_READY
-     *
+     * @see \Flagship\Enum\FlagshipStatus
      * @return int
      */
     public static function getStatus()
@@ -232,11 +251,15 @@ class Flagship
     /**
      * Set Flagship SDK status
      *
-     * @param  int $status FlagshipStatus::READY or FlagshipStatus::NOT_READY
+     * @param int $status FlagshipStatus::READY or FlagshipStatus::NOT_READY
      * @return Flagship
      */
-    protected function setStatus($status)
+    public function setStatus($status)
     {
+        if ($this->config && $this->config->getStatusChangedCallback() && $this->status !== $status) {
+            call_user_func($this->config->getStatusChangedCallback(), $status);
+        }
+
         $this->status = $status;
         return $this;
     }
@@ -250,18 +273,20 @@ class Flagship
     }
 
     /**
-     * Create a new visitor with a context.
+     * Initialize the builder and Return a \Flagship\Visitor\VisitorBuilder
+     * or null if the SDK hasn't started successfully.
      *
      * @param string $visitorId : Unique visitor identifier.
-     * @param  array $context   : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
-     * @return Visitor|null
+     * @return VisitorBuilder|null
      */
-    public static function newVisitor($visitorId, $context = [])
+    public static function newVisitor($visitorId)
     {
         if (empty($visitorId) || !self::isReady()) {
             return  null;
         }
+
         $instance = self::getInstance();
-        return new Visitor($instance->getConfigManager(), $visitorId, $context);
+
+        return VisitorBuilder::builder($visitorId, $instance->getConfigManager(), $instance->getContainer());
     }
 }

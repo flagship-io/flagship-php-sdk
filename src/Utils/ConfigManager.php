@@ -3,8 +3,8 @@
 namespace Flagship\Utils;
 
 use Flagship\Api\TrackingManagerAbstract;
+use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\DecisionManagerAbstract;
-use Flagship\FlagshipConfig;
 
 class ConfigManager
 {

@@ -2,14 +2,19 @@
 
 namespace Controller;
 
+use App\Traits\ErrorFormatTrait;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Utils\ConfigManager;
+use Flagship\Utils\Container;
+use Flagship\Visitor\Visitor;
+use Flagship\Visitor\VisitorDelegate;
 use TestCase;
-use Flagship\FlagshipConfig;
-use Flagship\Visitor;
 use Illuminate\Support\Facades\Session;
 
 class FlagControllerTest extends TestCase
 {
+    use ErrorFormatTrait;
+
     private function startFlagShip()
     {
         $data = [
@@ -24,10 +29,11 @@ class FlagControllerTest extends TestCase
     public function getVisitorMock($envId, $apiKey)
     {
         $configManager = new ConfigManager();
-        $config = new FlagshipConfig($envId, $apiKey);
+        $config = new DecisionApiConfig($envId, $apiKey);
         $configManager->setConfig($config);
+        $visitorDelegate = new VisitorDelegate(new Container(), $configManager, 'visitorId', []);
         $visitor = $this->getMockBuilder(Visitor::class)
-            ->setConstructorArgs([$configManager, 'visitorId', []])->getMock();
+            ->setConstructorArgs([$visitorDelegate])->getMock();
         Session::start();
         Session::put('visitor', $visitor);
         return $visitor;
@@ -54,7 +60,7 @@ class FlagControllerTest extends TestCase
         //Test Validation error
         $this->get('/flag/key?' . http_build_query(['type' => 'string', 'defaultValue' => 'yes']));
         $this->assertJsonStringEqualsJsonString(
-            '{"error":{"activate":["The activate field is required."]}}',
+            json_encode($this->formatError(["activate" => ["The activate field is required."]])),
             $this->response->content()
         );
     }

@@ -1,0 +1,22 @@
+{
+  "name": "flagship-io/demo",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "hp",
+      "email": "email@example.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/flagship-io/flagship-php-sdk.git",
+      "no-api": true
+    }
+  ],
+  "require": {
+    "flagship-io/flagship-php-sdk": "dev-feature/sdk_v2"
+  }
+}

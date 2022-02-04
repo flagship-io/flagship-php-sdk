@@ -34,15 +34,37 @@ $router->group(
         $router->put(
             '/context/{key}',
             [
-                'middleware' => 'CheckFlagshipSession|flagshipVisitor',
+                'middleware' => 'CheckFlagshipSession|startFlagship|flagshipVisitor',
                 'uses' => 'VisitorController@updateContext'
+            ]
+        );
+
+        $router->put(
+            '/consent',
+            [
+                'middleware' => 'CheckFlagshipSession|flagshipVisitor',
+                'uses' => 'VisitorController@updateConsent'
             ]
         );
     }
 );
 
 $router->group(
-    ['prefix' => 'flag', 'middleware' => ['CheckFlagshipSession','flagshipVisitor']],
+    ['prefix' => 'authenticate','middleware' => 'CheckFlagshipSession|flagshipVisitor'],
+    function () use ($router) {
+        $router->put('/', 'AuthController@authenticate');
+    }
+) ;
+
+$router->group(
+    ['prefix' => 'unauthenticate','middleware' => 'CheckFlagshipSession|flagshipVisitor'],
+    function () use ($router) {
+        $router->put('/', 'AuthController@unauthenticate');
+    }
+) ;
+
+$router->group(
+    ['prefix' => 'flag', 'middleware' => ['CheckFlagshipSession','startFlagship','flagshipVisitor']],
     function () use ($router) {
         $router->get('/{key}/activate', 'FlagController@activeModification');
         $router->get('/{key}/info', 'FlagController@getModificationInfo');
@@ -51,7 +73,7 @@ $router->group(
 );
 
 $router->group(
-    ['prefix' => 'hit', 'middleware' => ['CheckFlagshipSession','flagshipVisitor']],
+    ['prefix' => 'hit', 'middleware' => ['CheckFlagshipSession','startFlagship', 'flagshipVisitor']],
     function () use ($router) {
         $router->post('/', 'HitController@sendHit');
     }

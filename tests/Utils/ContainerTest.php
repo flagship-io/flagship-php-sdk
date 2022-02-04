@@ -20,6 +20,10 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf($alias, $instanceAlias1);
 
         //Test constructor with default argument
+        $container->bind(
+            "Flagship\Config\FlagshipConfig",
+            "Flagship\Config\DecisionApiConfig"
+        );
         $alias = 'Flagship\Decision\DecisionManagerAbstract';
         $className = 'Flagship\Decision\ApiManager';
         $container->bind($alias, $className);
@@ -38,7 +42,7 @@ class ContainerTest extends TestCase
 
     public function testGetWithDefaultArgs()
     {
-        $className = 'Flagship\FlagshipConfig';
+        $className = 'Flagship\Config\DecisionApiConfig';
         $container = new Container();
         $instanceAlias = $container->get($className);
         $this->assertInstanceOf($className, $instanceAlias);
@@ -60,7 +64,7 @@ class ContainerTest extends TestCase
     {
         //Test constructor with custom argument
         $container = new Container();
-        $className = 'Flagship\FlagshipConfig';
+        $className = 'Flagship\Config\DecisionApiConfig';
         $envId = 'envId';
         $apiKey = 'apiKey';
         $instanceAlias = $container->get($className, [$envId, $apiKey]);
@@ -71,7 +75,7 @@ class ContainerTest extends TestCase
 
     public function testFactory()
     {
-        $className = 'Flagship\FlagshipConfig';
+        $className = 'Flagship\Config\DecisionApiConfig';
         $container = new Container();
         $envId = 'envId';
         $apiKey = 'apiKey';

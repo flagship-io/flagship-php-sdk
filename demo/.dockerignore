@@ -1,0 +1,7 @@
+vendor
+flagship.json
+.gitignore
+docker-compose.demo.yml
+Dockerfile-demo
+Dockerfile-polling
+.env

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1642583227">
-  <project timestamp="1642583227">
+<coverage generated="1643975828">
+  <project timestamp="1643975828">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -1264,18 +1264,18 @@
         <class name="LogTrait" namespace="Flagship\Traits">
           <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
         </class>
-        <line num="16" type="method" name="logError" crap="4" count="42"/>
-        <line num="18" type="stmt" count="42"/>
+        <line num="16" type="method" name="logError" crap="4" count="40"/>
+        <line num="18" type="stmt" count="40"/>
         <line num="19" type="stmt" count="16"/>
-        <line num="21" type="stmt" count="28"/>
-        <line num="22" type="stmt" count="28"/>
-        <line num="23" type="stmt" count="28"/>
-        <line num="30" type="method" name="logInfo" crap="4" count="7"/>
-        <line num="32" type="stmt" count="7"/>
-        <line num="33" type="stmt" count="1"/>
-        <line num="35" type="stmt" count="7"/>
-        <line num="36" type="stmt" count="7"/>
-        <line num="37" type="stmt" count="7"/>
+        <line num="21" type="stmt" count="26"/>
+        <line num="22" type="stmt" count="26"/>
+        <line num="23" type="stmt" count="26"/>
+        <line num="30" type="method" name="logInfo" crap="4" count="10"/>
+        <line num="32" type="stmt" count="10"/>
+        <line num="33" type="stmt" count="2"/>
+        <line num="35" type="stmt" count="9"/>
+        <line num="36" type="stmt" count="9"/>
+        <line num="37" type="stmt" count="9"/>
         <metrics loc="38" ncloc="28" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Traits/ValidatorTrait.php">
@@ -1896,58 +1896,58 @@
         <line num="27" type="stmt" count="5"/>
         <line num="32" type="method" name="getVisitorDelegate" crap="1" count="5"/>
         <line num="34" type="stmt" count="5"/>
-        <line num="40" type="method" name="getConfig" crap="1" count="1"/>
-        <line num="42" type="stmt" count="1"/>
-        <line num="48" type="method" name="getVisitorId" crap="1" count="2"/>
-        <line num="50" type="stmt" count="2"/>
-        <line num="57" type="method" name="setVisitorId" crap="1" count="1"/>
-        <line num="59" type="stmt" count="1"/>
-        <line num="60" type="stmt" count="1"/>
-        <line num="67" type="method" name="hasConsented" crap="1" count="2"/>
-        <line num="69" type="stmt" count="2"/>
-        <line num="77" type="method" name="setConsent" crap="1" count="1"/>
-        <line num="79" type="stmt" count="1"/>
-        <line num="80" type="stmt" count="1"/>
-        <line num="86" type="method" name="getContext" crap="1" count="2"/>
-        <line num="88" type="stmt" count="2"/>
-        <line num="98" type="method" name="setContext" crap="1" count="1"/>
-        <line num="100" type="stmt" count="1"/>
-        <line num="101" type="stmt" count="1"/>
-        <line num="104" type="method" name="getAnonymousId" crap="1" count="2"/>
-        <line num="106" type="stmt" count="2"/>
-        <line num="112" type="method" name="updateContext" crap="1" count="1"/>
-        <line num="114" type="stmt" count="1"/>
-        <line num="115" type="stmt" count="1"/>
-        <line num="120" type="method" name="updateContextCollection" crap="1" count="1"/>
-        <line num="122" type="stmt" count="1"/>
-        <line num="123" type="stmt" count="1"/>
-        <line num="128" type="method" name="clearContext" crap="1" count="1"/>
-        <line num="130" type="stmt" count="1"/>
-        <line num="131" type="stmt" count="1"/>
-        <line num="136" type="method" name="authenticate" crap="1" count="1"/>
-        <line num="138" type="stmt" count="1"/>
-        <line num="139" type="stmt" count="1"/>
-        <line num="144" type="method" name="unauthenticate" crap="1" count="1"/>
-        <line num="146" type="stmt" count="1"/>
-        <line num="147" type="stmt" count="1"/>
-        <line num="152" type="method" name="getModification" crap="1" count="1"/>
-        <line num="154" type="stmt" count="1"/>
-        <line num="160" type="method" name="getModificationInfo" crap="1" count="1"/>
-        <line num="162" type="stmt" count="1"/>
-        <line num="168" type="method" name="synchronizeModifications" crap="1" count="2"/>
-        <line num="170" type="stmt" count="2"/>
-        <line num="171" type="stmt" count="2"/>
-        <line num="177" type="method" name="activateModification" crap="1" count="1"/>
-        <line num="179" type="stmt" count="1"/>
-        <line num="180" type="stmt" count="1"/>
-        <line num="185" type="method" name="sendHit" crap="1" count="1"/>
-        <line num="187" type="stmt" count="1"/>
-        <line num="188" type="stmt" count="1"/>
-        <line num="193" type="method" name="jsonSerialize" crap="1" count="1"/>
-        <line num="195" type="stmt" count="1"/>
-        <line num="201" type="method" name="getModifications" crap="1" count="1"/>
-        <line num="203" type="stmt" count="1"/>
-        <metrics loc="205" ncloc="129" classes="1" methods="22" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" elements="56" coveredelements="56"/>
+        <line num="41" type="method" name="getConfig" crap="1" count="1"/>
+        <line num="43" type="stmt" count="1"/>
+        <line num="50" type="method" name="getVisitorId" crap="1" count="2"/>
+        <line num="52" type="stmt" count="2"/>
+        <line num="60" type="method" name="setVisitorId" crap="1" count="1"/>
+        <line num="62" type="stmt" count="1"/>
+        <line num="63" type="stmt" count="1"/>
+        <line num="70" type="method" name="hasConsented" crap="1" count="2"/>
+        <line num="72" type="stmt" count="2"/>
+        <line num="80" type="method" name="setConsent" crap="1" count="1"/>
+        <line num="82" type="stmt" count="1"/>
+        <line num="83" type="stmt" count="1"/>
+        <line num="90" type="method" name="getContext" crap="1" count="2"/>
+        <line num="92" type="stmt" count="2"/>
+        <line num="102" type="method" name="setContext" crap="1" count="1"/>
+        <line num="104" type="stmt" count="1"/>
+        <line num="105" type="stmt" count="1"/>
+        <line num="108" type="method" name="getAnonymousId" crap="1" count="2"/>
+        <line num="110" type="stmt" count="2"/>
+        <line num="116" type="method" name="updateContext" crap="1" count="1"/>
+        <line num="118" type="stmt" count="1"/>
+        <line num="119" type="stmt" count="1"/>
+        <line num="124" type="method" name="updateContextCollection" crap="1" count="1"/>
+        <line num="126" type="stmt" count="1"/>
+        <line num="127" type="stmt" count="1"/>
+        <line num="132" type="method" name="clearContext" crap="1" count="1"/>
+        <line num="134" type="stmt" count="1"/>
+        <line num="135" type="stmt" count="1"/>
+        <line num="140" type="method" name="authenticate" crap="1" count="1"/>
+        <line num="142" type="stmt" count="1"/>
+        <line num="143" type="stmt" count="1"/>
+        <line num="148" type="method" name="unauthenticate" crap="1" count="1"/>
+        <line num="150" type="stmt" count="1"/>
+        <line num="151" type="stmt" count="1"/>
+        <line num="156" type="method" name="getModification" crap="1" count="1"/>
+        <line num="158" type="stmt" count="1"/>
+        <line num="164" type="method" name="getModificationInfo" crap="1" count="1"/>
+        <line num="166" type="stmt" count="1"/>
+        <line num="172" type="method" name="synchronizeModifications" crap="1" count="2"/>
+        <line num="174" type="stmt" count="2"/>
+        <line num="175" type="stmt" count="2"/>
+        <line num="181" type="method" name="activateModification" crap="1" count="1"/>
+        <line num="183" type="stmt" count="1"/>
+        <line num="184" type="stmt" count="1"/>
+        <line num="189" type="method" name="sendHit" crap="1" count="1"/>
+        <line num="191" type="stmt" count="1"/>
+        <line num="192" type="stmt" count="1"/>
+        <line num="197" type="method" name="jsonSerialize" crap="1" count="1"/>
+        <line num="199" type="stmt" count="1"/>
+        <line num="205" type="method" name="getModifications" crap="1" count="1"/>
+        <line num="207" type="stmt" count="1"/>
+        <metrics loc="209" ncloc="129" classes="1" methods="22" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" elements="56" coveredelements="56"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/VisitorAbstract.php">
         <class name="VisitorAbstract" namespace="Flagship\Visitor">
@@ -2153,6 +2153,6 @@
     <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/VisitorInterface.php">
       <metrics loc="114" ncloc="31" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="48" loc="5937" ncloc="3965" classes="44" methods="328" coveredmethods="328" conditionals="0" coveredconditionals="0" statements="1528" coveredstatements="1528" elements="1856" coveredelements="1856"/>
+    <metrics files="48" loc="5941" ncloc="3965" classes="44" methods="328" coveredmethods="328" conditionals="0" coveredconditionals="0" statements="1528" coveredstatements="1528" elements="1856" coveredelements="1856"/>
   </project>
 </coverage>

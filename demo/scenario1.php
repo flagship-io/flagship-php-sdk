@@ -10,7 +10,7 @@ $config = FlagshipConfig::decisionApi();
 
 Flagship::start("", "", $config);
 
-$visitor = Flagship::newVisitor("visitor-A")->context([
+$visitor = Flagship::newVisitor("visitor-A")->withContext([
     "qa_getflag" => true
 ])->build();
 

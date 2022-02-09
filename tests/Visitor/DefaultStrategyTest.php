@@ -1288,7 +1288,7 @@ class DefaultStrategyTest extends TestCase
         $flagDTO->setKey($key)
             ->setValue("value");
 
-        $functionName = "getFlag value";
+        $functionName = "getFlagValue";
 
         $trackerManagerStub->expects($this->exactly(2))
             ->method('sendActive')

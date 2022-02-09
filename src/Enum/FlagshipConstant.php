@@ -51,6 +51,7 @@ class FlagshipConstant
     const GET_MODIFICATION_KEY_ERROR = "Key '%s' must not be null. Default value is returned.";
     const GET_MODIFICATION_ERROR = "No modification for key '%s'.";
     const GET_FLAG_ERROR = "No flag for key '%s'.";
+    const USER_EXPOSED_NO_FLAG_ERROR = "No flag for key '%s', no activate will be sent";
     const GET_FLAG_MISSING_ERROR = "No Flag for key '%s'. Default value is returned.";
     const GET_METADATA_CAST_ERROR = "Flag for key '%s' has a different type with defaultValue, an empty metadata object is returned";
     const GET_FLAG_CAST_ERROR = "Flag for key '%s' has a different type. Default value is returned.";

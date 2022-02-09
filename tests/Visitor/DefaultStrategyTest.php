@@ -1237,7 +1237,7 @@ class DefaultStrategyTest extends TestCase
 
         $logManagerStub->expects($this->exactly(2))->method('info')
             ->withConsecutive(
-                ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_FLAG_ERROR, $key),
+                ["[$flagshipSdk] " . sprintf(FlagshipConstant::USER_EXPOSED_NO_FLAG_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]],
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::USER_EXPOSED_CAST_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]]

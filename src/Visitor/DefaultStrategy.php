@@ -316,7 +316,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         if (!$flag) {
             $this->logInfo(
                 $this->getVisitor()->getConfig(),
-                sprintf(FlagshipConstant::GET_FLAG_ERROR, $key),
+                sprintf(FlagshipConstant::USER_EXPOSED_NO_FLAG_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]
             );
             return ;

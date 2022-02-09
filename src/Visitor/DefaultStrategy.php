@@ -312,7 +312,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
     public function userExposed($key, $hasSameType, FlagDTO $flag = null)
     {
-        $functionName = 'userExposed';
+        $functionName = __FUNCTION__;
         if (!$flag) {
             $this->logInfo(
                 $this->getVisitor()->getConfig(),
@@ -335,7 +335,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
     public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
     {
-        $functionName = 'getFlag value';
+        $functionName = __FUNCTION__;
         if (!$flag) {
             $this->logInfo(
                 $this->getVisitor()->getConfig(),

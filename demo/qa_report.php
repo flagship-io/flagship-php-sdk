@@ -126,11 +126,11 @@ function scenario7()
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
 
-//scenario1();
-//scenario2();
-//scenario3();
-//scenario4();
-//scenario5();
-//scenario6();
+scenario1();
+scenario2();
+scenario3();
+scenario4();
+scenario5();
+scenario6();
 
-scenario7();
+//scenario7();

@@ -11,7 +11,7 @@ interface FlagInterface
      * @param bool $userExposed
      * @return bool|numeric|string|array
      */
-    public function getValue($userExposed);
+    public function getValue($userExposed = true);
 
     /**
      * This method will return true if a Flag exists in Flagship.

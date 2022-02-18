@@ -16,7 +16,6 @@ $visitor = Flagship::newVisitor("visitor-A")->withContext([
 
 $visitor->fetchFlags();
 
-
 $flag = $visitor->getFlag("qa_flag", "default");
 
 var_dump("value:", $flag->getValue());

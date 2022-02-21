@@ -10,7 +10,7 @@ use JsonSerializable;
  *
  * @package Flagship\Model
  */
-class Modification implements JsonSerializable
+class FlagDTO implements JsonSerializable
 {
     /**
      * @var string
@@ -38,6 +38,11 @@ class Modification implements JsonSerializable
     private $value;
 
     /**
+     * @var string
+     */
+    private $campaignType;
+
+    /**
      * @return string
      */
     public function getKey()
@@ -47,7 +52,7 @@ class Modification implements JsonSerializable
 
     /**
      * @param  string $key
-     * @return Modification
+     * @return FlagDTO
      */
     public function setKey($key)
     {
@@ -65,7 +70,7 @@ class Modification implements JsonSerializable
 
     /**
      * @param  string $campaignId
-     * @return Modification
+     * @return FlagDTO
      */
     public function setCampaignId($campaignId)
     {
@@ -83,7 +88,7 @@ class Modification implements JsonSerializable
 
     /**
      * @param  string $variationGroupId
-     * @return Modification
+     * @return FlagDTO
      */
     public function setVariationGroupId($variationGroupId)
     {
@@ -101,7 +106,7 @@ class Modification implements JsonSerializable
 
     /**
      * @param  string $variationId
-     * @return Modification
+     * @return FlagDTO
      */
     public function setVariationId($variationId)
     {
@@ -119,7 +124,7 @@ class Modification implements JsonSerializable
 
     /**
      * @param  string $isReference
-     * @return Modification
+     * @return FlagDTO
      */
     public function setIsReference($isReference)
     {
@@ -137,11 +142,29 @@ class Modification implements JsonSerializable
 
     /**
      * @param  string|bool|numeric $value
-     * @return Modification
+     * @return FlagDTO
      */
     public function setValue($value)
     {
         $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCampaignType()
+    {
+        return $this->campaignType;
+    }
+
+    /**
+     * @param string $campaignType
+     * @return FlagDTO
+     */
+    public function setCampaignType($campaignType)
+    {
+        $this->campaignType = $campaignType;
         return $this;
     }
 

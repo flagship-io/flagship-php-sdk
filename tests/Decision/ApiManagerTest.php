@@ -297,7 +297,14 @@ class ApiManagerTest extends TestCase
             '',
             false
         );
-        ;
+
+        //Mock Track
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
 
         //Mock method curl->post to throw Exception
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
@@ -312,7 +319,7 @@ class ApiManagerTest extends TestCase
 
         $config->setLogManager($logManagerStub);
         $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager->setConfig($config)->setTrackingManager($trackerManager);
 
         $apiManager = new ApiManager($httpClientMock, $config);
 

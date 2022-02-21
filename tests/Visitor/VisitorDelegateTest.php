@@ -7,8 +7,9 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Page;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\Utils;
@@ -68,7 +69,7 @@ class VisitorDelegateTest extends TestCase
         $this->assertSame($config, $visitorDelegate->getConfig());
 
         $modifications = [
-            new Modification()
+            new FlagDTO()
         ];
 
         $visitorDelegate->setModifications($modifications);
@@ -163,8 +164,8 @@ class VisitorDelegateTest extends TestCase
             ->setMethods([
                 'setContext', 'updateContext', 'updateContextCollection',
                 'clearContext', 'authenticate', 'unauthenticate', 'getModification',
-                'getModificationInfo', 'synchronizeModifications',
-                'activateModification', 'sendHit'
+                'getModificationInfo', 'synchronizeModifications', 'setConsent',
+                'activateModification', 'sendHit', 'fetchFlags','userExposed', 'getFlagValue', 'getFlagMetadata'
             ])->disableOriginalConstructor()
             ->getMock();
 
@@ -251,6 +252,68 @@ class VisitorDelegateTest extends TestCase
             ->method('sendHit')->with($hit);
 
         $visitor->sendHit($hit);
+
+        //Test fetchFlags
+        $defaultStrategy->expects($this->once())->method('fetchFlags');
+        $visitor->fetchFlags();
+
+        //Test userExposed
+        $key = 'key';
+        $flagDTO = new FlagDTO();
+        $defaultStrategy->expects($this->once())->method('userExposed')
+            ->with($key, true, $flagDTO);
+        $visitor->userExposed($key, true, $flagDTO);
+
+        //Test getFlagValue
+        $key = 'key';
+        $flagDTO = new FlagDTO();
+        $defaultValue = "defaultValue";
+        $defaultStrategy->expects($this->once())
+            ->method('getFlagValue')
+            ->with($key, $defaultValue, $flagDTO, true);
+        $visitor->getFlagValue($key, $defaultValue, $flagDTO);
+
+        //Test getFlagMetadata
+        $key = 'key';
+        $metadata = FlagMetadata::getEmpty();
+        $defaultStrategy->expects($this->exactly(1))
+           ->method('getFlagMetadata')
+           ->withConsecutive([$key, $metadata, true]);
+
+        $visitor->getFlagMetadata($key, $metadata, true);
+
+        //Test getFlag
+        $flagDTO = new FlagDTO();
+        $flagDTO->setKey("key1")
+            ->setCampaignId('campaignID')
+            ->setVariationGroupId("varGroupID")
+            ->setVariationId('varID')
+            ->setIsReference(true)->setValue("value")
+        ->setCampaignType("ab");
+
+
+        $flagsDTO = [
+            $flagDTO
+        ];
+        $visitor->setFlagsDTO($flagsDTO);
+        $defaultValue = "defaultValue";
+        $flag = $visitor->getFlag('key1', $defaultValue);
+        $this->assertInstanceOf("Flagship\Flag\Flag", $flag);
+        $metadataJson = [
+            "campaignId" => $flagDTO->getCampaignId(),
+            "variationGroupId" => $flagDTO->getVariationGroupId(),
+            "variationId" => $flagDTO->getVariationId(),
+            "isReference" => $flagDTO->getIsReference(),
+            "campaignType" => $flagDTO->getCampaignType()
+        ];
+        $metadata = Utils::getProperty($flag, 'metadata')->getValue($flag);
+        $this->assertJsonStringEqualsJsonString(json_encode($metadata), json_encode($metadataJson));
+
+        //Test getFlag null
+        $flag = $visitor->getFlag('key2', $defaultValue);
+        $this->assertInstanceOf("Flagship\Flag\Flag", $flag);
+        $metadata = Utils::getProperty($flag, 'metadata')->getValue($flag);
+        $this->assertJsonStringEqualsJsonString(json_encode($metadata), json_encode(FlagMetadata::getEmpty()));
     }
 
     public function testJson()

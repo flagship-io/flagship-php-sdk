@@ -8,7 +8,7 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 use Flagship\Hit\HitAbstract;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
 use Flagship\Visitor\VisitorAbstract;
@@ -22,10 +22,21 @@ class TrackingManager extends TrackingManagerAbstract
     use LogTrait;
     use BuildApiTrait;
 
+    protected function buildActivateBody($postData, $visitorId, $anonymousId)
+    {
+        if ($visitorId && $anonymousId) {
+            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $visitorId ;
+            $postData[FlagshipConstant::ANONYMOUS_ID] = $anonymousId;
+        } else {
+            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $visitorId ?: $anonymousId;
+            $postData[FlagshipConstant::ANONYMOUS_ID] = null;
+        }
+        return $postData;
+    }
     /**
      * @inheritDoc
      */
-    public function sendActive(VisitorAbstract $visitor, Modification $modification)
+    public function sendActive(VisitorAbstract $visitor, FlagDTO $modification)
     {
         try {
             $headers = $this->buildHeader($visitor->getConfig()->getApiKey());
@@ -39,11 +50,10 @@ class TrackingManager extends TrackingManagerAbstract
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $visitor->getConfig()->getEnvId()
             ];
 
-            $postData = $this->setVisitorBodyParams(
-                $visitor->getVisitorId(),
-                $visitor->getAnonymousId(),
+            $postData = $this->buildActivateBody(
                 $postData,
-                FlagshipConstant::ANONYMOUS_ID
+                $visitor->getVisitorId(),
+                $visitor->getAnonymousId()
             );
 
             $response = $this->httpClient->post($url, [], $postData);
@@ -86,11 +96,15 @@ class TrackingManager extends TrackingManagerAbstract
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
                 FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP
             ];
-            $postBody = $this->setVisitorBodyParams(
-                $visitor->getVisitorId(),
-                $visitor->getAnonymousId(),
-                $postBody
-            );
+
+            if ($visitor->getVisitorId() && $visitor->getAnonymousId()) {
+                $postBody[FlagshipConstant::VISITOR_ID_API_ITEM] = $visitor->getAnonymousId();
+                $postBody[FlagshipConstant::CUSTOMER_UID] = $visitor->getVisitorId();
+            } else {
+                $postBody[FlagshipConstant::VISITOR_ID_API_ITEM] =
+                    $visitor->getVisitorId() ?: $visitor->getAnonymousId();
+                $postBody[FlagshipConstant::CUSTOMER_UID] = null;
+            }
             $this->httpClient->post($url, [], $postBody);
         } catch (Exception $exception) {
             $this->logError($config, $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);

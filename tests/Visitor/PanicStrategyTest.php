@@ -5,6 +5,7 @@ namespace Flagship\Visitor;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Page;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -34,6 +35,13 @@ class PanicStrategyTest extends TestCase
             ['error']
         );
 
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
@@ -57,7 +65,7 @@ class PanicStrategyTest extends TestCase
                 [FlagshipConstant::TAG => $functionName]];
         };
 
-        $logManagerStub->expects($this->exactly(8))->method('error')
+        $logManagerStub->expects($this->exactly(11))->method('error')
             ->withConsecutive(
                 $logMessageBuild('updateContext'),
                 $logMessageBuild('updateContextCollection'),
@@ -66,13 +74,16 @@ class PanicStrategyTest extends TestCase
                 $logMessageBuild('getModificationInfo'),
                 $logMessageBuild('activateModification'),
                 $logMessageBuild('sendHit'),
-                $logMessageBuildConsent('setConsent')
+                $logMessageBuildConsent('setConsent'),
+                $logMessageBuild('getFlagValue'),
+                $logMessageBuild('userExposed'),
+                $logMessageBuild('getFlagMetadata')
             );
 
         $apiManagerStub->expects($this->once())->method('getCampaignModifications');
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($apiManagerStub)->setTrackingManager($trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -111,5 +122,15 @@ class PanicStrategyTest extends TestCase
         //Test setConsent
         $panicStrategy->setConsent(true);
         $this->assertSame(true, $visitor->hasConsented());
+
+        //Test getFlagValue
+        $value = $panicStrategy->getFlagValue('key', true);
+        $this->assertEquals(true, $value);
+
+        //Test userExposed
+        $panicStrategy->userExposed('key', true, null);
+
+        //Test getFlagMetadata
+        $panicStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);
     }
 }

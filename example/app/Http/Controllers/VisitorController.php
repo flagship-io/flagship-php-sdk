@@ -46,10 +46,10 @@ class VisitorController extends Controller
 
             $visitor->setConsent(!empty($data['consent']));
 
-            $visitor->synchronizeModifications();
+            $visitor->fetchFlags();
 
             $request->session()->put('visitor', $visitor);
-            return response()->json($visitor->getModifications());
+            return response()->json($visitor->getFlagsDTO());
         } catch (ValidationException $exception) {
             return response()->json($this->formatError($exception->errors()), 422);
         } catch (Exception $exception) {
@@ -85,7 +85,7 @@ class VisitorController extends Controller
 
             $visitor->updateContext($key, $value);
 
-            $visitor->synchronizeModifications();
+            $visitor->fetchFlags();
 
             return response()->json($visitor);
         } catch (ValidationException $exception) {

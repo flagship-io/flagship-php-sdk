@@ -5,7 +5,7 @@ namespace Flagship\Visitor;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Page;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use PHPUnit\Framework\TestCase;
@@ -34,6 +34,13 @@ class NoConsentStrategyTest extends TestCase
             ['error']
         );
 
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
@@ -49,21 +56,22 @@ class NoConsentStrategyTest extends TestCase
                 [FlagshipConstant::TAG => $functionName]];
         };
 
-        $logManagerStub->expects($this->exactly(3))->method('error')
+        $logManagerStub->expects($this->exactly(4))->method('error')
             ->withConsecutive(
                 $logMessageBuild('activateModification'),
                 $logMessageBuild('activateModification'),
-                $logMessageBuild('sendHit')
+                $logMessageBuild('sendHit'),
+                $logMessageBuild('userExposed')
             );
 
         $modificationKey = "age";
         $modificationValue = 20;
         $apiManagerStub->expects($this->once())
             ->method('getCampaignModifications')
-            ->willReturn([(new Modification())->setKey($modificationKey)->setValue($modificationValue)]);
+            ->willReturn([(new FlagDTO())->setKey($modificationKey)->setValue($modificationValue)]);
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($apiManagerStub)->setTrackingManager($trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
@@ -111,5 +119,8 @@ class NoConsentStrategyTest extends TestCase
 
         //Test sendHit
         $noConsentStrategy->sendHit(new Page('http://localhost'));
+
+        //Test userExposed
+        $noConsentStrategy->userExposed('key', true, null);
     }
 }

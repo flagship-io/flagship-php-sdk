@@ -9,7 +9,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
@@ -43,7 +43,7 @@ class TrackingManagerTest extends TestCase
         $configManager = new ConfigManager();
         $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
         $modification
             ->setKey('background')
             ->setValue('EE3300')
@@ -55,8 +55,10 @@ class TrackingManagerTest extends TestCase
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 
-        $httpClientMock->expects($this->once())->method('post')->with(
-            $url,
+        $authenticatedId = "authenticatedId";
+
+        $httpClientMock->expects($this->exactly(2))->method('post')->withConsecutive(
+            [$url,
             [],
             [
                 FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
@@ -64,8 +66,21 @@ class TrackingManagerTest extends TestCase
                 FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
                 FlagshipConstant::ANONYMOUS_ID => null
-            ]
+            ]],
+            [$url,
+                [],
+                [
+                    FlagshipConstant::VISITOR_ID_API_ITEM => $authenticatedId,
+                    FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
+                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
+                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
+                    FlagshipConstant::ANONYMOUS_ID => $visitor->getVisitorId()
+                ]]
         )->willReturn(new HttpResponse(204, null));
+
+        $trackingManager->sendActive($visitor, $modification);
+
+        $visitor->authenticate($authenticatedId);
 
         $trackingManager->sendActive($visitor, $modification);
     }
@@ -94,7 +109,7 @@ class TrackingManagerTest extends TestCase
         $configManager = new ConfigManager();
         $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
 
         $modification
             ->setKey('background')
@@ -129,7 +144,7 @@ class TrackingManagerTest extends TestCase
 
         $trackingManager = new TrackingManager($httpClientMock);
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
         $modification
             ->setKey('background')
             ->setValue('EE3300')
@@ -175,7 +190,7 @@ class TrackingManagerTest extends TestCase
 
         $config->setLogManager($logManagerStub);
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
 
         $modification
             ->setKey('background')
@@ -224,12 +239,17 @@ class TrackingManagerTest extends TestCase
         $configManager = new ConfigManager();
         $configManager->setConfig($config)->setTrackingManager($trackingManager);
 
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
+        $authenticatedId = "authenticatedId";
+        $visitorId = 'visitorId';
+
+        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
+
+
 
         $url = FlagshipConstant::HIT_CONSENT_URL;
 
-        $httpClientMock->expects($this->once())->method('post')->with(
-            $url,
+        $httpClientMock->expects($this->exactly(2))->method('post')->withConsecutive(
+            [ $url,
             [],
             [
                 FlagshipConstant::T_API_ITEM => HitType::EVENT,
@@ -239,10 +259,27 @@ class TrackingManagerTest extends TestCase
                 FlagshipConstant::EVENT_CATEGORY_API_ITEM => EventCategory::USER_ENGAGEMENT,
                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
                 FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
-                FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
-                FlagshipConstant::CUSTOMER_UID => $visitor->getAnonymousId()
-            ]
+                FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
+                FlagshipConstant::CUSTOMER_UID => null
+            ]],
+            [ $url,
+                [],
+                [
+                    FlagshipConstant::T_API_ITEM => HitType::EVENT,
+                    FlagshipConstant::EVENT_LABEL_API_ITEM =>
+                        FlagshipConstant::SDK_LANGUAGE . ":" . ($visitor->hasConsented() ? "true" : "false"),
+                    FlagshipConstant::EVENT_ACTION_API_ITEM => "fs_content",
+                    FlagshipConstant::EVENT_CATEGORY_API_ITEM => EventCategory::USER_ENGAGEMENT,
+                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
+                    FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
+                    FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
+                    FlagshipConstant::CUSTOMER_UID => $authenticatedId
+                ]]
         )->willReturn(new HttpResponse(204, null));
+
+        $trackingManager->sendConsentHit($visitor, $config);
+
+        $visitor->authenticate($authenticatedId);
 
         $trackingManager->sendConsentHit($visitor, $config);
     }

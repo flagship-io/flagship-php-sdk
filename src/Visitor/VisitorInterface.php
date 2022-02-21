@@ -2,6 +2,7 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Flag\FlagInterface;
 use Flagship\Hit\HitAbstract;
 
 /**
@@ -9,7 +10,7 @@ use Flagship\Hit\HitAbstract;
  *
  * @package Flagship
  */
-interface VisitorInterface
+interface VisitorInterface extends VisitorCoreInterface
 {
     /**
      * Set if visitor has consented for private data usage.
@@ -17,33 +18,7 @@ interface VisitorInterface
      * @return void
      */
     public function setConsent($hasConsented);
-    /**
-     * Update the visitor context values, matching the given keys, used for targeting.
-     *
-     * A new context value associated with this key will be created if there is no previous matching value.
-     * Context key must be String, and value type must be one of the following : Number, Boolean, String.
-     *
-     * @param string $key : context key.
-     * @param numeric|string|bool $value : context value.
-     * @return void
-     */
-    public function updateContext($key, $value);
 
-    /**
-     * Update the visitor context values, matching the given keys, used for targeting.
-     *
-     * A new context value associated with this key will be created if there is no previous matching value.
-     * Context keys must be String, and values types must be one of the following : Number, Boolean, String.
-     *
-     * @param array $context : collection of keys, values. e.g: ["age"=>42, "IsVip"=>true, "country"=>"UK"]
-     */
-    public function updateContextCollection(array $context);
-
-    /**
-     * clear the actual visitor context
-     * @return void
-     */
-    public function clearContext();
 
     /**
      * Retrieve a modification value by its key. If no modification match the given
@@ -57,8 +32,16 @@ interface VisitorInterface
      *                                          activateModification() later.
 
      * @return string|bool|numeric|array : modification value or default value.
+     * @deprecated use getFlag instead
      */
     public function getModification($key, $defaultValue, $activate = false);
+
+    /**
+     * @param string $key key associated to the flag
+     * @param string|bool|numeric|array $defaultValue flag default value.
+     * @return FlagInterface
+     */
+    public function getFlag($key, $defaultValue);
 
     /**
      * Authenticate anonymous visitor
@@ -74,19 +57,23 @@ interface VisitorInterface
     public function unauthenticate();
 
     /**
+     * @deprecated
      * @return array
      */
     public function getModifications();
 
+    public function getFlagsDTO();
+
     /**
      * Get the campaign modification information value matching the given key.
-     *
+     * @deprecated
      * @param string $key : key which identify the modification.
      * @return array|null
      */
     public function getModificationInfo($key);
 
     /**
+     * @deprecated
      * In DecisionApi Mode this function calls the Flagship Decision API to run
      * campaign assignments according to the current user context
      * and retrieve applicable modifications. <br/>
@@ -100,15 +87,9 @@ interface VisitorInterface
     /**
      * Report this user has seen this modification.
      *
+     * @deprecated
      * @param $key : key which identify the modification to activate.
      * @return void
      */
     public function activateModification($key);
-
-    /**
-     * Send a Hit to Flagship servers for reporting.
-     * @param HitAbstract $hit
-     * @return void
-     */
-    public function sendHit(HitAbstract $hit);
 }

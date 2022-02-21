@@ -5,6 +5,7 @@ namespace Flagship\Visitor;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Page;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -24,6 +25,13 @@ class NotReadyStrategyTest extends TestCase
             ['error']
         );
 
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
@@ -37,16 +45,20 @@ class NotReadyStrategyTest extends TestCase
                 [FlagshipConstant::TAG => $functionName]];
         };
 
-        $logManagerStub->expects($this->exactly(5))->method('error')
+        $logManagerStub->expects($this->exactly(9))->method('error')
             ->withConsecutive(
                 $logMessageBuild('synchronizeModifications'),
                 $logMessageBuild('getModification'),
                 $logMessageBuild('getModificationInfo'),
                 $logMessageBuild('activateModification'),
-                $logMessageBuild('sendHit')
+                $logMessageBuild('sendHit'),
+                $logMessageBuild('fetchFlags'),
+                $logMessageBuild('getFlagValue'),
+                $logMessageBuild('userExposed'),
+                $logMessageBuild('getFlagMetadata')
             );
 
-        $configManager = (new ConfigManager())->setConfig($config);
+        $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
         $visitorId = "visitorId";
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
@@ -102,5 +114,18 @@ class NotReadyStrategyTest extends TestCase
 
         //Test sendHit
         $notReadyStrategy->sendHit(new Page('http://localhost'));
+
+        //Test fetchFlags
+        $notReadyStrategy->fetchFlags();
+
+        //Test getFlagValue
+        $value = $notReadyStrategy->getFlagValue('key', true);
+        $this->assertEquals(true, $value);
+
+        //Test userExposed
+        $notReadyStrategy->userExposed('key', true, null);
+
+        //Test getFlagMetadata
+        $notReadyStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);
     }
 }

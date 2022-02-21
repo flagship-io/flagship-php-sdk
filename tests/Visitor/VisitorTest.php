@@ -72,7 +72,7 @@ class VisitorTest extends TestCase
                 'getContext', 'setContext', 'updateContext', 'updateContextCollection',
                 'clearContext', 'authenticate', 'unauthenticate','getAnonymousId',
                 'getModification','getModifications','getModificationInfo', 'synchronizeModifications',
-                'activateModification', 'sendHit'
+                'activateModification', 'sendHit', 'fetchFlags', 'getFlag', 'getFlagsDTO'
                 ])
             ->setConstructorArgs([new Container(),$configManager, $visitorId, false, $visitorContext, true])->getMock();
 
@@ -167,6 +167,26 @@ class VisitorTest extends TestCase
             ->method('sendHit')->with($hit);
 
         $visitor->sendHit($hit);
+
+        //Test fetchFlags
+        $visitorDelegateMock->expects($this->once())
+            ->method('fetchFlags');
+        $visitor->fetchFlags();
+
+        //Test getFlag
+        $key = 'key';
+        $defaultValue = 'defaultValue';
+        $visitorDelegateMock->expects($this->once())
+            ->method('getFlag')
+            ->with($key, $defaultValue)->willReturn(null);
+        $flagValue = $visitor->getFlag($key, $defaultValue);
+        $this->assertSame(null, $flagValue);
+
+        //Test getFlagsDTO
+        $visitorDelegateMock->expects($this->once())
+            ->method('getFlagsDTO')
+            ->willReturn([]);
+        $visitor->getFlagsDTO();
     }
 
     public function testJson()

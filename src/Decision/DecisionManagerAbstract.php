@@ -5,7 +5,7 @@ namespace Flagship\Decision;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagshipStatus;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\HttpClientInterface;
@@ -114,9 +114,9 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     }
 
     /**
-     * @param  Modification[] $modifications
+     * @param  FlagDTO[] $modifications
      * @param  $key
-     * @return Modification|null
+     * @return FlagDTO|null
      */
     protected function checkModificationKeyExist(array $modifications, $key)
     {
@@ -132,7 +132,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * Return an array of Modification from all campaigns
      *
      * @param  $campaigns
-     * @return Modification[] Return an array of Modification
+     * @return FlagDTO[] Return an array of Modification
      */
     protected function getModifications($campaigns)
     {
@@ -177,7 +177,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
             $isKeyUsed = true;
 
             if (is_null($modification)) {
-                $modification = new Modification();
+                $modification = new FlagDTO();
                 $isKeyUsed = false;
             }
 
@@ -204,6 +204,10 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
                     $campaign[FlagshipField::FIELD_VARIATION]
                     [FlagshipField::FIELD_REFERENCE]
                 );
+            }
+
+            if (isset($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE])) {
+                $modification->setCampaignType($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]);
             }
 
             if (!$isKeyUsed) {

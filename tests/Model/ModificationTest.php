@@ -10,7 +10,7 @@ class ModificationTest extends TestCase
     public function testModificationInstance()
     {
 
-        $modification = new Modification();
+        $modification = new FlagDTO();
 
         $modificationValue = "value";
         $modification->setValue($modificationValue);

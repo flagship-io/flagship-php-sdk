@@ -5,8 +5,9 @@ namespace Flagship\Visitor;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
-use Flagship\Model\Modification;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\ValidatorTrait;
 
 class DefaultStrategy extends VisitorStrategyAbstract
@@ -16,9 +17,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function setConsent($hasConsented)
     {
-        $this->getVisitor()->hasConsented = $hasConsented;
-
-        $this->getTrackingManager(__FUNCTION__)->sendConsentHit($this->getVisitor(), $this->getConfig());
+        $trackingManager = $this->getTrackingManager(__FUNCTION__);
+        if ($trackingManager) {
+            $trackingManager->sendConsentHit($this->getVisitor(), $this->getConfig());
+        }
     }
 
     /**
@@ -125,7 +127,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * Return the Modification that matches the key, otherwise return null
      *
      * @param  $key
-     * @return Modification|null
+     * @return FlagDTO|null
      */
     private function getObjetModification($key)
     {
@@ -183,10 +185,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
     /**
      * Build the Campaign of Modification
      *
-     * @param  Modification $modification Modification containing information
+     * @param  FlagDTO $modification Modification containing information
      * @return array JSON encoded string
      */
-    private function parseToCampaign(Modification $modification)
+    private function parseToCampaign(FlagDTO $modification)
     {
         return [
             FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
@@ -225,17 +227,30 @@ class DefaultStrategy extends VisitorStrategyAbstract
         return $this->parseToCampaign($modification);
     }
 
+    private function synchronizeFlags($functionName)
+    {
+        $decisionManager = $this->getDecisionManager($functionName);
+        if (!$decisionManager) {
+            return;
+        }
+        $flagsDTO = $decisionManager->getCampaignModifications($this->getVisitor());
+        $this->getVisitor()->setFlagsDTO($flagsDTO);
+    }
+
     /**
      * @inheritDoc
      */
     public function synchronizeModifications()
     {
-        $decisionManager = $this->getDecisionManager(__FUNCTION__);
-        if (!$decisionManager) {
-            return;
-        }
-        $modifications = $decisionManager->getCampaignModifications($this->getVisitor());
-        $this->getVisitor()->setModifications($modifications);
+        $this->synchronizeFlags(__FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchFlags()
+    {
+        $this->synchronizeFlags(__FUNCTION__);
     }
 
     /**
@@ -293,5 +308,77 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function getModifications()
     {
         return $this->getVisitor()->getModifications();
+    }
+
+    public function userExposed($key, $hasSameType, FlagDTO $flag = null)
+    {
+        $functionName = __FUNCTION__;
+        if (!$flag) {
+            $this->logInfo(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::USER_EXPOSED_NO_FLAG_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            return ;
+        }
+        if ($flag->getValue() && !$hasSameType) {
+            $this->logInfo(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::USER_EXPOSED_CAST_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            return ;
+        }
+        $trackingManager =  $this->getTrackingManager(__FUNCTION__);
+        $trackingManager->sendActive($this->getVisitor(), $flag);
+    }
+
+    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    {
+        $functionName = __FUNCTION__;
+        if (!$flag) {
+            $this->logInfo(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::GET_FLAG_MISSING_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            return  $defaultValue;
+        }
+
+        if (!$this->hasSameType($flag->getValue(), $defaultValue)) {
+            $this->logInfo(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::GET_FLAG_CAST_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            if (!$flag->getValue() && $userExposed) {
+                $this->userExposed($key, true, $flag);
+            }
+            return  $defaultValue;
+        }
+        if ($userExposed) {
+            $this->userExposed($key, true, $flag);
+        }
+        return  $flag->getValue();
+    }
+
+    /**
+     * @param string $key
+     * @param FlagMetadata $metadata
+     * @param bool $hasSameType
+     * @return FlagMetadata
+     */
+    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    {
+        $functionName = 'flag.metadata';
+        if (!$hasSameType && $metadata->getCampaignId()) {
+            $this->logInfo(
+                $this->getVisitor()->getConfig(),
+                sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
+                [FlagshipConstant::TAG => $functionName]
+            );
+            return  FlagMetadata::getEmpty();
+        }
+        return  $metadata;
     }
 }

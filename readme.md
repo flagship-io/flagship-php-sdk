@@ -16,12 +16,7 @@
 **Visit [https://developers.flagship.io/](https://developers.flagship.io/) to get started with Flagship.**
 
 ## Docs
-
-- [Get Started](https://developers.flagship.io/docs/sdk/php/v1.0#getting-started)
-- [Initialize and start](https://developers.flagship.io/docs/sdk/php/v1.0#initialization)
-- [Campaign integration](https://developers.flagship.io/docs/sdk/php/v1.0#managing-visitor-campaigns)
-- [Hit tracking](https://developers.flagship.io/docs/sdk/php/v1.0#hit-tracking)
-- [Release Notes](https://developers.flagship.io/docs/sdk/php/v1.0#release-notes)
+- [docs](https://docs.developers.flagship.io/docs/php-sdk)
 
 ## Licence
 

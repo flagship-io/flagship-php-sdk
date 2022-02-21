@@ -439,8 +439,9 @@ class FlagshipTest extends TestCase
             "panic" => true
         ];
 
-        $httpClientMock->expects($this->exactly(2))->method('post')
+        $httpClientMock->expects($this->exactly(3))->method('post')
             ->willReturnOnConsecutiveCalls(
+                new HttpResponse(204, null),
                 new HttpResponse(204, $body),
                 new HttpResponse(204, [
                     "visitorId" => $visitorId,
@@ -450,7 +451,7 @@ class FlagshipTest extends TestCase
 
         $apiManager = new ApiManager($httpClientMock, $config);
 
-        $trackingManager = new TrackingManager(new HttpClient());
+        $trackingManager = new TrackingManager($httpClientMock);
 
         $configManager = new ConfigManager();
 

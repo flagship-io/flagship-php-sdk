@@ -5,7 +5,11 @@ namespace Flagship\Visitor;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
+use Flagship\Flag\Flag;
+use Flagship\Flag\FlagInterface;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\Guid;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
@@ -38,10 +42,7 @@ class VisitorDelegate extends VisitorAbstract
         $this->setConfigManager($configManager);
         $this->loadPredefinedContext();
 
-        if (!$hasConsented) {
-            $this->setConsent($hasConsented);
-        }
-        $this->hasConsented = $hasConsented;
+        $this->setConsent($hasConsented);
 
         if ($isAuthenticated && $this->getConfig()->getDecisionMode() == DecisionMode::DECISION_API) {
             $anonymousId  = $this->newGuid();
@@ -143,5 +144,64 @@ class VisitorDelegate extends VisitorAbstract
     public function sendHit(HitAbstract $hit)
     {
         $this->getStrategy()->sendHit($hit);
+    }
+
+    public function fetchFlags()
+    {
+        $this->getStrategy()->fetchFlags();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function userExposed($key, $hasSameType, FlagDTO $flag = null)
+    {
+        $this->getStrategy()->userExposed($key, $hasSameType, $flag);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    {
+        return $this->getStrategy()->getFlagValue($key, $defaultValue, $flag, $userExposed);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    {
+        return $this->getStrategy()->getFlagMetadata($key, $metadata, $hasSameType);
+    }
+
+    protected function findFlagDTO($key)
+    {
+        foreach ($this->getFlagsDTO() as $flagDTO) {
+            if ($flagDTO->getKey() === $key) {
+                return $flagDTO;
+            }
+        }
+        return null;
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getFlag($key, $defaultValue)
+    {
+        $flagDTO = $this->findFlagDTO($key);
+
+        if ($flagDTO) {
+            $metadata = new FlagMetadata(
+                $flagDTO->getCampaignId(),
+                $flagDTO->getVariationGroupId(),
+                $flagDTO->getVariationId(),
+                $flagDTO->getIsReference(),
+                $flagDTO->getCampaignType()
+            );
+        } else {
+            $metadata = new FlagMetadata("", "", "", false, "");
+        }
+        return new Flag($key, $this, $defaultValue, $metadata, $flagDTO);
     }
 }

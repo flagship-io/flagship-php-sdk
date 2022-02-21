@@ -206,4 +206,25 @@ class Visitor implements VisitorInterface, JsonSerializable
     {
         return $this->getVisitorDelegate()->getModifications();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchFlags()
+    {
+        $this->visitorDelegate->fetchFlags();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFlag($key, $defaultValue)
+    {
+        return $this->visitorDelegate->getFlag($key, $defaultValue);
+    }
+
+    public function getFlagsDTO()
+    {
+        return $this->visitorDelegate->getFlagsDTO();
+    }
 }

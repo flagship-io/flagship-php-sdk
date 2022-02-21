@@ -4,6 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\HitAbstract;
+use Flagship\Model\FlagDTO;
 
 /**
  * Visitor method strategy to use when the SDK status is READY_PANIC_ON.
@@ -23,6 +24,14 @@ class NoConsentStrategy extends DefaultStrategy
      * @inheritDoc
      */
     public function sendHit(HitAbstract $hit)
+    {
+        $this->log(__FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function userExposed($key, $hasSameType, FlagDTO $flag = null)
     {
         $this->log(__FUNCTION__);
     }

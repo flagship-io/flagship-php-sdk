@@ -6,12 +6,14 @@ use Flagship\Api\TrackingManagerAbstract;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 
-abstract class VisitorStrategyAbstract implements VisitorInterface
+abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorFlagInterface
 {
     use ValidatorTrait;
+    use HasSameTypeTrait;
 
     /**
      * @var VisitorAbstract

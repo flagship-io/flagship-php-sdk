@@ -28,11 +28,17 @@ class FlagTest extends TestCase
         );
         $visitorDelegateMock = $this->getMockForAbstractClass(
             'Flagship\Visitor\VisitorAbstract',
-            ['getFlagValue','userExposed','getFlagMetadata'],
+            [],
+            "",
+            false,
+            false,
+            true,
+            ['getFlagValue','userExposed','getFlagMetadata', 'getFlagsDTO'],
             '',
             false
         );
-        $flag = new Flag($key, $visitorDelegateMock, $defaultValue, $metadata, $flagDTO);
+
+        $visitorDelegateMock->method("getFlagsDTO")->willReturn([$flagDTO]);
 
         $visitorDelegateMock->expects($this->exactly(2))->method('getFlagValue')->withConsecutive(
             [ $key,
@@ -44,6 +50,8 @@ class FlagTest extends TestCase
                $flagDTO,
                false]
         )->willReturn($flagDTO->getValue());
+
+        $flag = new Flag($key, $visitorDelegateMock, $defaultValue);
 
         $value = $flag->getValue();
         $this->assertEquals($value, $flagDTO->getValue());
@@ -98,6 +106,6 @@ class FlagTest extends TestCase
 
         $metadataValue = $flag->getMetadata();
 
-        $this->assertSame($metadataValue, $metadata);
+        $this->assertEquals($metadataValue, $metadata);
     }
 }

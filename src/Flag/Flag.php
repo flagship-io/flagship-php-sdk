@@ -18,10 +18,7 @@ class Flag implements FlagInterface
      * @var VisitorAbstract
      */
     private $visitorDelegate;
-    /**
-     * @var FlagDTO
-     */
-    private $flagDTO;
+
     /**
      * @var mixed
      */
@@ -35,30 +32,43 @@ class Flag implements FlagInterface
     /***
      * @param string $key
      * @param VisitorAbstract $visitorDelegate
-     * @param FlagDTO $flagDTO
      * @param mixed $defaultValue
-     * @param FlagMetadata $flagMetadata
      */
     public function __construct(
         $key,
         VisitorAbstract $visitorDelegate,
-        $defaultValue,
-        FlagMetadata $flagMetadata,
-        FlagDTO $flagDTO = null
+        $defaultValue
     ) {
         $this->key = $key;
         $this->visitorDelegate = $visitorDelegate;
-        $this->flagDTO = $flagDTO;
+        $flagDTO = $this->findFlagDTO($key);
+
         $this->defaultValue = $defaultValue;
-        $this->metadata = $flagMetadata;
+        $this->metadata = new FlagMetadata(
+            $flagDTO ? $flagDTO->getCampaignId() : "",
+            $flagDTO ? $flagDTO->getVariationGroupId() : "",
+            $flagDTO ? $flagDTO->getVariationId() : "",
+            $flagDTO ? $flagDTO->getIsReference() : false,
+            $flagDTO ? $flagDTO->getCampaignType() : ""
+        );
     }
 
+    protected function findFlagDTO($key)
+    {
+        foreach ($this->visitorDelegate->getFlagsDTO() as $flagDTO) {
+            if ($flagDTO->getKey() === $key) {
+                return $flagDTO;
+            }
+        }
+        return null;
+    }
     /**
      * @inheritDoc
      */
     public function getValue($userExposed = true)
     {
-        return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $this->flagDTO, $userExposed);
+        $flagDTO = $this->findFlagDTO($this->key);
+        return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $flagDTO, $userExposed);
     }
 
     /**
@@ -66,7 +76,8 @@ class Flag implements FlagInterface
      */
     public function exists()
     {
-        return $this->flagDTO && $this->hasSameType($this->flagDTO->getValue(), $this->defaultValue);
+        $flagDTO = $this->findFlagDTO($this->key);
+        return $flagDTO && $this->hasSameType($flagDTO->getValue(), $this->defaultValue);
     }
 
     /**
@@ -74,10 +85,11 @@ class Flag implements FlagInterface
      */
     public function userExposed()
     {
+        $flagDTO = $this->findFlagDTO($this->key);
         $this->visitorDelegate->userExposed(
             $this->key,
-            $this->flagDTO && $this->hasSameType($this->flagDTO->getValue(), $this->defaultValue),
-            $this->flagDTO
+            $flagDTO && $this->hasSameType($flagDTO->getValue(), $this->defaultValue),
+            $flagDTO
         );
     }
 
@@ -86,14 +98,15 @@ class Flag implements FlagInterface
      */
     public function getMetadata()
     {
-        if (!$this->flagDTO) {
+        $flagDTO = $this->findFlagDTO($this->key);
+        if (!$flagDTO) {
             return $this->metadata;
         }
 
         return  $this->visitorDelegate->getFlagMetadata(
             $this->key,
             $this->metadata,
-            !$this->flagDTO->getValue() || $this->hasSameType($this->flagDTO->getValue(), $this->defaultValue)
+            !$flagDTO->getValue() || $this->hasSameType($flagDTO->getValue(), $this->defaultValue)
         );
     }
 }

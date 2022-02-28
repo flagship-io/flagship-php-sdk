@@ -29,10 +29,10 @@ class FlagController extends Controller
 
             $defaultValue = $typeCast->castToType($data['defaultValue'], $data['type']);
 
-            $modificationValue = $visitor->getModification($key, $defaultValue, $data['activate']);
+            $flag = $visitor->getFlag($key, $defaultValue);
 
             $result = [
-                "value" => $modificationValue,
+                "value" => $flag->getValue($data['activate']),
                 'error' => null
             ];
             return response()->json($result);
@@ -43,20 +43,28 @@ class FlagController extends Controller
         }
     }
 
-    public function getModificationInfo($key, Visitor $visitor)
+    public function getModificationInfo($key, Visitor $visitor, Request $request, TypeCastInterface $typeCast)
     {
+        $defaultValueQuery = $request->get("defaultValue");
+        $type = $request->get("type");
         try {
-            $response = $visitor->getModificationInfo($key);
+            $defaultValue = $typeCast->castToType($defaultValueQuery, $type);
+            $flag = $visitor->getFlag($key, $defaultValue);
+            $response = $flag->getMetadata();
             return response()->json($response);
         } catch (Exception $exception) {
             return response()->json($this->formatError($exception->getMessage()), 500);
         }
     }
 
-    public function activeModification($key, Visitor $visitor)
+    public function activeModification($key, Visitor $visitor, Request $request, TypeCastInterface $typeCast)
     {
         try {
-            $visitor->activateModification($key);
+            $defaultValueQuery = $request->get("defaultValue");
+            $type = $request->get("type");
+            $defaultValue = $typeCast->castToType($defaultValueQuery, $type);
+            $flag = $visitor->getFlag($key, $defaultValue);
+            $flag->userExposed();
             return response()->json('successful operation');
         } catch (Exception $exception) {
             return response()->json($this->formatError($exception->getMessage()), 500);

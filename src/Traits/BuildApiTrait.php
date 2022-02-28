@@ -31,26 +31,4 @@ trait BuildApiTrait
     {
         return FlagshipConstant::BASE_API_URL . '/' . $url;
     }
-
-    /**
-     * @param string $visitorId
-     * @param string $anonymousId
-     * @param array $postData
-     * @return array
-     */
-    protected function setVisitorBodyParams(
-        $visitorId,
-        $anonymousId,
-        array $postData,
-        $idConstant = FlagshipConstant::CUSTOMER_UID
-    ) {
-        if ($visitorId && $anonymousId) {
-            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $anonymousId;
-            $postData[$idConstant] = $visitorId;
-        } else {
-            $postData[FlagshipConstant::VISITOR_ID_API_ITEM] = $visitorId ?: $anonymousId;
-            $postData[$idConstant] = null;
-        }
-        return $postData;
-    }
 }

@@ -101,6 +101,15 @@ class EventTest extends TestCase
         $event->setValue('abc');
 
         $this->assertSame($eventArray, $event->toArray());
+
+        $anonymousId = "anonymousId";
+        $event->setAnonymousId($anonymousId);
+
+        $eventArray[FlagshipConstant::VISITOR_ID_API_ITEM] = $anonymousId;
+        $eventArray[FlagshipConstant::CUSTOMER_UID] = $visitorId;
+        $this->assertSame($eventArray, $event->toArray());
+
+        $this->assertEquals($anonymousId, $event->getAnonymousId());
     }
 
     public function testSetCategory()

@@ -316,7 +316,15 @@ abstract class HitAbstract
             FlagshipConstant::USER_LANGUAGE => $this->getLocale(),
             FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber()
         ];
-        return $this->setVisitorBodyParams($this->getVisitorId(), $this->getAnonymousId(), $data);
+
+        if ($this->visitorId && $this->anonymousId) {
+            $data[FlagshipConstant::VISITOR_ID_API_ITEM] = $this->anonymousId;
+            $data[FlagshipConstant::CUSTOMER_UID] = $this->visitorId;
+        } else {
+            $data[FlagshipConstant::VISITOR_ID_API_ITEM] = $this->visitorId ?: $this->anonymousId;
+            $data[FlagshipConstant::CUSTOMER_UID] = null;
+        }
+        return $data;
     }
 
     /**

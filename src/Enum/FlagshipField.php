@@ -15,8 +15,10 @@ class FlagshipField
     const FIELD_VALUE = 'value';
     const FIELD_REFERENCE = 'reference';
     const FIELD_VARIATION = 'variation';
+    const FIELD_CAMPAIGN_TYPE = 'type';
     const FIELD_VARIATION_GROUP_ID = 'variationGroupId';
     const FIELD_ID = 'id';
+    const FIELD_TYPE = 'id';
     const FIELD_CAMPAIGN_ID = 'campaignId';
     const FIELD_VARIATION_ID = 'variationId';
     const FIELD_IS_REFERENCE = 'isReference';

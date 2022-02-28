@@ -750,7 +750,7 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $defaultStrategyMock = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
-            ->setMethods(['logError'])
+            ->setMethods(['logError','logInfo'])
             ->setConstructorArgs([$visitor])->getMock();
 
         $defaultStrategyMock->synchronizeModifications();
@@ -767,12 +767,17 @@ class DefaultStrategyTest extends TestCase
             ], [], []
         ];
 
-        $defaultStrategyMock->expects($this->exactly(3))
-            ->method('logError')
+        $defaultStrategyMock->expects($this->exactly(2))
+            ->method('logInfo')
             ->withConsecutive(
-                $expectedParams[0],
                 $expectedParams[1],
                 $expectedParams[2]
+            );
+
+        $defaultStrategyMock->expects($this->exactly(1))
+            ->method('logError')
+            ->withConsecutive(
+                $expectedParams[0]
             );
 
         $defaultStrategyMock->getModification($key, $defaultValue);
@@ -899,7 +904,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error','info']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -947,7 +952,7 @@ class DefaultStrategyTest extends TestCase
 
         $paramsExpected = [];
         $logManagerStub->expects($this->exactly(1))
-            ->method('error')
+            ->method('info')
             ->withConsecutive($paramsExpected);
 
         //Test key not exist
@@ -1190,7 +1195,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error','info']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -1230,9 +1235,9 @@ class DefaultStrategyTest extends TestCase
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
-        $logManagerStub->expects($this->exactly(2))->method('error')
+        $logManagerStub->expects($this->exactly(2))->method('info')
             ->withConsecutive(
-                ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_FLAG_ERROR, $key),
+                ["[$flagshipSdk] " . sprintf(FlagshipConstant::USER_EXPOSED_NO_FLAG_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]],
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::USER_EXPOSED_CAST_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]]
@@ -1252,7 +1257,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error','info']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -1283,7 +1288,7 @@ class DefaultStrategyTest extends TestCase
         $flagDTO->setKey($key)
             ->setValue("value");
 
-        $functionName = "getFlag value";
+        $functionName = "getFlagValue";
 
         $trackerManagerStub->expects($this->exactly(2))
             ->method('sendActive')
@@ -1294,7 +1299,7 @@ class DefaultStrategyTest extends TestCase
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
-        $logManagerStub->expects($this->exactly(4))->method('error')
+        $logManagerStub->expects($this->exactly(4))->method('info')
             ->withConsecutive(
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_FLAG_MISSING_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]],
@@ -1335,7 +1340,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error','info']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -1358,7 +1363,7 @@ class DefaultStrategyTest extends TestCase
 
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
-        $logManagerStub->expects($this->exactly(1))->method('error')
+        $logManagerStub->expects($this->exactly(1))->method('info')
             ->withConsecutive(
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]]

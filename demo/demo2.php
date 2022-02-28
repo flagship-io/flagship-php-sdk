@@ -1,45 +1,40 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-use Flagship\Config\BucketingConfig;
-use Flagship\Enum\FlagshipStatus;
 use Flagship\Flagship;
 
-$envId = getenv('FLAGSHIP_ENV_ID');
-$apiKey = getenv('FLAGSHIP_API_KEY');
-$bucketingDirectory = getenv("FLAGSHIP_BUCKETING_DIRECTORY");
 
-$config = new BucketingConfig();
 
-$onStatusChanged =
+$ENV_ID = '';
+$API_KEY = '';
 
-$config->setStatusChangedCallback(function ($status) {
-    if ($status === FlagshipStatus::READY) {
-        echo "SDK is ready";
-    }
-});
 
-$config->setBucketingDirectoryPath($bucketingDirectory);
 
-Flagship::start($envId, $apiKey, $config);
+Flagship::start($ENV_ID, $API_KEY, \Flagship\Config\FlagshipConfig::decisionApi()->setTimeout(10000));
 
-$visitor_Id = "visitor_1";
-$context = [
-    "isPhp" => true
-];
+for ($i = 1; $i <= 3; $i++) {
+    $visitor = Flagship::newVisitor("300122-php-trans-" . $i)->build();
+    $visitor->fetchFlags();
+    $flag = $visitor->getFlag("php", "test");
 
-$visitor = Flagship::newVisitor($visitor_Id, $context);
+    echo $flag->getValue();
 
-while (true) {
-    echo "============================================================" . PHP_EOL;
-    echo 'visitor context';
-    echo json_encode($context);
-    echo PHP_EOL;
-    if (!$visitor) {
-        break;
-    }
-    $visitor->synchronizedModifications();
-    print_r($visitor->getModifications());
-    sleep(10);
+//    echo $visitor->getModification("php", "test", true);
+
+    $page = new \Flagship\Hit\Page("https://www.sdk.com/abtastylab/php/310122-" . $i);
+    $visitor->sendHit($page);
+
+    $screen = new \Flagship\Hit\Screen("abtastylab-php-" . $i);
+
+    $visitor->sendHit($screen);
+
+    $transaction = new \Flagship\Hit\Transaction($visitor->getVisitorId(), "KPI1");
+
+    $visitor->sendHit($transaction);
+
+    $event = new \Flagship\Hit\Event(\Flagship\Enum\EventCategory::USER_ENGAGEMENT, "KP2");
+    $event->setValue(10);
+
+    $visitor->sendHit($event);
 }

@@ -15,7 +15,7 @@ if (isset($methodArg["method"])) {
     $method = $methodArg["method"];
 }
 
-$timeout = 10000;
+$timeout = 2;
 $timeoutArg = getopt(null, ["timeout:"]);
 if (isset($timeoutArg["timeout"])) {
     $timeout = $timeoutArg['timeout'];
@@ -71,7 +71,6 @@ try {
     }
 
     error_log("httpStatusCode: $httpStatusCode");
-    error_log("rawResponse: $rawResponse");
 } catch (Exception $e) {
     error_log($e->getMessage());
 }

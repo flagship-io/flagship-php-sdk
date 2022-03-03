@@ -8,26 +8,25 @@ use Flagship\Flagship;
 
 $config = FlagshipConfig::decisionApi();
 
-Flagship::start("bk87t3jggr10c6l6sdog", "N1Rm3DsCBrahhnGTzEnha31IN4DK8tXl28IykcCX", $config);
+Flagship::start("", "", $config);
 
 $visitor = Flagship::newVisitor("visitor-A")->withContext([
-    "qa_getflag" => true
+    "qa_report" => true,
+    "is_php" => true
 ])->build();
 
 $visitor->fetchFlags();
 
-$flag = $visitor->getFlag("qa_flag", "default");
+var_dump($visitor->getFlagsDTO());
+
+$flag = $visitor->getFlag("qa_report_var", "default");
 
 $start = new DateTime();
 
 var_dump("value:", $flag->getValue());
 
-//var_dump("exist:", $flag->exists());
+var_dump("exist:", $flag->exists());
 
 //var_dump(json_encode($flag->getMetadata()));
 
-//$flag->userExposed();
-
-$end = new DateTime();
-
-echo $start->diff($end)->f;
+$flag->userExposed();

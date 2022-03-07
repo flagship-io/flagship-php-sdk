@@ -5,6 +5,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Flagship\Enum\EventCategory;
 use Flagship\Flagship;
 use Flagship\Hit\Event;
+use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 
 
@@ -21,13 +22,16 @@ function scenario1()
 
     $visitor->fetchFlags();
 
-    echo "value 1:" . $visitor->getFlag('qa_report_var', 'test')->getValue() . PHP_EOL;
-
-    sleep(1);
+    $flag = $visitor->getFlag('qa_report_var', 'test');
+    echo "value 1:" . $flag->getValue() . PHP_EOL;
 
     $visitor->sendHit(new Screen("I LOVE QA"));
 
-    sleep(1);
+    $flag->userExposed();
+
+    $visitor->sendHit(new Page("I LOVE QA"));
+
+    $flag->userExposed();
 
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
@@ -38,13 +42,17 @@ function scenario2()
 
     $visitor->fetchFlags();
 
-    echo "value 2:" . $visitor->getFlag('qa_report_var', 'test')->getValue() . PHP_EOL;
+    $flag = $visitor->getFlag('qa_report_var', 'test');
 
-    sleep(1);
+    echo "value 2:" . $flag->getValue() . PHP_EOL;
 
     $visitor->sendHit(new Screen("I LOVE QA"));
 
-    sleep(1);
+    $flag->userExposed();
+
+    $visitor->sendHit(new Page("I LOVE QA"));
+
+    $flag->userExposed();
 
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
@@ -59,7 +67,7 @@ function scenario3()
 
     $visitor->sendHit(new Screen("I LOVE QA"));
 
-    sleep(1);
+    $visitor->sendHit(new Page("I LOVE QA"));
 
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
@@ -86,12 +94,11 @@ function scenario5()
 
     echo "value 5:" . $visitor->getFlag('qa_report_var', 'test')->getValue() . PHP_EOL;
 
-    sleep(1);
     $visitor->setConsent(false);
 
     $visitor->sendHit(new Screen("I LOVE QA"));
 
-    sleep(1);
+    $visitor->sendHit(new Page("I LOVE QA"));
 
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
@@ -104,11 +111,8 @@ function scenario6()
 
     echo "value 6:" . $visitor->getFlag('qa_report_var', 'test')->getValue() . PHP_EOL;
 
-    sleep(1);
-
     $visitor->sendHit(new Screen("I LOVE QA"));
-
-    sleep(1);
+    $visitor->sendHit(new Page("I LOVE QA"));
 
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }

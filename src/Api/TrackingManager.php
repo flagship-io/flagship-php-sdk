@@ -75,13 +75,7 @@ class TrackingManager extends TrackingManagerAbstract
                 $visitor->getAnonymousId()
             );
 
-            $this->sendBackRequest(
-                $url,
-                $postData,
-                $headers,
-                $visitor->getConfig()->getTimeout() / 1000,
-                self::ACTIVATE_LOG
-            );
+            $this->httpClient->post($url, [], $postData);
         } catch (Exception $exception) {
             $this->logError($visitor->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }

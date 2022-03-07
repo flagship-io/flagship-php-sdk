@@ -78,35 +78,32 @@ class TrackingManagerTest extends TestCase
 
         $authenticatedId = "authenticatedId";
 
-        $trackingManager->sendActive($visitor, $modification);
-
-        $body = [
-                FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
-                FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
-                FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
-                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-                FlagshipConstant::ANONYMOUS_ID => null
-            ];
-        $command = $this->buildBackRequest($url, $body, $this->buildHeader($config->getApiKey()), $config->getTimeout()/1000, TrackingManager::ACTIVATE_LOG);
-        $this->assertEquals($command, ShellExec::$command);
-
-        ShellExec::$command = null;
-
-        $visitor->authenticate($authenticatedId);
-
-        $trackingManager->sendActive($visitor, $modification);
-
-        $body = [
+        $httpClientMock->expects($this->exactly(2))->method('post')->withConsecutive(
+            [$url,
+                [],
+                [
+                    FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
+                    FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
+                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
+                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
+                    FlagshipConstant::ANONYMOUS_ID => null
+                ]],
+            [$url,
+                [],
+                [
                     FlagshipConstant::VISITOR_ID_API_ITEM => $authenticatedId,
                     FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
                     FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
                     FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-                    FlagshipConstant::ANONYMOUS_ID => $visitor->getAnonymousId()
-                ];
+                    FlagshipConstant::ANONYMOUS_ID => $visitor->getVisitorId()
+                ]]
+        )->willReturn(new HttpResponse(204, null));
 
-        $command = $this->buildBackRequest($url, $body, $this->buildHeader($config->getApiKey()), $config->getTimeout()/1000, TrackingManager::ACTIVATE_LOG);
-        $this->assertEquals($command, ShellExec::$command);
-        ShellExec::$command = null;
+        $trackingManager->sendActive($visitor, $modification);
+
+        $visitor->authenticate($authenticatedId);
+
+        $trackingManager->sendActive($visitor, $modification);
     }
 
     public function testSendActiveThrowException()
@@ -145,17 +142,16 @@ class TrackingManagerTest extends TestCase
 
         $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
 
+        $exception = new Exception();
+        $httpClientMock->expects($this->once())->method('post')->willThrowException($exception);
+
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-
-        $exceptionMessage = "exception Message";
-
         $logManagerStub->expects($this->once())
             ->method('error')
-            ->with("[$flagshipSdk] " . $exceptionMessage);
+            ->with("[$flagshipSdk] " . $exception->getMessage());
 
-        ShellExec::$toThrowException = $exceptionMessage;
+
         $trackingManager->sendActive($visitor, $modification);
-        ShellExec::$toThrowException = null;
     }
 
     public function testSendHit()

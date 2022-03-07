@@ -70,7 +70,8 @@ try {
         throw new Exception(json_encode($message), $curlErrorCode);
     }
 
-    error_log("httpStatusCode: $httpStatusCode");
+    $date  = (new DateTime())->format("Y-m-d h:i:s u");
+    error_log("[$date] httpStatusCode: $httpStatusCode");
 } catch (Exception $e) {
     error_log($e->getMessage());
 }

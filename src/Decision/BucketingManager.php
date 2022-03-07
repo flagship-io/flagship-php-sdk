@@ -25,6 +25,9 @@ class BucketingManager extends DecisionManagerAbstract
 
     protected function sendContext(VisitorAbstract $visitor)
     {
+        if (count($visitor->getContext())<=3){
+            return;
+        }
         $envId = $this->getConfig()->getEnvId();
         $url = sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId);
         $headers = $this->buildHeader($this->getConfig()->getApiKey());

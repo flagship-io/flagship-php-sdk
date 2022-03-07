@@ -152,6 +152,10 @@ class BucketingManagerTest extends TestCase
 
         $bucketingManager->getCampaignModifications($visitor);
         $bucketingManager->getCampaignModifications($visitor);
+
+        //Test empty context
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, [], true);
+        $bucketingManager->getCampaignModifications($visitor);
     }
 
     public function testSendContextWithError()

@@ -25,7 +25,7 @@ class BucketingManager extends DecisionManagerAbstract
 
     protected function sendContext(VisitorAbstract $visitor)
     {
-        if (count($visitor->getContext())<=3){
+        if (count($visitor->getContext())<=4){
             return;
         }
         $envId = $this->getConfig()->getEnvId();

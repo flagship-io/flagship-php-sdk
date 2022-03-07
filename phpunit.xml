@@ -26,6 +26,9 @@
     <filter>
         <whitelist>
             <directory suffix=".php">src/</directory>
+            <exclude>
+                <file>src/Api/backgroundRequest.php</file>
+            </exclude>
         </whitelist>
     </filter>
 

@@ -47,6 +47,10 @@ class TrackingManager extends TrackingManagerAbstract
         $args .= " --header=$headersArg";
         $args .= " --timeout=$timeoutArg";
 
+        if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'){
+            pclose(popen("start /B  php " . __DIR__ . "/backgroundRequest.php", "r"));
+            return;
+        }
         $command = "nohup php " . __DIR__ . "/backgroundRequest.php $args >>" . __DIR__ . "/$logFile 2>&1  &";
         shell_exec($command);
     }

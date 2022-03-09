@@ -12,6 +12,7 @@ use Flagship\Visitor\VisitorAbstract;
 
 class BucketingManager extends DecisionManagerAbstract
 {
+    const NB_MIN_CONTEXT_KEYS = 4;
     /**
      * @var MurmurHash
      */
@@ -25,7 +26,7 @@ class BucketingManager extends DecisionManagerAbstract
 
     protected function sendContext(VisitorAbstract $visitor)
     {
-        if (count($visitor->getContext())<=4){
+        if (count($visitor->getContext())<= self::NB_MIN_CONTEXT_KEYS){
             return;
         }
         $envId = $this->getConfig()->getEnvId();

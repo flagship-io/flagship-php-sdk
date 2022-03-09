@@ -22,7 +22,6 @@ class TrackingManager extends TrackingManagerAbstract
     use LogTrait;
     use BuildApiTrait;
 
-    const ACTIVATE_LOG = "ACTIVATE_LOG";
     const HIT_LOG = "HIT_LOG";
 
     protected function buildActivateBody($postData, $visitorId, $anonymousId)
@@ -41,7 +40,7 @@ class TrackingManager extends TrackingManagerAbstract
     {
         $bodyArg = escapeshellarg(json_encode($body));
         $headersArg = escapeshellarg(json_encode($headers));
-        $timeoutArg = $timeout;
+        $timeoutArg = $timeout/1000;
         $args = " --url=$url";
         $args .= " --body=$bodyArg";
         $args .= " --header=$headersArg";
@@ -96,7 +95,7 @@ class TrackingManager extends TrackingManagerAbstract
                 $url,
                 $hit->toArray(),
                 $headers,
-                $hit->getConfig()->getTimeOut() / 1000,
+                $hit->getConfig()->getTimeOut(),
                 self::HIT_LOG
             );
         } catch (Exception $exception) {
@@ -129,7 +128,7 @@ class TrackingManager extends TrackingManagerAbstract
                     $visitor->getVisitorId() ?: $visitor->getAnonymousId();
                 $postBody[FlagshipConstant::CUSTOMER_UID] = null;
             }
-            $this->sendBackRequest($url, $postBody, $headers, $config->getTimeOut() / 1000, self::HIT_LOG);
+            $this->sendBackRequest($url, $postBody, $headers, $config->getTimeOut(), self::HIT_LOG);
         } catch (Exception $exception) {
             $this->logError($config, $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }

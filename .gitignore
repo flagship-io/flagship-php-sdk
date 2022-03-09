@@ -5,5 +5,4 @@ vendor
 reports
 bucketing.json
 flagship
-/src/Api/ACTIVATE_LOG
 /src/Api/HIT_LOG

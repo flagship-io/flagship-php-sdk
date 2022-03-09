@@ -88,8 +88,6 @@ class TrackingManager extends TrackingManagerAbstract
     {
         try {
             $headers = $this->buildHeader($hit->getConfig()->getApiKey());
-            $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($hit->getConfig()->getTimeOut() / 1000);
             $url = FlagshipConstant::HIT_API_URL;
             $this->sendBackRequest(
                 $url,
@@ -107,8 +105,6 @@ class TrackingManager extends TrackingManagerAbstract
     {
         try {
             $headers = $this->buildHeader($config->getApiKey());
-            $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($config->getTimeOut() / 1000);
             $url = FlagshipConstant::HIT_CONSENT_URL;
             $postBody = [
                 FlagshipConstant::T_API_ITEM => HitType::EVENT,

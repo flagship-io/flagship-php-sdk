@@ -509,9 +509,6 @@ class FlagshipTest extends TestCase
 
         $visitor->fetchFlags();
 
-        var_dump(Flagship::getStatus());
-
-
         $this->assertSame(FlagshipStatus::READY_PANIC_ON, Flagship::getStatus());
 
         $visitor->fetchFlags();

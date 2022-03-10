@@ -58,7 +58,7 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function getCampaigns(VisitorAbstract $visitor)
     {
-        $this->sendContext($visitor);
+
         $bucketingFile = $this->getConfig()->getBucketingDirectoryPath() . "/bucketing.json";
         if (!file_exists($bucketingFile)) {
             return [];
@@ -87,6 +87,8 @@ class BucketingManager extends DecisionManagerAbstract
         $campaigns = $bucketingCampaigns[FlagshipField::FIELD_CAMPAIGNS];
 
         $visitorCampaigns = [];
+
+        $this->sendContext($visitor);
 
         foreach ($campaigns as $campaign) {
             if (!isset($campaign[FlagshipField::FIELD_VARIATION_GROUPS])) {

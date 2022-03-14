@@ -11,17 +11,22 @@ $config = FlagshipConfig::decisionApi();
 Flagship::start("", "", $config);
 
 $visitor = Flagship::newVisitor("visitor-A")->withContext([
-    "qa_getflag" => true
+    "qa_report" => true,
+    "is_php" => true
 ])->build();
 
 $visitor->fetchFlags();
 
-$flag = $visitor->getFlag("qa_flag", "default");
+var_dump($visitor->getFlagsDTO());
+
+$flag = $visitor->getFlag("qa_report_var", "default");
+
+$start = new DateTime();
 
 var_dump("value:", $flag->getValue());
 
 var_dump("exist:", $flag->exists());
 
-var_dump(json_encode($flag->getMetadata()));
+//var_dump(json_encode($flag->getMetadata()));
 
 $flag->userExposed();

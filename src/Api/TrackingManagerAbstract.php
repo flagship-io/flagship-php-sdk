@@ -42,13 +42,13 @@ abstract class TrackingManagerAbstract
      *
      * @param VisitorAbstract $visitor
      * @param FlagDTO $modification
-     * @return bool
+     * @return void
      */
     abstract public function sendActive(VisitorAbstract $visitor, FlagDTO $modification);
 
     /**
      * @param  HitAbstract $hit
-     * @return mixed
+     * @return void
      */
     abstract public function sendHit(HitAbstract $hit);
 

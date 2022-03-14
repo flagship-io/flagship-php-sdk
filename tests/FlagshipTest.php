@@ -439,9 +439,8 @@ class FlagshipTest extends TestCase
             "panic" => true
         ];
 
-        $httpClientMock->expects($this->exactly(3))->method('post')
+        $httpClientMock->expects($this->exactly(2))->method('post')
             ->willReturnOnConsecutiveCalls(
-                new HttpResponse(204, null),
                 new HttpResponse(204, $body),
                 new HttpResponse(204, [
                     "visitorId" => $visitorId,
@@ -508,11 +507,11 @@ class FlagshipTest extends TestCase
 
         $visitor = Flagship::newVisitor('Visitor_1')->build();
 
-        $visitor->synchronizeModifications();
+        $visitor->fetchFlags();
 
         $this->assertSame(FlagshipStatus::READY_PANIC_ON, Flagship::getStatus());
 
-        $visitor->synchronizeModifications();
+        $visitor->fetchFlags();
 
         $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
     }

@@ -12,6 +12,6 @@ RUN apt-get install -y libzip-dev zlib1g-dev
 
 RUN docker-php-ext-install zip
 
-RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
+RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer --disable-tls
 
 RUN composer install

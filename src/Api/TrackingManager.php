@@ -22,6 +22,8 @@ class TrackingManager extends TrackingManagerAbstract
     use LogTrait;
     use BuildApiTrait;
 
+    const HIT_LOG = "HIT_LOG";
+
     protected function buildActivateBody($postData, $visitorId, $anonymousId)
     {
         if ($visitorId && $anonymousId) {
@@ -33,6 +35,22 @@ class TrackingManager extends TrackingManagerAbstract
         }
         return $postData;
     }
+
+    protected function sendBackRequest($url, $body, $headers, $timeout, $logFile)
+    {
+        $bodyArg = escapeshellarg(json_encode($body));
+        $headersArg = escapeshellarg(json_encode($headers));
+        $timeoutArg = $timeout/1000;
+        $args = " --url=$url";
+        $args .= " --body=$bodyArg";
+        $args .= " --header=$headersArg";
+        $args .= " --timeout=$timeoutArg";
+
+        $command = "nohup php " . __DIR__ . "/backgroundRequest.php $args >>" . __DIR__ . "/$logFile 2>&1  &";
+        shell_exec($command);
+    }
+
+
     /**
      * @inheritDoc
      */
@@ -56,8 +74,7 @@ class TrackingManager extends TrackingManagerAbstract
                 $visitor->getAnonymousId()
             );
 
-            $response = $this->httpClient->post($url, [], $postData);
-            return $response->getStatusCode() == 204;
+            $this->httpClient->post($url, [], $postData);
         } catch (Exception $exception) {
             $this->logError($visitor->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
@@ -71,10 +88,14 @@ class TrackingManager extends TrackingManagerAbstract
     {
         try {
             $headers = $this->buildHeader($hit->getConfig()->getApiKey());
-            $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($hit->getConfig()->getTimeOut() / 1000);
             $url = FlagshipConstant::HIT_API_URL;
-            $this->httpClient->post($url, [], $hit->toArray());
+            $this->sendBackRequest(
+                $url,
+                $hit->toArray(),
+                $headers,
+                $hit->getConfig()->getTimeOut(),
+                self::HIT_LOG
+            );
         } catch (Exception $exception) {
             $this->logError($hit->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
@@ -84,8 +105,6 @@ class TrackingManager extends TrackingManagerAbstract
     {
         try {
             $headers = $this->buildHeader($config->getApiKey());
-            $this->httpClient->setHeaders($headers);
-            $this->httpClient->setTimeout($config->getTimeOut() / 1000);
             $url = FlagshipConstant::HIT_CONSENT_URL;
             $postBody = [
                 FlagshipConstant::T_API_ITEM => HitType::EVENT,
@@ -105,7 +124,7 @@ class TrackingManager extends TrackingManagerAbstract
                     $visitor->getVisitorId() ?: $visitor->getAnonymousId();
                 $postBody[FlagshipConstant::CUSTOMER_UID] = null;
             }
-            $this->httpClient->post($url, [], $postBody);
+            $this->sendBackRequest($url, $postBody, $headers, $config->getTimeOut(), self::HIT_LOG);
         } catch (Exception $exception) {
             $this->logError($config, $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }

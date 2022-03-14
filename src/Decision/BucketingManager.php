@@ -12,6 +12,7 @@ use Flagship\Visitor\VisitorAbstract;
 
 class BucketingManager extends DecisionManagerAbstract
 {
+    const NB_MIN_CONTEXT_KEYS = 4;
     /**
      * @var MurmurHash
      */
@@ -25,6 +26,9 @@ class BucketingManager extends DecisionManagerAbstract
 
     protected function sendContext(VisitorAbstract $visitor)
     {
+        if (count($visitor->getContext())<= self::NB_MIN_CONTEXT_KEYS){
+            return;
+        }
         $envId = $this->getConfig()->getEnvId();
         $url = sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId);
         $headers = $this->buildHeader($this->getConfig()->getApiKey());
@@ -54,7 +58,7 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function getCampaigns(VisitorAbstract $visitor)
     {
-        $this->sendContext($visitor);
+
         $bucketingFile = $this->getConfig()->getBucketingDirectoryPath() . "/bucketing.json";
         if (!file_exists($bucketingFile)) {
             return [];
@@ -83,6 +87,8 @@ class BucketingManager extends DecisionManagerAbstract
         $campaigns = $bucketingCampaigns[FlagshipField::FIELD_CAMPAIGNS];
 
         $visitorCampaigns = [];
+
+        $this->sendContext($visitor);
 
         foreach ($campaigns as $campaign) {
             if (!isset($campaign[FlagshipField::FIELD_VARIATION_GROUPS])) {

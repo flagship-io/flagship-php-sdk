@@ -29,7 +29,7 @@ class BucketingManagerTest extends TestCase
             false
         );
 
-        $httpClientMock->expects($this->exactly(6))
+        $httpClientMock->expects($this->exactly(2))
             ->method('post')
             ->willReturn(new HttpResponse(204, null));
 
@@ -150,8 +150,17 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
+        File::$fileExist = true;
+        File::$fileContent = '{"campaigns":[{}]}';
+
         $bucketingManager->getCampaignModifications($visitor);
         $bucketingManager->getCampaignModifications($visitor);
+
+        //Test empty context
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, [], true);
+        $bucketingManager->getCampaignModifications($visitor);
+        File::$fileExist = false;
+        File::$fileContent = null;
     }
 
     public function testSendContextWithError()
@@ -213,6 +222,8 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
+        File::$fileExist = true;
+        File::$fileContent = '{"campaigns":[{}]}';
         $bucketingManager->getCampaignModifications($visitor);
     }
 

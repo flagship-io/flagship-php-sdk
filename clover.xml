@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1645712946">
-  <project timestamp="1645712946">
+<coverage generated="1645717404">
+  <project timestamp="1645717404">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -665,50 +665,49 @@
     <package name="Flagship\Flag">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Flag/Flag.php">
         <class name="Flag" namespace="Flagship\Flag">
-          <metrics methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="35" elements="41" coveredelements="41"/>
+          <metrics methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" elements="40" coveredelements="40"/>
         </class>
-        <line num="37" type="method" name="__construct" crap="6" count="3"/>
-        <line num="42" type="stmt" count="3"/>
-        <line num="43" type="stmt" count="3"/>
-        <line num="44" type="stmt" count="3"/>
-        <line num="46" type="stmt" count="3"/>
-        <line num="47" type="stmt" count="3"/>
-        <line num="48" type="stmt" count="3"/>
-        <line num="49" type="stmt" count="3"/>
-        <line num="50" type="stmt" count="3"/>
-        <line num="51" type="stmt" count="3"/>
-        <line num="52" type="stmt" count="3"/>
-        <line num="53" type="stmt" count="3"/>
-        <line num="54" type="stmt" count="3"/>
-        <line num="56" type="method" name="findFlagDTO" crap="3" count="3"/>
-        <line num="58" type="stmt" count="3"/>
-        <line num="59" type="stmt" count="2"/>
-        <line num="60" type="stmt" count="2"/>
-        <line num="62" type="stmt" count="2"/>
-        <line num="63" type="stmt" count="2"/>
-        <line num="68" type="method" name="getValue" crap="1" count="1"/>
-        <line num="70" type="stmt" count="1"/>
-        <line num="71" type="stmt" count="1"/>
-        <line num="77" type="method" name="exists" crap="2" count="2"/>
-        <line num="79" type="stmt" count="2"/>
-        <line num="80" type="stmt" count="2"/>
-        <line num="86" type="method" name="userExposed" crap="2" count="1"/>
-        <line num="88" type="stmt" count="1"/>
-        <line num="89" type="stmt" count="1"/>
-        <line num="90" type="stmt" count="1"/>
-        <line num="91" type="stmt" count="1"/>
-        <line num="93" type="stmt" count="1"/>
-        <line num="94" type="stmt" count="1"/>
-        <line num="99" type="method" name="getMetadata" crap="3" count="2"/>
-        <line num="101" type="stmt" count="2"/>
-        <line num="102" type="stmt" count="2"/>
+        <line num="32" type="method" name="__construct" crap="1" count="3"/>
+        <line num="37" type="stmt" count="3"/>
+        <line num="38" type="stmt" count="3"/>
+        <line num="40" type="stmt" count="3"/>
+        <line num="41" type="stmt" count="3"/>
+        <line num="43" type="method" name="findFlagDTO" crap="3" count="2"/>
+        <line num="45" type="stmt" count="2"/>
+        <line num="46" type="stmt" count="1"/>
+        <line num="47" type="stmt" count="1"/>
+        <line num="49" type="stmt" count="1"/>
+        <line num="50" type="stmt" count="1"/>
+        <line num="55" type="method" name="getValue" crap="1" count="1"/>
+        <line num="57" type="stmt" count="1"/>
+        <line num="58" type="stmt" count="1"/>
+        <line num="64" type="method" name="exists" crap="2" count="2"/>
+        <line num="66" type="stmt" count="2"/>
+        <line num="67" type="stmt" count="2"/>
+        <line num="73" type="method" name="userExposed" crap="2" count="1"/>
+        <line num="75" type="stmt" count="1"/>
+        <line num="76" type="stmt" count="1"/>
+        <line num="77" type="stmt" count="1"/>
+        <line num="78" type="stmt" count="1"/>
+        <line num="80" type="stmt" count="1"/>
+        <line num="81" type="stmt" count="1"/>
+        <line num="86" type="method" name="getMetadata" crap="8" count="2"/>
+        <line num="88" type="stmt" count="2"/>
+        <line num="89" type="stmt" count="2"/>
+        <line num="90" type="stmt" count="2"/>
+        <line num="91" type="stmt" count="2"/>
+        <line num="92" type="stmt" count="2"/>
+        <line num="93" type="stmt" count="2"/>
+        <line num="94" type="stmt" count="2"/>
+        <line num="95" type="stmt" count="2"/>
+        <line num="97" type="stmt" count="2"/>
+        <line num="98" type="stmt" count="1"/>
+        <line num="101" type="stmt" count="1"/>
+        <line num="102" type="stmt" count="1"/>
         <line num="103" type="stmt" count="1"/>
-        <line num="106" type="stmt" count="1"/>
-        <line num="107" type="stmt" count="1"/>
-        <line num="108" type="stmt" count="1"/>
-        <line num="109" type="stmt" count="1"/>
-        <line num="110" type="stmt" count="1"/>
-        <metrics loc="112" ncloc="83" classes="1" methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="35" elements="41" coveredelements="41"/>
+        <line num="104" type="stmt" count="1"/>
+        <line num="105" type="stmt" count="1"/>
+        <metrics loc="107" ncloc="81" classes="1" methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" elements="40" coveredelements="40"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Flag/FlagMetadata.php">
         <class name="FlagMetadata" namespace="Flagship\Flag">
@@ -721,25 +720,25 @@
         <line num="43" type="stmt" count="7"/>
         <line num="44" type="stmt" count="7"/>
         <line num="45" type="stmt" count="7"/>
-        <line num="50" type="method" name="getCampaignId" crap="1" count="3"/>
-        <line num="52" type="stmt" count="3"/>
-        <line num="59" type="method" name="getVariationGroupId" crap="1" count="2"/>
-        <line num="61" type="stmt" count="2"/>
-        <line num="68" type="method" name="getVariationId" crap="1" count="2"/>
-        <line num="70" type="stmt" count="2"/>
-        <line num="76" type="method" name="isReference" crap="1" count="2"/>
-        <line num="78" type="stmt" count="2"/>
-        <line num="84" type="method" name="getCampaignType" crap="1" count="2"/>
-        <line num="86" type="stmt" count="2"/>
+        <line num="50" type="method" name="getCampaignId" crap="1" count="2"/>
+        <line num="52" type="stmt" count="2"/>
+        <line num="59" type="method" name="getVariationGroupId" crap="1" count="1"/>
+        <line num="61" type="stmt" count="1"/>
+        <line num="68" type="method" name="getVariationId" crap="1" count="1"/>
+        <line num="70" type="stmt" count="1"/>
+        <line num="76" type="method" name="isReference" crap="1" count="1"/>
+        <line num="78" type="stmt" count="1"/>
+        <line num="84" type="method" name="getCampaignType" crap="1" count="1"/>
+        <line num="86" type="stmt" count="1"/>
         <line num="89" type="method" name="getEmpty" crap="1" count="5"/>
         <line num="91" type="stmt" count="5"/>
-        <line num="97" type="method" name="jsonSerialize" crap="1" count="2"/>
-        <line num="100" type="stmt" count="2"/>
-        <line num="101" type="stmt" count="2"/>
-        <line num="102" type="stmt" count="2"/>
-        <line num="103" type="stmt" count="2"/>
-        <line num="104" type="stmt" count="2"/>
-        <line num="105" type="stmt" count="2"/>
+        <line num="97" type="method" name="jsonSerialize" crap="1" count="1"/>
+        <line num="100" type="stmt" count="1"/>
+        <line num="101" type="stmt" count="1"/>
+        <line num="102" type="stmt" count="1"/>
+        <line num="103" type="stmt" count="1"/>
+        <line num="104" type="stmt" count="1"/>
+        <line num="105" type="stmt" count="1"/>
         <metrics loc="107" ncloc="67" classes="1" methods="8" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" elements="26" coveredelements="26"/>
       </file>
     </package>
@@ -2389,6 +2388,6 @@
     <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/VisitorInterface.php">
       <metrics loc="95" ncloc="30" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="54" loc="6563" ncloc="4404" classes="47" methods="367" coveredmethods="367" conditionals="0" coveredconditionals="0" statements="1696" coveredstatements="1696" elements="2063" coveredelements="2063"/>
+    <metrics files="54" loc="6558" ncloc="4402" classes="47" methods="367" coveredmethods="367" conditionals="0" coveredconditionals="0" statements="1695" coveredstatements="1695" elements="2062" coveredelements="2062"/>
   </project>
 </coverage>

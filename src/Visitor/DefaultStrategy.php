@@ -18,6 +18,9 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function setConsent($hasConsented)
     {
         $trackingManager = $this->getTrackingManager(__FUNCTION__);
+        if (!$hasConsented){
+            $this->flushVisitor();
+        }
         if ($trackingManager) {
             $trackingManager->sendConsentHit($this->getVisitor(), $this->getConfig());
         }
@@ -227,14 +230,46 @@ class DefaultStrategy extends VisitorStrategyAbstract
         return $this->parseToCampaign($modification);
     }
 
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor){
+        $visitorCache = $visitor->visitorCache;
+        if (!isset($visitorCache, $visitorCache[self::DATA], $visitorCache[self::DATA][self::CAMPAIGNS]) || !is_array($visitorCache[self::DATA][self::CAMPAIGNS])){
+            return [];
+        }
+        $data = $visitorCache[self::DATA];
+        $visitor->updateContextCollection($data[self::CONTEXT]);
+        $campaigns = [];
+        foreach ($data[self::CAMPAIGNS] as $item) {
+            $campaigns[] =[
+                FlagshipField::FIELD_ID => $item[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION => [
+                    FlagshipField::FIELD_ID => $item[self::CAMPAIGN_ID],
+                    FlagshipField::FIELD_REFERENCE => $item[FlagshipField::FIELD_IS_REFERENCE],
+                    FlagshipField::FIELD_MODIFICATIONS => [
+                        FlagshipField::FIELD_CAMPAIGN_TYPE => $item[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                        FlagshipField::FIELD_VALUE => $item[self::FLAGS]
+                    ]
+                ]
+            ];
+        }
+        return  $campaigns;
+    }
+
     private function synchronizeFlags($functionName)
     {
         $decisionManager = $this->getDecisionManager($functionName);
         if (!$decisionManager) {
             return;
         }
-        $flagsDTO = $decisionManager->getCampaignModifications($this->getVisitor());
+        $campaigns = $decisionManager->getCampaigns($this->getVisitor());
+
+        if (!count($campaigns)){
+            $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
+        }
+        $this->getVisitor()->campaigns = $campaigns;
+        $flagsDTO = $decisionManager->getModifications($campaigns);
         $this->getVisitor()->setFlagsDTO($flagsDTO);
+        $this->cacheVisitor();
     }
 
     /**

@@ -14,4 +14,8 @@ interface DecisionManagerInterface
      * @return FlagDTO[]
      */
     public function getCampaignModifications(VisitorAbstract $visitor);
+
+    public function getCampaigns(VisitorAbstract $visitor);
+
+    public function getModifications($campaigns);
 }

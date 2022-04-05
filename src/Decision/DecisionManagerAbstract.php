@@ -134,7 +134,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param  $campaigns
      * @return FlagDTO[] Return an array of Modification
      */
-    protected function getModifications($campaigns)
+    public function getModifications($campaigns)
     {
 
         $modifications = [];
@@ -221,7 +221,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param VisitorAbstract $visitor
      * @return array
      */
-    abstract protected function getCampaigns(VisitorAbstract $visitor);
+    abstract public function getCampaigns(VisitorAbstract $visitor);
 
     /**
      * @inheritDoc

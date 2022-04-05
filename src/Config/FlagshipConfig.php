@@ -2,6 +2,7 @@
 
 namespace Flagship\Config;
 
+use Flagship\Cache\IVisitorCacheImplementation;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
@@ -48,6 +49,11 @@ abstract class FlagshipConfig implements JsonSerializable
      * @var callable
      */
     private $statusChangedCallback;
+
+    /**
+     * @var IVisitorCacheImplementation
+     */
+    private $visitorCacheImplementation;
 
 
     /**
@@ -220,6 +226,26 @@ abstract class FlagshipConfig implements JsonSerializable
         }
         return $this;
     }
+
+    /**
+     * @return IVisitorCacheImplementation
+     */
+    public function getVisitorCacheImplementation()
+    {
+        return $this->visitorCacheImplementation;
+    }
+
+    /**
+     * @param IVisitorCacheImplementation $visitorCacheImplementation
+     * @return FlagshipConfig
+     */
+    public function setVisitorCacheImplementation(IVisitorCacheImplementation $visitorCacheImplementation)
+    {
+        $this->visitorCacheImplementation = $visitorCacheImplementation;
+        return $this;
+    }
+
+
 
     /**
      * @inheritDoc

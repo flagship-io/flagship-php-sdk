@@ -38,6 +38,12 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @var FlagDTO[]
      */
     protected $flagsDTO = [];
+
+    /**
+     * @var array
+     */
+    public $campaigns = [];
+
     /**
      * @var ConfigManager
      */
@@ -51,6 +57,15 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @var ContainerInterface
      */
     private $dependencyIContainer;
+
+    /**
+     * @var array
+     */
+    public  $visitorCache;
+
+    public function __construct(){
+        $this->visitorCache = [];
+    }
 
     /**
      * @return ConfigManager

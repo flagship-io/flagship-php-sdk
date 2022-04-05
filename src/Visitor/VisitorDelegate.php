@@ -35,6 +35,7 @@ class VisitorDelegate extends VisitorAbstract
         array $context = [],
         $hasConsented = false
     ) {
+        parent::__construct();
         $this->setDependencyIContainer($dependencyIContainer);
         $this->setConfig($configManager->getConfig());
         $this->setVisitorId($visitorId);
@@ -48,6 +49,8 @@ class VisitorDelegate extends VisitorAbstract
             $anonymousId  = $this->newGuid();
             $this->setAnonymousId($anonymousId);
         }
+
+        $this->getStrategy()->lookupVisitor();
     }
 
     private function loadPredefinedContext()

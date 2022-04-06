@@ -90,6 +90,16 @@ class NotReadyStrategy extends DefaultStrategy
         return FlagMetadata::getEmpty();
     }
 
+    public function lookupVisitor()
+    {
+        //
+    }
+
+    public function cacheVisitor()
+    {
+        //
+    }
+
     private function log($functionName)
     {
         $this->logError(

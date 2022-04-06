@@ -165,13 +165,17 @@ class VisitorDelegateTest extends TestCase
                 'setContext', 'updateContext', 'updateContextCollection',
                 'clearContext', 'authenticate', 'unauthenticate', 'getModification',
                 'getModificationInfo', 'synchronizeModifications', 'setConsent',
-                'activateModification', 'sendHit', 'fetchFlags','userExposed', 'getFlagValue', 'getFlagMetadata'
+                'activateModification', 'sendHit', 'fetchFlags','userExposed', 'getFlagValue', 'getFlagMetadata','lookupVisitor'
             ])->disableOriginalConstructor()
             ->getMock();
 
         $containerMock->method('get')->willReturn($defaultStrategy);
 
+        $defaultStrategy->expects($this->once())->method("lookupVisitor");
+
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
+
+
 
         $defaultContext = [
             FlagshipContext::OS_NAME => PHP_OS,

@@ -3,25 +3,28 @@
 namespace Flagship\Visitor;
 
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Page;
 use Flagship\Model\FlagDTO;
+use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use PHPUnit\Framework\TestCase;
 
 class NoConsentStrategyTest extends TestCase
 {
+    use CampaignsData;
+
     public function testMethods()
     {
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [],
-            'ApiManagerInterface',
-            false,
-            true,
-            true,
-            ['getCampaignModifications', 'getConfig']
+        $modifications = $this->campaignsModifications();
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
@@ -64,14 +67,15 @@ class NoConsentStrategyTest extends TestCase
                 $logMessageBuild('userExposed')
             );
 
-        $modificationKey = "age";
-        $modificationValue = 20;
-        $apiManagerStub->expects($this->once())
-            ->method('getCampaignModifications')
-            ->willReturn([(new FlagDTO())->setKey($modificationKey)->setValue($modificationValue)]);
+        $modificationKey = $modifications[0]->getKey();
+        $modificationValue = $modifications[0]->getValue();
+        
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200,$this->campaigns()));
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub)->setTrackingManager($trackerManager);
+        $decisionManager = new ApiManager($httpClientMock, $config);
+        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 

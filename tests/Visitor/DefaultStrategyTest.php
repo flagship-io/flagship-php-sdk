@@ -18,6 +18,7 @@ use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Transaction;
 use Flagship\Model\FlagDTO;
+use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
@@ -25,6 +26,7 @@ use PHPUnit\Framework\TestCase;
 
 class DefaultStrategyTest extends TestCase
 {
+    use CampaignsData;
     /**
      * @return \array[][]|FlagDTO[]
      */
@@ -75,6 +77,7 @@ class DefaultStrategyTest extends TestCase
                 ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
         ]]];
     }
+
 
     public function testUpdateContext()
     {
@@ -367,29 +370,24 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame($anonymous, $visitor->getVisitorId());
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testSynchronizeModifications($modifications)
+    public function testSynchronizeModifications()
     {
-
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [],
-            'ApiManagerInterface',
-            false,
-            true,
-            true,
-            ['getCampaignModifications', 'getConfig']
-        );
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
 
-        $apiManagerStub->expects($this->once())->method('getCampaignModifications')->willReturn($modifications);
-        $apiManagerStub->method('getConfig')->willReturn($config);
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200,$this->campaigns()));
+
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($decisionManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -397,13 +395,15 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->synchronizeModifications();
 
-        $this->assertSame($modifications, $defaultStrategy->getModifications());
+        $modifications = $this->campaignsModifications();
+
+        $this->assertJsonStringEqualsJsonString(json_encode($modifications), json_encode($defaultStrategy->getModifications()));
 
         //Test getModification keyValue is string and DefaultValue is string
         //Return KeyValue
 
-        $key = $modifications[0]->getKey();
-        $keyValue = $modifications[0]->getValue();
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
         $defaultValue = "red";
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -411,8 +411,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is boolean and DefaultValue is boolean
         //Return KeyValue
 
-        $key = $modifications[4]->getKey();
-        $keyValue = $modifications[4]->getValue();
+        $key = $modifications[1]->getKey();
+        $keyValue = $modifications[1]->getValue();
         $defaultValue = false;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -420,8 +420,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is numeric and DefaultValue is numeric
         //Return KeyValue
 
-        $key = $modifications[5]->getKey();
-        $keyValue = $modifications[5]->getValue();
+        $key = $modifications[0]->getKey();
+        $keyValue = $modifications[0]->getValue();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -429,8 +429,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is string and DefaultValue is not string
         //Return DefaultValue
 
-        $key = $modifications[0]->getKey();
-        $keyValue = $modifications[0]->getValue();
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
         $defaultValue = 25; // default is numeric
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
@@ -457,7 +457,7 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is null
         //Return DefaultValue
 
-        $key = $modifications[2]->getKey();
+        $key = $modifications[4]->getKey();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
@@ -465,8 +465,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is empty
         //Return DefaultValue
 
-        $key = $modifications[3]->getKey();
-        $keyValue = $modifications[3]->getValue();
+        $key = $modifications[5]->getKey();
+        $keyValue = $modifications[5]->getValue();
         $defaultValue = "blue-border";
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -512,29 +512,24 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->synchronizeModifications();
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testFetchFlags($modifications)
+
+    public function testFetchFlags()
     {
-
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [],
-            'ApiManagerInterface',
-            false,
-            true,
-            true,
-            ['getCampaignModifications', 'getConfig']
-        );
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
 
-        $apiManagerStub->expects($this->once())->method('getCampaignModifications')->willReturn($modifications);
-        $apiManagerStub->method('getConfig')->willReturn($config);
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $httpClientMock->expects($this->once())->method("post")->willReturn(new HttpResponse(200,$this->campaigns()));
+
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($decisionManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -542,13 +537,15 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->fetchFlags();
 
-        $this->assertSame($modifications, $visitor->getFlagsDTO());
+        $modifications = $this->campaignsModifications();
+
+        $this->assertJsonStringEqualsJsonString(json_encode($modifications), json_encode($visitor->getFlagsDTO()));
 
         //Test getModification keyValue is string and DefaultValue is string
         //Return KeyValue
 
-        $key = $modifications[0]->getKey();
-        $keyValue = $modifications[0]->getValue();
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
         $defaultValue = "red";
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -556,8 +553,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is boolean and DefaultValue is boolean
         //Return KeyValue
 
-        $key = $modifications[4]->getKey();
-        $keyValue = $modifications[4]->getValue();
+        $key = $modifications[1]->getKey();
+        $keyValue = $modifications[1]->getValue();
         $defaultValue = false;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -565,8 +562,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is numeric and DefaultValue is numeric
         //Return KeyValue
 
-        $key = $modifications[5]->getKey();
-        $keyValue = $modifications[5]->getValue();
+        $key = $modifications[0]->getKey();
+        $keyValue = $modifications[0]->getValue();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -574,8 +571,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is string and DefaultValue is not string
         //Return DefaultValue
 
-        $key = $modifications[0]->getKey();
-        $keyValue = $modifications[0]->getValue();
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
         $defaultValue = 25; // default is numeric
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
@@ -602,7 +599,7 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is null
         //Return DefaultValue
 
-        $key = $modifications[2]->getKey();
+        $key = $modifications[4]->getKey();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
@@ -610,8 +607,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is empty
         //Return DefaultValue
 
-        $key = $modifications[3]->getKey();
-        $keyValue = $modifications[3]->getValue();
+        $key = $modifications[5]->getKey();
+        $keyValue = $modifications[5]->getValue();
         $defaultValue = "blue-border";
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -657,12 +654,20 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->synchronizeModifications();
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testGetModificationWithActive($modifications)
+
+    public function testGetModificationWithActive()
     {
+        $modifications = $this->campaignsModifications();
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -673,7 +678,6 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
 
         $trackerManagerStub = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
@@ -685,16 +689,6 @@ class DefaultStrategyTest extends TestCase
             ['sendActive']
         );
 
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient(), $config],
-            'ApiManagerInterface',
-            true,
-            true,
-            true,
-            ['getCampaignModifications']
-        );
-
 
         $config->setLogManager($logManagerStub);
 
@@ -702,10 +696,10 @@ class DefaultStrategyTest extends TestCase
             ->setConfig($config)
             ->setTrackingManager($trackerManagerStub);
 
-        $apiManagerStub->method('getCampaignModifications')
-            ->willReturn($modifications);
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200, $this->campaigns()));
 
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($decisionManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
@@ -716,7 +710,7 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->fetchFlags();
 
-        $defaultStrategy->getModification($modifications[0]->getKey(), 'defaultValue', true);
+        $defaultStrategy->getModification($modifications[0]->getKey(), 10, true);
 
         //Test activate on get Modification when value is null
 
@@ -811,15 +805,16 @@ class DefaultStrategyTest extends TestCase
      */
     public function testGetModificationInfo($modifications)
     {
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [],
-            'ApiManagerInterface',
-            false,
-            true,
-            true,
-            ['getCampaignModifications']
+        $modifications = $this->campaignsModifications();
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
         );
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
 
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
@@ -838,16 +833,15 @@ class DefaultStrategyTest extends TestCase
             false
         );
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
-
 
         $config->setLogManager($logManagerStub);
         $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($decisionManager);
 
         $paramsExpected = [];
 
-        $apiManagerStub->method('getCampaignModifications')->willReturn($modifications);
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200, $this->campaigns()));
 
         $logManagerStub->expects($this->exactly(2))->method('error')
             ->withConsecutive($paramsExpected);
@@ -910,15 +904,16 @@ class DefaultStrategyTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient(), $config],
+        $modifications = $this->campaignsModifications();
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
             '',
-            true,
-            true,
-            true,
-            ['getCampaignModifications']
+            false
         );
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
 
         $trackerManagerStub = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
@@ -930,12 +925,12 @@ class DefaultStrategyTest extends TestCase
             ['sendActive']
         );
 
-        $apiManagerStub->method('getCampaignModifications')
-            ->willReturn($modifications);
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200, $this->campaigns()));
 
         $configManager = (new ConfigManager())
             ->setConfig($config)
-            ->setDecisionManager($apiManagerStub)
+            ->setDecisionManager($decisionManager)
             ->setTrackingManager($trackerManagerStub);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
@@ -984,22 +979,23 @@ class DefaultStrategyTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient(), $config],
+        $modifications = $this->campaignsModifications();
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
             '',
-            true,
-            true,
-            true,
-            ['getCampaignModifications']
+            false
         );
 
-        $apiManagerStub->method('getCampaignModifications')
-            ->willReturn($modifications);
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200, $this->campaigns()));
 
         $configManager = (new ConfigManager())
             ->setConfig($config)
-            ->setDecisionManager($apiManagerStub);
+            ->setDecisionManager($decisionManager);
 
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);

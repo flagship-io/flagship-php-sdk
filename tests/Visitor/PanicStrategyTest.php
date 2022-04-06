@@ -3,27 +3,30 @@
 namespace Flagship\Visitor;
 
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Page;
+use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use PHPUnit\Framework\TestCase;
 
 class PanicStrategyTest extends TestCase
 {
+    use CampaignsData;
     public function testMethods()
     {
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [],
-            'ApiManagerInterface',
-            false,
-            true,
-            true,
-            ['getCampaignModifications', 'getConfig']
+        $modifications = $this->campaignsModifications();
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
         );
+
 
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
@@ -80,10 +83,14 @@ class PanicStrategyTest extends TestCase
                 $logMessageBuild('getFlagMetadata')
             );
 
-        $apiManagerStub->expects($this->once())->method('getCampaignModifications');
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200,$this->campaigns()));
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub)->setTrackingManager($trackerManager);
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 

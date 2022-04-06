@@ -2,6 +2,7 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
@@ -9,6 +10,8 @@ use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 use Flagship\Traits\ValidatorTrait;
+use Flagship\Utils\ConfigManager;
+use Flagship\Utils\Container;
 
 class DefaultStrategy extends VisitorStrategyAbstract
 {

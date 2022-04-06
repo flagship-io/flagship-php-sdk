@@ -1367,4 +1367,176 @@ class DefaultStrategyTest extends TestCase
         $metadataValue = $defaultStrategy->getFlagMetadata($key, $metadata, false);
         $this->assertEquals(FlagMetadata::getEmpty(), $metadataValue);
     }
+
+    public function testLookupVisitor(){
+        $config = new DecisionApiConfig('envId', 'apiKey');
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error','info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['lookupVisitor']);
+
+
+        $configManager = (new ConfigManager())->setConfig($config);
+
+        $container = new Container();
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $visitorCache1 = [
+            VisitorStrategyAbstract::VERSION => 1
+        ];
+
+        $differentVisitorId = "different visitorID";
+        $visitorCache2 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $differentVisitorId
+            ]
+        ];
+
+        $visitorCache3 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId
+            ]
+        ];
+
+        $visitorCache4 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::CAMPAIGNS => "not an array"
+            ]
+        ];
+        $visitorCache5 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::CAMPAIGNS => [
+                    "anythings"
+                ]
+            ]
+        ];
+
+        $visitorCache6 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::CAMPAIGNS => [
+                    [
+                        FlagshipField::FIELD_CAMPAIGN_ID => "c8pimlr7n0ig3a0pt2ig",
+                        FlagshipField::FIELD_VARIATION_GROUP_ID => "c8pimlr7n0ig3a0pt2jg",
+                        FlagshipField::FIELD_VARIATION_ID => "c8pimlr7n0ig3a0pt2kg",
+                        FlagshipField::FIELD_IS_REFERENCE => false,
+                        FlagshipField::FIELD_CAMPAIGN_TYPE =>"ab",
+                        VisitorStrategyAbstract::ACTIVATED => false,
+                        VisitorStrategyAbstract::FLAGS => [
+                            "Number" => 5,
+                            "isBool"=> false,
+                            "background" => "EE3300",
+                            "borderColor" => "blue",
+                            "Null" => null,
+                            "Empty" => ""
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $VisitorCacheImplementationMock->expects($this->exactly(8))
+            ->method("lookupVisitor")
+            ->with($visitorId)
+            ->willReturnOnConsecutiveCalls(null,[],
+                $visitorCache1, $visitorCache2,
+                $visitorCache3, $visitorCache4, $visitorCache5,
+                $visitorCache6);
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $functionName = "lookupVisitor";
+
+        $lookupVisitorJson  = function () use($flagshipSdk, $functionName){
+            return ["[$flagshipSdk] " . VisitorStrategyAbstract::LOOKUP_VISITOR_JSON_OBJECT_ERROR,
+                [FlagshipConstant::TAG => $functionName]];
+        };
+
+        $logManagerStub->expects($this->exactly(5))->method('error')
+            ->withConsecutive(
+                $lookupVisitorJson(),
+                $lookupVisitorJson(),
+                ["[$flagshipSdk] " . sprintf(VisitorStrategyAbstract::VISITOR_ID_MISMATCH_ERROR, $differentVisitorId, $visitorId),
+                    [FlagshipConstant::TAG => $functionName]],
+                $lookupVisitorJson()
+            );
+
+        // Test return null
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertCount(0,$visitor->visitorCache);
+
+        // test return empty array
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertCount(0,$visitor->visitorCache);
+
+        // test return array["version"=>1] only
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertCount(0,$visitor->visitorCache);
+
+        // test return cache with different visitor id
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertCount(0,$visitor->visitorCache);
+
+        // test return cache without campaings
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache3,$visitor->visitorCache);
+
+        // test return cache with is_array(campaings) === false
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache3,$visitor->visitorCache);
+
+        // test return cache with invalid campaigns
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache3,$visitor->visitorCache);
+
+        // test return cache with valid cache
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache6,$visitor->visitorCache);
+    }
 }

@@ -102,6 +102,9 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         return $decisionManager;
     }
 
+    /**
+     * @throws \Exception
+     */
     private  function checkLookupVisitorDataV1(array $item){
         if (!$item || !isset($item[self::DATA]) || !isset($item[self::DATA][self::VISITOR_ID])){
             return false;
@@ -110,8 +113,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         $visitorId = $data[self::VISITOR_ID];
 
         if ($visitorId!== $this->getVisitor()->getVisitorId()){
-            $this->logError($this->getConfig(), sprintf(self::VISITOR_ID_MISMATCH_ERROR, $visitorId, $this->getVisitor()->getVisitorId()), "lookupVisitor");
-            return false;
+            throw new \Exception(sprintf( self::VISITOR_ID_MISMATCH_ERROR, $visitorId, $this->getVisitor()->getVisitorId()));
         }
 
         if (!isset($data[self::CAMPAIGNS])){
@@ -119,7 +121,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         $campaigns = $data[self::CAMPAIGNS];
-        if (is_array($campaigns)){
+        if (!is_array($campaigns)){
              return  false;
         }
 
@@ -135,6 +137,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     /**
      * @param array $item
      * @return bool
+     * @throws \Exception
      */
     private function checkLookupVisitorData(array $item){
         if (isset($item[self::VERSION]) && $item[self::VERSION]==1){
@@ -158,13 +161,13 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
                 return;
             }
 
-            if ($this->checkLookupVisitorData($visitorCache)){
+            if (!$this->checkLookupVisitorData($visitorCache)){
                 throw  new \Exception(self::LOOKUP_VISITOR_JSON_OBJECT_ERROR);
             }
-            $this->visitor->$visitorCache = $visitorCache;
+            $this->getVisitor()->visitorCache = $visitorCache;
         }
         catch (\Exception $exception){
-            $this->logError($this->getConfig(), $exception->getMessage(), __FUNCTION__);
+            $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
     }
 
@@ -217,7 +220,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
 
         }
         catch (\Exception $exception){
-            $this->logError($this->getConfig(), $exception->getMessage(), __FUNCTION__);
+            $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG =>__FUNCTION__]);
         }
     }
 
@@ -231,7 +234,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             $visitorCacheInstance->flushVisitor($this->getVisitor()->getVisitorId());
         }
         catch (\Exception $exception){
-            $this->logError($this->getConfig(), $exception->getMessage(), __FUNCTION__);
+            $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG =>__FUNCTION__]);
         }
     }
 }

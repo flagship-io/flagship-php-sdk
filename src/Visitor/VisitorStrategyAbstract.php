@@ -183,13 +183,13 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             $campaigns = [];
 
             foreach ($visitor->campaigns as $campaign) {
-                $variation = $campaigns[FlagshipField::FIELD_VARIATION];
-                $modifications = $campaigns[FlagshipField::FIELD_MODIFICATIONS];
-                $assignmentsHistory[$campaigns[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
+                $variation = $campaign[FlagshipField::FIELD_VARIATION];
+                $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
+                $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
 
                 $campaigns[]=[
-                    FlagshipField::FIELD_CAMPAIGN_ID => $campaigns[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_VARIATION_GROUP_ID => $campaigns[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                    FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                     FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                     FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
                     FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],

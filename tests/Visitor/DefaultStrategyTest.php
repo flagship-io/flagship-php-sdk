@@ -1539,4 +1539,235 @@ class DefaultStrategyTest extends TestCase
 
         $this->assertSame($visitorCache6,$visitor->visitorCache);
     }
+
+    public function testCacheVisitor(){
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $campaignsData = $this->campaigns();
+        $campaignsData2 = $this->campaigns2();
+
+        $httpClientMock->expects($this->exactly(3))->method("post")
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(200, $campaignsData),
+                new HttpResponse(200, $campaignsData2),
+                new HttpResponse(200, $campaignsData2));
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error','info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['lookupVisitor', 'cacheVisitor']);
+
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setDecisionManager($decisionManager);
+
+        $container = new Container();
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $assignmentsHistory = [];
+        $campaigns = [];
+        foreach ($campaignsData[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
+            $variation = $campaign[FlagshipField::FIELD_VARIATION];
+            $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
+            $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
+
+            $campaigns[]=[
+                FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                VisitorStrategyAbstract::ACTIVATED => false,
+                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+            ];
+        }
+
+        $visitorCache = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
+                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
+                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
+                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            ]
+        ];
+
+        $assignmentsHistory2 = [];
+        $campaigns2 = [];
+        foreach ($campaignsData2[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
+            $variation = $campaign[FlagshipField::FIELD_VARIATION];
+            $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
+            $assignmentsHistory2[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
+
+            $campaigns2[]=[
+                FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                VisitorStrategyAbstract::ACTIVATED => false,
+                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+            ];
+        }
+
+
+        $visitorCache2 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
+                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
+                VisitorStrategyAbstract::CAMPAIGNS => $campaigns2,
+                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY => array_merge($assignmentsHistory, $assignmentsHistory2)
+            ]
+        ];
+
+        $exception = new \Exception("Message error");
+
+        $VisitorCacheImplementationMock->expects($this->exactly(3))
+            ->method("cacheVisitor")
+            ->withConsecutive([$visitorId, $visitorCache], [$visitorId, $visitorCache2])
+            ->willReturnOnConsecutiveCalls(null, null, $this->throwException($exception));
+
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $functionName = "cacheVisitor";
+
+        $defaultStrategy->fetchFlags();
+
+        $defaultStrategy->fetchFlags();
+
+
+
+        $logManagerStub->expects($this->exactly(1))->method('error')
+            ->withConsecutive(
+                ["[$flagshipSdk] " . $exception->getMessage(),
+                    [FlagshipConstant::TAG => $functionName]]
+            );
+
+        $defaultStrategy->fetchFlags();
+    }
+
+    public function testFlushVisitor(){
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+
+        $httpClientMock->expects($this->exactly(0))->method("post");
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error','info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['flushVisitor']);
+
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setDecisionManager($decisionManager)
+            ->setTrackingManager($trackerManager);
+
+        $container = new Container();
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $exception = new \Exception("Message error");
+
+        $VisitorCacheImplementationMock->expects($this->exactly(2))
+            ->method("flushVisitor")
+            ->withConsecutive([$visitorId])
+            ->willReturnOnConsecutiveCalls(null, $this->throwException($exception));
+
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+        $defaultStrategy->setConsent(false); // will flush Visitor cache
+
+        $defaultStrategy->setConsent(true); // will not flush Visitor cache
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $functionName = "flushVisitor";
+
+        $logManagerStub->expects($this->exactly(1))->method('error')
+            ->withConsecutive(
+                ["[$flagshipSdk] " . $exception->getMessage(),
+                    [FlagshipConstant::TAG => $functionName]]
+            );
+        $defaultStrategy->setConsent(false); // will throw exception
+
+    }
 }

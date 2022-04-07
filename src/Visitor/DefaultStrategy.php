@@ -16,7 +16,8 @@ use Flagship\Utils\Container;
 class DefaultStrategy extends VisitorStrategyAbstract
 {
     /**
-     * @inheritDoc
+     * @param bool $hasConsented
+     * @return void
      */
     public function setConsent($hasConsented)
     {

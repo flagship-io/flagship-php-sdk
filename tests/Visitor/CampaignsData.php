@@ -113,4 +113,27 @@ trait CampaignsData
         ];
     }
 
+    public function campaigns2(){
+        return [
+            "visitorId" => "",
+            "campaigns"=> [
+                [
+                    "id" => "c69sir3q6mc0ggqin8ag",
+                    "slug" => null,
+                    "type" => "toggle",
+                    "variationGroupId" => "c69sir3q6mc0ggqin8bg",
+                    "variation" => [
+                        "id" => "c69sir3q6mc0ggqin8c0",
+                        "modifications" => [
+                            "type" => "FLAG",
+                            "value"=> [
+                                "myAwesomeFeature" => 10
+                            ]
+                        ],
+                        "reference" => false
+                    ]
+                ]
+            ]
+        ];
+    }
 }

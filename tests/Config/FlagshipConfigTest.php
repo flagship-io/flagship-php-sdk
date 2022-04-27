@@ -184,6 +184,6 @@ class FlagshipConfigTest extends TestCase
     public function testBuilder()
     {
         $this->assertInstanceOf("Flagship\Config\DecisionApiConfig", FlagshipConfig::decisionApi());
-        $this->assertInstanceOf("Flagship\Config\BucketingConfig", FlagshipConfig::bucketing());
+        $this->assertInstanceOf("Flagship\Config\BucketingConfig", FlagshipConfig::bucketing("http:127.0.0.1:3000"));
     }
 }

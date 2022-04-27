@@ -2,7 +2,6 @@
 
 namespace Flagship\Config;
 
-use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
 use Flagship\Utils\FlagshipLogManager;
@@ -11,54 +10,32 @@ use PHPUnit\Framework\TestCase;
 class BucketingConfigTest extends TestCase
 {
 
-    public function testSetPollingInterval()
+    public function testBucketingUrl()
     {
-        $envId = "envId";
-        $apiKey = "apiKey";
+        $bucketingUrl = "http:127.0.0.1:3000";
 
-        $config = new BucketingConfig($envId, $apiKey);
+        $config = new BucketingConfig($bucketingUrl);
 
         //Test default value
-        $this->assertSame(FlagshipConstant::DEFAULT_POLLING_INTERVAL * 1000, $config->getPollingInterval());
+        $this->assertSame($bucketingUrl, $config->getBucketingUrl());
 
-        //Test set with alpha
-        $config->setPollingInterval('abc');
-        $this->assertSame(FlagshipConstant::DEFAULT_POLLING_INTERVAL * 1000, $config->getPollingInterval());
-
-        $polling = 5000;
-        $config->setPollingInterval($polling);
-        $this->assertSame($polling, $config->getPollingInterval());
-    }
-
-    public function testSetBucketingDirectory()
-    {
-        $config = new BucketingConfig();
-        $myDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
-        $this->assertRegExp(
-            "/\/\.\.\/\.\.\/$myDirectory$/",
-            $config->getBucketingDirectoryPath()
-        );
-
-        $myDirectory = "myDirectory";
-        $config->setBucketingDirectoryPath($myDirectory);
-        $this->assertRegExp(
-            "/\/\.\.\/\.\.\/\.\.\/\.\.\/$myDirectory$/",
-            $config->getBucketingDirectoryPath()
-        );
+        $newBucketingUrl = "http:127.0.0.2:3000";
+        $config->setBucketingUrl($newBucketingUrl);
+        $this->assertSame($newBucketingUrl, $config->getBucketingUrl());
     }
 
     public function testJson()
     {
+        $bucketingUrl = "http:127.0.0.1:3000";
         $data =  [
-            FlagshipField::FIELD_ENVIRONMENT_ID => 'envId',
-            FlagshipField::FIELD_API_KEY => "apiKey",
+            FlagshipField::FIELD_ENVIRONMENT_ID => null,
+            FlagshipField::FIELD_API_KEY => null,
             FlagshipField::FIELD_TIMEOUT => 2000,
             FlagshipField::FIELD_LOG_LEVEL => LogLevel::ALL,
-            FlagshipField::FIELD_POLLING_INTERVAL => 1000,
-            FlagshipField::FIELD_BUCKETING_DIRECTORY => "flagship"
+            FlagshipField::FIELD_BUCKETING_URL => $bucketingUrl
         ];
 
-        $config = new BucketingConfig($data[FlagshipField::FIELD_ENVIRONMENT_ID], $data[FlagshipField::FIELD_API_KEY]);
+        $config = new BucketingConfig($bucketingUrl);
         $config->setTimeout($data[FlagshipField::FIELD_TIMEOUT]);
 
         $this->assertJsonStringEqualsJsonString(

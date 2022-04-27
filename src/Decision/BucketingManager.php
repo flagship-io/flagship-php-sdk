@@ -14,6 +14,7 @@ use Flagship\Visitor\VisitorAbstract;
 class BucketingManager extends DecisionManagerAbstract
 {
     const NB_MIN_CONTEXT_KEYS = 4;
+    const INVALID_BUCKETING_FILE_URL = "Invalid bucketing file url";
     /**
      * @var MurmurHash
      */
@@ -88,7 +89,7 @@ class BucketingManager extends DecisionManagerAbstract
             $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
             $url = $this->getConfig()->getBucketingUrl();
             if (!$url){
-                throw  new Exception("invalid bucketing file url");
+                throw  new Exception(self::INVALID_BUCKETING_FILE_URL);
             }
             $response = $this->httpClient->get($url);
             return $response->getBody();
@@ -121,7 +122,6 @@ class BucketingManager extends DecisionManagerAbstract
         if (!isset($bucketingCampaigns[FlagshipField::FIELD_CAMPAIGNS])) {
             return [];
         }
-
 
         $campaigns = $bucketingCampaigns[FlagshipField::FIELD_CAMPAIGNS];
 

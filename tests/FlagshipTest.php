@@ -117,7 +117,7 @@ class FlagshipTest extends TestCase
 
         $configManager = new ConfigManager();
 
-        $bucketingConfig = new BucketingConfig();
+        $bucketingConfig = new BucketingConfig("http://127.0.0.1:3000");
         $bucketingManager = new BucketingManager(new HttpClient(), $bucketingConfig, new MurmurHash());
 
         $containerGetMethod = function () use (
@@ -180,7 +180,7 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf('Flagship\Api\TrackingManager', $configManager->getTrackingManager());
         $this->assertInstanceOf('Flagship\Config\DecisionApiConfig', $configManager->getConfig());
 
-        $config = new BucketingConfig();
+        $config = new BucketingConfig("http://127.0.0.1:3000");
         Flagship::start($envId, $apiKey, $config);
         $this->assertInstanceOf('Flagship\Decision\BucketingManager', $configManager->getDecisionManager());
     }

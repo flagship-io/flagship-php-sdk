@@ -12,6 +12,8 @@ use Flagship\Traits\ValidatorTrait;
 
 class DefaultStrategy extends VisitorStrategyAbstract
 {
+    const TYPE_NULL = "NULL";
+
     /**
      * @inheritDoc
      */
@@ -310,7 +312,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         return $this->getVisitor()->getModifications();
     }
 
-    public function userExposed($key, $hasSameType, FlagDTO $flag = null)
+    public function userExposed($key, $defaultValue, FlagDTO $flag = null)
     {
         $functionName = __FUNCTION__;
         if (!$flag) {
@@ -321,7 +323,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
             );
             return ;
         }
-        if ($flag->getValue() && !$hasSameType) {
+
+        if (gettype($defaultValue)!= self::TYPE_NULL && gettype($flag->getValue())!= self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
             $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::USER_EXPOSED_CAST_ERROR, $key),
@@ -345,19 +348,23 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return  $defaultValue;
         }
 
-        if (!$this->hasSameType($flag->getValue(), $defaultValue)) {
+        if (gettype($flag->getValue()) === self::TYPE_NULL){
+            if ($userExposed) {
+                $this->userExposed($key, $defaultValue, $flag);
+            }
+            return  $defaultValue;
+        }
+
+        if (gettype($defaultValue)!=self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
             $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_FLAG_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]
             );
-            if (!$flag->getValue() && $userExposed) {
-                $this->userExposed($key, true, $flag);
-            }
             return  $defaultValue;
         }
         if ($userExposed) {
-            $this->userExposed($key, true, $flag);
+            $this->userExposed($key, $defaultValue, $flag);
         }
         return  $flag->getValue();
     }

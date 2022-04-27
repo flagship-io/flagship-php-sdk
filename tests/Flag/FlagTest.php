@@ -63,7 +63,7 @@ class FlagTest extends TestCase
 
         $visitorDelegateMock->expects($this->once())->method('userExposed')->with(
             $key,
-            true,
+            $defaultValue,
             $flagDTO
         );
 

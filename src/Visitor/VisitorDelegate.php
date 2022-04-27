@@ -154,9 +154,9 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function userExposed($key, $hasSameType, FlagDTO $flag = null)
+    public function userExposed($key, $defaultValue, FlagDTO $flag = null)
     {
-        $this->getStrategy()->userExposed($key, $hasSameType, $flag);
+        $this->getStrategy()->userExposed($key, $defaultValue, $flag);
     }
 
     /**

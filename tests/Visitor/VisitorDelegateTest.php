@@ -93,7 +93,7 @@ class VisitorDelegateTest extends TestCase
         $this->assertNotNull($visitorDelegate->getAnonymousId());
 
         //Test with bucketing mode
-        $configManager->setConfig(new BucketingConfig());
+        $configManager->setConfig(new BucketingConfig("http://127.0.0.1:3000"));
         $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, true, [], true);
         $this->assertNull($visitorDelegate->getAnonymousId());
     }

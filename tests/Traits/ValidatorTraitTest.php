@@ -118,7 +118,9 @@ class ValidatorTraitTest extends TestCase
         );
 
         $checkFlagshipContext = Utils::getMethod($validatorTraitMock, "checkFlagshipContext");
-        $config = new BucketingConfig();
+
+
+        $config = new BucketingConfig("http://127.0.0.1:3000");
         $config->setLogManager($logManagerStub);
         $value = "linux";
         $check = $checkFlagshipContext->invokeArgs($validatorTraitMock, ['item',$value, $config]);
@@ -189,7 +191,7 @@ class ValidatorTraitTest extends TestCase
         $itemName = "test";
 
         $isNumeric = Utils::getMethod($validatorTraitMock, "isNumeric");
-        $config = new BucketingConfig();
+        $config = new BucketingConfig("http://127.0.0.1:3000");
         $config->setLogManager($logManagerStub);
         $this->assertTrue($isNumeric->invokeArgs($validatorTraitMock, [1, $itemName, $config]));
 

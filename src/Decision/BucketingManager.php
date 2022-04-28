@@ -4,6 +4,7 @@ namespace Flagship\Decision;
 
 use Exception;
 use Flagship\Config\BucketingConfig;
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Utils\HttpClientInterface;
@@ -13,10 +14,39 @@ use Flagship\Visitor\VisitorAbstract;
 class BucketingManager extends DecisionManagerAbstract
 {
     const NB_MIN_CONTEXT_KEYS = 4;
+    const INVALID_BUCKETING_FILE_URL = "Invalid bucketing file url";
     /**
      * @var MurmurHash
      */
     private $murmurHash;
+
+    /**
+     * @var BucketingConfig
+     */
+    protected $config;
+
+    /**
+     * @return BucketingConfig
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param BucketingConfig $config
+     * @return BucketingManager
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+        return $this;
+    }
+
+
+
+
+
 
     public function __construct(HttpClientInterface $httpClient, BucketingConfig $config, MurmurHash $murmurHash)
     {
@@ -53,23 +83,33 @@ class BucketingManager extends DecisionManagerAbstract
         }
     }
 
+    protected  function getBucketingFile(){
+
+        try {
+            $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
+            $url = $this->getConfig()->getBucketingUrl();
+            if (!$url){
+                throw  new Exception(self::INVALID_BUCKETING_FILE_URL);
+            }
+            $response = $this->httpClient->get($url);
+            return $response->getBody();
+        } catch (Exception $exception) {
+            $this->logError($this->getConfig(), $exception->getMessage(), [
+                FlagshipConstant::TAG => __FUNCTION__
+            ]);
+        }
+        return null;
+    }
     /**
      * @inheritDoc
      */
     protected function getCampaigns(VisitorAbstract $visitor)
     {
-
-        $bucketingFile = $this->getConfig()->getBucketingDirectoryPath() . "/bucketing.json";
-        if (!file_exists($bucketingFile)) {
-            return [];
-        }
-        $bucketingCampaigns = file_get_contents($bucketingFile);
+        $bucketingCampaigns = $this->getBucketingFile();
 
         if (!$bucketingCampaigns) {
             return [];
         }
-
-        $bucketingCampaigns = json_decode($bucketingCampaigns, true);
 
         if (isset($bucketingCampaigns[FlagshipField::FIELD_PANIC])) {
             $hasPanicMode = !empty($bucketingCampaigns[FlagshipField::FIELD_PANIC]);
@@ -82,7 +122,6 @@ class BucketingManager extends DecisionManagerAbstract
         if (!isset($bucketingCampaigns[FlagshipField::FIELD_CAMPAIGNS])) {
             return [];
         }
-
 
         $campaigns = $bucketingCampaigns[FlagshipField::FIELD_CAMPAIGNS];
 

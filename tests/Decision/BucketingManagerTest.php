@@ -13,6 +13,7 @@ use Flagship\Utils\HttpClient;
 use Flagship\Utils\MurmurHash;
 use Flagship\Utils\Utils;
 use Flagship\Visitor\VisitorDelegate;
+use Flagship\Visitor\VisitorStrategyAbstract;
 use PHPUnit\Framework\TestCase;
 
 class BucketingManagerTest extends TestCase
@@ -255,11 +256,16 @@ class BucketingManagerTest extends TestCase
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "123456";
 
+        $container = new Container();
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config);
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, [], true);
+
         $getVariationMethod = Utils::getMethod($bucketingManager, "getVariation");
 
         //Test key Id  in variationGroup
         $variationGroups = [];
-        $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitorId);
+        $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
         $this->assertCount(0, $variation);
 
         //Test key Id  in variationGroup
@@ -300,7 +306,7 @@ class BucketingManagerTest extends TestCase
             FlagshipField::FIELD_ID => "9273BKSDJtoto",
             FlagshipField::FIELD_VARIATIONS => $variations
         ];
-        $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitorId);
+        $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
         $this->assertSame($variations[0]['id'], $variation['id']);
 
         $variationGroups = [
@@ -308,8 +314,109 @@ class BucketingManagerTest extends TestCase
             FlagshipField::FIELD_VARIATIONS => $variations
         ];
         $visitorId = 'ëééééé';
-        $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitorId);
+        $visitor->setVisitorId($visitorId);
+        $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
         $this->assertSame($variations[2]['id'], $variation['id']);
+
+        //Test realloc
+        $realloCvariations = [
+            [
+                "id" => "c20j8bk3fk9hdphqtd30",
+                "modifications" => [
+                    "type" => "HTML",
+                    "value" => [
+                        "my_html" => "<div>\n  <p>Original</p>\n</div>"
+                    ]
+                ],
+                "allocation" => 100,
+                "reference" => true
+            ],
+            [
+                "id" => "c20j8bk3fk9hdphqtd3g",
+                "modifications" => [
+                    "type" => "HTML",
+                    "value" => [
+                        "my_html" => "<div>\n  <p>variation 1</p>\n</div>"
+                    ]
+                ],
+                "allocation" => 0
+            ],
+            [
+                "id" => "c20j9lgbcahhf2mvhbf0",
+                "modifications" => [
+                    "type" => "HTML",
+                    "value" => [
+                        "my_html" => "<div>\n  <p>variation 2</p>\n</div>"
+                    ]
+                ],
+                "allocation" => 0
+            ]
+        ];
+
+
+        $variationGroups = [
+            FlagshipField::FIELD_ID => "9273BKSDJtoto",
+            FlagshipField::FIELD_VARIATIONS => $realloCvariations
+        ];
+        $assignmentsHistory = ["9273BKSDJtoto"=>"c20j9lgbcahhf2mvhbf0"];
+        $visitorCache = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            ]
+        ];
+
+        $visitor->visitorCache = $visitorCache;
+
+        $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
+
+        $this->assertSame($realloCvariations[2]['id'], $variation['id']);
+
+        //Test deleted variation
+
+        $reallovariations = [
+            [
+                "id" => "c20j8bk3fk9hdphqtd30",
+                "modifications" => [
+                    "type" => "HTML",
+                    "value" => [
+                        "my_html" => "<div>\n  <p>Original</p>\n</div>"
+                    ]
+                ],
+                "allocation" => 50,
+                "reference" => true
+            ],
+            [
+                "id" => "c20j8bk3fk9hdphqtd3g",
+                "modifications" => [
+                    "type" => "HTML",
+                    "value" => [
+                        "my_html" => "<div>\n  <p>variation 1</p>\n</div>"
+                    ]
+                ],
+                "allocation" => 50
+            ]
+        ];
+
+
+        $variationGroups = [
+            FlagshipField::FIELD_ID => "9273BKSDJtoto",
+            FlagshipField::FIELD_VARIATIONS => $reallovariations
+        ];
+        $assignmentsHistory = ["9273BKSDJtoto"=>"c20j9lgbcahhf2mvhbf0"];
+        $visitorCache = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            ]
+        ];
+
+        $visitor->visitorCache = $visitorCache;
+
+        $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
+
+        $this->assertCount(0,$variation);
+
     }
 
     public function testIsMatchTargeting()

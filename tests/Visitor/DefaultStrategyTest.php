@@ -1684,8 +1684,6 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->fetchFlags();
 
-
-
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->withConsecutive(
                 ["[$flagshipSdk] " . $exception->getMessage(),
@@ -1778,4 +1776,90 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->setConsent(false); // will throw exception
 
     }
+
+
+    public function testFetchVisitorCampaigns(){
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $campaignsData = $this->campaigns();
+
+        $httpClientMock->expects($this->exactly(1))
+            ->method("post")
+            ->willReturn(new HttpResponse(200, null));
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error','info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setDecisionManager($decisionManager);
+
+        $container = new Container();
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $assignmentsHistory = [];
+        $campaigns = [];
+        foreach ($campaignsData[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
+            $variation = $campaign[FlagshipField::FIELD_VARIATION];
+            $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
+            $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
+
+            $campaigns[]=[
+                FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                VisitorStrategyAbstract::ACTIVATED => false,
+                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+            ];
+        }
+
+        $visitorCache = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
+                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
+                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
+                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            ]
+        ];
+
+
+        $visitor->visitorCache = $visitorCache;
+
+        $defaultStrategy->fetchFlags();
+
+        $this->assertCount(7,$visitor->getFlagsDTO());
+    }
+
 }

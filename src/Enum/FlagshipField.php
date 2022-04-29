@@ -36,4 +36,5 @@ class FlagshipField
     const FIELD_TIMEOUT = "timeout";
     const FIELD_LOG_LEVEL = "logLevel";
     const FIELD_BUCKETING_DIRECTORY = "bucketingDirectory";
+    const FIELD_BUCKETING_URL = "bucketingUrl";
 }

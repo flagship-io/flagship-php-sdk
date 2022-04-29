@@ -9,11 +9,11 @@ interface VisitorFlagInterface
 {
     /**
      * @param string $key
-     * @param bool $hasSameType
+     * @param mixed $defaultValue
      * @param FlagDTO $flag
      * @return void
      */
-    public function userExposed($key, $hasSameType, FlagDTO $flag = null);
+    public function userExposed($key, $defaultValue, FlagDTO $flag = null);
 
     /**
      * @param string $key

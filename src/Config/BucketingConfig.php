@@ -8,83 +8,38 @@ use Flagship\Enum\FlagshipField;
 
 class BucketingConfig extends FlagshipConfig
 {
-    /**
-     * @var int
-     */
-    private $pollingInterval = FlagshipConstant::DEFAULT_POLLING_INTERVAL;
+    private $bucketingUrl;
 
-    /**
-     * @var string
-     */
-    private $baseBucketingDirectory;
 
-    /**
-     * @var string
-     */
-    private $bucketingDirectoryPath;
-
-    public function __construct($envId = null, $apiKey = null)
+    public function __construct($bucketingUrl, $envId = null, $apiKey = null)
     {
         parent::__construct($envId, $apiKey);
         $this->setDecisionMode(DecisionMode::BUCKETING);
-        $this->setBucketingDirectoryPath("");
+        $this->setBucketingUrl($bucketingUrl);
     }
 
     /**
-     * @return int
+     * @return mixed
      */
-    public function getPollingInterval()
+    public function getBucketingUrl()
     {
-        return $this->pollingInterval * 1000;
+        return $this->bucketingUrl;
     }
 
     /**
-     * Specify delay between two bucketing polling.
-     *     Note: If 0 is given then it should poll only once at start time.
-     * @param int $pollingInterval : time delay in second. Default is 2000ms.
+     * @param mixed $bucketingUrl
      * @return BucketingConfig
      */
-    public function setPollingInterval($pollingInterval)
+    public function setBucketingUrl($bucketingUrl)
     {
-        if (!$this->isNumeric($pollingInterval, "pollingInterval", $this)) {
-            return $this;
-        }
-        $this->pollingInterval = $pollingInterval / 1000;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBucketingDirectoryPath()
-    {
-        return $this->bucketingDirectoryPath;
-    }
-
-    /**
-     * Define the directory path  where the SDK will find the bucketing file from polling process
-     *     Note: Default path is `/webroot/vendor/flagship-io/flagship`
-     * @param string $bucketingDirectoryPath : directory path
-     * @return BucketingConfig
-     */
-    public function setBucketingDirectoryPath($bucketingDirectoryPath)
-    {
-        $this->baseBucketingDirectory = $bucketingDirectoryPath;
-        if (empty($bucketingDirectoryPath)) {
-            $this->baseBucketingDirectory = FlagshipConstant::BUCKETING_DIRECTORY;
-            $bucketingDirectoryPath = __DIR__ . '/../../' . FlagshipConstant::BUCKETING_DIRECTORY;
-        } else {
-            $bucketingDirectoryPath = __DIR__ . '/../../../../../' . $bucketingDirectoryPath;
-        }
-        $this->bucketingDirectoryPath = $bucketingDirectoryPath;
+        $this->bucketingUrl = $bucketingUrl;
         return $this;
     }
 
     public function jsonSerialize()
     {
         $parent = parent::jsonSerialize();
-        $parent[FlagshipField::FIELD_POLLING_INTERVAL] = $this->getPollingInterval();
-        $parent[FlagshipField::FIELD_BUCKETING_DIRECTORY] = $this->baseBucketingDirectory;
+        $parent[FlagshipField::FIELD_BUCKETING_URL] = $this->bucketingUrl;
         return $parent;
     }
 }

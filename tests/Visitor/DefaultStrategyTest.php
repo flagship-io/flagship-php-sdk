@@ -301,7 +301,7 @@ class DefaultStrategyTest extends TestCase
 
         //Test with bcuketing mode
         $newVisitorId2 = "new_visitor_id";
-        $visitor->setConfig((new BucketingConfig())->setLogManager($logManagerStub));
+        $visitor->setConfig((new BucketingConfig("http:127.0.0.1:3000"))->setLogManager($logManagerStub));
         $defaultStrategy->authenticate($newVisitorId2);
         $this->assertSame($visitorId, $visitor->getAnonymousId());
         $this->assertSame($newVisitorId, $visitor->getVisitorId());
@@ -351,7 +351,7 @@ class DefaultStrategyTest extends TestCase
             ->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $visitor->setConfig((new BucketingConfig())->setLogManager($logManagerStub));
+        $visitor->setConfig((new BucketingConfig("http://127.0.0.1:3000"))->setLogManager($logManagerStub));
         $defaultStrategy = new DefaultStrategy($visitor);
         $defaultStrategy->unauthenticate();
 
@@ -1220,12 +1220,17 @@ class DefaultStrategyTest extends TestCase
         $flagDTO = new FlagDTO();
         $flagDTO->setKey($key)
             ->setValue("value");
+        $defaultValue = "default";
 
-        $trackerManagerStub->expects($this->once())
+        $trackerManagerStub->expects($this->exactly(2))
             ->method('sendActive')
             ->with($visitor, $flagDTO);
 
-        $defaultStrategy->userExposed($key, true, $flagDTO);
+        $defaultStrategy->userExposed($key, $defaultValue, $flagDTO);
+
+        //Test defaultValue null
+
+        $defaultStrategy->userExposed($key, null, $flagDTO);
 
         $functionName = "userExposed";
 
@@ -1239,7 +1244,7 @@ class DefaultStrategyTest extends TestCase
                     [FlagshipConstant::TAG => $functionName]]
             );
 
-        $defaultStrategy->userExposed($key, true, null);
+        $defaultStrategy->userExposed($key, $defaultValue, null);
 
         $defaultStrategy->userExposed($key, false, $flagDTO);
     }
@@ -1286,20 +1291,23 @@ class DefaultStrategyTest extends TestCase
 
         $functionName = "getFlagValue";
 
-        $trackerManagerStub->expects($this->exactly(2))
+        $trackerManagerStub->expects($this->exactly(3))
             ->method('sendActive')
             ->with($visitor, $flagDTO);
 
         $value = $defaultStrategy->getFlagValue($key, $defaultValue, $flagDTO);
         $this->assertEquals($value, $flagDTO->getValue());
 
+        //Test with default value is null
+        $value = $defaultStrategy->getFlagValue($key, null, $flagDTO);
+        $this->assertEquals($value, $flagDTO->getValue());
+
+
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
-        $logManagerStub->expects($this->exactly(4))->method('info')
+        $logManagerStub->expects($this->exactly(2))->method('info')
             ->withConsecutive(
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_FLAG_MISSING_ERROR, $key),
-                    [FlagshipConstant::TAG => $functionName]],
-                ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_FLAG_CAST_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]],
                 ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_FLAG_CAST_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]]

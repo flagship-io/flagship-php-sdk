@@ -2,10 +2,7 @@
 
 namespace Flagship\Decision;
 
-require_once __dir__ . "/../Assets/File.php";
-
 use Exception;
-use Flagship\Assets\File;
 use Flagship\Config\BucketingConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
@@ -24,17 +21,14 @@ class BucketingManagerTest extends TestCase
     {
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
-            ['post'],
+            ['post', 'get'],
             "",
             false
         );
 
-        $httpClientMock->expects($this->exactly(2))
-            ->method('post')
-            ->willReturn(new HttpResponse(204, null));
-
+        $bucketingUrl = "127.0.0.1:3000";
         $murmurhash = new MurmurHash();
-        $config = new BucketingConfig();
+        $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
         $visitorId = "visitor_1";
         $visitorContext = [
@@ -46,34 +40,40 @@ class BucketingManagerTest extends TestCase
 
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
+        $httpClientMock->expects($this->exactly(2))
+            ->method('post')
+            ->willReturn(new HttpResponse(204, null));
+
+        $bucketingFile =\file_get_contents(__DIR__ . '/bucketing.json');
+        $httpClientMock->expects($this->exactly(6))
+            ->method('get')
+            ->with($bucketingUrl)
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(204, null),
+                new HttpResponse(204, json_decode('{"panic": true}', true)),
+                new HttpResponse(204, json_decode('{}', true)),
+                new HttpResponse(204, json_decode( '{"campaigns":[{}]}', true)),
+                new HttpResponse(204, json_decode('{"notExistKey": false}', true)),
+                new HttpResponse(204, json_decode($bucketingFile, true))
+            );
         //Test File not exist
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);
 
-        //Test file_get_contents failed
-        File::$fileExist = true;
-        File::$fileContent = false;
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
-        $this->assertCount(0, $campaigns);
-
         //Test Panic Mode
-        File::$fileExist = true;
-        File::$fileContent = '{"panic": true}';
+
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test campaign property
-        File::$fileExist = true;
-        File::$fileContent = '{}';
+
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test campaign[FIELD_VARIATION_GROUPS]
-        File::$fileExist = true;
-        File::$fileContent = '{"campaigns":[{}]}';
 
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
@@ -81,12 +81,21 @@ class BucketingManagerTest extends TestCase
 
         //
 
-        File::$fileExist = true;
-        File::$fileContent = \file_get_contents(__DIR__ . '/bucketing.json');
+        $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
+        $this->assertCount(0, $campaigns);
+
+        //
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(6, $campaigns);
+
+        //test invalid bucketing file url
+
+        $config->setBucketingUrl("");
+        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+
+        $this->assertCount(0, $campaigns);
     }
 
     public function testSendContext()
@@ -100,7 +109,7 @@ class BucketingManagerTest extends TestCase
 
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
-            ['post'],
+            ['post', 'get'],
             "",
             false
         );
@@ -124,23 +133,10 @@ class BucketingManagerTest extends TestCase
             FlagshipConstant::FS_USERS => $visitorId,
         ];
 
-        $postBody = [
-            "visitorId" => $visitorId,
-            "type" => "CONTEXT",
-            "data" => $visitorContext
-        ];
 
-        $errorMessage = "message error";
-        $httpClientMock->expects($this->exactly(2))
-            ->method('post')
-           ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), [], $postBody)
-            ->willReturnOnConsecutiveCalls(new HttpResponse(204, null), new HttpResponse(404, $errorMessage));
-
-        $sdk = FlagshipConstant::FLAGSHIP_SDK;
-        $logManagerStub->expects($this->once())->method('error')->with("[$sdk] " . $errorMessage);
-
+        $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
-        $config = new BucketingConfig($envId);
+        $config = new BucketingConfig($bucketingUrl,$envId);
         $config->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
@@ -150,8 +146,29 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        File::$fileExist = true;
-        File::$fileContent = '{"campaigns":[{}]}';
+        $postBody = [
+            "visitorId" => $visitorId,
+            "type" => "CONTEXT",
+            "data" => $visitorContext
+        ];
+
+        $errorMessage = "message error";
+        $httpClientMock->expects($this->exactly(2))
+            ->method('post')
+            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), [], $postBody)
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(204, null),
+                new HttpResponse(404, $errorMessage)
+            );
+
+        $httpClientMock->expects($this->exactly(3))
+            ->method('get')
+            ->willReturn(
+                new HttpResponse(204, json_decode( '{"campaigns":[{}]}', true))
+            );
+
+        $sdk = FlagshipConstant::FLAGSHIP_SDK;
+        //  $logManagerStub->expects($this->once())->method('error')->with("[$sdk] " . $errorMessage);
 
         $bucketingManager->getCampaignModifications($visitor);
         $bucketingManager->getCampaignModifications($visitor);
@@ -159,8 +176,7 @@ class BucketingManagerTest extends TestCase
         //Test empty context
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, [], true);
         $bucketingManager->getCampaignModifications($visitor);
-        File::$fileExist = false;
-        File::$fileContent = null;
+
     }
 
     public function testSendContextWithError()
@@ -174,7 +190,7 @@ class BucketingManagerTest extends TestCase
 
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
-            ['post'],
+            ['post', 'get'],
             "",
             false
         );
@@ -212,8 +228,9 @@ class BucketingManagerTest extends TestCase
 
         $logManagerStub->expects($this->once())->method('error');
 
+        $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
-        $config = new BucketingConfig($envId);
+        $config = new BucketingConfig($bucketingUrl,$envId);
         $config->setLogManager($logManagerStub);
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
 
@@ -222,15 +239,19 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        File::$fileExist = true;
-        File::$fileContent = '{"campaigns":[{}]}';
+        $httpClientMock->method('get')
+        ->willReturn(
+            new HttpResponse(204, json_decode( '{"campaigns":[{}]}', true))
+        );
+
         $bucketingManager->getCampaignModifications($visitor);
     }
 
     public function testGetVariation()
     {
+        $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
-        $config = new BucketingConfig();
+        $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "123456";
 
@@ -293,8 +314,9 @@ class BucketingManagerTest extends TestCase
 
     public function testIsMatchTargeting()
     {
+        $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
-        $config = new BucketingConfig();
+        $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [
@@ -454,8 +476,9 @@ class BucketingManagerTest extends TestCase
 
     public function testCheckAndTargeting()
     {
+        $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
-        $config = new BucketingConfig();
+        $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [
@@ -546,8 +569,9 @@ class BucketingManagerTest extends TestCase
 
     public function testOperator()
     {
+        $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
-        $config = new BucketingConfig();
+        $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
         $visitorContext = [

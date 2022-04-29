@@ -260,9 +260,9 @@ abstract class FlagshipConfig implements JsonSerializable
         ];
     }
 
-    public static function bucketing()
+    public static function bucketing($bucketingUrl)
     {
-        return new BucketingConfig();
+        return new BucketingConfig($bucketingUrl);
     }
 
     public static function decisionApi()

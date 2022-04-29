@@ -64,7 +64,7 @@ class Flag implements FlagInterface
     public function exists()
     {
         $flagDTO = $this->findFlagDTO($this->key);
-        return $flagDTO && $this->hasSameType($flagDTO->getValue(), $this->defaultValue);
+        return $flagDTO && $flagDTO->getCampaignId() && $flagDTO->getVariationId() && $flagDTO->getVariationGroupId();
     }
 
     /**
@@ -75,7 +75,7 @@ class Flag implements FlagInterface
         $flagDTO = $this->findFlagDTO($this->key);
         $this->visitorDelegate->userExposed(
             $this->key,
-            $flagDTO && $this->hasSameType($flagDTO->getValue(), $this->defaultValue),
+            $this->defaultValue,
             $flagDTO
         );
     }

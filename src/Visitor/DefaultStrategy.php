@@ -246,7 +246,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $campaigns = [];
         foreach ($data[self::CAMPAIGNS] as $item) {
             $campaigns[] =[
-                FlagshipField::FIELD_ID => $item[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_ID => $item[FlagshipField::FIELD_CAMPAIGN_ID],
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION => [
                     FlagshipField::FIELD_ID => $item[self::CAMPAIGN_ID],

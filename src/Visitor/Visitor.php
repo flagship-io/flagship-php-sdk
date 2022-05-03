@@ -194,6 +194,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->getVisitorDelegate()->jsonSerialize();

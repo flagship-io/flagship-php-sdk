@@ -256,6 +256,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [

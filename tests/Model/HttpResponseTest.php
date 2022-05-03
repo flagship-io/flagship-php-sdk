@@ -11,7 +11,10 @@ class HttpResponseTest extends TestCase
     {
         $statusCode = 200;
         $body = 'Body';
-        $httpResponse = new HttpResponse($statusCode, $body);
+        $headers = [
+            "accept"=>"application/json"
+        ];
+        $httpResponse = new HttpResponse($statusCode, $body, $headers);
 
         $this->assertSame($statusCode, $httpResponse->getStatusCode());
         $this->assertSame($body, $httpResponse->getBody());
@@ -24,5 +27,6 @@ class HttpResponseTest extends TestCase
         $this->assertSame($statusCode, $httpResponse->getStatusCode());
         $this->assertSame($body, $httpResponse->getBody());
         $this->assertSame($instance1, $instance2);
+        $this->assertSame($headers, $httpResponse->getHeaders());
     }
 }

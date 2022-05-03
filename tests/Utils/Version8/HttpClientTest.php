@@ -72,12 +72,14 @@ class HttpClientTest extends TestCase
         Curl::$response = '"Test-response"';
         Curl::$curlErrorCode = 0;
         Curl::$curlHttpCodeInfo = 204;
+        Curl::$curlLastModifies = 1651479244; //2022-05-02 08:14:04
 
         $response = $client->post($url, [], []);
 
         $this->assertInstanceOf('Flagship\Model\HttpResponse', $response);
         $this->assertSame(json_decode(Curl::$response), $response->getBody());
         $this->assertSame(Curl::$curlHttpCodeInfo, $response->getStatusCode());
+        $this->assertSame("2022-05-02 08:14:04", $response->getHeaders()["last-modified"]);
     }
 
     public function testPostFailed()

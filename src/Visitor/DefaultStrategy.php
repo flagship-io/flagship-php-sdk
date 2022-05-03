@@ -269,7 +269,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
         $campaigns = $decisionManager->getCampaigns($this->getVisitor());
 
-        if (!count($campaigns)){
+        if (is_array($campaigns) && !count($campaigns)){
             $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
         }
         $this->getVisitor()->campaigns = $campaigns;

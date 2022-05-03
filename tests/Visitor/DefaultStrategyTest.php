@@ -731,11 +731,12 @@ class DefaultStrategyTest extends TestCase
             false,
             true,
             true,
-            ['getCampaignModifications', 'getConfig']
+            ['getModifications', 'getConfig', 'getCampaigns']
         );
         $config = new DecisionApiConfig('envId', 'apiKey');
 
-        $apiManagerStub->method('getCampaignModifications')->willReturn($modifications);
+        $apiManagerStub->method('getCampaigns')->willReturn([]);
+        $apiManagerStub->method('getModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
 
         $configManager = (new ConfigManager())->setConfig($config);

@@ -324,8 +324,8 @@ class ApiManagerTest extends TestCase
         $apiManager = new ApiManager($httpClientMock, $config);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, 'visitor_id', false, ['age' => 15], true);
-        $value = $apiManager->getCampaignModifications($visitor);
+        $value = $apiManager->getCampaigns($visitor);
 
-        $this->assertSame([], $value);
+        $this->assertNull($value);
     }
 }

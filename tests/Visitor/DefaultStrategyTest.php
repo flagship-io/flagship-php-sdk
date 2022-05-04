@@ -1799,7 +1799,7 @@ class DefaultStrategyTest extends TestCase
 
         $httpClientMock->expects($this->exactly(1))
             ->method("post")
-            ->willReturn(new HttpResponse(200, null));
+            ->willThrowException(new \Exception());
 
         $decisionManager = new ApiManager($httpClientMock, $config);
 

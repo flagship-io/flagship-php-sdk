@@ -236,6 +236,7 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
+     * Define an object that implement the interface IVisitorCacheImplementation, to handle the visitor cache.
      * @param IVisitorCacheImplementation $visitorCacheImplementation
      * @return FlagshipConfig
      */

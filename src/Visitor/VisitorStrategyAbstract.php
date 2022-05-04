@@ -185,7 +185,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             foreach ($visitor->campaigns as $campaign) {
                 $variation = $campaign[FlagshipField::FIELD_VARIATION];
                 $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
-                $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
+                $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
 
                 $campaigns[]=[
                     FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],

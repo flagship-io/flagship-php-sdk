@@ -269,13 +269,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
         $campaigns = $decisionManager->getCampaigns($this->getVisitor());
 
-        if (!$campaigns){
+        if (!is_array($campaigns)){
             $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
         }
         $this->getVisitor()->campaigns = $campaigns;
         $flagsDTO = $decisionManager->getModifications($campaigns);
         $this->getVisitor()->setFlagsDTO($flagsDTO);
-        $this->cacheVisitor();
     }
 
     /**

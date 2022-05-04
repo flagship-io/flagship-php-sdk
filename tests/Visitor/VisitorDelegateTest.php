@@ -162,7 +162,7 @@ class VisitorDelegateTest extends TestCase
 
         $defaultStrategy = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
             ->setMethods([
-                'setContext', 'updateContext', 'updateContextCollection',
+                'setContext', 'updateContext', 'updateContextCollection', "cacheVisitor",
                 'clearContext', 'authenticate', 'unauthenticate', 'getModification',
                 'getModificationInfo', 'synchronizeModifications', 'setConsent',
                 'activateModification', 'sendHit', 'fetchFlags','userExposed', 'getFlagValue', 'getFlagMetadata','lookupVisitor'
@@ -240,6 +240,9 @@ class VisitorDelegateTest extends TestCase
         //Test synchronizedModifications
         $defaultStrategy->expects($this->once())
             ->method('synchronizeModifications');
+
+        $defaultStrategy->expects($this->exactly(2))
+            ->method('cacheVisitor');
 
         $visitor->synchronizeModifications();
 

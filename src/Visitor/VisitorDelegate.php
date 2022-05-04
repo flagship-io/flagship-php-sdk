@@ -130,6 +130,7 @@ class VisitorDelegate extends VisitorAbstract
     public function synchronizeModifications()
     {
         $this->getStrategy()->synchronizeModifications();
+        $this->getStrategy()->cacheVisitor();
     }
 
 
@@ -152,6 +153,7 @@ class VisitorDelegate extends VisitorAbstract
     public function fetchFlags()
     {
         $this->getStrategy()->fetchFlags();
+        $this->getStrategy()->cacheVisitor();
     }
 
     /**

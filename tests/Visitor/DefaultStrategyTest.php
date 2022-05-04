@@ -1602,18 +1602,31 @@ class DefaultStrategyTest extends TestCase
             ->setConfig($config)
             ->setDecisionManager($decisionManager);
 
-        $container = new Container();
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $containerMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\ContainerInterface',
+            ['get'],
+            '',
+            false
+        );
 
-        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $containerGetMethod = function () {
+            $args = func_get_args();
+            $params = $args[1];
+            return new DefaultStrategy($params[0]);
+        };
+
+        $containerMock->method('get')->willReturnCallback($containerGetMethod);
+
+        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
 
         $assignmentsHistory = [];
         $campaigns = [];
         foreach ($campaignsData[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
             $variation = $campaign[FlagshipField::FIELD_VARIATION];
             $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
-            $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
+            $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
 
             $campaigns[]=[
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
@@ -1643,7 +1656,7 @@ class DefaultStrategyTest extends TestCase
         foreach ($campaignsData2[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
             $variation = $campaign[FlagshipField::FIELD_VARIATION];
             $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
-            $assignmentsHistory2[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
+            $assignmentsHistory2[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
 
             $campaigns2[]=[
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
@@ -1681,9 +1694,9 @@ class DefaultStrategyTest extends TestCase
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $functionName = "cacheVisitor";
 
-        $defaultStrategy->fetchFlags();
+        $visitor->fetchFlags();
 
-        $defaultStrategy->fetchFlags();
+        $visitor->fetchFlags();
 
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->withConsecutive(
@@ -1691,7 +1704,7 @@ class DefaultStrategyTest extends TestCase
                     [FlagshipConstant::TAG => $functionName]]
             );
 
-        $defaultStrategy->fetchFlags();
+        $visitor->fetchFlags();
     }
 
     public function testFlushVisitor(){
@@ -1797,7 +1810,7 @@ class DefaultStrategyTest extends TestCase
 
         $campaignsData = $this->campaigns();
 
-        $httpClientMock->expects($this->exactly(1))
+        $httpClientMock->expects($this->exactly(2))
             ->method("post")
             ->willThrowException(new \Exception());
 
@@ -1819,11 +1832,25 @@ class DefaultStrategyTest extends TestCase
             ->setConfig($config)
             ->setDecisionManager($decisionManager);
 
-        $container = new Container();
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $containerMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\ContainerInterface',
+            ['get'],
+            '',
+            false
+        );
 
-        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $containerGetMethod = function () {
+            $args = func_get_args();
+            $params = $args[1];
+            return new DefaultStrategy($params[0]);
+        };
+
+        $containerMock->method('get')->willReturnCallback($containerGetMethod);
+
+        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
+
 
         $assignmentsHistory = [];
         $campaigns = [];
@@ -1858,9 +1885,15 @@ class DefaultStrategyTest extends TestCase
 
         $visitor->visitorCache = $visitorCache;
 
-        $defaultStrategy->fetchFlags();
+        $visitor->fetchFlags();
 
         $this->assertCount(7,$visitor->getFlagsDTO());
+
+        $visitor->visitorCache = [];
+
+        $visitor->fetchFlags();
+
+        $this->assertCount(0,$visitor->getFlagsDTO());
     }
 
 }

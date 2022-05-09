@@ -189,6 +189,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
 
                 $campaigns[]=[
                     FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_SLUG =>isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null,
                     FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                     FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                     FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],

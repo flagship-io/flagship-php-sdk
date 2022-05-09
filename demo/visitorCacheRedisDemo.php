@@ -11,7 +11,10 @@ use Flagship\Flagship;
 $ENV_ID = '';
 $API_KEY = '';
 
-class VisitorCache implements IVisitorCacheImplementation{
+/**
+ * Implementing visitor caches with redis
+ */
+class VisitorCacheRedis implements IVisitorCacheImplementation{
 
     private $redis;
     public function __construct($address, $port)
@@ -22,13 +25,11 @@ class VisitorCache implements IVisitorCacheImplementation{
 
     public function cacheVisitor($visitorId, array $data)
     {
-        throw new Exception();
         $this->redis->set($visitorId, json_encode($data, JSON_NUMERIC_CHECK));
     }
 
     public function lookupVisitor($visitorId)
     {
-        throw new Exception();
         $data = $this->redis->get($visitorId);
         if (!$data){
             return null;
@@ -38,15 +39,14 @@ class VisitorCache implements IVisitorCacheImplementation{
 
     public function flushVisitor($visitorId)
     {
-        throw new Exception();
       $this->redis->del($visitorId);
     }
 }
 
 Flagship::start($ENV_ID, $API_KEY,
-    FlagshipConfig::decisionApi("http://127.0.0.1:8080/bucketing")
+    FlagshipConfig::bucketing("http://127.0.0.1:8080/bucketing")
     ->setTimeout(10000)
-    ->setVisitorCacheImplementation(new VisitorCache("127.0.0.1", 6379))
+    ->setVisitorCacheImplementation(new VisitorCacheRedis("127.0.0.1", 6379))
 );
 
 function test1(){
@@ -59,6 +59,15 @@ function test1(){
     echo "############# Flag cache ##################### \n";
 
     $flagCache = $visitor->getFlag("myAwesomeFeature", 0) ;
+    echo "value: ". $flagCache->getValue(false)."\n";
+    echo "exists: ". $flagCache->exists()."\n";
+    echo "metadata: ". json_encode($flagCache->getMetadata())."\n";
+
+    echo "############# End Flag cache ##################### \n\n";
+
+    echo "############# Flag cache ##################### \n";
+
+    $flagCache = $visitor->getFlag("js-qa-app", "default js-qa-app") ;
     echo "value: ". $flagCache->getValue(false)."\n";
     echo "exists: ". $flagCache->exists()."\n";
     echo "metadata: ". json_encode($flagCache->getMetadata())."\n";

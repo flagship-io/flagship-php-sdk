@@ -17,14 +17,17 @@ class FlagTest extends TestCase
             ->setVariationId("variationId")
             ->setVariationGroupId('varGroupId')
             ->setCampaignId("campaignId")
-            ->setKey($key)->setValue("value");
+            ->setKey($key)->setValue("value")
+            ->setSlug("slug")
+            ->setCampaignType("ab");
 
         $metadata = new FlagMetadata(
             $flagDTO->getCampaignId(),
             $flagDTO->getVariationGroupId(),
             $flagDTO->getVariationId(),
             $flagDTO->getIsReference(),
-            ""
+            $flagDTO->getCampaignType(),
+            $flagDTO->getSlug()
         );
         $visitorDelegateMock = $this->getMockForAbstractClass(
             'Flagship\Visitor\VisitorAbstract',
@@ -90,7 +93,8 @@ class FlagTest extends TestCase
             "",
             "",
             "",
-            ""
+            "",
+            null
         );
         $visitorDelegateMock = $this->getMockForAbstractClass(
             'Flagship\Visitor\VisitorAbstract',

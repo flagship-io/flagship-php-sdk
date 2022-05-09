@@ -43,6 +43,11 @@ class FlagDTO implements JsonSerializable
     private $campaignType;
 
     /**
+     * @var string
+     */
+    private $slug;
+
+    /**
      * @return string
      */
     public function getKey()
@@ -169,6 +174,24 @@ class FlagDTO implements JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     * @return FlagDTO
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
@@ -180,7 +203,8 @@ class FlagDTO implements JsonSerializable
             FlagshipField::FIELD_VARIATION_GROUP_ID => $this->getVariationGroupId(),
             FlagshipField::FIELD_VARIATION_ID => $this->getVariationId(),
             FlagshipField::FIELD_IS_REFERENCE => $this->getIsReference(),
-            FlagshipField::FIELD_VALUE => $this->getValue()
+            FlagshipField::FIELD_VALUE => $this->getValue(),
+            FlagshipField::FIELD_SLUG => $this->getSlug()
         ];
     }
 }

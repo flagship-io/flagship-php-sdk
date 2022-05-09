@@ -140,7 +140,8 @@ class BucketingManager extends DecisionManagerAbstract
                 $variationGroups,
                 $campaign[FlagshipField::FIELD_ID],
                 $visitor,
-                $campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]
+                $campaign[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null
             );
             $visitorCampaigns = array_merge($visitorCampaigns, $currentCampaigns);
         }
@@ -154,7 +155,7 @@ class BucketingManager extends DecisionManagerAbstract
      * @param string $campaignType
      * @return array
      */
-    private function getVisitorCampaigns($variationGroups, $campaignId, VisitorAbstract $visitor, $campaignType)
+    private function getVisitorCampaigns($variationGroups, $campaignId, VisitorAbstract $visitor, $campaignType, $slug)
     {
         $visitorCampaigns = [];
         foreach ($variationGroups as $variationGroup) {
@@ -166,6 +167,7 @@ class BucketingManager extends DecisionManagerAbstract
                 );
                 $visitorCampaigns[] = [
                     FlagshipField::FIELD_ID => $campaignId,
+                    FlagshipField::FIELD_SLUG => $slug,
                     FlagshipField::FIELD_VARIATION_GROUP_ID => $variationGroup[FlagshipField::FIELD_ID],
                     FlagshipField::FIELD_VARIATION => $variations,
                     FlagshipField::FIELD_CAMPAIGN_TYPE => $campaignType

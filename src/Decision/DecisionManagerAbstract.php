@@ -210,6 +210,10 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
                 $modification->setCampaignType($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]);
             }
 
+            if (isset($campaign[FlagshipField::FIELD_SLUG])) {
+                $modification->setSlug($campaign[FlagshipField::FIELD_SLUG]);
+            }
+
             if (!$isKeyUsed) {
                 $localModifications[] = $modification;
             }

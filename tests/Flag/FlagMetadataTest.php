@@ -13,29 +13,38 @@ class FlagMetadataTest extends TestCase
         $variationId = "variationId";
         $isReferenceId = true;
         $campaignType = "campaignType";
-        $metadata = new FlagMetadata($campaignId, $variationGroupId, $variationId, $isReferenceId, $campaignType);
+        $slug = "slug";
+        $metadata = new FlagMetadata($campaignId, $variationGroupId, $variationId, $isReferenceId, $campaignType, $slug);
 
         $this->assertSame($metadata->getCampaignId(), $campaignId);
         $this->assertSame($metadata->getVariationGroupId(), $variationGroupId);
         $this->assertSame($metadata->getVariationId(), $variationId);
         $this->assertSame($metadata->isReference(), $isReferenceId);
         $this->assertSame($metadata->getCampaignType(), $campaignType);
+        $this->assertSame($metadata->getSlug(), $slug);
 
         $metadataJson = json_encode([
             "campaignId" => $campaignId,
             "variationGroupId" => $variationGroupId,
             "variationId" => $variationId,
             "isReference" => $isReferenceId,
-            "campaignType" => $campaignType
+            "campaignType" => $campaignType,
+            "slug" => $slug
         ]);
         $this->assertJsonStringEqualsJsonString(json_encode($metadata), $metadataJson);
+
+        $newSlug = "new_slug";
+        $metadata->setSlug($newSlug);
+
+        $this->assertSame($newSlug, $metadata->getSlug());
 
         $metadataJson = json_encode([
             "campaignId" => "",
             "variationGroupId" => "",
             "variationId" => "",
             "isReference" => false,
-            "campaignType" => ""
+            "campaignType" => "",
+            "slug"=>null
         ]);
 
         $this->assertJsonStringEqualsJsonString(json_encode(FlagMetadata::getEmpty()), $metadataJson);

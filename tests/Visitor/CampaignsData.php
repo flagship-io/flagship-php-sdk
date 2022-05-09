@@ -16,6 +16,7 @@ trait CampaignsData
                 ->setVariationGroupId('c8pimlr7n0ig3a0pt2jg')
                 ->setCampaignId('c8pimlr7n0ig3a0pt2ig')
                 ->setVariationId('c8pimlr7n0ig3a0pt2kg')
+                ->setSlug("campaign_1")
                 ->setCampaignType("ab"),
             (new FlagDTO())
                 ->setKey('isBool')
@@ -24,6 +25,7 @@ trait CampaignsData
                 ->setVariationGroupId('c8pimlr7n0ig3a0pt2jg')
                 ->setCampaignId('c8pimlr7n0ig3a0pt2ig')
                 ->setVariationId('c8pimlr7n0ig3a0pt2kg')
+                ->setSlug("campaign_1")
                 ->setCampaignType("ab"),
             (new FlagDTO())
                 ->setKey('background')
@@ -32,6 +34,7 @@ trait CampaignsData
                 ->setVariationGroupId('c8pimlr7n0ig3a0pt2jg')
                 ->setCampaignId('c8pimlr7n0ig3a0pt2ig')
                 ->setVariationId('c8pimlr7n0ig3a0pt2kg')
+                ->setSlug("campaign_1")
                 ->setCampaignType("ab"),
             (new FlagDTO())
                 ->setKey('borderColor')
@@ -40,6 +43,7 @@ trait CampaignsData
                 ->setVariationGroupId('c8pimlr7n0ig3a0pt2jg')
                 ->setCampaignId('c8pimlr7n0ig3a0pt2ig')
                 ->setVariationId('c8pimlr7n0ig3a0pt2kg')
+                ->setSlug("campaign_1")
                 ->setCampaignType("ab"),
             (new FlagDTO())
                 ->setKey('Null')
@@ -48,6 +52,7 @@ trait CampaignsData
                 ->setVariationGroupId('c8pimlr7n0ig3a0pt2jg')
                 ->setCampaignId('c8pimlr7n0ig3a0pt2ig')
                 ->setVariationId('c8pimlr7n0ig3a0pt2kg')
+                ->setSlug("campaign_1")
                 ->setCampaignType("ab"),
             (new FlagDTO())
                 ->setKey('Empty')
@@ -56,6 +61,7 @@ trait CampaignsData
                 ->setVariationGroupId('c8pimlr7n0ig3a0pt2jg')
                 ->setCampaignId('c8pimlr7n0ig3a0pt2ig')
                 ->setVariationId('c8pimlr7n0ig3a0pt2kg')
+                ->setSlug("campaign_1")
                 ->setCampaignType("ab"),
             (new FlagDTO())
                 ->setKey('php')
@@ -64,6 +70,7 @@ trait CampaignsData
                 ->setVariationGroupId('c7q1lmuru9u05agq3apg')
                 ->setCampaignId('c7q1lmuru9u05agq3aog')
                 ->setVariationId('c7q1m8p172r04gs741og')
+                ->setSlug("campaign_2")
                 ->setCampaignType("ab"),
         ];
     }
@@ -74,7 +81,7 @@ trait CampaignsData
             "campaigns"=> [
                 [
                     "id" => "c8pimlr7n0ig3a0pt2ig",
-                    "slug" => null,
+                    "slug" => "campaign_1",
                     "type" => "ab",
                     "variationGroupId" => "c8pimlr7n0ig3a0pt2jg",
                     "variation" => [
@@ -95,7 +102,7 @@ trait CampaignsData
                 ],
                 [
                     "id" => "c7q1lmuru9u05agq3aog",
-                    "slug" => null,
+                    "slug" => "campaign_2",
                     "type" => "ab",
                     "variationGroupId"=> "c7q1lmuru9u05agq3apg",
                     "variation" => [
@@ -119,7 +126,7 @@ trait CampaignsData
             "campaigns"=> [
                 [
                     "id" => "c69sir3q6mc0ggqin8ag",
-                    "slug" => null,
+                    "slug" => "campaign_3",
                     "type" => "toggle",
                     "variationGroupId" => "c69sir3q6mc0ggqin8bg",
                     "variation" => [

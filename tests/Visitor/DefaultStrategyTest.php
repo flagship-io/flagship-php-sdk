@@ -1359,7 +1359,7 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $key = "key";
-        $metadata = new FlagMetadata("campaignID", "varGroupID", "varID", true, "");
+        $metadata = new FlagMetadata("campaignID", "varGroupID", "varID", true, "ab", "slug");
 
         $functionName = "flag.metadata";
 
@@ -1630,6 +1630,7 @@ class DefaultStrategyTest extends TestCase
 
             $campaigns[]=[
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null,
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
@@ -1660,6 +1661,7 @@ class DefaultStrategyTest extends TestCase
 
             $campaigns2[]=[
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null,
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],

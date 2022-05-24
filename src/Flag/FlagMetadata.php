@@ -106,18 +106,6 @@ class FlagMetadata implements JsonSerializable
     }
 
     /**
-     * @param string $slug
-     * @return FlagMetadata
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-        return $this;
-    }
-
-
-
-    /**
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]

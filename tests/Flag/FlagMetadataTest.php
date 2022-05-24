@@ -33,11 +33,6 @@ class FlagMetadataTest extends TestCase
         ]);
         $this->assertJsonStringEqualsJsonString(json_encode($metadata), $metadataJson);
 
-        $newSlug = "new_slug";
-        $metadata->setSlug($newSlug);
-
-        $this->assertSame($newSlug, $metadata->getSlug());
-
         $metadataJson = json_encode([
             "campaignId" => "",
             "variationGroupId" => "",

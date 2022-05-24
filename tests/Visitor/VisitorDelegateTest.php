@@ -162,16 +162,20 @@ class VisitorDelegateTest extends TestCase
 
         $defaultStrategy = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
             ->setMethods([
-                'setContext', 'updateContext', 'updateContextCollection',
+                'setContext', 'updateContext', 'updateContextCollection', "cacheVisitor",
                 'clearContext', 'authenticate', 'unauthenticate', 'getModification',
                 'getModificationInfo', 'synchronizeModifications', 'setConsent',
-                'activateModification', 'sendHit', 'fetchFlags','userExposed', 'getFlagValue', 'getFlagMetadata'
+                'activateModification', 'sendHit', 'fetchFlags','userExposed', 'getFlagValue', 'getFlagMetadata','lookupVisitor'
             ])->disableOriginalConstructor()
             ->getMock();
 
         $containerMock->method('get')->willReturn($defaultStrategy);
 
+        $defaultStrategy->expects($this->once())->method("lookupVisitor");
+
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
+
+
 
         $defaultContext = [
             FlagshipContext::OS_NAME => PHP_OS,
@@ -236,6 +240,9 @@ class VisitorDelegateTest extends TestCase
         //Test synchronizedModifications
         $defaultStrategy->expects($this->once())
             ->method('synchronizeModifications');
+
+        $defaultStrategy->expects($this->exactly(2))
+            ->method('cacheVisitor');
 
         $visitor->synchronizeModifications();
 

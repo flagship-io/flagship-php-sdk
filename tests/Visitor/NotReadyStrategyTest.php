@@ -127,5 +127,28 @@ class NotReadyStrategyTest extends TestCase
 
         //Test getFlagMetadata
         $notReadyStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);
+
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['lookupVisitor', 'cacheVisitor']);
+
+        $VisitorCacheImplementationMock->expects($this->never())
+            ->method("cacheVisitor");
+
+        $VisitorCacheImplementationMock->expects($this->never())
+            ->method("lookupVisitor");
+
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+        // test lookupVisitor
+        $notReadyStrategy->lookupVisitor();
+
+        // test cacheVisitor
+        $notReadyStrategy->cacheVisitor();
     }
 }

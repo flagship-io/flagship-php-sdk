@@ -113,6 +113,21 @@ class PanicStrategy extends DefaultStrategy
         return FlagMetadata::getEmpty();
     }
 
+    public function lookupVisitor()
+    {
+        //
+    }
+
+    public function cacheVisitor()
+    {
+        //
+    }
+
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
+    {
+        return [];
+    }
+
     private function log($functionName)
     {
         $this->logError(

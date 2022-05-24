@@ -36,6 +36,21 @@ class NoConsentStrategy extends DefaultStrategy
         $this->log(__FUNCTION__);
     }
 
+    public function lookupVisitor()
+    {
+        //
+    }
+
+    public function cacheVisitor()
+    {
+        //
+    }
+
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
+    {
+        return [];
+    }
+
     private function log($functionName)
     {
         $this->logError(

@@ -29,19 +29,25 @@ class FlagMetadata implements JsonSerializable
     private $campaignType;
 
     /**
+     * @var string
+     */
+    private $slug;
+
+    /**
      * @param string $campaignId
      * @param string $variationGroupId
      * @param string $variationId
      * @param bool $isReference
      * @param string $campaignType
      */
-    public function __construct($campaignId, $variationGroupId, $variationId, $isReference, $campaignType)
+    public function __construct($campaignId, $variationGroupId, $variationId, $isReference, $campaignType, $slug)
     {
         $this->campaignId = $campaignId;
         $this->variationGroupId = $variationGroupId;
         $this->variationId = $variationId;
         $this->isReference = $isReference;
         $this->campaignType = $campaignType;
+        $this->slug = $slug;
     }
 
     /**
@@ -88,12 +94,21 @@ class FlagMetadata implements JsonSerializable
 
     public static function getEmpty()
     {
-        return new FlagMetadata("", "", "", false, "");
+        return new FlagMetadata("", "", "", false, "", null);
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [
@@ -101,7 +116,8 @@ class FlagMetadata implements JsonSerializable
             "variationGroupId" => $this->getVariationGroupId(),
             "variationId" => $this->getVariationId(),
             "isReference" => $this->isReference(),
-            "campaignType" => $this->getCampaignType()
+            "campaignType" => $this->getCampaignType(),
+            "slug" => $this->getSlug()
         ];
     }
 }

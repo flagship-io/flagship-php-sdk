@@ -9,7 +9,9 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Utils\MurmurHash;
+use Flagship\Visitor\DefaultStrategy;
 use Flagship\Visitor\VisitorAbstract;
+use Flagship\Visitor\VisitorStrategyAbstract;
 
 class BucketingManager extends DecisionManagerAbstract
 {
@@ -103,7 +105,7 @@ class BucketingManager extends DecisionManagerAbstract
     /**
      * @inheritDoc
      */
-    protected function getCampaigns(VisitorAbstract $visitor)
+    public function getCampaigns(VisitorAbstract $visitor)
     {
         $bucketingCampaigns = $this->getBucketingFile();
 
@@ -138,7 +140,8 @@ class BucketingManager extends DecisionManagerAbstract
                 $variationGroups,
                 $campaign[FlagshipField::FIELD_ID],
                 $visitor,
-                $campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]
+                $campaign[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null
             );
             $visitorCampaigns = array_merge($visitorCampaigns, $currentCampaigns);
         }
@@ -152,7 +155,7 @@ class BucketingManager extends DecisionManagerAbstract
      * @param string $campaignType
      * @return array
      */
-    private function getVisitorCampaigns($variationGroups, $campaignId, VisitorAbstract $visitor, $campaignType)
+    private function getVisitorCampaigns($variationGroups, $campaignId, VisitorAbstract $visitor, $campaignType, $slug)
     {
         $visitorCampaigns = [];
         foreach ($variationGroups as $variationGroup) {
@@ -160,10 +163,11 @@ class BucketingManager extends DecisionManagerAbstract
             if ($check) {
                 $variations = $this->getVariation(
                     $variationGroup,
-                    $visitor->getVisitorId()
+                    $visitor
                 );
                 $visitorCampaigns[] = [
                     FlagshipField::FIELD_ID => $campaignId,
+                    FlagshipField::FIELD_SLUG => $slug,
                     FlagshipField::FIELD_VARIATION_GROUP_ID => $variationGroup[FlagshipField::FIELD_ID],
                     FlagshipField::FIELD_VARIATION => $variations,
                     FlagshipField::FIELD_CAMPAIGN_TYPE => $campaignType
@@ -174,20 +178,41 @@ class BucketingManager extends DecisionManagerAbstract
         return $visitorCampaigns;
     }
 
+    private function getVisitorAssignmentsHistory($variationGroupId, VisitorAbstract $visitor){
+
+        if (!is_array($visitor->visitorCache) ||
+            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]) ||
+            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY]) ||
+            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId])
+        ){
+            return null;
+        }
+        return $visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId];
+    }
+
+    private function findVariationById(array $variations, $key){
+        foreach ($variations as $item) {
+            if ($item[FlagshipField::FIELD_ID] === $key){
+                return $item;
+            }
+        }
+        return null;
+    }
+
     /**
      *
      * @param array $variationGroup
      * @param string $visitorId
      * @return array
      */
-    private function getVariation($variationGroup, $visitorId)
+    private function getVariation($variationGroup, VisitorAbstract $visitor)
     {
         $visitorVariation = [];
         if (!isset($variationGroup[FlagshipField::FIELD_ID])) {
             return $visitorVariation;
         }
         $groupVariationId = $variationGroup[FlagshipField::FIELD_ID];
-        $hash = $this->murmurHash->murmurHash3Int32($groupVariationId . $visitorId);
+        $hash = $this->murmurHash->murmurHash3Int32($groupVariationId . $visitor->getVisitorId());
         $hashAllocation = $hash % 100;
         $variations = $variationGroup[FlagshipField::FIELD_VARIATIONS];
         $totalAllocation = 0;
@@ -195,6 +220,19 @@ class BucketingManager extends DecisionManagerAbstract
         foreach ($variations as $variation) {
             if (!isset($variation[FlagshipField::FIELD_ALLOCATION])) {
                 continue;
+            }
+            $assignmentsVariationId =  $this->getVisitorAssignmentsHistory($groupVariationId, $visitor);
+            if ($assignmentsVariationId){
+                $newVariation = $this->findVariationById($variations, $assignmentsVariationId);
+                if (!$newVariation){
+                    continue;
+                }
+                $visitorVariation = [
+                    FlagshipField::FIELD_ID => $newVariation[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_MODIFICATIONS => $newVariation[FlagshipField::FIELD_MODIFICATIONS],
+                    FlagshipField::FIELD_REFERENCE => !empty($newVariation[FlagshipField::FIELD_REFERENCE])
+                ];
+                break;
             }
             $totalAllocation += $variation[FlagshipField::FIELD_ALLOCATION];
             if ($hashAllocation < $totalAllocation) {

@@ -18,6 +18,7 @@ use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Transaction;
 use Flagship\Model\FlagDTO;
+use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
@@ -25,6 +26,7 @@ use PHPUnit\Framework\TestCase;
 
 class DefaultStrategyTest extends TestCase
 {
+    use CampaignsData;
     /**
      * @return \array[][]|FlagDTO[]
      */
@@ -75,6 +77,7 @@ class DefaultStrategyTest extends TestCase
                 ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
         ]]];
     }
+
 
     public function testUpdateContext()
     {
@@ -367,29 +370,24 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame($anonymous, $visitor->getVisitorId());
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testSynchronizeModifications($modifications)
+    public function testSynchronizeModifications()
     {
-
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [],
-            'ApiManagerInterface',
-            false,
-            true,
-            true,
-            ['getCampaignModifications', 'getConfig']
-        );
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
 
-        $apiManagerStub->expects($this->once())->method('getCampaignModifications')->willReturn($modifications);
-        $apiManagerStub->method('getConfig')->willReturn($config);
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200,$this->campaigns()));
+
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($decisionManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -397,13 +395,15 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->synchronizeModifications();
 
-        $this->assertSame($modifications, $defaultStrategy->getModifications());
+        $modifications = $this->campaignsModifications();
+
+        $this->assertJsonStringEqualsJsonString(json_encode($modifications), json_encode($defaultStrategy->getModifications()));
 
         //Test getModification keyValue is string and DefaultValue is string
         //Return KeyValue
 
-        $key = $modifications[0]->getKey();
-        $keyValue = $modifications[0]->getValue();
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
         $defaultValue = "red";
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -411,8 +411,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is boolean and DefaultValue is boolean
         //Return KeyValue
 
-        $key = $modifications[4]->getKey();
-        $keyValue = $modifications[4]->getValue();
+        $key = $modifications[1]->getKey();
+        $keyValue = $modifications[1]->getValue();
         $defaultValue = false;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -420,8 +420,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is numeric and DefaultValue is numeric
         //Return KeyValue
 
-        $key = $modifications[5]->getKey();
-        $keyValue = $modifications[5]->getValue();
+        $key = $modifications[0]->getKey();
+        $keyValue = $modifications[0]->getValue();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -429,8 +429,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is string and DefaultValue is not string
         //Return DefaultValue
 
-        $key = $modifications[0]->getKey();
-        $keyValue = $modifications[0]->getValue();
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
         $defaultValue = 25; // default is numeric
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
@@ -457,7 +457,7 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is null
         //Return DefaultValue
 
-        $key = $modifications[2]->getKey();
+        $key = $modifications[4]->getKey();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
@@ -465,8 +465,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is empty
         //Return DefaultValue
 
-        $key = $modifications[3]->getKey();
-        $keyValue = $modifications[3]->getValue();
+        $key = $modifications[5]->getKey();
+        $keyValue = $modifications[5]->getValue();
         $defaultValue = "blue-border";
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -512,29 +512,24 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->synchronizeModifications();
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testFetchFlags($modifications)
+
+    public function testFetchFlags()
     {
-
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [],
-            'ApiManagerInterface',
-            false,
-            true,
-            true,
-            ['getCampaignModifications', 'getConfig']
-        );
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
 
-        $apiManagerStub->expects($this->once())->method('getCampaignModifications')->willReturn($modifications);
-        $apiManagerStub->method('getConfig')->willReturn($config);
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $httpClientMock->expects($this->once())->method("post")->willReturn(new HttpResponse(200,$this->campaigns()));
+
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($decisionManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -542,13 +537,15 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->fetchFlags();
 
-        $this->assertSame($modifications, $visitor->getFlagsDTO());
+        $modifications = $this->campaignsModifications();
+
+        $this->assertJsonStringEqualsJsonString(json_encode($modifications), json_encode($visitor->getFlagsDTO()));
 
         //Test getModification keyValue is string and DefaultValue is string
         //Return KeyValue
 
-        $key = $modifications[0]->getKey();
-        $keyValue = $modifications[0]->getValue();
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
         $defaultValue = "red";
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -556,8 +553,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is boolean and DefaultValue is boolean
         //Return KeyValue
 
-        $key = $modifications[4]->getKey();
-        $keyValue = $modifications[4]->getValue();
+        $key = $modifications[1]->getKey();
+        $keyValue = $modifications[1]->getValue();
         $defaultValue = false;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -565,8 +562,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is numeric and DefaultValue is numeric
         //Return KeyValue
 
-        $key = $modifications[5]->getKey();
-        $keyValue = $modifications[5]->getValue();
+        $key = $modifications[0]->getKey();
+        $keyValue = $modifications[0]->getValue();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -574,8 +571,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is string and DefaultValue is not string
         //Return DefaultValue
 
-        $key = $modifications[0]->getKey();
-        $keyValue = $modifications[0]->getValue();
+        $key = $modifications[2]->getKey();
+        $keyValue = $modifications[2]->getValue();
         $defaultValue = 25; // default is numeric
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
@@ -602,7 +599,7 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is null
         //Return DefaultValue
 
-        $key = $modifications[2]->getKey();
+        $key = $modifications[4]->getKey();
         $defaultValue = 14;
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($defaultValue, $modificationValue);
@@ -610,8 +607,8 @@ class DefaultStrategyTest extends TestCase
         //Test getModification keyValue is empty
         //Return DefaultValue
 
-        $key = $modifications[3]->getKey();
-        $keyValue = $modifications[3]->getValue();
+        $key = $modifications[5]->getKey();
+        $keyValue = $modifications[5]->getValue();
         $defaultValue = "blue-border";
         $modificationValue = $defaultStrategy->getModification($key, $defaultValue);
         $this->assertSame($keyValue, $modificationValue);
@@ -657,12 +654,20 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->synchronizeModifications();
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testGetModificationWithActive($modifications)
+
+    public function testGetModificationWithActive()
     {
+        $modifications = $this->campaignsModifications();
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -673,7 +678,6 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
 
         $trackerManagerStub = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
@@ -685,16 +689,6 @@ class DefaultStrategyTest extends TestCase
             ['sendActive']
         );
 
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient(), $config],
-            'ApiManagerInterface',
-            true,
-            true,
-            true,
-            ['getCampaignModifications']
-        );
-
 
         $config->setLogManager($logManagerStub);
 
@@ -702,10 +696,10 @@ class DefaultStrategyTest extends TestCase
             ->setConfig($config)
             ->setTrackingManager($trackerManagerStub);
 
-        $apiManagerStub->method('getCampaignModifications')
-            ->willReturn($modifications);
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200, $this->campaigns()));
 
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($decisionManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
@@ -716,7 +710,7 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->fetchFlags();
 
-        $defaultStrategy->getModification($modifications[0]->getKey(), 'defaultValue', true);
+        $defaultStrategy->getModification($modifications[0]->getKey(), 10, true);
 
         //Test activate on get Modification when value is null
 
@@ -737,11 +731,12 @@ class DefaultStrategyTest extends TestCase
             false,
             true,
             true,
-            ['getCampaignModifications', 'getConfig']
+            ['getModifications', 'getConfig', 'getCampaigns']
         );
         $config = new DecisionApiConfig('envId', 'apiKey');
 
-        $apiManagerStub->method('getCampaignModifications')->willReturn($modifications);
+        $apiManagerStub->method('getCampaigns')->willReturn([]);
+        $apiManagerStub->method('getModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
 
         $configManager = (new ConfigManager())->setConfig($config);
@@ -811,15 +806,16 @@ class DefaultStrategyTest extends TestCase
      */
     public function testGetModificationInfo($modifications)
     {
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [],
-            'ApiManagerInterface',
-            false,
-            true,
-            true,
-            ['getCampaignModifications']
+        $modifications = $this->campaignsModifications();
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
         );
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
 
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
@@ -838,16 +834,15 @@ class DefaultStrategyTest extends TestCase
             false
         );
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
-
 
         $config->setLogManager($logManagerStub);
         $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($decisionManager);
 
         $paramsExpected = [];
 
-        $apiManagerStub->method('getCampaignModifications')->willReturn($modifications);
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200, $this->campaigns()));
 
         $logManagerStub->expects($this->exactly(2))->method('error')
             ->withConsecutive($paramsExpected);
@@ -910,15 +905,16 @@ class DefaultStrategyTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient(), $config],
+        $modifications = $this->campaignsModifications();
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
             '',
-            true,
-            true,
-            true,
-            ['getCampaignModifications']
+            false
         );
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
 
         $trackerManagerStub = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
@@ -930,12 +926,12 @@ class DefaultStrategyTest extends TestCase
             ['sendActive']
         );
 
-        $apiManagerStub->method('getCampaignModifications')
-            ->willReturn($modifications);
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200, $this->campaigns()));
 
         $configManager = (new ConfigManager())
             ->setConfig($config)
-            ->setDecisionManager($apiManagerStub)
+            ->setDecisionManager($decisionManager)
             ->setTrackingManager($trackerManagerStub);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
@@ -984,22 +980,23 @@ class DefaultStrategyTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
-        $apiManagerStub = $this->getMockForAbstractClass(
-            'Flagship\Decision\DecisionManagerAbstract',
-            [new HttpClient(), $config],
+        $modifications = $this->campaignsModifications();
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
             '',
-            true,
-            true,
-            true,
-            ['getCampaignModifications']
+            false
         );
 
-        $apiManagerStub->method('getCampaignModifications')
-            ->willReturn($modifications);
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $httpClientMock->expects($this->once())->method("post")
+            ->willReturn(new HttpResponse(200, $this->campaigns()));
 
         $configManager = (new ConfigManager())
             ->setConfig($config)
-            ->setDecisionManager($apiManagerStub);
+            ->setDecisionManager($decisionManager);
 
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
@@ -1362,7 +1359,7 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $key = "key";
-        $metadata = new FlagMetadata("campaignID", "varGroupID", "varID", true, "");
+        $metadata = new FlagMetadata("campaignID", "varGroupID", "varID", true, "ab", "slug");
 
         $functionName = "flag.metadata";
 
@@ -1379,4 +1376,526 @@ class DefaultStrategyTest extends TestCase
         $metadataValue = $defaultStrategy->getFlagMetadata($key, $metadata, false);
         $this->assertEquals(FlagMetadata::getEmpty(), $metadataValue);
     }
+
+    public function testLookupVisitor(){
+        $config = new DecisionApiConfig('envId', 'apiKey');
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error','info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['lookupVisitor']);
+
+
+        $configManager = (new ConfigManager())->setConfig($config);
+
+        $container = new Container();
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $visitorCache1 = [
+            VisitorStrategyAbstract::VERSION => 1
+        ];
+
+        $differentVisitorId = "different visitorID";
+        $visitorCache2 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $differentVisitorId
+            ]
+        ];
+
+        $visitorCache3 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId
+            ]
+        ];
+
+        $visitorCache4 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::CAMPAIGNS => "not an array"
+            ]
+        ];
+        $visitorCache5 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::CAMPAIGNS => [
+                    "anythings"
+                ]
+            ]
+        ];
+
+        $visitorCache6 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::CAMPAIGNS => [
+                    [
+                        FlagshipField::FIELD_CAMPAIGN_ID => "c8pimlr7n0ig3a0pt2ig",
+                        FlagshipField::FIELD_VARIATION_GROUP_ID => "c8pimlr7n0ig3a0pt2jg",
+                        FlagshipField::FIELD_VARIATION_ID => "c8pimlr7n0ig3a0pt2kg",
+                        FlagshipField::FIELD_IS_REFERENCE => false,
+                        FlagshipField::FIELD_CAMPAIGN_TYPE =>"ab",
+                        VisitorStrategyAbstract::ACTIVATED => false,
+                        VisitorStrategyAbstract::FLAGS => [
+                            "Number" => 5,
+                            "isBool"=> false,
+                            "background" => "EE3300",
+                            "borderColor" => "blue",
+                            "Null" => null,
+                            "Empty" => ""
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $VisitorCacheImplementationMock->expects($this->exactly(8))
+            ->method("lookupVisitor")
+            ->with($visitorId)
+            ->willReturnOnConsecutiveCalls(null,[],
+                $visitorCache1, $visitorCache2,
+                $visitorCache3, $visitorCache4, $visitorCache5,
+                $visitorCache6);
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $functionName = "lookupVisitor";
+
+        $lookupVisitorJson  = function () use($flagshipSdk, $functionName){
+            return ["[$flagshipSdk] " . VisitorStrategyAbstract::LOOKUP_VISITOR_JSON_OBJECT_ERROR,
+                [FlagshipConstant::TAG => $functionName]];
+        };
+
+        $logManagerStub->expects($this->exactly(5))->method('error')
+            ->withConsecutive(
+                $lookupVisitorJson(),
+                $lookupVisitorJson(),
+                ["[$flagshipSdk] " . sprintf(VisitorStrategyAbstract::VISITOR_ID_MISMATCH_ERROR, $differentVisitorId, $visitorId),
+                    [FlagshipConstant::TAG => $functionName]],
+                $lookupVisitorJson()
+            );
+
+        // Test return null
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertCount(0,$visitor->visitorCache);
+
+        // test return empty array
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertCount(0,$visitor->visitorCache);
+
+        // test return array["version"=>1] only
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertCount(0,$visitor->visitorCache);
+
+        // test return cache with different visitor id
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertCount(0,$visitor->visitorCache);
+
+        // test return cache without campaings
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache3,$visitor->visitorCache);
+
+        // test return cache with is_array(campaings) === false
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache3,$visitor->visitorCache);
+
+        // test return cache with invalid campaigns
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache3,$visitor->visitorCache);
+
+        // test return cache with valid cache
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache6,$visitor->visitorCache);
+    }
+
+    public function testCacheVisitor(){
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $campaignsData = $this->campaigns();
+        $campaignsData2 = $this->campaigns2();
+
+        $httpClientMock->expects($this->exactly(3))->method("post")
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(200, $campaignsData),
+                new HttpResponse(200, $campaignsData2),
+                new HttpResponse(200, $campaignsData2));
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error','info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['lookupVisitor', 'cacheVisitor']);
+
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setDecisionManager($decisionManager);
+
+
+        $containerMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\ContainerInterface',
+            ['get'],
+            '',
+            false
+        );
+
+
+        $containerGetMethod = function () {
+            $args = func_get_args();
+            $params = $args[1];
+            return new DefaultStrategy($params[0]);
+        };
+
+        $containerMock->method('get')->willReturnCallback($containerGetMethod);
+
+        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
+
+        $assignmentsHistory = [];
+        $campaigns = [];
+        foreach ($campaignsData[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
+            $variation = $campaign[FlagshipField::FIELD_VARIATION];
+            $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
+            $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
+
+            $campaigns[]=[
+                FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null,
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                VisitorStrategyAbstract::ACTIVATED => false,
+                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+            ];
+        }
+
+        $visitorCache = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
+                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
+                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
+                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            ]
+        ];
+
+        $assignmentsHistory2 = [];
+        $campaigns2 = [];
+        foreach ($campaignsData2[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
+            $variation = $campaign[FlagshipField::FIELD_VARIATION];
+            $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
+            $assignmentsHistory2[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
+
+            $campaigns2[]=[
+                FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null,
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                VisitorStrategyAbstract::ACTIVATED => false,
+                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+            ];
+        }
+
+
+        $visitorCache2 = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
+                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
+                VisitorStrategyAbstract::CAMPAIGNS => $campaigns2,
+                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY => array_merge($assignmentsHistory, $assignmentsHistory2)
+            ]
+        ];
+
+        $exception = new \Exception("Message error");
+
+        $VisitorCacheImplementationMock->expects($this->exactly(3))
+            ->method("cacheVisitor")
+            ->withConsecutive([$visitorId, $visitorCache], [$visitorId, $visitorCache2])
+            ->willReturnOnConsecutiveCalls(null, null, $this->throwException($exception));
+
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $functionName = "cacheVisitor";
+
+        $visitor->fetchFlags();
+
+        $visitor->fetchFlags();
+
+        $logManagerStub->expects($this->exactly(1))->method('error')
+            ->withConsecutive(
+                ["[$flagshipSdk] " . $exception->getMessage(),
+                    [FlagshipConstant::TAG => $functionName]]
+            );
+
+        $visitor->fetchFlags();
+    }
+
+    public function testFlushVisitor(){
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+
+        $httpClientMock->expects($this->exactly(0))->method("post");
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error','info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['flushVisitor']);
+
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setDecisionManager($decisionManager)
+            ->setTrackingManager($trackerManager);
+
+        $container = new Container();
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $exception = new \Exception("Message error");
+
+        $VisitorCacheImplementationMock->expects($this->exactly(2))
+            ->method("flushVisitor")
+            ->withConsecutive([$visitorId])
+            ->willReturnOnConsecutiveCalls(null, $this->throwException($exception));
+
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+        $defaultStrategy->setConsent(false); // will flush Visitor cache
+
+        $defaultStrategy->setConsent(true); // will not flush Visitor cache
+
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $functionName = "flushVisitor";
+
+        $logManagerStub->expects($this->exactly(1))->method('error')
+            ->withConsecutive(
+                ["[$flagshipSdk] " . $exception->getMessage(),
+                    [FlagshipConstant::TAG => $functionName]]
+            );
+        $defaultStrategy->setConsent(false); // will throw exception
+
+    }
+
+
+    public function testFetchVisitorCampaigns(){
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $campaignsData = $this->campaigns();
+
+        $httpClientMock->expects($this->exactly(2))
+            ->method("post")
+            ->willThrowException(new \Exception());
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error','info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $configManager = (new ConfigManager())
+            ->setConfig($config)
+            ->setDecisionManager($decisionManager);
+
+
+        $containerMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\ContainerInterface',
+            ['get'],
+            '',
+            false
+        );
+
+
+        $containerGetMethod = function () {
+            $args = func_get_args();
+            $params = $args[1];
+            return new DefaultStrategy($params[0]);
+        };
+
+        $containerMock->method('get')->willReturnCallback($containerGetMethod);
+
+        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
+
+
+        $assignmentsHistory = [];
+        $campaigns = [];
+        foreach ($campaignsData[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
+            $variation = $campaign[FlagshipField::FIELD_VARIATION];
+            $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
+            $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
+
+            $campaigns[]=[
+                FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                VisitorStrategyAbstract::ACTIVATED => false,
+                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+            ];
+        }
+
+        $visitorCache = [
+            VisitorStrategyAbstract::VERSION => 1,
+            VisitorStrategyAbstract::DATA => [
+                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
+                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
+                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
+                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
+                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            ]
+        ];
+
+
+        $visitor->visitorCache = $visitorCache;
+
+        $visitor->fetchFlags();
+
+        $this->assertCount(7,$visitor->getFlagsDTO());
+
+        $visitor->visitorCache = [];
+
+        $visitor->fetchFlags();
+
+        $this->assertCount(0,$visitor->getFlagsDTO());
+    }
+
 }

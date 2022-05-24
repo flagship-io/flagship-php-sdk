@@ -35,6 +35,7 @@ class VisitorDelegate extends VisitorAbstract
         array $context = [],
         $hasConsented = false
     ) {
+        parent::__construct();
         $this->setDependencyIContainer($dependencyIContainer);
         $this->setConfig($configManager->getConfig());
         $this->setVisitorId($visitorId);
@@ -48,6 +49,8 @@ class VisitorDelegate extends VisitorAbstract
             $anonymousId  = $this->newGuid();
             $this->setAnonymousId($anonymousId);
         }
+
+        $this->getStrategy()->lookupVisitor();
     }
 
     private function loadPredefinedContext()
@@ -127,6 +130,7 @@ class VisitorDelegate extends VisitorAbstract
     public function synchronizeModifications()
     {
         $this->getStrategy()->synchronizeModifications();
+        $this->getStrategy()->cacheVisitor();
     }
 
 
@@ -149,6 +153,7 @@ class VisitorDelegate extends VisitorAbstract
     public function fetchFlags()
     {
         $this->getStrategy()->fetchFlags();
+        $this->getStrategy()->cacheVisitor();
     }
 
     /**
@@ -197,10 +202,11 @@ class VisitorDelegate extends VisitorAbstract
                 $flagDTO->getVariationGroupId(),
                 $flagDTO->getVariationId(),
                 $flagDTO->getIsReference(),
-                $flagDTO->getCampaignType()
+                $flagDTO->getCampaignType(),
+                $flagDTO->getSlug()
             );
         } else {
-            $metadata = new FlagMetadata("", "", "", false, "");
+            $metadata = new FlagMetadata("", "", "", false, "", null);
         }
         return new Flag($key, $this, $defaultValue, $metadata, $flagDTO);
     }

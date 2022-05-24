@@ -48,7 +48,8 @@ class ModificationTest extends TestCase
             FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
             FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
             FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference(),
-            FlagshipField::FIELD_VALUE => $modification->getValue()
+            FlagshipField::FIELD_VALUE => $modification->getValue(),
+            FlagshipField::FIELD_SLUG => $modification->getSlug()
         ];
 
         $this->assertJsonStringEqualsJsonString(json_encode($arrayToJson), json_encode($modification));

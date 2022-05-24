@@ -3,10 +3,8 @@
 namespace Flagship\Decision;
 
 use Exception;
-use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
-use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor\VisitorAbstract;
 
 /**
@@ -23,7 +21,7 @@ class ApiManager extends DecisionManagerAbstract
      * @param VisitorAbstract $visitor
      * @return array return an associative array of campaigns
      */
-    protected function getCampaigns(VisitorAbstract $visitor)
+    public function getCampaigns(VisitorAbstract $visitor)
     {
         try {
             $headers = $this->buildHeader($this->getConfig()->getApiKey());
@@ -56,7 +54,7 @@ class ApiManager extends DecisionManagerAbstract
                 FlagshipConstant::TAG => __FUNCTION__
             ]);
         }
-        return [];
+        return null;
     }
 
     /**

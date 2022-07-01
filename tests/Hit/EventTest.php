@@ -80,12 +80,12 @@ class EventTest extends TestCase
             return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
         };
 
-        $logManagerMock->expects($this->exactly(4))->method('error')
+        $logManagerMock->expects($this->exactly(5))->method('error')
             ->withConsecutive(
                 ["[$flagshipSdk] " . sprintf(Event::CATEGORY_ERROR, 'category')],
                 [$errorMessage('action', 'string')],
                 [$errorMessage('eventLabel', 'string')],
-                [$errorMessage('eventValue', 'numeric')]
+                ["[$flagshipSdk] " . Event::VALUE_FIELD_ERROR,['TAG' => 'setValue']]
             );
 
         //Test category validation with empty
@@ -99,6 +99,9 @@ class EventTest extends TestCase
 
         //Test value validation with no numeric
         $event->setValue('abc');
+
+        //Test value validation with no numeric
+        $event->setValue(2.5);
 
         $this->assertSame($eventArray, $event->toArray());
 

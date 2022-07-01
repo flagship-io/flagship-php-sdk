@@ -150,7 +150,7 @@ class Event extends HitAbstract
      */
     public function setValue($value)
     {
-        if (!is_int($value) || $value < 0) {
+        if (!is_int($value) ||  $value < 0) {
             $this->logError(
                 $this->config,
                 self::VALUE_FIELD_ERROR,

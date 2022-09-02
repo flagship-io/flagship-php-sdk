@@ -307,7 +307,6 @@ abstract class HitAbstract
     public function toArray()
     {
         $data = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
             FlagshipConstant::T_API_ITEM => $this->getType(),

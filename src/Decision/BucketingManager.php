@@ -7,6 +7,7 @@ use Flagship\Config\BucketingConfig;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Hit\Segment;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Utils\MurmurHash;
 use Flagship\Visitor\DefaultStrategy;
@@ -61,28 +62,8 @@ class BucketingManager extends DecisionManagerAbstract
         if (count($visitor->getContext())<= self::NB_MIN_CONTEXT_KEYS){
             return;
         }
-        $envId = $this->getConfig()->getEnvId();
-        $url = sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId);
-        $headers = $this->buildHeader($this->getConfig()->getApiKey());
-        $this->httpClient->setHeaders($headers);
-        $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
-        $postBody = [
-            "visitorId" => $visitor->getVisitorId(),
-            "type" => "CONTEXT",
-            "data" => $visitor->getContext()
-        ];
-        try {
-            $response = $this->httpClient->post($url, [], $postBody);
-            if ($response->getStatusCode() >= 400) {
-                $this->logError($this->getConfig(), $response->getBody(), [
-                    FlagshipConstant::TAG => __FUNCTION__
-                ]);
-            }
-        } catch (Exception $exception) {
-            $this->logError($this->getConfig(), $exception->getMessage(), [
-                FlagshipConstant::TAG => __FUNCTION__
-            ]);
-        }
+        $segmentHit = new Segment($visitor->getContext());
+        $visitor->sendHit($segmentHit);
     }
 
     protected  function getBucketingFile(){

@@ -38,4 +38,13 @@ class HitType
      * @var string
      */
     const EVENT = "EVENT";
+
+    /**
+     * @var string
+     */
+    const ACTIVATE = "ACTIVATE";
+
+    const CONSENT = "CONSENT";
+
+    const SEGMENT = "SEGMENT";
 }

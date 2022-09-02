@@ -26,6 +26,7 @@ class VisitorDelegate extends VisitorAbstract
      * @param string $visitorId : visitor unique identifier.
      * @param bool $isAuthenticated
      * @param array $context : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
+     * @param bool $hasConsented
      */
     public function __construct(
         ContainerInterface $dependencyIContainer,
@@ -38,7 +39,7 @@ class VisitorDelegate extends VisitorAbstract
         parent::__construct();
         $this->setDependencyIContainer($dependencyIContainer);
         $this->setConfig($configManager->getConfig());
-        $this->setVisitorId($visitorId);
+        $this->setVisitorId($visitorId ?: $this->newGuid());
         $this->setContext($context);
         $this->setConfigManager($configManager);
         $this->loadPredefinedContext();

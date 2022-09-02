@@ -111,6 +111,8 @@ class FlagshipConstant
     const IP_API_ITEM = "ip";
     const IQ_API_ITEM = "iq";
     const IV_API_ITEM = "iv";
+    const VISITOR_CONSENT = "vc";
+    const SL_API_ITEM = "sl";
     const EVENT_CATEGORY_API_ITEM = "ec";
     const EVENT_ACTION_API_ITEM = "ea";
     const EVENT_LABEL_API_ITEM = "el";
@@ -128,6 +130,7 @@ class FlagshipConstant
     const TIMEOUT_TYPE_ERROR = "timeout must be numeric and > 0";
     const LOG_LEVEL_ERROR = "Loglevel value invalid, please use \Flagship\Enum\LogLevel ";
     const BUCKETING_DIRECTORY = "flagship";
+
 
     const FS_CLIENT = "fs_client";
     const FS_VERSION = "fs_version";

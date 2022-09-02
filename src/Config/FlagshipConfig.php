@@ -55,6 +55,8 @@ abstract class FlagshipConfig implements JsonSerializable
      */
     private $visitorCacheImplementation;
 
+    private 
+
 
     /**
      * Create a new FlagshipConfig configuration.

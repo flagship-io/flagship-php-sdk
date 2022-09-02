@@ -7,6 +7,8 @@ use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Flag\FlagMetadata;
+use Flagship\Hit\Activate;
+use Flagship\Hit\Consent;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 use Flagship\Traits\ValidatorTrait;
@@ -23,13 +25,11 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function setConsent($hasConsented)
     {
-        $trackingManager = $this->getTrackingManager(__FUNCTION__);
         if (!$hasConsented){
             $this->flushVisitor();
         }
-        if ($trackingManager) {
-            $trackingManager->sendConsentHit($this->getVisitor(), $this->getConfig());
-        }
+        $consentHit = new Consent($hasConsented);
+        $this->sendHit($consentHit);
     }
 
     /**
@@ -311,7 +311,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
         if (!$trackingManager) {
             return ;
         }
-        $trackingManager->sendActive($this->getVisitor(), $modification);
+        $activateHit = new Activate($modification->getVariationGroupId(), $modification->getVariationId());
+        $this->sendHit($activateHit);
     }
 
     /**
@@ -370,8 +371,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
             );
             return ;
         }
-        $trackingManager =  $this->getTrackingManager(__FUNCTION__);
-        $trackingManager->sendActive($this->getVisitor(), $flag);
+        $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
+        $this->sendHit($activateHit);
     }
 
     public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)

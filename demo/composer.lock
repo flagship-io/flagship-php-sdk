@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9bab2588ddb7a99a366987a284f28ca",
+    "content-hash": "bde5e4525c488b989f9d21c152937b5f",
     "packages": [
         {
             "name": "flagship-io/flagship-php-sdk",
-            "version": "dev-qa",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flagship-io/flagship-php-sdk.git",
-                "reference": "579485242b81a260932212767b31d69dc9e468e8"
+                "reference": "f51b525216f9ae95bb40602516e2b969c9bd9325"
             },
             "require": {
                 "ext-curl": "*",
@@ -24,9 +24,6 @@
                 "phpunit/phpunit": "^4.8",
                 "squizlabs/php_codesniffer": "^3.6"
             },
-            "bin": [
-                "bin/flagship"
-            ],
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -64,7 +61,7 @@
                 "flagship-php",
                 "sdk"
             ],
-            "time": "2021-06-24T14:51:49+00:00"
+            "time": "2022-07-04T11:55:46+00:00"
         },
         {
             "name": "psr/log",
@@ -120,12 +117,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "flagship-io/flagship-php-sdk": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

@@ -128,14 +128,14 @@ class ApiManagerTest extends TestCase
             "visitorId" => $visitor->getVisitorId(),
             "anonymousId" => $visitor->getAnonymousId(),
             "trigger_hit" => false,
-            "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null
+            "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
+            "visitor_consent" => $visitor->hasConsented()
         ];
 
         $url = FlagshipConstant::BASE_API_URL . '/' . $config->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS;
 
         $query = [
             FlagshipConstant::EXPOSE_ALL_KEYS => "true",
-            FlagshipConstant::SEND_CONTEXT_EVENT => "false"
         ];
 
         $httpPost->withConsecutive(
@@ -143,7 +143,13 @@ class ApiManagerTest extends TestCase
                 $url, [FlagshipConstant::EXPOSE_ALL_KEYS => "true"], $postData
             ],
             [
-                $url, $query, $postData
+                $url, [FlagshipConstant::EXPOSE_ALL_KEYS => "true"], [
+                "visitorId" => $visitor->getVisitorId(),
+                "anonymousId" => $visitor->getAnonymousId(),
+                "trigger_hit" => false,
+                "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
+                "visitor_consent" => false
+            ]
             ]
         );
 

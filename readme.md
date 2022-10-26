@@ -21,11 +21,11 @@
 - Carry out A/B tests by easily assigning feature variations to groups of users.
 ​
 <img src="https://www.flagship.io/wp-content/uploads/demo-setup.png" alt="drawing" width="600"/>
-​
+
 Flagship also allows you to choose whatever implementation method works for you from our many available SDKs or directly through a REST API. Additionally, our architecture is based on multi-cloud providers that offer high performance and highly-scalable managed services.
-​
+
 **To learn more:**
-​
+
 - [Solution overview](https://www.flagship.io/#showvideo) - A 5mn video demo :movie_camera:
 - [Documentation](https://docs.developers.flagship.io/) - Our dev portal with guides, how tos, API and SDK references
 - [Sign up for a free trial](https://www.flagship.io/sign-up/) - Create your free account

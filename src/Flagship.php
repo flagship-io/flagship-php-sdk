@@ -126,7 +126,7 @@ class Flagship
 
             $configManager->setDecisionManager($decisionManager);
 
-            $trackingManager = $container->get('Flagship\Api\TrackingManager');
+            $trackingManager = $container->get('Flagship\Api\TrackingManager',[$httpClient, $config]);
 
             $configManager->setTrackingManager($trackingManager);
 

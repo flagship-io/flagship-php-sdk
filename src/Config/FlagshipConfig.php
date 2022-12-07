@@ -2,7 +2,9 @@
 
 namespace Flagship\Config;
 
+use Flagship\Cache\IHitCacheImplementation;
 use Flagship\Cache\IVisitorCacheImplementation;
+use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
@@ -55,9 +57,20 @@ abstract class FlagshipConfig implements JsonSerializable
      */
     private $visitorCacheImplementation;
 
-    private 
+    /**
+     * @var IHitCacheImplementation
+     */
+    private $hitCacheImplementation;
 
+    /**
+     * @var int
+     */
+    protected $batchIntervals;
 
+    /**
+     * @var int
+     */
+    protected $cacheStrategy;
     /**
      * Create a new FlagshipConfig configuration.
      *
@@ -68,6 +81,7 @@ abstract class FlagshipConfig implements JsonSerializable
     {
         $this->envId = $envId;
         $this->apiKey = $apiKey;
+        $this->cacheStrategy = CacheStrategy::CONTINUOUS_CACHING;
     }
 
     /**
@@ -201,6 +215,42 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
+     * @return int
+     */
+    public function getBatchIntervals()
+    {
+        return $this->batchIntervals;
+    }
+
+    /**
+     * @param int $batchIntervals
+     * @return FlagshipConfig
+     */
+    public function setBatchIntervals($batchIntervals)
+    {
+        $this->batchIntervals = $batchIntervals;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCacheStrategy()
+    {
+        return $this->cacheStrategy;
+    }
+
+    /**
+     * @param int $cacheStrategy
+     * @return FlagshipConfig
+     */
+    public function setCacheStrategy($cacheStrategy)
+    {
+        $this->cacheStrategy = $cacheStrategy;
+        return $this;
+    }
+
+    /**
      * @return callable
      */
     public function getStatusChangedCallback()
@@ -248,6 +298,23 @@ abstract class FlagshipConfig implements JsonSerializable
         return $this;
     }
 
+    /**
+     * @return IHitCacheImplementation
+     */
+    public function getHitCacheImplementation()
+    {
+        return $this->hitCacheImplementation;
+    }
+
+    /**
+     * @param IHitCacheImplementation $hitCacheImplementation
+     * @return FlagshipConfig
+     */
+    public function setHitCacheImplementation($hitCacheImplementation)
+    {
+        $this->hitCacheImplementation = $hitCacheImplementation;
+        return $this;
+    }
 
 
     /**

@@ -63,7 +63,7 @@ class Activate extends HitAbstract
      */
     public function toArray()
     {
-        $arrayParent = [
+        $apiKeys = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
             FlagshipConstant::VARIATION_ID_API_ITEM => $this->getVisitorId(),
             FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $this->getVariationGroupId(),
@@ -72,11 +72,11 @@ class Activate extends HitAbstract
         ];
 
         if ($this->getVisitorId() && $this->getAnonymousId()){
-            $arrayParent[FlagshipConstant::VISITOR_ID_API_ITEM]  = $this->getVisitorId();
-            $arrayParent[FlagshipConstant::ANONYMOUS_ID] = $this->getAnonymousId();
+            $apiKeys[FlagshipConstant::VISITOR_ID_API_ITEM]  = $this->getVisitorId();
+            $apiKeys[FlagshipConstant::ANONYMOUS_ID] = $this->getAnonymousId();
         }
 
-        return $arrayParent;
+        return $apiKeys;
     }
 
     /**

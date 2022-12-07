@@ -22,6 +22,7 @@ abstract class HitAbstract
      * @var string
      */
     private $visitorId;
+
     /**
      * @var string
      */
@@ -65,6 +66,16 @@ abstract class HitAbstract
     protected $sessionNumber;
 
     /**
+     * @var string
+     */
+    protected $key;
+
+    /**
+     * @var int
+     */
+    protected $createdAt;
+
+    /**
      * HitAbstract constructor.
      *
      * @param string $type : Hit type
@@ -78,6 +89,7 @@ abstract class HitAbstract
     public function __construct($type)
     {
         $this->type = $type;
+        $this->createdAt = 	round(microtime(true) * 1000);
     }
 
     /**
@@ -296,8 +308,41 @@ abstract class HitAbstract
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
 
+    /**
+     * @param string $key
+     * @return HitAbstract
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+        return $this;
+    }
 
+    /**
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param string $createdAt
+     * @return HitAbstract
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
 
     /**
      * Return an associative array of the class with Api parameters as keys

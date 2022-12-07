@@ -17,6 +17,8 @@ class FlagshipConstant
 
     const DEFAULT_POLLING_INTERVAL = 1;
 
+    const DEFAULT_HIT_CACHE_TIME_MS = 14400000;
+
     /**
      * SDK language
      */
@@ -32,6 +34,7 @@ class FlagshipConstant
     const HIT_CONSENT_URL = "https://ariane.abtasty.com";
     const URL_CAMPAIGNS = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
+    const HIT_EVENT_URL = 'https://events.flagship.io';
 
     const EXPOSE_ALL_KEYS = "exposeAllKeys";
     const SEND_CONTEXT_EVENT = "sendContextEvent";
@@ -113,6 +116,7 @@ class FlagshipConstant
     const IV_API_ITEM = "iv";
     const VISITOR_CONSENT = "vc";
     const SL_API_ITEM = "sl";
+    const H_API_ITEM = 'h';
     const EVENT_CATEGORY_API_ITEM = "ec";
     const EVENT_ACTION_API_ITEM = "ea";
     const EVENT_LABEL_API_ITEM = "el";
@@ -121,6 +125,7 @@ class FlagshipConstant
     const SCREEN_RESOLUTION_API_ITEM = "sr";
     const USER_LANGUAGE = "ul";
     const SESSION_NUMBER = "sn";
+    const QT_API_ITEM = 'qt';
 
     const HEADER_X_API_KEY = 'x-api-key';
     const HEADER_CONTENT_TYPE = 'Content-Type';
@@ -135,4 +140,27 @@ class FlagshipConstant
     const FS_CLIENT = "fs_client";
     const FS_VERSION = "fs_version";
     const FS_USERS = "fs_users";
+
+    const FS_CONSENT = 'fs_consent';
+    const TRACKING_MANAGER = 'TRACKING_MANAGER';
+    const HIT_ADDED_IN_QUEUE = "The HIT has been added into the pool queue : '%s'";
+    const ACTIVATE_HIT_ADDED_IN_QUEUE = "The ACTIVATE hit has been added into the pool queue : '%s'";
+    const HIT_SENT_SUCCESS = "%s has been sent : %s";
+    const TRACKING_MANAGER_ERROR = '%s Unexpected Error occurred %s';
+    const BATCH_HIT = 'BATCH_HIT';
+    const PROCESS_CACHE = 'CACHE';
+    const SEND_BATCH = 'SEND BATCH';
+    const SEND_ACTIVATE = 'SEND ACTIVATE';
+
+    const VISITOR_CACHE_ERROR = 'visitor {0}. {1} threw an exception {2}';
+    const HIT_CACHE_ERROR = '{0} threw an exception {1}';
+    const VISITOR_CACHE_LOADED = 'Visitor {0}, visitor cache has been loaded from database: {1}';
+    const VISITOR_CACHE_SAVED = 'Visitor {0}, visitor cache has been saved into database : {0}';
+    const VISITOR_CACHE_FLUSHED = 'Visitor {0}, visitor cache has been flushed from database.';
+    const HIT_CACHE_LOADED = 'Hits cache has been loaded from database: {0}';
+    const HIT_CACHE_SAVED = 'Hit cache has been saved into database : %s';
+    const HIT_DATA_FLUSHED = 'The following hit keys have been flushed from database : %s';
+    const ALL_HITS_FLUSHED = 'All hits cache has been flushed from database';
+    const BATCH = "BATCH";
+
 }

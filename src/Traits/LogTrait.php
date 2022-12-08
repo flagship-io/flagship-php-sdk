@@ -8,6 +8,17 @@ use Flagship\Enum\LogLevel;
 
 trait LogTrait
 {
+
+    protected function formatArgs($args = []){
+        $formatArgs = [];
+        foreach ($args as $arg) {
+            if (is_array($arg)){
+                $arg = json_encode($arg);
+            }
+            $formatArgs[] = $arg;
+        }
+        return $formatArgs;
+    }
     /**
      * @param FlagshipConfig $config
      * @param $tag
@@ -19,7 +30,7 @@ trait LogTrait
         if ($config->getLogLevel() < LogLevel::DEBUG || is_null($config->getLogManager())) {
             return;
         }
-        $customMessage = sprintf($message, ...$args);
+        $customMessage = sprintf($message, ...$this->formatArgs($args));
         $this->logDebug($config, $customMessage, [FlagshipConstant::TAG => $tag]);
     }
 
@@ -47,7 +58,7 @@ trait LogTrait
         if ($config->getLogLevel() < LogLevel::ERROR || is_null($config->getLogManager())) {
             return;
         }
-        $customMessage = sprintf($message, ...$args);
+        $customMessage = sprintf($message, ...$this->formatArgs($args));
         $this->logError($config, $customMessage, [FlagshipConstant::TAG => $tag]);
     }
     /**
@@ -68,7 +79,7 @@ trait LogTrait
         if ($config->getLogLevel() < LogLevel::INFO || is_null($config->getLogManager())) {
             return;
         }
-        $customMessage = sprintf($message, ...$args);
+        $customMessage = sprintf($message, ...$this->formatArgs($args));
         $this->logInfo($config, $customMessage, [FlagshipConstant::TAG => $tag]);
     }
     /**

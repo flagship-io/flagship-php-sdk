@@ -4,11 +4,13 @@ namespace Flagship\Visitor;
 
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\DecisionMode;
+use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\Consent;
+use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 use Flagship\Traits\ValidatorTrait;
@@ -28,7 +30,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
         if (!$hasConsented){
             $this->flushVisitor();
         }
-        $consentHit = new Consent($hasConsented);
+        $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
+        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . $hasConsented?"true":"false");
         $this->sendHit($consentHit);
     }
 
@@ -312,7 +315,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return ;
         }
         $activateHit = new Activate($modification->getVariationGroupId(), $modification->getVariationId());
-        $this->sendHit($activateHit);
+        $activateHit->setConfig($this->getConfig())
+            ->setVisitorId($this->visitor->getVisitorId())
+            ->setAnonymousId($this->visitor->getAnonymousId());
+
+
+        $this->getTrackingManager()->activateFlag( $activateHit);
     }
 
     /**
@@ -340,7 +348,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
 
-        $trackingManager->sendHit($hit);
+        $trackingManager->addHit($hit);
     }
 
     /**
@@ -371,8 +379,13 @@ class DefaultStrategy extends VisitorStrategyAbstract
             );
             return ;
         }
+
         $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
-        $this->sendHit($activateHit);
+        $activateHit->setConfig($this->getConfig())
+            ->setVisitorId($this->visitor->getVisitorId())
+            ->setAnonymousId($this->visitor->getAnonymousId());
+
+        $this->getTrackingManager()->activateFlag($activateHit);
     }
 
     public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)

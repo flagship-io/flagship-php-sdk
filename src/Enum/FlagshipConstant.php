@@ -42,7 +42,7 @@ class FlagshipConstant
     /**
      * SDK version
      */
-    const SDK_VERSION = "v2";
+    const SDK_VERSION = "3.1.0";
 
     //Message Error
     const INITIALIZATION_PARAM_ERROR = "Params 'envId' and 'apiKey' must not be null or empty.";
@@ -149,8 +149,8 @@ class FlagshipConstant
     const TRACKING_MANAGER_ERROR = '%s Unexpected Error occurred %s';
     const BATCH_HIT = 'BATCH_HIT';
     const PROCESS_CACHE = 'CACHE';
-    const SEND_BATCH = 'SEND BATCH';
-    const SEND_ACTIVATE = 'SEND ACTIVATE';
+    const SEND_BATCH = 'SEND_BATCH';
+    const SEND_ACTIVATE = 'SEND_ACTIVATE';
 
     const VISITOR_CACHE_ERROR = 'visitor {0}. {1} threw an exception {2}';
     const HIT_CACHE_ERROR = '{0} threw an exception {1}';
@@ -161,6 +161,6 @@ class FlagshipConstant
     const HIT_CACHE_SAVED = 'Hit cache has been saved into database : %s';
     const HIT_DATA_FLUSHED = 'The following hit keys have been flushed from database : %s';
     const ALL_HITS_FLUSHED = 'All hits cache has been flushed from database';
-    const BATCH = "BATCH";
+    const BATCH = "batch";
 
 }

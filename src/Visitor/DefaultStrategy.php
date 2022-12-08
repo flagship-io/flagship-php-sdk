@@ -31,7 +31,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->flushVisitor();
         }
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
-        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . $hasConsented?"true":"false");
+        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . ($hasConsented?"true":"false"));
         $this->sendHit($consentHit);
     }
 

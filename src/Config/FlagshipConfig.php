@@ -65,11 +65,6 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @var int
      */
-    protected $batchIntervals;
-
-    /**
-     * @var int
-     */
     protected $cacheStrategy;
     /**
      * Create a new FlagshipConfig configuration.
@@ -211,24 +206,6 @@ abstract class FlagshipConfig implements JsonSerializable
             return $this;
         }
         $this->logLevel = $logLevel;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getBatchIntervals()
-    {
-        return $this->batchIntervals;
-    }
-
-    /**
-     * @param int $batchIntervals
-     * @return FlagshipConfig
-     */
-    public function setBatchIntervals($batchIntervals)
-    {
-        $this->batchIntervals = $batchIntervals;
         return $this;
     }
 

@@ -8,7 +8,7 @@ use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 
-class a extends BatchingCachingStrategyAbstract
+class BatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstract
 {
 
     protected function notConsent($visitorId)

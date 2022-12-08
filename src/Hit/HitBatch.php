@@ -2,6 +2,7 @@
 
 namespace Flagship\Hit;
 
+use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 
 class HitBatch extends HitAbstract
@@ -22,10 +23,11 @@ class HitBatch extends HitAbstract
     /**
      * @param HitAbstract[] $hits
      */
-    public function __construct(array $hits)
+    public function __construct(FlagshipConfig $config, array $hits)
     {
         parent::__construct("BATCH");
         $this->hits=$hits;
+        $this->config = $config;
     }
 
     public function toArray()

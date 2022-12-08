@@ -99,7 +99,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
             $hits[] = $item;
         }
-        $batchHit = new HitBatch($hits);
+
+        $batchHit = new HitBatch($this->config, $hits);
 
         if (!count($hits)){
             return;
@@ -120,7 +121,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
            $this->logDebugSprintf($this->config, FlagshipConstant::TRACKING_MANAGER,
                FlagshipConstant::HIT_SENT_SUCCESS, [
-                   FlagshipConstant::BATCH_HIT,
+                   FlagshipConstant::SEND_BATCH,
                    $this->getLogFormat(null, $url, $requestBody, $header,$this->getNow()  - $now) ]);
 
            $this->flushHits($hitKeysToRemove);

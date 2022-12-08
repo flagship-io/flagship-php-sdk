@@ -8,23 +8,51 @@ use Flagship\Hit\HitAbstract;
 class BatchingPeriodicCachingStrategy extends BatchingCachingStrategyAbstract
 {
 
+    protected function cacheMergedPoolQueue(){
+        $mergedQueue = array_merge($this->hitsPoolQueue, $this->activatePoolQueue);
+        $this->flushAllHits();
+        $this->cacheHit($mergedQueue);
+    }
+
     protected function notConsent($visitorId)
     {
-        // TODO: Implement notConsent() method.
+        $keysToFlush = $this->commonNotConsent($visitorId);
+
+        if (!count($keysToFlush)){
+            return;
+        }
+
+        $this->cacheMergedPoolQueue();
     }
 
     protected function addHitInPoolQueue(HitAbstract $hit)
     {
-        // TODO: Implement addHitInPoolQueue() method.
+        $this->hitsPoolQueue[$hit->getKey()] = $hit;
     }
 
     protected function addActivateHitInPoolQueue(Activate $hit)
     {
-        // TODO: Implement addActivateHitInPoolQueue() method.
+        $this->activatePoolQueue[$hit->getKey()] = $hit;
     }
 
-    protected function sendActivateHit()
+    protected function postPrecessSendBatch()
     {
-        // TODO: Implement sendActivateHit() method.
+        $this->cacheMergedPoolQueue();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function flushBatchedHits(array $hitKeysToRemove)
+    {
+        // Nothing to do
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function flushSentActivateHit(array $hitKeysToRemove)
+    {
+        // Nothing to do
     }
 }

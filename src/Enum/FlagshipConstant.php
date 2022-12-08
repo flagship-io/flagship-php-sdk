@@ -150,6 +150,7 @@ class FlagshipConstant
     const BATCH_HIT = 'BATCH_HIT';
     const PROCESS_CACHE = 'CACHE';
     const SEND_BATCH = 'SEND_BATCH';
+    const SEND_HIT = 'SEND_HIT';
     const SEND_ACTIVATE = 'SEND_ACTIVATE';
 
     const VISITOR_CACHE_ERROR = 'visitor {0}. {1} threw an exception {2}';

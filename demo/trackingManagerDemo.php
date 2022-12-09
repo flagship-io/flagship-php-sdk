@@ -12,10 +12,12 @@ use Flagship\Enum\EventCategory;
 class HitCacheRedis implements IHitCacheImplementation{
 
     private $redis;
-    public function __construct($address, $port)
+    const REDIS_PREFIX = 'FLAGSHIP_';
+    public function __construct($address, $port, $dbIndex)
     {
         $this->redis = new Redis();
         $this->redis->connect($address, $port);
+        $this->redis->select($dbIndex);
     }
 
     /**
@@ -23,7 +25,11 @@ class HitCacheRedis implements IHitCacheImplementation{
      */
     public function cacheHit(array $hits)
     {
-        // TODO: Implement cacheHit() method.
+        $this->redis->multi();
+        foreach ($hits as $key=>$hit) {
+            $this->redis->set($key, json_encode($hit));
+        }
+        $this->redis->exec();
     }
 
     /**
@@ -31,7 +37,16 @@ class HitCacheRedis implements IHitCacheImplementation{
      */
     public function lookupHits()
     {
-        // TODO: Implement lookupHits() method.
+        $keys = $this->redis->keys( '*');
+        $hits = $this->redis->mGet($keys);
+        if (!$hits){
+            return [];
+        }
+        $hitsOut = [];
+        foreach ($hits as $key=> $hit) {
+            $hitsOut[$keys[$key]] = json_decode($hit, true);
+        }
+        return $hitsOut;
     }
 
     /**
@@ -39,19 +54,25 @@ class HitCacheRedis implements IHitCacheImplementation{
      */
     public function flushHits(array $hitKeys)
     {
-        // TODO: Implement flushHits() method.
+        $this->redis->del($hitKeys);
     }
 
     public function flushAllHits()
     {
-        // TODO: Implement flushAllHits() method.
+        $this->redis->flushDB();
     }
 }
 
-Flagship::start("ENV_ID", "API_KEY",
-    DecisionApiConfig::decisionApi()->setCacheStrategy(3));
+$ENV_ID = '';
+$API_KEY = '';
 
-$visitor = Flagship::newVisitor("visitor_123")
+Flagship::start($ENV_ID, $API_KEY,
+    DecisionApiConfig::decisionApi()->setCacheStrategy(1)
+    ->setHitCacheImplementation(new HitCacheRedis('127.0.0.1', 6379,0))
+    ->setLogLevel(\Flagship\Enum\LogLevel::INFO)
+);
+
+$visitor = Flagship::newVisitor("visitor_2")
     ->withContext(["qa_report" => true, 'is_php' => true])
     ->build();
 

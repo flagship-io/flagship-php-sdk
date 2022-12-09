@@ -186,7 +186,7 @@ class TrackingManagerTest extends TestCase
         $page->setConfig($config);
         $trackingManager->sendHit($page);
 
-        $command = $this->buildBackRequest($url, $page->toArray(), $this->buildHeader($config->getApiKey()), $config->getTimeout()/1000, TrackingManager::HIT_LOG);
+        $command = $this->buildBackRequest($url, $page->toApiKeys(), $this->buildHeader($config->getApiKey()), $config->getTimeout()/1000, TrackingManager::HIT_LOG);
         $this->assertEquals($command, ShellExec::$command);
         ShellExec::$command = null;
     }

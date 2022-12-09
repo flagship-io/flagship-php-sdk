@@ -18,7 +18,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
             FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON
         ];
 
-        $requestBody = $hit->toArray();
+        $requestBody = $hit->toApiKeys();
         $now = $this->getNow();
         $url = FlagshipConstant::HIT_EVENT_URL;
 

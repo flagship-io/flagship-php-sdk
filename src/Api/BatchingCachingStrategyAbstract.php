@@ -82,7 +82,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $this->notConsent($hit->getVisitorId());
         }
 
-        $this->logDebugSprintf($this->config, FlagshipConstant::TRACKING_MANAGER, FlagshipConstant::HIT_ADDED_IN_QUEUE, [$hit->toArray()]);
+        $this->logDebugSprintf($this->config, FlagshipConstant::TRACKING_MANAGER, FlagshipConstant::HIT_ADDED_IN_QUEUE, [$hit->toApiKeys()]);
     }
 
     public function activateFlag(Activate $hit)
@@ -93,7 +93,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         $this->addActivateHitInPoolQueue($hit);
 
-        $this->logDebugSprintf($this->config, FlagshipConstant::TRACKING_MANAGER, FlagshipConstant::ACTIVATE_HIT_ADDED_IN_QUEUE, [$hit->toArray()]);
+        $this->logDebugSprintf($this->config, FlagshipConstant::TRACKING_MANAGER, FlagshipConstant::ACTIVATE_HIT_ADDED_IN_QUEUE, [$hit->toApiKeys()]);
     }
 
     abstract protected function notConsent($visitorId);
@@ -235,7 +235,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON
         ];
 
-        $requestBody = $batchHit->toArray();
+        $requestBody = $batchHit->toApiKeys();
         $now = $this->getNow();
         $url = FlagshipConstant::HIT_EVENT_URL;
 
@@ -281,7 +281,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
             foreach ($hits as $hit) {
                 $hitData = [
-                    HitCacheFields::VISITOR_ID => 1,
+                    HitCacheFields::VERSION => 1,
                     HitCacheFields::DATA => [
                         HitCacheFields::VISITOR_ID => $hit->getVisitorId(),
                         HitCacheFields::ANONYMOUS_ID => $hit->getAnonymousId(),

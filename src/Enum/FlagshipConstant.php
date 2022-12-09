@@ -158,10 +158,11 @@ class FlagshipConstant
     const VISITOR_CACHE_LOADED = 'Visitor {0}, visitor cache has been loaded from database: {1}';
     const VISITOR_CACHE_SAVED = 'Visitor {0}, visitor cache has been saved into database : {0}';
     const VISITOR_CACHE_FLUSHED = 'Visitor {0}, visitor cache has been flushed from database.';
-    const HIT_CACHE_LOADED = 'Hits cache has been loaded from database: {0}';
+    const HIT_CACHE_LOADED = 'Hits cache has been loaded from database: %s';
     const HIT_CACHE_SAVED = 'Hit cache has been saved into database : %s';
     const HIT_DATA_FLUSHED = 'The following hit keys have been flushed from database : %s';
     const ALL_HITS_FLUSHED = 'All hits cache has been flushed from database';
     const BATCH = "batch";
+    const HIT_CACHE_FORMAT_ERROR = "Hit cache format error %s";
 
 }

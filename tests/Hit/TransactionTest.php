@@ -51,50 +51,50 @@ class TransactionTest extends TestCase
         $transaction->setTaxes($taxesAmount);
         $transactionArray[FlagshipConstant::TT_API_ITEM] = $taxesAmount;
 
-        $this->assertSame($transactionArray, $transaction->toArray());
+        $this->assertSame($transactionArray, $transaction->toApiKeys());
 
         $currency = "USD";
         $transaction->setCurrency($currency);
         $transactionArray[FlagshipConstant::TC_API_ITEM] = $currency;
 
-        $this->assertSame($transactionArray, $transaction->toArray());
+        $this->assertSame($transactionArray, $transaction->toApiKeys());
 
         $couponCode = "coupon";
         $transaction->setCouponCode($couponCode);
         $transactionArray[FlagshipConstant::TCC_API_ITEM] = $couponCode;
 
-        $this->assertSame($transactionArray, $transaction->toArray());
+        $this->assertSame($transactionArray, $transaction->toApiKeys());
 
         $itemCount = 5;
         $transaction->setItemCount($itemCount);
         $transactionArray[FlagshipConstant::ICN_API_ITEM] = $itemCount;
 
-        $this->assertSame($transactionArray, $transaction->toArray());
+        $this->assertSame($transactionArray, $transaction->toApiKeys());
 
         $shippingMethod = "shippingMethod";
         $transaction->setShippingMethod($shippingMethod);
         $transactionArray[FlagshipConstant::SM_API_ITEM] = $shippingMethod;
 
-        $this->assertSame($transactionArray, $transaction->toArray());
+        $this->assertSame($transactionArray, $transaction->toApiKeys());
 
         $paymentMethod = 'paypal';
         $transaction->setPaymentMethod($paymentMethod);
         $transactionArray[FlagshipConstant::PM_API_ITEM] = $paymentMethod;
 
-        $this->assertSame($transactionArray, $transaction->toArray());
+        $this->assertSame($transactionArray, $transaction->toApiKeys());
 
         $revenue = 45;
         $transaction->setTotalRevenue($revenue);
         $transactionArray[FlagshipConstant::TR_API_ITEM] = $revenue;
 
-        $this->assertSame($transactionArray, $transaction->toArray());
+        $this->assertSame($transactionArray, $transaction->toApiKeys());
 
         $shippingCost = 78;
         $transaction->setShippingCosts($shippingCost);
         $transactionArray[FlagshipConstant::TS_API_ITEM] = $shippingCost;
 
 
-        $this->assertSame($transactionArray, $transaction->toArray());
+        $this->assertSame($transactionArray, $transaction->toApiKeys());
 
         $transaction->getConfig()->setLogManager($logManagerMock);
 

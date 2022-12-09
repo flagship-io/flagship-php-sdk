@@ -11,6 +11,10 @@ class Activate extends HitAbstract
     private $variationGroupId;
     private $variationId;
 
+    public static function getClassName(){
+        return __CLASS__;
+    }
+
     /**
      * @param $variationGroupId
      * @param $variationId
@@ -61,7 +65,7 @@ class Activate extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toArray()
+    public function toApiKeys()
     {
         $apiKeys = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
@@ -79,6 +83,7 @@ class Activate extends HitAbstract
         return $apiKeys;
     }
 
+
     /**
      * @inheritDoc
      */
@@ -95,4 +100,6 @@ class Activate extends HitAbstract
     {
         return self::ERROR_MESSAGE;
     }
+
+
 }

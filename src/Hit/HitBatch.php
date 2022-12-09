@@ -30,7 +30,7 @@ class HitBatch extends HitAbstract
         $this->config = $config;
     }
 
-    public function toArray()
+    public function toApiKeys()
     {
         $data = [
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
@@ -41,7 +41,7 @@ class HitBatch extends HitAbstract
         ];
 
         foreach ($this->hits as $hit) {
-            $hitApiKey = $hit->toArray();
+            $hitApiKey = $hit->toApiKeys();
             unset($hitApiKey[FlagshipConstant::DS_API_ITEM]);
             unset($hitApiKey[FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM]);
             $data[FlagshipConstant::H_API_ITEM][] = $hitApiKey;

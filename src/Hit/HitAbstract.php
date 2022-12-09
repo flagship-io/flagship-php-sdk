@@ -6,6 +6,9 @@ use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionObject;
 
 /**
  * Class HitAbstract
@@ -21,12 +24,12 @@ abstract class HitAbstract
     /**
      * @var string
      */
-    private $visitorId;
+    protected $visitorId;
 
     /**
      * @var string
      */
-    private $ds;
+    protected $ds;
 
     /**
      * @var string
@@ -349,7 +352,7 @@ abstract class HitAbstract
      *
      * @return array
      */
-    public function toArray()
+    public function toApiKeys()
     {
         $data = [
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
@@ -370,6 +373,41 @@ abstract class HitAbstract
         }
         return $data;
     }
+
+    /**
+     * @param $class
+     * @param $data
+     * @return object
+     * @throws ReflectionException
+     */
+    public static function hydrate($class, $data){
+        $reflector = new ReflectionClass($class);
+        $objet = $reflector->newInstanceWithoutConstructor();
+        foreach ($data as $key=>$value) {
+            $method = 'set'.ucwords($key);
+            if (is_callable(array($objet, $method))) {
+                $objet->$method($value);
+            }
+        }
+        return $objet;
+    }
+
+    public function toArray(){
+        $reflector = new ReflectionObject($this);
+        $properties = $reflector->getProperties();
+        $outArray = [];
+        foreach ($properties as $property) {
+            var_dump($property->getName());
+            if ($property->getName()==='config'){
+                continue;
+            }
+            $property->setAccessible(true);
+            $value = $property->getValue($this);
+            $outArray[$property->getName()] = $value;
+        }
+        return $outArray;
+    }
+
 
     /**
      * Return true if all required attributes are given, otherwise return false

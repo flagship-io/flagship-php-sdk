@@ -14,6 +14,10 @@ class Page extends HitAbstract
 {
     const ERROR_MESSAGE = 'Page url is required';
 
+    public static function getClassName(){
+        return __CLASS__;
+    }
+
     /**
      * @var string
      */
@@ -56,9 +60,9 @@ class Page extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toArray()
+    public function toApiKeys()
     {
-        $arrayParent = parent::toArray();
+        $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::DL_API_ITEM] = $this->getPageUrl();
         return $arrayParent;
     }

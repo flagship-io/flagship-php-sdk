@@ -13,6 +13,11 @@ use Flagship\Enum\HitType;
 class Item extends HitAbstract
 {
     const ERROR_MESSAGE = 'Transaction Id, Item name and item code are required';
+
+    public static function getClassName(){
+        return __CLASS__;
+    }
+
     /**
      * @var string
      */
@@ -212,9 +217,9 @@ class Item extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toArray()
+    public function toApiKeys()
     {
-        $arrayParent = parent::toArray();
+        $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::TID_API_ITEM] = $this->getTransactionId();
         $arrayParent[FlagshipConstant::IN_API_ITEM] = $this->getProductName();
         $arrayParent[FlagshipConstant::IC_API_ITEM] = $this->getProductSku();

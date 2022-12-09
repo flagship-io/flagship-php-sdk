@@ -13,6 +13,11 @@ use Flagship\Enum\HitType;
 class Screen extends HitAbstract
 {
     const ERROR_MESSAGE = 'Screen name is required';
+
+    public static function getClassName(){
+        return __CLASS__;
+    }
+
     /**
      * @var string
      */
@@ -58,9 +63,9 @@ class Screen extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toArray()
+    public function toApiKeys()
     {
-        $arrayParent = parent::toArray();
+        $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::DL_API_ITEM] = $this->getScreenName();
         return $arrayParent;
     }

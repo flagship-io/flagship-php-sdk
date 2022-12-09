@@ -9,6 +9,11 @@ class Segment extends HitAbstract
 {
     const SL_MESSAGE_ERROR = "Sl value must be an associative array";
     const ERROR_MESSAGE  = 'sl is required';
+
+    public static function getClassName(){
+        return __CLASS__;
+    }
+
     /**
      * @var array
      */
@@ -52,9 +57,9 @@ class Segment extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toArray()
+    public function toApiKeys()
     {
-        $arrayParent = parent::toArray();
+        $arrayParent = parent::toApiKeys();
         $context = [];
         foreach ($this->sl as  $key=>$value){
             $context[$key] = is_string($value) ? $value : json_encode($value);

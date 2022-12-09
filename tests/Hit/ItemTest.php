@@ -43,13 +43,13 @@ class ItemTest extends TestCase
             ->setConfig($config)
             ->setDs(FlagshipConstant::SDK_APP);
 
-        $this->assertSame($itemArray, $item->toArray());
+        $this->assertSame($itemArray, $item->toApiKeys());
 
         $item->setItemPrice($itemPrice);
 
         $itemArray[FlagshipConstant::IP_API_ITEM] = $itemPrice;
 
-        $this->assertSame($itemArray, $item->toArray());
+        $this->assertSame($itemArray, $item->toApiKeys());
 
         $item->setItemQuantity($itemQuantity);
 
@@ -58,7 +58,7 @@ class ItemTest extends TestCase
         $itemArray[FlagshipConstant::IQ_API_ITEM] = $itemQuantity;
         $itemArray[FlagshipConstant::IV_API_ITEM] = $itemCategory;
 
-        $this->assertSame($itemArray, $item->toArray());
+        $this->assertSame($itemArray, $item->toApiKeys());
 
         $logManagerMock = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
@@ -104,7 +104,7 @@ class ItemTest extends TestCase
         //itemCategory
         $item->setItemCategory(7895);
 
-        $this->assertSame($itemArray, $item->toArray());
+        $this->assertSame($itemArray, $item->toApiKeys());
     }
 
 

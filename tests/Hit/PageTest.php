@@ -36,7 +36,7 @@ class PageTest extends TestCase
             FlagshipConstant::DL_API_ITEM => $pageUrl
         ];
 
-        $this->assertSame($screenArray, $page->toArray());
+        $this->assertSame($screenArray, $page->toApiKeys());
     }
 
     public function testIsReady()

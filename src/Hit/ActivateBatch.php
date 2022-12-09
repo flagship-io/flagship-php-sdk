@@ -26,7 +26,7 @@ class ActivateBatch
     public function toArray(){
         $activates = [];
         foreach ($this->hits as $hit) {
-            $apiKeys = $hit->toArray();
+            $apiKeys = $hit->toApiKeys();
             unset($apiKeys[FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM]);
             $activates[] = $apiKeys;
         }

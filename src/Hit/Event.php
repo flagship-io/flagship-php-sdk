@@ -16,6 +16,11 @@ class Event extends HitAbstract
     const ERROR_MESSAGE  = 'event category and event action are required';
     const CATEGORY_ERROR = "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
     const VALUE_FIELD_ERROR = 'value must be an integer and be >= 0';
+
+    public static function getClassName(){
+        return __CLASS__;
+    }
+
     /**
      * @var string
      */
@@ -167,9 +172,9 @@ class Event extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toArray()
+    public function toApiKeys()
     {
-        $arrayParent = parent::toArray();
+        $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::EVENT_CATEGORY_API_ITEM] = $this->getCategory();
         $arrayParent[FlagshipConstant::EVENT_ACTION_API_ITEM] = $this->getAction();
 

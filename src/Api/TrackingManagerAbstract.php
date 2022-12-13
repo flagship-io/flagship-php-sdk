@@ -160,7 +160,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                     case HitType::ACTIVATE:
                         $hit = HitAbstract::hydrate(Activate::getClassName(), $content);
                         $hit->setConfig($this->config);
-                        $this->activatePoolQueue[$hit->getKey()]=$hit;
+                        $this->strategy->hydrateActivatePoolQueue($hit->getKey(), $hit);
                         continue 2;
                     case HitType::TRANSACTION:
                         $hit = HitAbstract::hydrate(Transaction::getClassName(), $content);
@@ -169,12 +169,11 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                         continue 2;
                 }
                 $hit->setConfig($this->config);
-                $this->hitsPoolQueue[$hit->getKey()]=$hit;
+                $this->strategy->hydrateHitsPoolQueue($hit->getKey(), $hit);
             }
 
-//            $this->strategy->flushHits($hitKeysToRemove);
+            $this->strategy->flushHits($hitKeysToRemove);
 
-            var_dump($this->hitsPoolQueue);
 
         }catch (\Exception $exception){
             $this->logErrorSprintf($this->config, FlagshipConstant::PROCESS_CACHE,

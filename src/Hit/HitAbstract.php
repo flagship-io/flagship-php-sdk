@@ -397,7 +397,6 @@ abstract class HitAbstract
         $properties = $reflector->getProperties();
         $outArray = [];
         foreach ($properties as $property) {
-            var_dump($property->getName());
             if ($property->getName()==='config'){
                 continue;
             }

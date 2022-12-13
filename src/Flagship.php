@@ -285,12 +285,7 @@ class Flagship
      */
     public static function newVisitor($visitorId)
     {
-        if (empty($visitorId) || !self::isReady()) {
-            return  null;
-        }
-
         $instance = self::getInstance();
-
         return VisitorBuilder::builder($visitorId, $instance->getConfigManager(), $instance->getContainer());
     }
 }

@@ -44,12 +44,20 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param HitAbstract[] $hitsPoolQueue
      * @param Activate[] $activatePoolQueue
      */
-    public function __construct(FlagshipConfig $config, HttpClientInterface $httpClient, array &$hitsPoolQueue, array &$activatePoolQueue)
+    public function __construct(FlagshipConfig $config, HttpClientInterface $httpClient, array $hitsPoolQueue, array $activatePoolQueue)
     {
         $this->httpClient = $httpClient;
         $this->config = $config;
         $this->hitsPoolQueue = $hitsPoolQueue;
         $this->activatePoolQueue = $activatePoolQueue;
+    }
+
+    public function hydrateHitsPoolQueue($key, HitAbstract $hit){
+        $this->hitsPoolQueue[$key] = $hit;
+    }
+
+    public function hydrateActivatePoolQueue($key, Activate $hit){
+        $this->activatePoolQueue[$key] = $hit;
     }
 
     public function getNow()

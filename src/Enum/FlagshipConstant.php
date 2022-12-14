@@ -54,11 +54,11 @@ class FlagshipConstant
     const GET_MODIFICATION_KEY_ERROR = "Key '%s' must not be null. Default value is returned.";
     const GET_MODIFICATION_ERROR = "No modification for key '%s'.";
     const GET_FLAG_ERROR = "No flag for key '%s'.";
-    const USER_EXPOSED_NO_FLAG_ERROR = "No flag for key '%s', no activate will be sent";
-    const GET_FLAG_MISSING_ERROR = "No Flag for key '%s'. Default value is returned.";
+    const USER_EXPOSED_NO_FLAG_ERROR = "Visitor %s, No Flags found for key %s: User exposition wont be sent";
+    const GET_FLAG_MISSING_ERROR = "Visitor %s, No Flags found for key %s : Default value is returned %s";
     const GET_METADATA_CAST_ERROR = "Flag for key '%s' has a different type with defaultValue, an empty metadata object is returned";
-    const GET_FLAG_CAST_ERROR = "Flag for key '%s' has a different type. Default value is returned.";
-    const USER_EXPOSED_CAST_ERROR = "Flag for key '%s' has a different type with defaultValue, no activate will be sent";
+    const GET_FLAG_CAST_ERROR = "Visitor %s, Flag for key %s has a different type with default value : Default value is returned %s";
+    const USER_EXPOSED_CAST_ERROR = "Visitor %s, Flag for key %s has a different type with default value: User exposition wont be sent";
     const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null.";
     const TRACKER_MANAGER_MISSING_ERROR = "trackerManager must not be null.";
     const CURL_LIBRARY_IS_NOT_LOADED = 'curl library is not loaded';
@@ -149,9 +149,9 @@ class FlagshipConstant
     const TRACKING_MANAGER_ERROR = '%s Unexpected Error occurred %s';
     const BATCH_HIT = 'BATCH_HIT';
     const PROCESS_CACHE = 'CACHE';
-    const SEND_BATCH = 'SEND_BATCH';
+    const SEND_BATCH = 'HIT BATCH';
     const SEND_HIT = 'SEND_HIT';
-    const SEND_ACTIVATE = 'SEND_ACTIVATE';
+    const SEND_ACTIVATE = 'HIT ACTIVATE';
 
     const VISITOR_CACHE_ERROR = 'visitor {0}. {1} threw an exception {2}';
     const HIT_CACHE_ERROR = '{0} threw an exception {1}';
@@ -164,5 +164,12 @@ class FlagshipConstant
     const ALL_HITS_FLUSHED = 'All hits cache has been flushed from database';
     const BATCH = "batch";
     const HIT_CACHE_FORMAT_ERROR = "Hit cache format error %s";
-
+    const FETCH_FLAGS_STARTED = 'visitor `%s` fetchFlags process is started';
+    const PROCESS_FETCHING_FLAGS = 'FETCH_FLAGS';
+    const FETCH_CAMPAIGNS_SUCCESS = 'Visitor %s, anonymousId %s with context %s has just fetched campaigns %s in %s ms';
+    const FETCH_CAMPAIGNS_FROM_CACHE = 'Visitor %s, anonymousId %s with context %s has just fetched campaigns from cache %s in % ms';
+    const FETCH_FLAGS_FROM_CAMPAIGNS = 'Visitor %s, anonymousId %s with context %s has just fetched flags %s from Campaigns';
+    const FLAG_USER_EXPOSED = 'FLAG_USER_EXPOSED';
+    const FLAG_VALUE = 'FLAG_VALUE';
+    const GET_FLAG_VALUE = 'Visitor %s, Flag for key %s returns value %s';
 }

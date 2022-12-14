@@ -44,8 +44,7 @@ trait LogTrait
         if (!$config || $config->getLogLevel() < LogLevel::DEBUG || is_null($config->getLogManager())) {
             return;
         }
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $config->getLogManager()->debug("[$flagshipSdk] $message", $context);
+        $config->getLogManager()->debug($message, $context);
     }
 
     /**
@@ -71,8 +70,7 @@ trait LogTrait
         if (!$config || $config->getLogLevel() < LogLevel::ERROR || is_null($config->getLogManager())) {
             return;
         }
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $config->getLogManager()->error("[$flagshipSdk] $message", $context);
+        $config->getLogManager()->error($message, $context);
     }
 
     protected function logInfoSprintf( FlagshipConfig $config, $tag, $message, $args=[]){
@@ -92,8 +90,7 @@ trait LogTrait
         if (!$config || $config->getLogLevel() < LogLevel::INFO || is_null($config->getLogManager())) {
             return;
         }
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $config->getLogManager()->info("[$flagshipSdk] $message", $context);
+        $config->getLogManager()->info($message, $context);
     }
 
     protected function getLogFormat($message, $url, $requestBody, $headers, $duration){

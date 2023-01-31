@@ -46,17 +46,21 @@ class BucketingManager extends DecisionManagerAbstract
         return $this;
     }
 
-
-
-
-
-
+    /**
+     * @param HttpClientInterface $httpClient
+     * @param BucketingConfig $config
+     * @param MurmurHash $murmurHash
+     */
     public function __construct(HttpClientInterface $httpClient, BucketingConfig $config, MurmurHash $murmurHash)
     {
         parent::__construct($httpClient, $config);
         $this->murmurHash = $murmurHash;
     }
 
+    /**
+     * @param VisitorAbstract $visitor
+     * @return void
+     */
     protected function sendContext(VisitorAbstract $visitor)
     {
         if (count($visitor->getContext())<= self::NB_MIN_CONTEXT_KEYS){
@@ -66,6 +70,9 @@ class BucketingManager extends DecisionManagerAbstract
         $visitor->sendHit($segmentHit);
     }
 
+    /**
+     * @return mixed|null
+     */
     protected  function getBucketingFile(){
 
         try {
@@ -83,6 +90,7 @@ class BucketingManager extends DecisionManagerAbstract
         }
         return null;
     }
+
     /**
      * @inheritDoc
      */
@@ -130,10 +138,11 @@ class BucketingManager extends DecisionManagerAbstract
     }
 
     /**
-     * @param $variationGroups
-     * @param $campaignId
+     * @param array $variationGroups
+     * @param string $campaignId
      * @param VisitorAbstract $visitor
      * @param string $campaignType
+     * @param string $slug
      * @return array
      */
     private function getVisitorCampaigns($variationGroups, $campaignId, VisitorAbstract $visitor, $campaignType, $slug)
@@ -159,6 +168,11 @@ class BucketingManager extends DecisionManagerAbstract
         return $visitorCampaigns;
     }
 
+    /**
+     * @param string $variationGroupId
+     * @param VisitorAbstract $visitor
+     * @return mixed|null
+     */
     private function getVisitorAssignmentsHistory($variationGroupId, VisitorAbstract $visitor){
 
         if (!is_array($visitor->visitorCache) ||
@@ -183,7 +197,7 @@ class BucketingManager extends DecisionManagerAbstract
     /**
      *
      * @param array $variationGroup
-     * @param string $visitorId
+     * @param VisitorAbstract $visitor
      * @return array
      */
     private function getVariation($variationGroup, VisitorAbstract $visitor)
@@ -230,7 +244,9 @@ class BucketingManager extends DecisionManagerAbstract
     }
 
     /**
-     * @param mixed $variationGroup
+     * @param $variationGroup
+     * @param VisitorAbstract $visitor
+     * @return bool
      */
     private function isMatchTargeting($variationGroup, VisitorAbstract $visitor)
     {
@@ -301,11 +317,22 @@ class BucketingManager extends DecisionManagerAbstract
         return $isMatching;
     }
 
+    /**
+     * @param $operator
+     * @return bool
+     */
     private function isANDListOperator($operator)
     {
         return in_array($operator, ['NOT_EQUALS', 'NOT_CONTAINS']);
     }
 
+    /**
+     * @param string $operator
+     * @param mixed $contextValue
+     * @param array $targetingValue
+     * @param $initialCheck
+     * @return bool|mixed
+     */
     private function testListOperatorLoop($operator, $contextValue, array $targetingValue, $initialCheck)
     {
         $check = $initialCheck;

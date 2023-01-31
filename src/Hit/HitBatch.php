@@ -30,6 +30,9 @@ class HitBatch extends HitAbstract
         $this->config = $config;
     }
 
+    /**
+     * @return array
+     */
     public function toApiKeys()
     {
         $data = [

@@ -41,12 +41,19 @@ class Segment extends HitAbstract
         return $this;
     }
 
+    /**
+     * @param array $sl
+     */
     public function __construct(array $sl)
     {
         parent::__construct(HitType::SEGMENT);
         $this->setSl($sl);
     }
 
+    /**
+     * @param array $array
+     * @return bool
+     */
     public function isAssoc(array $array)
     {
         $keys = array_keys($array);

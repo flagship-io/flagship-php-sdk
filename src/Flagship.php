@@ -82,7 +82,7 @@ class Flagship
     /**
      * Start the flagship SDK
      *
-     * @param $envId  : Environment id provided by Flagship.
+     * @param $envId : Environment id provided by Flagship.
      * @param $apiKey : Secure api key provided by Flagship.
      * @param BucketingConfig|DecisionApiConfig|null $config : (optional) SDK configuration.
      */

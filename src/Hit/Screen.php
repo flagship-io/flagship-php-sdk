@@ -14,6 +14,9 @@ class Screen extends HitAbstract
 {
     const ERROR_MESSAGE = 'Screen name is required';
 
+    /**
+     * @return string
+     */
     public static function getClassName(){
         return __CLASS__;
     }

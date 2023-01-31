@@ -17,12 +17,19 @@ class ActivateBatch
      */
     protected $config;
 
+    /**
+     * @param FlagshipConfig $config
+     * @param array $hits
+     */
     public function __construct(FlagshipConfig $config, array $hits)
     {
         $this->config = $config;
         $this->hits = $hits;
     }
 
+    /**
+     * @return array
+     */
     public function toArray(){
         $activates = [];
         foreach ($this->hits as $hit) {

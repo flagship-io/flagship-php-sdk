@@ -52,19 +52,35 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->activatePoolQueue = $activatePoolQueue;
     }
 
+    /**
+     * @param $key
+     * @param HitAbstract $hit
+     * @return void
+     */
     public function hydrateHitsPoolQueue($key, HitAbstract $hit){
         $this->hitsPoolQueue[$key] = $hit;
     }
 
+    /**
+     * @param $key
+     * @param Activate $hit
+     * @return void
+     */
     public function hydrateActivatePoolQueue($key, Activate $hit){
         $this->activatePoolQueue[$key] = $hit;
     }
 
+    /**
+     * @return float
+     */
     public function getNow()
     {
         return round(microtime(true) * 1000);
     }
 
+    /**
+     * @return array
+     */
     public function getActivateHeaders(){
         return [
             FlagshipConstant::HEADER_X_API_KEY => $this->config->getApiKey(),
@@ -74,10 +90,18 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         ];
     }
 
+    /**
+     * @param $visitorId
+     * @return string
+     */
     public function generateHitKey($visitorId){
         return $visitorId . ":" . $this->newGuid();
     }
 
+    /**
+     * @param HitAbstract $hit
+     * @return void
+     */
     public function addHit(HitAbstract $hit)
     {
         $hitKey = $this->generateHitKey($hit->getVisitorId());
@@ -93,6 +117,10 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->logDebugSprintf($this->config, FlagshipConstant::TRACKING_MANAGER, FlagshipConstant::HIT_ADDED_IN_QUEUE, [$hit->toApiKeys()]);
     }
 
+    /**
+     * @param Activate $hit
+     * @return void
+     */
     public function activateFlag(Activate $hit)
     {
         $hitKey = $this->generateHitKey($hit->getVisitorId());
@@ -104,19 +132,34 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->logDebugSprintf($this->config, FlagshipConstant::TRACKING_MANAGER, FlagshipConstant::ACTIVATE_HIT_ADDED_IN_QUEUE, [$hit->toApiKeys()]);
     }
 
+    /**
+     * @param $visitorId
+     * @return void
+     */
     abstract protected function notConsent($visitorId);
 
+    /**
+     * @return void
+     */
     protected function postPrecessSendBatch()
     {
         // Nothing to do
     }
 
+    /**
+     * @param HitAbstract $hit
+     * @return void
+     */
     protected function addHitInPoolQueue(HitAbstract $hit)
     {
         $this->hitsPoolQueue[$hit->getKey()] = $hit;
         $this->cacheHit([$hit]);
     }
 
+    /**
+     * @param Activate $hit
+     * @return void
+     */
     protected function addActivateHitInPoolQueue(Activate $hit)
     {
         $this->activatePoolQueue[$hit->getKey()] = $hit;
@@ -141,6 +184,9 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->flushHits($hitKeysToRemove);
     }
 
+    /**
+     * @return void
+     */
     protected function sendActivateHit()
     {
         $headers = $this->getActivateHeaders();
@@ -215,6 +261,9 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         return $keysToFlush;
     }
 
+    /**
+     * @return void
+     */
     public function sendBatch()
     {
         if (count($this->activatePoolQueue)) {
@@ -312,6 +361,10 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         }
     }
 
+    /**
+     * @param array $hitKeys
+     * @return void
+     */
     public function flushHits(array $hitKeys)
     {
         try {
@@ -328,6 +381,9 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         }
     }
 
+    /**
+     * @return void
+     */
     public function flushAllHits()
     {
         try {

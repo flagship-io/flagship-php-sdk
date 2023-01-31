@@ -54,6 +54,9 @@ class VisitorDelegate extends VisitorAbstract
         $this->getStrategy()->lookupVisitor();
     }
 
+    /**
+     * @return void
+     */
     private function loadPredefinedContext()
     {
         $defaultContext = [

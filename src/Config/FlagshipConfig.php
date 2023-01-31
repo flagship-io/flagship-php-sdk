@@ -296,6 +296,7 @@ abstract class FlagshipConfig implements JsonSerializable
 
     /**
      * @inheritDoc
+     * @return array
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()

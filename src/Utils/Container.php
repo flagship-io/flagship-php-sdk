@@ -27,6 +27,10 @@ class Container implements ContainerInterface
     }
 
     /**
+     * @param $id
+     * @param $args
+     * @param $isFactory
+     * @return mixed|object|null
      * @throws ReflectionException
      */
     public function get($id, $args = null, $isFactory = false)
@@ -41,6 +45,9 @@ class Container implements ContainerInterface
     }
 
     /**
+     * @param $id
+     * @param $args
+     * @return object|null
      * @throws ReflectionException
      * @throws Exception
      */
@@ -71,6 +78,11 @@ class Container implements ContainerInterface
         return $reflectedClass->newInstanceArgs($constructorParameters);
     }
 
+    /**
+     * @param $parameters
+     * @return array
+     * @throws ReflectionException
+     */
     private function extractConstructorParam($parameters)
     {
         $constructorParameters = [];

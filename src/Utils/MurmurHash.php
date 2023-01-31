@@ -4,6 +4,11 @@ namespace Flagship\Utils;
 
 class MurmurHash
 {
+    /**
+     * @param mixed $k1
+     * @param mixed $constant
+     * @return int
+     */
     private function multiply($k1, $constant)
     {
         return ((($k1 & 0xffff) * $constant) +
@@ -11,11 +16,21 @@ class MurmurHash
                             (($k1 & 0x7fffffff) >> 16) | 0x8000) * $constant & 0xffff) << 16)) & 0xffffffff;
     }
 
+    /**
+     * @param mixed $k1
+     * @return int
+     */
     private function rotateLeft($k1)
     {
         return $k1 << 15 | ($k1 >= 0 ? $k1 >> 17 : (($k1 & 0x7fffffff) >> 17) | 0x4000);
     }
 
+    /**
+     * @param mixed $value
+     * @param mixed $numberDecalBit
+     * @param mixed $constant
+     * @return int
+     */
     private function rotateRight($value, $numberDecalBit, $constant)
     {
         return $value >= 0 ? $value >> $numberDecalBit : (($value & 0x7fffffff) >> $numberDecalBit) | $constant;

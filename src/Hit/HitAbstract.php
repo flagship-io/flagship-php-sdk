@@ -81,13 +81,13 @@ abstract class HitAbstract
     /**
      * HitAbstract constructor.
      *
-     * @param string $type : Hit type
-     *                     <code>
-     *                     Flagship\Enum\HitType::EVENT,
-     *                     Flagship\Enum\HitType::ITEM,
-     *                     Flagship\Enum\HitType::PAGEVIEW,
-     *                     Flagship\Enum\HitType::TRANSACTION
-     *                     </code>
+     * @param string $type  Hit type
+     *<code>
+     *Flagship\Enum\HitType::EVENT,
+     *Flagship\Enum\HitType::ITEM,
+     *Flagship\Enum\HitType::PAGEVIEW,
+     *Flagship\Enum\HitType::TRANSACTION
+     *</code>
      */
     public function __construct($type)
     {
@@ -392,6 +392,9 @@ abstract class HitAbstract
         return $objet;
     }
 
+    /**
+     * @return array
+     */
     public function toArray(){
         $reflector = new ReflectionObject($this);
         $properties = $reflector->getProperties();

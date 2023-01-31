@@ -40,6 +40,10 @@ class Flag implements FlagInterface
         $this->defaultValue = $defaultValue;
     }
 
+    /**
+     * @param $key
+     * @return FlagDTO|null
+     */
     protected function findFlagDTO($key)
     {
         foreach ($this->visitorDelegate->getFlagsDTO() as $flagDTO) {

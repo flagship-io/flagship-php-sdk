@@ -8,9 +8,16 @@ use Flagship\Enum\FlagshipField;
 
 class BucketingConfig extends FlagshipConfig
 {
+    /**
+     * @var string
+     */
     private $bucketingUrl;
 
-
+    /**
+     * @param string $bucketingUrl
+     * @param string $envId
+     * @param string $apiKey
+     */
     public function __construct($bucketingUrl, $envId = null, $apiKey = null)
     {
         parent::__construct($envId, $apiKey);
@@ -19,7 +26,7 @@ class BucketingConfig extends FlagshipConfig
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getBucketingUrl()
     {
@@ -27,7 +34,7 @@ class BucketingConfig extends FlagshipConfig
     }
 
     /**
-     * @param mixed $bucketingUrl
+     * @param string $bucketingUrl
      * @return BucketingConfig
      */
     public function setBucketingUrl($bucketingUrl)
@@ -36,6 +43,10 @@ class BucketingConfig extends FlagshipConfig
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $parent = parent::jsonSerialize();

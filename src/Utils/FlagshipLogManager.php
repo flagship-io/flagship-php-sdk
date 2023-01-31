@@ -93,6 +93,10 @@ class FlagshipLogManager implements LoggerInterface
         error_log($customMessage . $contextString ." ". $message);
     }
 
+    /**
+     * @param $context
+     * @return false|string
+     */
     private function parseContextToString($context)
     {
         $contextToString = "";

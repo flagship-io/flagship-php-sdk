@@ -8,7 +8,15 @@ use Flagship\Enum\HitType;
 class Activate extends HitAbstract
 {
     const ERROR_MESSAGE  = 'variationId and variationGroupId are required';
+
+    /**
+     * @var string
+     */
     private $variationGroupId;
+
+    /**
+     * @var string
+     */
     private $variationId;
 
     public static function getClassName(){
@@ -16,8 +24,8 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @param $variationGroupId
-     * @param $variationId
+     * @param string $variationGroupId
+     * @param string $variationId
      */
     public  function __construct($variationGroupId, $variationId)
     {
@@ -27,7 +35,7 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getVariationGroupId()
     {
@@ -35,7 +43,7 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @param mixed $variationGroupId
+     * @param string $variationGroupId
      * @return Activate
      */
     public function setVariationGroupId($variationGroupId)
@@ -45,7 +53,7 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getVariationId()
     {
@@ -53,7 +61,7 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @param mixed $variationId
+     * @param string $variationId
      * @return Activate
      */
     public function setVariationId($variationId)

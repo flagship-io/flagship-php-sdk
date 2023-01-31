@@ -107,27 +107,43 @@ class PanicStrategy extends DefaultStrategy
         $this->log(__FUNCTION__);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
     {
         $this->log(__FUNCTION__);
         return FlagMetadata::getEmpty();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function lookupVisitor()
     {
         //
     }
 
+    /**
+     * @inheritDoc
+     */
     public function cacheVisitor()
     {
         //
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
     {
         return [];
     }
 
+    /**
+     * @param string $functionName
+     * @return void
+     */
     private function log($functionName)
     {
         $this->logError(

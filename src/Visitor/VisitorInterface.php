@@ -4,6 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Flag\FlagInterface;
 use Flagship\Hit\HitAbstract;
+use Flagship\Model\FlagDTO;
 
 /**
  * Flagship visitor representation.
@@ -62,6 +63,10 @@ interface VisitorInterface extends VisitorCoreInterface
      */
     public function getModifications();
 
+    /**
+     * Return an array of all flags data fetched for the current visitor.
+     * @return FlagDTO[]
+     */
     public function getFlagsDTO();
 
     /**

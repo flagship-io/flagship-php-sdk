@@ -5,6 +5,9 @@ namespace Flagship\Traits;
 trait Guid
 {
 
+    /**
+     * @return string
+     */
     protected function newGuid()
     {
         $rand = function ($min, $max) {

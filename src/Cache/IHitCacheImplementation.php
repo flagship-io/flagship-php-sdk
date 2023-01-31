@@ -25,5 +25,8 @@ interface IHitCacheImplementation
      */
     public function flushHits(array $hitKeys);
 
+    /**
+     * @return void
+     */
     public function flushAllHits();
 }

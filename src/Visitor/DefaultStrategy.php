@@ -75,6 +75,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $this->getVisitor()->context = [];
     }
 
+    /**
+     * @param string $functionName
+     * @return void
+     */
     private function logDeactivate($functionName)
     {
         $this->logError(
@@ -88,6 +92,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
 
+    /**
+     * @param string $visitorId
+     * @return void
+     */
     public function authenticate($visitorId)
     {
         if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
@@ -107,6 +115,9 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
 
+    /**
+     * @return void
+     */
     public function unauthenticate()
     {
         if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
@@ -143,6 +154,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
 
+    /**
+     * @param string $key
+     * @param mixed $defaultValue
+     * @param bool $activate
+     * @return bool|float|int|string
+     */
     public function getModification($key, $defaultValue, $activate = false)
     {
         if (!$this->isKeyValid($key)) {
@@ -201,6 +218,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
 
+    /**
+     * @param string $key
+     * @return array|null
+     */
     public function getModificationInfo($key)
     {
         if (!$this->isKeyValid($key)) {
@@ -226,6 +247,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
         return $this->parseToCampaign($modification);
     }
 
+    /**
+     * @param VisitorAbstract $visitor
+     * @return array
+     */
     protected function fetchVisitorCampaigns(VisitorAbstract $visitor){
         $now = $this->getNow();
         $visitorCache = $visitor->visitorCache;
@@ -257,11 +282,18 @@ class DefaultStrategy extends VisitorStrategyAbstract
         return  $campaigns;
     }
 
+    /**
+     * @return float
+     */
     public function getNow()
     {
         return round(microtime(true) * 1000);
     }
 
+    /**
+     * @param string $functionName
+     * @return void
+     */
     private function synchronizeFlags($functionName)
     {
         $decisionManager = $this->getDecisionManager($functionName);
@@ -293,6 +325,9 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
 
+    /**
+     * @return void
+     */
     public function synchronizeModifications()
     {
         $this->synchronizeFlags(__FUNCTION__);
@@ -307,6 +342,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
 
+    /**
+     * @param string $key
+     * @return void
+     */
     public function activateModification($key)
     {
         $modification = $this->getObjetModification($key);
@@ -360,11 +399,20 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
 
+    /**
+     * @return array|FlagDTO[]
+     */
     public function getModifications()
     {
         return $this->getVisitor()->getModifications();
     }
 
+    /**
+     * @param string $key
+     * @param mixed $defaultValue
+     * @param FlagDTO|null $flag
+     * @return void
+     */
     public function userExposed($key, $defaultValue, FlagDTO $flag = null)
     {
         if (!$flag) {
@@ -395,6 +443,13 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $this->getTrackingManager()->activateFlag($activateHit);
     }
 
+    /**
+     * @param string $key
+     * @param mixed $defaultValue
+     * @param FlagDTO|null $flag
+     * @param bool $userExposed
+     * @return array|bool|float|int|string
+     */
     public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
     {
         $functionName = __FUNCTION__;

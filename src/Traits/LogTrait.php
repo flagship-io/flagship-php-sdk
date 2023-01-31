@@ -9,6 +9,10 @@ use Flagship\Enum\LogLevel;
 trait LogTrait
 {
 
+    /**
+     * @param array $args
+     * @return array
+     */
     protected function formatArgs($args = []){
         $formatArgs = [];
         foreach ($args as $arg) {
@@ -19,11 +23,13 @@ trait LogTrait
         }
         return $formatArgs;
     }
+
     /**
      * @param FlagshipConfig $config
-     * @param $tag
+     * @param string $tag
      * @param string $message
-     * @param mixed ...$args
+     * @param array $args
+     * @return void
      */
     protected function logDebugSprintf(FlagshipConfig $config, $tag, $message, $args=[])
     {
@@ -38,6 +44,7 @@ trait LogTrait
      * @param FlagshipConfig $config
      * @param string $message
      * @param array $context
+     *@return void
      */
     protected function logDebug($config, $message, $context = [])
     {
@@ -51,7 +58,8 @@ trait LogTrait
      * @param FlagshipConfig $config
      * @param string $tag
      * @param string $message
-     * @param mixed ...$args
+     * @param array ...$args
+     * @return void
      */
     protected function logErrorSprintf( FlagshipConfig $config, $tag, $message, $args=[]){
         if ($config->getLogLevel() < LogLevel::ERROR || is_null($config->getLogManager())) {
@@ -64,6 +72,7 @@ trait LogTrait
      * @param FlagshipConfig $config
      * @param string $message
      * @param array $context
+     * @return void
      */
     protected function logError($config, $message, $context = [])
     {
@@ -73,6 +82,13 @@ trait LogTrait
         $config->getLogManager()->error($message, $context);
     }
 
+    /**
+     * @param FlagshipConfig $config
+     * @param string $tag
+     * @param string $message
+     * @param array $args
+     * @return void
+     */
     protected function logInfoSprintf( FlagshipConfig $config, $tag, $message, $args=[]){
         if ($config->getLogLevel() < LogLevel::INFO || is_null($config->getLogManager())) {
             return;
@@ -84,6 +100,7 @@ trait LogTrait
      * @param FlagshipConfig $config
      * @param string $message
      * @param array $context
+     * @return void
      */
     protected function logInfo($config, $message, $context = [])
     {
@@ -93,6 +110,14 @@ trait LogTrait
         $config->getLogManager()->info($message, $context);
     }
 
+    /**
+     * @param string $message
+     * @param string $url
+     * @param array $requestBody
+     * @param array $headers
+     * @param string $duration
+     * @return array
+     */
     protected function getLogFormat($message, $url, $requestBody, $headers, $duration){
         $format = [];
         if ($message){

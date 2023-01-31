@@ -4,6 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Config\FlagshipConfig;
 use Flagship\Hit\HitAbstract;
+use Flagship\Model\FlagDTO;
 use Flagship\Traits\LogTrait;
 use JsonSerializable;
 
@@ -105,6 +106,10 @@ class Visitor implements VisitorInterface, JsonSerializable
         return $this;
     }
 
+    /**
+     * visitor anonymous id
+     * @return string
+     */
     public function getAnonymousId()
     {
         return $this->getVisitorDelegate()->getAnonymousId();
@@ -193,6 +198,7 @@ class Visitor implements VisitorInterface, JsonSerializable
 
     /**
      * @inheritDoc
+     * @return array
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
@@ -224,6 +230,9 @@ class Visitor implements VisitorInterface, JsonSerializable
         return $this->visitorDelegate->getFlag($key, $defaultValue);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getFlagsDTO()
     {
         return $this->visitorDelegate->getFlagsDTO();

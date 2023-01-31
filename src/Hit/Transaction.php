@@ -15,6 +15,9 @@ class Transaction extends HitAbstract
     const CURRENCY_ERROR = "'%s' must be a string and have exactly 3 letters";
     const ERROR_MESSAGE  = 'Transaction Id and Transaction affiliation are required';
 
+    /**
+     * @return string
+     */
     public static function getClassName(){
         return __CLASS__;
     }
@@ -310,7 +313,7 @@ class Transaction extends HitAbstract
     /**
      * Total shipping cost of the transaction
      *
-     * @return string
+     * @return float
      */
     public function getShippingCosts()
     {

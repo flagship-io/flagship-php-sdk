@@ -198,7 +198,7 @@ class Visitor implements VisitorInterface, JsonSerializable
 
     /**
      * @inheritDoc
-     * @return array
+     * @return mixed
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()

@@ -107,7 +107,7 @@ class FlagMetadata implements JsonSerializable
 
     /**
      * @inheritDoc
-     * @return array
+     * @return mixed
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()

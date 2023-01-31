@@ -193,7 +193,7 @@ class FlagDTO implements JsonSerializable
 
     /**
      * @inheritDoc
-     * @return array
+     * @return mixed
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()

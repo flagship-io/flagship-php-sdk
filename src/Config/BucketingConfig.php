@@ -45,6 +45,7 @@ class BucketingConfig extends FlagshipConfig
 
     /**
      * @inheritDoc
+     * @return mixed
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()

@@ -25,7 +25,7 @@ class ConfigManagerTest extends TestCase
         $configManager->setDecisionManager($decisionManager);
         $this->assertSame($decisionManager, $configManager->getDecisionManager());
 
-        $trackingManager = new TrackingManager(new HttpClient());
+        $trackingManager = new TrackingManager($config, new HttpClient());
         $configManager->setTrackingManager($trackingManager);
         $this->assertSame($trackingManager, $configManager->getTrackingManager());
     }

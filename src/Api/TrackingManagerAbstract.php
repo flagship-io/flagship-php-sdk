@@ -15,10 +15,8 @@ use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Segment;
 use Flagship\Hit\Transaction;
-use Flagship\Model\FlagDTO;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClientInterface;
-use Flagship\Visitor\VisitorAbstract;
 
 /**
  * Class TrackingManagerAbstract
@@ -76,21 +74,42 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     }
 
     /**
+     * @return FlagshipConfig
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * @return BatchingCachingStrategyAbstract
      */
-    public function initStrategy(){
-        switch ($this->config->getCacheStrategy()){
+    public function initStrategy()
+    {
+        switch ($this->config->getCacheStrategy()) {
             case CacheStrategy::CONTINUOUS_CACHING:
-                $strategy = new BatchingContinuousCachingStrategy($this->config,$this->httpClient,
-                    $this->hitsPoolQueue, $this->activatePoolQueue);
+                $strategy = new BatchingContinuousCachingStrategy(
+                    $this->config,
+                    $this->httpClient,
+                    $this->hitsPoolQueue,
+                    $this->activatePoolQueue
+                );
                 break;
             case CacheStrategy::PERIODIC_CACHING:
-                $strategy = new BatchingPeriodicCachingStrategy($this->config,$this->httpClient,
-                    $this->hitsPoolQueue, $this->activatePoolQueue);
+                $strategy = new BatchingPeriodicCachingStrategy(
+                    $this->config,
+                    $this->httpClient,
+                    $this->hitsPoolQueue,
+                    $this->activatePoolQueue
+                );
                 break;
             default:
-                $strategy = new NoBatchingContinuousCachingStrategy($this->config,$this->httpClient,
-                    $this->hitsPoolQueue, $this->activatePoolQueue);
+                $strategy = new NoBatchingContinuousCachingStrategy(
+                    $this->config,
+                    $this->httpClient,
+                    $this->hitsPoolQueue,
+                    $this->activatePoolQueue
+                );
                 break;
         }
         return $strategy;
@@ -101,14 +120,19 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
         if (isset($item[HitCacheFields::VERSION]) && $item[HitCacheFields::VERSION] == 1 &&
             isset($item[HitCacheFields::DATA]) && isset($item[HitCacheFields::DATA][HitCacheFields::TYPE]) &&
             isset($item[HitCacheFields::DATA][HitCacheFields::CONTENT])
-        ){
+        ) {
             return true;
         }
-        $this->logErrorSprintf($this->config, FlagshipConstant::PROCESS_CACHE,
-            FlagshipConstant::HIT_CACHE_FORMAT_ERROR,[$item]);
+        $this->logErrorSprintf(
+            $this->config,
+            FlagshipConstant::PROCESS_CACHE,
+            FlagshipConstant::HIT_CACHE_FORMAT_ERROR,
+            [$item]
+        );
         return  false;
     }
-    public function lookupHits(){
+    public function lookupHits()
+    {
         try {
             $hitCacheImplementation = $this->config->getHitCacheImplementation();
             if (!$hitCacheImplementation) {
@@ -116,32 +140,37 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
             }
             $hitsCache = $hitCacheImplementation->lookupHits();
 
-            $this->logDebugSprintf($this->config, FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_CACHE_LOADED,[$hitsCache]);
+            $this->logDebugSprintf(
+                $this->config,
+                FlagshipConstant::PROCESS_CACHE,
+                FlagshipConstant::HIT_CACHE_LOADED,
+                [$hitsCache]
+            );
 
-            if (!is_array($hitsCache) || !count($hitsCache)){
+            if (!is_array($hitsCache) || !count($hitsCache)) {
                 return;
             }
 
 
-            function checkHitTime ($time){
+            function checkHitTime($time)
+            {
                 $now = round(microtime(true) * 1000);
                 return ($now - $time)>= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
             }
 
             $hitKeysToRemove = [];
 
-            foreach ($hitsCache as $key=>$item) {
+            foreach ($hitsCache as $key => $item) {
                 $hitKeysToRemove [] = $key;
-                if (!$this->checkLookupHitData($item) || checkHitTime($item[HitCacheFields::DATA][HitCacheFields::TIME])){
+                if (!$this->checkLookupHitData($item) ||
+                    checkHitTime($item[HitCacheFields::DATA][HitCacheFields::TIME])) {
                     continue;
                 }
 
                 $type = $item[HitCacheFields::DATA][HitCacheFields::TYPE];
                 $content = $item[HitCacheFields::DATA][HitCacheFields::CONTENT];
 
-                switch ($type){
-
+                switch ($type) {
                     case HitType::EVENT:
                         $hit = HitAbstract::hydrate(Event::getClassName(), $content);
                         break;
@@ -173,11 +202,13 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
             }
 
             $this->strategy->flushHits($hitKeysToRemove);
-
-
-        }catch (\Exception $exception){
-            $this->logErrorSprintf($this->config, FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_CACHE_ERROR, ["lookupHits", $exception->getMessage()]);
+        } catch (\Exception $exception) {
+            $this->logErrorSprintf(
+                $this->config,
+                FlagshipConstant::PROCESS_CACHE,
+                FlagshipConstant::HIT_CACHE_ERROR,
+                ["lookupHits", $exception->getMessage()]
+            );
         }
     }
 }

@@ -113,7 +113,7 @@ class FlagshipTest extends TestCase
 
         $apiManager = new ApiManager(new HttpClient(), $config);
 
-        $trackingManager = new TrackingManager(new HttpClient());
+        $trackingManager = new TrackingManager($config, new HttpClient());
 
         $configManager = new ConfigManager();
 
@@ -125,8 +125,7 @@ class FlagshipTest extends TestCase
             $apiManager,
             $trackingManager,
             $configManager,
-            $bucketingManager
-) {
+            $bucketingManager) {
             $args = func_get_args();
             switch ($args[0]) {
                 case 'Flagship\Config\DecisionApiConfig':
@@ -450,7 +449,7 @@ class FlagshipTest extends TestCase
 
         $apiManager = new ApiManager($httpClientMock, $config);
 
-        $trackingManager = new TrackingManager($httpClientMock);
+        $trackingManager = new TrackingManager($config, $httpClientMock);
 
         $configManager = new ConfigManager();
 

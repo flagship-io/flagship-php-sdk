@@ -1,14 +1,13 @@
 <?php
 
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use Flagship\Cache\IHitCacheImplementation;
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\LogLevel;
 use Flagship\Flagship;
-use Flagship\Hit\Event;
-use Flagship\Enum\EventCategory;
 use Flagship\Hit\Page;
 
 class HitCacheRedis implements IHitCacheImplementation{
@@ -64,24 +63,24 @@ class HitCacheRedis implements IHitCacheImplementation{
     }
 }
 
+
 $ENV_ID = '';
 $API_KEY = '';
 
 Flagship::start($ENV_ID, $API_KEY,
-    DecisionApiConfig::decisionApi()->setCacheStrategy(2)
-    ->setHitCacheImplementation(new HitCacheRedis('127.0.0.1', 6379,0))
+    DecisionApiConfig::decisionApi() // DecisionApiConfig::bucketing("http://127.0.0.1:8080/bucketing")
+    ->setCacheStrategy(CacheStrategy::PERIODIC_CACHING)
+        //->setHitCacheImplementation(new HitCacheRedis('127.0.0.1', 6379,0))
     ->setLogLevel(LogLevel::ALL)
 );
 
-$now = round(microtime(true) * 1000);
-
-$visitor = Flagship::newVisitor("visitor_2")
+$visitor = Flagship::newVisitor("visitor_ID")
     ->withContext(["qa_report" => true, 'is_php' => true])
     ->build();
 
 $visitor->fetchFlags();
 
-$flag = $visitor->getFlag('qa_report_var', 'default_title');
+$flag = $visitor->getFlag('my_flag_key', 'default_value');
 
 echo "value :" . $flag->getValue() . PHP_EOL;
 
@@ -91,8 +90,6 @@ $visitor->sendHit(new Page("page3"));
 $visitor->sendHit(new Page("page4"));
 $visitor->sendHit(new Page("page5"));
 
+// Note: A appeler avant que le script termine l'exécution. Par exemple l'event kernel.terminate pour symfony
 Flagship::close();
 
-$now2 = round(microtime(true) * 1000);
-
-echo "duration:". ($now2 - $now).PHP_EOL;

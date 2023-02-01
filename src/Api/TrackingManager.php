@@ -2,17 +2,8 @@
 
 namespace Flagship\Api;
 
-use Exception;
-use Flagship\Config\FlagshipConfig;
-use Flagship\Enum\EventCategory;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\HitType;
 use Flagship\Hit\Activate;
 use Flagship\Hit\HitAbstract;
-use Flagship\Model\FlagDTO;
-use Flagship\Traits\BuildApiTrait;
-use Flagship\Traits\LogTrait;
-use Flagship\Visitor\VisitorAbstract;
 
 /**
  * Class TrackingManager

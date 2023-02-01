@@ -13,10 +13,11 @@ trait LogTrait
      * @param array $args
      * @return array
      */
-    protected function formatArgs($args = []){
+    protected function formatArgs($args = [])
+    {
         $formatArgs = [];
         foreach ($args as $arg) {
-            if (is_array($arg)){
+            if (is_array($arg)) {
                 $arg = json_encode($arg);
             }
             $formatArgs[] = $arg;
@@ -31,12 +32,12 @@ trait LogTrait
      * @param array $args
      * @return void
      */
-    protected function logDebugSprintf(FlagshipConfig $config, $tag, $message, $args=[])
+    protected function logDebugSprintf(FlagshipConfig $config, $tag, $message, $args = [])
     {
         if ($config->getLogLevel() < LogLevel::DEBUG || is_null($config->getLogManager())) {
             return;
         }
-        $customMessage = sprintf($message, ...$this->formatArgs($args));
+        $customMessage = vsprintf($message, $this->formatArgs($args));
         $this->logDebug($config, $customMessage, [FlagshipConstant::TAG => $tag]);
     }
 
@@ -61,11 +62,12 @@ trait LogTrait
      * @param array ...$args
      * @return void
      */
-    protected function logErrorSprintf( FlagshipConfig $config, $tag, $message, $args=[]){
+    protected function logErrorSprintf(FlagshipConfig $config, $tag, $message, $args = [])
+    {
         if ($config->getLogLevel() < LogLevel::ERROR || is_null($config->getLogManager())) {
             return;
         }
-        $customMessage = sprintf($message, ...$this->formatArgs($args));
+        $customMessage = vsprintf($message, $this->formatArgs($args));
         $this->logError($config, $customMessage, [FlagshipConstant::TAG => $tag]);
     }
     /**
@@ -89,11 +91,12 @@ trait LogTrait
      * @param array $args
      * @return void
      */
-    protected function logInfoSprintf( FlagshipConfig $config, $tag, $message, $args=[]){
+    protected function logInfoSprintf(FlagshipConfig $config, $tag, $message, $args = [])
+    {
         if ($config->getLogLevel() < LogLevel::INFO || is_null($config->getLogManager())) {
             return;
         }
-        $customMessage = sprintf($message, ...$this->formatArgs($args));
+        $customMessage = vsprintf($message, $this->formatArgs($args));
         $this->logInfo($config, $customMessage, [FlagshipConstant::TAG => $tag]);
     }
     /**
@@ -118,21 +121,22 @@ trait LogTrait
      * @param string $duration
      * @return array
      */
-    protected function getLogFormat($message, $url, $requestBody, $headers, $duration){
+    protected function getLogFormat($message, $url, $requestBody, $headers, $duration)
+    {
         $format = [];
-        if ($message){
+        if ($message) {
             $format["message"] = $message;
         }
-        if ($url){
+        if ($url) {
             $format["url"] = $url;
         }
-        if ($requestBody){
+        if ($requestBody) {
             $format['body'] = $requestBody;
         }
-        if ($headers){
+        if ($headers) {
             $format['headers'] = $headers;
         }
-        if ($duration){
+        if ($duration) {
             $format['duration'] = $duration;
         }
         return  $format;

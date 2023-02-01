@@ -681,7 +681,7 @@ class DefaultStrategyTest extends TestCase
 
         $trackerManagerStub = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
-            [new HttpClient()],
+            [$config, new HttpClient()],
             '',
             true,
             true,

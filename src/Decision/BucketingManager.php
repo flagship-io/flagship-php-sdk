@@ -63,9 +63,10 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function sendContext(VisitorAbstract $visitor)
     {
-        if (count($visitor->getContext())<= self::NB_MIN_CONTEXT_KEYS){
+        if (count($visitor->getContext())<= self::NB_MIN_CONTEXT_KEYS) {
             return;
         }
+
         $segmentHit = new Segment($visitor->getContext());
         $visitor->sendHit($segmentHit);
     }
@@ -73,12 +74,13 @@ class BucketingManager extends DecisionManagerAbstract
     /**
      * @return mixed|null
      */
-    protected  function getBucketingFile(){
+    protected function getBucketingFile()
+    {
 
         try {
             $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
             $url = $this->getConfig()->getBucketingUrl();
-            if (!$url){
+            if (!$url) {
                 throw  new Exception(self::INVALID_BUCKETING_FILE_URL);
             }
             $response = $this->httpClient->get($url);
@@ -101,6 +103,7 @@ class BucketingManager extends DecisionManagerAbstract
         if (!$bucketingCampaigns) {
             return [];
         }
+
 
         if (isset($bucketingCampaigns[FlagshipField::FIELD_PANIC])) {
             $hasPanicMode = !empty($bucketingCampaigns[FlagshipField::FIELD_PANIC]);
@@ -173,21 +176,23 @@ class BucketingManager extends DecisionManagerAbstract
      * @param VisitorAbstract $visitor
      * @return mixed|null
      */
-    private function getVisitorAssignmentsHistory($variationGroupId, VisitorAbstract $visitor){
+    private function getVisitorAssignmentsHistory($variationGroupId, VisitorAbstract $visitor)
+    {
 
         if (!is_array($visitor->visitorCache) ||
             !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]) ||
             !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY]) ||
             !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId])
-        ){
+        ) {
             return null;
         }
         return $visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId];
     }
 
-    private function findVariationById(array $variations, $key){
+    private function findVariationById(array $variations, $key)
+    {
         foreach ($variations as $item) {
-            if ($item[FlagshipField::FIELD_ID] === $key){
+            if ($item[FlagshipField::FIELD_ID] === $key) {
                 return $item;
             }
         }
@@ -217,9 +222,9 @@ class BucketingManager extends DecisionManagerAbstract
                 continue;
             }
             $assignmentsVariationId =  $this->getVisitorAssignmentsHistory($groupVariationId, $visitor);
-            if ($assignmentsVariationId){
+            if ($assignmentsVariationId) {
                 $newVariation = $this->findVariationById($variations, $assignmentsVariationId);
-                if (!$newVariation){
+                if (!$newVariation) {
                     continue;
                 }
                 $visitorVariation = [

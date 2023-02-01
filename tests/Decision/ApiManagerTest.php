@@ -301,7 +301,7 @@ class ApiManagerTest extends TestCase
         //Mock Track
         $trackerManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
-            ['sendConsentHit'],
+            ['sendHit'],
             '',
             false
         );
@@ -313,9 +313,7 @@ class ApiManagerTest extends TestCase
             ->willThrowException(new Exception($errorMessage, 403));
 
         $config = new DecisionApiConfig("env_id", "api_key");
-        $logManagerStub->expects($this->once())->method('error')->withConsecutive(
-            ["[$flagshipSdk] " . $errorMessage]
-        );
+
 
         $config->setLogManager($logManagerStub);
         $configManager = new ConfigManager();
@@ -324,6 +322,12 @@ class ApiManagerTest extends TestCase
         $apiManager = new ApiManager($httpClientMock, $config);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, 'visitor_id', false, ['age' => 15], true);
+
+        $logManagerStub->expects($this->once())->method('error')
+            ->withConsecutive(
+                [ $errorMessage]
+            );
+
         $value = $apiManager->getCampaigns($visitor);
 
         $this->assertNull($value);

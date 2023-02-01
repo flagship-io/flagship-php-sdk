@@ -132,11 +132,9 @@ class FlagshipConfigTest extends TestCase
             ['error', 'info']
         );
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerMock->expects($this->once())
             ->method('error')
             ->with(
-                "[$flagshipSdk] " .
                 sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
                 [
                     FlagshipConstant::TAG => "setStatusChangedCallback"

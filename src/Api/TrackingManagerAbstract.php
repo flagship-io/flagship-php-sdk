@@ -31,15 +31,6 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     protected $httpClient;
 
     /**
-     * @var HitAbstract[]
-     */
-    protected $hitsPoolQueue;
-
-    /**
-     * @var Activate[]
-     */
-    protected $activatePoolQueue;
-    /**
      * @var FlagshipConfig
      */
     protected $config;
@@ -59,8 +50,6 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     {
         $this->httpClient = $httpClient;
         $this->config = $config;
-        $this->activatePoolQueue = [];
-        $this->hitsPoolQueue = [];
         $this->strategy = $this->initStrategy();
         $this->lookupHits();
     }
@@ -90,25 +79,19 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
             case CacheStrategy::CONTINUOUS_CACHING:
                 $strategy = new BatchingContinuousCachingStrategy(
                     $this->config,
-                    $this->httpClient,
-                    $this->hitsPoolQueue,
-                    $this->activatePoolQueue
+                    $this->httpClient
                 );
                 break;
             case CacheStrategy::PERIODIC_CACHING:
                 $strategy = new BatchingPeriodicCachingStrategy(
                     $this->config,
-                    $this->httpClient,
-                    $this->hitsPoolQueue,
-                    $this->activatePoolQueue
+                    $this->httpClient
                 );
                 break;
             default:
                 $strategy = new NoBatchingContinuousCachingStrategy(
                     $this->config,
-                    $this->httpClient,
-                    $this->hitsPoolQueue,
-                    $this->activatePoolQueue
+                    $this->httpClient
                 );
                 break;
         }

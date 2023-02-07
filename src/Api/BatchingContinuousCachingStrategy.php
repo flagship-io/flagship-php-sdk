@@ -15,11 +15,10 @@ class BatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstract
     protected function notConsent($visitorId)
     {
         $keysToFlush = $this->commonNotConsent($visitorId);
-        if (!count($keysToFlush)){
+        if (!count($keysToFlush)) {
             return;
         }
 
         $this->flushHits($keysToFlush);
     }
-
 }

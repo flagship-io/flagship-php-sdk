@@ -52,13 +52,30 @@ class NoConsentStrategyTest extends TestCase
 
         $logMessageBuild = function ($functionName) use ($visitorId) {
             $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return ["[$flagshipSdk] " . sprintf(
+            return [sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_CONSENT_ERROR,
                 $functionName,
                 $visitorId
             ),
                 [FlagshipConstant::TAG => $functionName]];
         };
+
+
+
+        $modificationKey = $modifications[0]->getKey();
+        $modificationValue = $modifications[0]->getValue();
+        
+        $httpClientMock->expects($this->exactly(2))->method("post")
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(200, $this->campaigns()),
+                new HttpResponse(500, null)
+            );
+
+        $configManager = (new ConfigManager())->setConfig($config);
+        $decisionManager = new ApiManager($httpClientMock, $config);
+        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $logManagerStub->expects($this->exactly(4))->method('error')
             ->withConsecutive(
@@ -67,21 +84,6 @@ class NoConsentStrategyTest extends TestCase
                 $logMessageBuild('sendHit'),
                 $logMessageBuild('userExposed')
             );
-
-        $modificationKey = $modifications[0]->getKey();
-        $modificationValue = $modifications[0]->getValue();
-        
-        $httpClientMock->expects($this->exactly(2))->method("post")
-            ->willReturnOnConsecutiveCalls(
-                new HttpResponse(200,$this->campaigns()),
-                new HttpResponse(500,null)
-            );
-
-        $configManager = (new ConfigManager())->setConfig($config);
-        $decisionManager = new ApiManager($httpClientMock, $config);
-        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
-
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $noConsentStrategy = new NoConsentStrategy($visitor);
 
@@ -175,7 +177,8 @@ class NoConsentStrategyTest extends TestCase
             true,
             true,
             true,
-            ['lookupVisitor', 'cacheVisitor']);
+            ['lookupVisitor', 'cacheVisitor']
+        );
 
         $VisitorCacheImplementationMock->expects($this->never())
             ->method("cacheVisitor");
@@ -191,5 +194,4 @@ class NoConsentStrategyTest extends TestCase
         // test cacheVisitor
         $noConsentStrategy->cacheVisitor();
     }
-
 }

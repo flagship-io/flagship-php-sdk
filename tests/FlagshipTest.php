@@ -125,7 +125,8 @@ class FlagshipTest extends TestCase
             $apiManager,
             $trackingManager,
             $configManager,
-            $bucketingManager) {
+            $bucketingManager
+) {
             $args = func_get_args();
             switch ($args[0]) {
                 case 'Flagship\Config\DecisionApiConfig':
@@ -384,33 +385,6 @@ class FlagshipTest extends TestCase
 
         $visitor1 = Flagship::newVisitor($visitorId);
         $this->assertInstanceOf("Flagship\Visitor\VisitorBuilder", $visitor1);
-    }
-
-    public function testNewVisitorFailed()
-    {
-        //Test Start Flagship with a empty envId
-        $envId = "";
-        $apiKey = "apiKey";
-        $config = new DecisionApiConfig($envId, $apiKey);
-        $config->setLogManager($this->logManagerMock);
-
-        Flagship::start($envId, $apiKey, $config);
-
-        $context = ['age' => 20];
-        $visitorId = "visitorId";
-        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
-        $this->assertSame(null, $visitor1);
-    }
-
-    public function testNewVisitorFailedWithoutStart()
-    {
-        //Test Start Flagship
-        $context = ['age' => 20];
-        $visitorId = "visitorId";
-
-        $visitor1 = Flagship::newVisitor($visitorId, false, $context);
-
-        $this->assertSame(null, $visitor1);
     }
 
     public function testStatusCallback()

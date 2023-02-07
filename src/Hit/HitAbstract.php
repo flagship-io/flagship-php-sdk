@@ -92,7 +92,7 @@ abstract class HitAbstract
     public function __construct($type)
     {
         $this->type = $type;
-        $this->createdAt = 	round(microtime(true) * 1000);
+        $this->createdAt =  round(microtime(true) * 1000);
     }
 
     /**
@@ -355,21 +355,20 @@ abstract class HitAbstract
     public function toApiKeys()
     {
         $data = [
+            FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId ?: $this->anonymousId,
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
             FlagshipConstant::T_API_ITEM => $this->getType(),
             FlagshipConstant::USER_IP_API_ITEM => $this->getUserIP(),
             FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $this->getScreenResolution(),
             FlagshipConstant::USER_LANGUAGE => $this->getLocale(),
-            FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber()
+            FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber(),
+            FlagshipConstant::CUSTOMER_UID => null
         ];
 
         if ($this->visitorId && $this->anonymousId) {
             $data[FlagshipConstant::VISITOR_ID_API_ITEM] = $this->anonymousId;
             $data[FlagshipConstant::CUSTOMER_UID] = $this->visitorId;
-        } else {
-            $data[FlagshipConstant::VISITOR_ID_API_ITEM] = $this->visitorId ?: $this->anonymousId;
-            $data[FlagshipConstant::CUSTOMER_UID] = null;
         }
         return $data;
     }
@@ -380,10 +379,11 @@ abstract class HitAbstract
      * @return object
      * @throws ReflectionException
      */
-    public static function hydrate($class, $data){
+    public static function hydrate($class, $data)
+    {
         $reflector = new ReflectionClass($class);
         $objet = $reflector->newInstanceWithoutConstructor();
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             $method = 'set'.ucwords($key);
             if (is_callable(array($objet, $method))) {
                 $objet->$method($value);
@@ -395,12 +395,13 @@ abstract class HitAbstract
     /**
      * @return array
      */
-    public function toArray(){
+    public function toArray()
+    {
         $reflector = new ReflectionObject($this);
         $properties = $reflector->getProperties();
         $outArray = [];
         foreach ($properties as $property) {
-            if ($property->getName()==='config'){
+            if ($property->getName()==='config') {
                 continue;
             }
             $property->setAccessible(true);

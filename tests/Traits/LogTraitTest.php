@@ -35,7 +35,7 @@ class LogTraitTest extends TestCase
 
         $logManagerMock->expects($this->exactly(3))->method('error')
             ->with(
-                "[$flagshipSdk] " . $message,
+                $message,
                 $context
             );
 
@@ -81,11 +81,10 @@ class LogTraitTest extends TestCase
         );
         $message = "hello";
         $context = ['exception' => 'hello Exception'];
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
         $logManagerMock->expects($this->exactly(3))->method('info')
             ->with(
-                "[$flagshipSdk] " . $message,
+                $message,
                 $context
             );
         $config = new DecisionApiConfig();

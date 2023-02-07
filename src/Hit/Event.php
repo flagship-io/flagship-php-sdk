@@ -17,7 +17,8 @@ class Event extends HitAbstract
     const CATEGORY_ERROR = "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
     const VALUE_FIELD_ERROR = 'value must be an integer and be >= 0';
 
-    public static function getClassName(){
+    public static function getClassName()
+    {
         return __CLASS__;
     }
 

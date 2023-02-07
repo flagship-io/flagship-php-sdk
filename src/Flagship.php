@@ -126,7 +126,7 @@ class Flagship
 
             $configManager->setDecisionManager($decisionManager);
 
-            $trackingManager = $container->get('Flagship\Api\TrackingManager',[$config,$httpClient]);
+            $trackingManager = $container->get('Flagship\Api\TrackingManager', [$config,$httpClient]);
 
             $configManager->setTrackingManager($trackingManager);
 
@@ -272,9 +272,10 @@ class Flagship
         return $this->container;
     }
 
-    public static function close(){
+    public static function close()
+    {
         $instance = self::getInstance();
-        if (!$instance->configManager){
+        if (!$instance->configManager) {
             return;
         }
         $instance->configManager->getTrackingManager()->sendBatch();

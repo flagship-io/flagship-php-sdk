@@ -2,6 +2,8 @@
 
 namespace Flagship\Visitor;
 
+require_once __dir__ . '/../Assets/Round.php';
+
 use Flagship\Config\BucketingConfig;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
@@ -12,6 +14,7 @@ use Flagship\Enum\FlagshipField;
 use Flagship\Enum\HitType;
 use Flagship\Flag\Flag;
 use Flagship\Flag\FlagMetadata;
+use Flagship\Hit\Activate;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
@@ -23,6 +26,7 @@ use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use PHPUnit\Framework\TestCase;
+
 
 class DefaultStrategyTest extends TestCase
 {
@@ -272,21 +276,23 @@ class DefaultStrategyTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
-        $sdk = FlagshipConstant::FLAGSHIP_SDK;
-        $authenticateName = "authenticate";
-        $logManagerStub->expects($this->exactly(2))
-            ->method('error')
-            ->withConsecutive(["[$sdk] " . sprintf(
-                FlagshipConstant::VISITOR_ID_ERROR,
-                $authenticateName
-            )], ["[$sdk] " . sprintf(
-                FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
-                $authenticateName
-            ), [FlagshipConstant::TAG => $authenticateName]]);
 
         $configManager = (new ConfigManager())
             ->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
+
+        $authenticateName = "authenticate";
+        $logManagerStub->expects($this->exactly(2))
+            ->method('error')
+            ->withConsecutive([ sprintf(
+                FlagshipConstant::VISITOR_ID_ERROR,
+                $authenticateName
+            )], [sprintf(
+                FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
+                $authenticateName
+            ), [FlagshipConstant::TAG => $authenticateName]]);
+
+
         $defaultStrategy = new DefaultStrategy($visitor);
         $newVisitorId = "new_visitor_id";
         $defaultStrategy->authenticate($newVisitorId);
@@ -327,20 +333,7 @@ class DefaultStrategyTest extends TestCase
             false
         );
 
-        $sdk = FlagshipConstant::FLAGSHIP_SDK;
-        $unauthenticateName = "unauthenticate";
-        $logManagerStub->expects($this->exactly(2))
-            ->method('error')
-            ->withConsecutive(
-                ["[$sdk] " . sprintf(
-                    FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
-                    $unauthenticateName
-                ), [FlagshipConstant::TAG => $unauthenticateName]],
-                [
-                    "[$sdk] " . FlagshipConstant::FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE,
-                    [FlagshipConstant::TAG => $unauthenticateName]
-                ]
-            );
+
 
         $visitorId = "visitor_id";
 
@@ -352,6 +345,21 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $visitor->setConfig((new BucketingConfig("http://127.0.0.1:3000"))->setLogManager($logManagerStub));
+
+        $unauthenticateName = "unauthenticate";
+        $logManagerStub->expects($this->exactly(2))
+            ->method('error')
+            ->withConsecutive(
+                [sprintf(
+                    FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
+                    $unauthenticateName
+                ), [FlagshipConstant::TAG => $unauthenticateName]],
+                [
+                    FlagshipConstant::FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE,
+                    [FlagshipConstant::TAG => $unauthenticateName]
+                ]
+            );
+
         $defaultStrategy = new DefaultStrategy($visitor);
         $defaultStrategy->unauthenticate();
 
@@ -397,7 +405,10 @@ class DefaultStrategyTest extends TestCase
 
         $modifications = $this->campaignsModifications();
 
-        $this->assertJsonStringEqualsJsonString(json_encode($modifications), json_encode($defaultStrategy->getModifications()));
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($modifications),
+            json_encode($defaultStrategy->getModifications())
+        );
 
         //Test getModification keyValue is string and DefaultValue is string
         //Return KeyValue
@@ -501,11 +512,10 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
 
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->with(
-                "[$flagshipSdk] " . FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
+                FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
                 [FlagshipConstant::TAG => "synchronizeModifications"]
             );
 
@@ -643,11 +653,9 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->with(
-                "[$flagshipSdk] " . FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
+                FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
                 [FlagshipConstant::TAG => "synchronizeModifications"]
             );
 
@@ -686,7 +694,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['sendActive']
+            ['activateFlag']
         );
 
 
@@ -704,9 +712,11 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
         $defaultStrategy = new DefaultStrategy($visitor);
 
+        $activate = new Activate($modifications[0]->getVariationGroupId(), $modifications[0]->getVariationId());
+        $activate->setConfig($config)->setVisitorId($visitor->getVisitorId());
         $trackerManagerStub->expects($this->exactly(2))
-            ->method('sendActive')
-            ->withConsecutive([$visitor, $modifications[0]], [$visitor, $modifications[2]]);
+            ->method('activateFlag')
+            ->with($activate);
 
         $defaultStrategy->fetchFlags();
 
@@ -844,10 +854,12 @@ class DefaultStrategyTest extends TestCase
         $httpClientMock->expects($this->once())->method("post")
             ->willReturn(new HttpResponse(200, $this->campaigns()));
 
-        $logManagerStub->expects($this->exactly(2))->method('error')
-            ->withConsecutive($paramsExpected);
+
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
+
+        $logManagerStub->expects($this->exactly(2))->method('error')
+            ->withConsecutive($paramsExpected);
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
@@ -923,7 +935,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['sendActive']
+            ['activateFlag']
         );
 
         $httpClientMock->expects($this->once())->method("post")
@@ -938,9 +950,11 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy = new DefaultStrategy($visitor);
 
+        $activate = new Activate($modifications[0]->getVariationGroupId(), $modifications[0]->getVariationId());
+        $activate->setVisitorId($visitor->getVisitorId())->setConfig($config);
         $trackerManagerStub->expects($this->once())
-            ->method('sendActive')
-            ->with($visitor, $modifications[0]);
+            ->method('activateFlag')
+            ->with($activate);
 
         $defaultStrategy->synchronizeModifications();
 
@@ -1004,10 +1018,10 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->synchronizeModifications();
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
 
         $logManagerStub->expects($this->exactly(1))->method('error')->with(
-            "[$flagshipSdk] " . FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
+            FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
             [FlagshipConstant::TAG => "activateModification"]
         );
 
@@ -1025,7 +1039,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['sendHit']
+            ['addHit']
         );
 
         $envId = "envId";
@@ -1065,7 +1079,7 @@ class DefaultStrategyTest extends TestCase
         $item = new Item($transitionId, $itemName, $itemCode);
 
         $trackerManagerMock->expects($this->exactly(5))
-            ->method('sendHit')
+            ->method('addHit')
             ->withConsecutive([$page], [$screen], [$transition], [$event], [$item]);
 
         //Test type page
@@ -1207,7 +1221,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['sendActive']
+            ['activateFlag']
         );
 
         $configManager = (new ConfigManager())
@@ -1224,9 +1238,12 @@ class DefaultStrategyTest extends TestCase
             ->setValue("value");
         $defaultValue = "default";
 
+        $activate = new Activate($flagDTO->getVariationGroupId(), $flagDTO->getVariationId());
+        $activate->setVisitorId($visitor->getVisitorId())->setConfig($config);
+
         $trackerManagerStub->expects($this->exactly(2))
-            ->method('sendActive')
-            ->with($visitor, $flagDTO);
+            ->method('activateFlag')
+            ->with($activate);
 
         $defaultStrategy->userExposed($key, $defaultValue, $flagDTO);
 
@@ -1234,19 +1251,17 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->userExposed($key, null, $flagDTO);
 
-        $functionName = "userExposed";
-
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $functionName = FlagshipConstant::FLAG_USER_EXPOSED;
 
         $logManagerStub->expects($this->exactly(2))->method('info')
             ->withConsecutive(
-                ["[$flagshipSdk] " . sprintf(
+                [sprintf(
                     FlagshipConstant::USER_EXPOSED_NO_FLAG_ERROR,
                     $visitor->getVisitorId(),
                     $key
                 ),
                 [FlagshipConstant::TAG => $functionName]],
-                ["[$flagshipSdk] " . sprintf(
+                [sprintf(
                     FlagshipConstant::USER_EXPOSED_CAST_ERROR,
                     $visitor->getVisitorId(),
                     $key
@@ -1282,7 +1297,7 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['sendActive']
+            ['activateFlag']
         );
 
         $configManager = (new ConfigManager())
@@ -1296,14 +1311,17 @@ class DefaultStrategyTest extends TestCase
         $key = "key";
         $defaultValue = "defaultValue";
         $flagDTO = new FlagDTO();
+
+        $activate = new Activate($flagDTO->getVariationGroupId(), $flagDTO->getVariationId());
+        $activate->setVisitorId($visitor->getVisitorId())->setConfig($config);
         $flagDTO->setKey($key)
             ->setValue("value");
 
-        $functionName = "getFlagValue";
+        $functionName = FlagshipConstant::FLAG_VALUE;
 
         $trackerManagerStub->expects($this->exactly(3))
-            ->method('sendActive')
-            ->with($visitor, $flagDTO);
+            ->method('activateFlag')
+            ->with($activate);
 
         $value = $defaultStrategy->getFlagValue($key, $defaultValue, $flagDTO);
         $this->assertEquals($value, $flagDTO->getValue());
@@ -1312,25 +1330,17 @@ class DefaultStrategyTest extends TestCase
         $value = $defaultStrategy->getFlagValue($key, null, $flagDTO);
         $this->assertEquals($value, $flagDTO->getValue());
 
-
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-
+        $logDifferentType  = [];
         $logManagerStub->expects($this->exactly(2))->method('info')
             ->withConsecutive(
-                ["[$flagshipSdk] " . sprintf(
+                [sprintf(
                     FlagshipConstant::GET_FLAG_MISSING_ERROR,
                     $visitor->getVisitorId(),
                     $key,
-                    $value
+                    $defaultValue
                 ),
-                    [FlagshipConstant::TAG => $functionName]],
-                ["[$flagshipSdk] " . sprintf(
-                    FlagshipConstant::GET_FLAG_CAST_ERROR,
-                    $visitor->getVisitorId(),
-                    $key,
-                    $value
-                ),
-                    [FlagshipConstant::TAG => $functionName]]
+                [FlagshipConstant::TAG => $functionName]],
+                $logDifferentType
             );
 
         // Test flag null
@@ -1338,7 +1348,17 @@ class DefaultStrategyTest extends TestCase
         $this->assertEquals($value, $defaultValue);
 
         // Test flag with different type
+
         $defaultValue = 12;
+
+        $logDifferentType[] = sprintf(
+            FlagshipConstant::GET_FLAG_CAST_ERROR,
+            $visitor->getVisitorId(),
+            $key,
+            $defaultValue
+        );
+        $logDifferentType[] = [FlagshipConstant::TAG => $functionName];
+
         $value = $defaultStrategy->getFlagValue($key, $defaultValue, $flagDTO);
         $this->assertEquals($value, $defaultValue);
 
@@ -1385,11 +1405,11 @@ class DefaultStrategyTest extends TestCase
         $metadataValue = $defaultStrategy->getFlagMetadata($key, $metadata, true);
         $this->assertEquals($metadata, $metadataValue);
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
 
         $logManagerStub->expects($this->exactly(1))->method('info')
             ->withConsecutive(
-                ["[$flagshipSdk] " . sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
+                [sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
                     [FlagshipConstant::TAG => $functionName]]
             );
         $metadataValue = $defaultStrategy->getFlagMetadata($key, $metadata, false);
@@ -1513,11 +1533,11 @@ class DefaultStrategyTest extends TestCase
             );
         $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
         $functionName = "lookupVisitor";
 
         $lookupVisitorJson  = function () use ($flagshipSdk, $functionName) {
-            return ["[$flagshipSdk] " . VisitorStrategyAbstract::LOOKUP_VISITOR_JSON_OBJECT_ERROR,
+            return [VisitorStrategyAbstract::LOOKUP_VISITOR_JSON_OBJECT_ERROR,
                 [FlagshipConstant::TAG => $functionName]];
         };
 
@@ -1525,7 +1545,7 @@ class DefaultStrategyTest extends TestCase
             ->withConsecutive(
                 $lookupVisitorJson(),
                 $lookupVisitorJson(),
-                ["[$flagshipSdk] " . sprintf(VisitorStrategyAbstract::VISITOR_ID_MISMATCH_ERROR, $differentVisitorId, $visitorId),
+                [sprintf(VisitorStrategyAbstract::VISITOR_ID_MISMATCH_ERROR, $differentVisitorId, $visitorId),
                     [FlagshipConstant::TAG => $functionName]],
                 $lookupVisitorJson()
             );
@@ -1687,11 +1707,13 @@ class DefaultStrategyTest extends TestCase
         foreach ($campaignsData2[FlagshipField::FIELD_CAMPAIGNS] as $campaign) {
             $variation = $campaign[FlagshipField::FIELD_VARIATION];
             $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
-            $assignmentsHistory2[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
+            $assignmentsHistory2[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] =
+                $variation[FlagshipField::FIELD_ID];
 
             $campaigns2[]=[
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
-                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null,
+                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG])?
+                    $campaign[FlagshipField::FIELD_SLUG]:null,
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
@@ -1723,7 +1745,7 @@ class DefaultStrategyTest extends TestCase
 
         $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
         $functionName = "cacheVisitor";
 
         $visitor->fetchFlags();
@@ -1732,7 +1754,7 @@ class DefaultStrategyTest extends TestCase
 
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->withConsecutive(
-                ["[$flagshipSdk] " . $exception->getMessage(),
+                [$exception->getMessage(),
                     [FlagshipConstant::TAG => $functionName]]
             );
 
@@ -1813,12 +1835,12 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->setConsent(true); // will not flush Visitor cache
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+
         $functionName = "flushVisitor";
 
         $logManagerStub->expects($this->exactly(1))->method('error')
             ->withConsecutive(
-                ["[$flagshipSdk] " . $exception->getMessage(),
+                [$exception->getMessage(),
                     [FlagshipConstant::TAG => $functionName]]
             );
         $defaultStrategy->setConsent(false); // will throw exception

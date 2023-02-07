@@ -42,10 +42,6 @@ class BucketingManagerTest extends TestCase
 
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        $httpClientMock->expects($this->exactly(2))
-            ->method('post')
-            ->willReturn(new HttpResponse(204, null));
-
         $bucketingFile =\file_get_contents(__DIR__ . '/bucketing.json');
         $httpClientMock->expects($this->exactly(6))
             ->method('get')
@@ -58,19 +54,18 @@ class BucketingManagerTest extends TestCase
                 new HttpResponse(204, json_decode('{"notExistKey": false}', true)),
                 new HttpResponse(204, json_decode($bucketingFile, true))
             );
+
         //Test File not exist
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test Panic Mode
-
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test campaign property
-
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);

@@ -49,8 +49,7 @@ class PanicStrategyTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $logMessageBuild = function ($functionName) {
-            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return ["[$flagshipSdk] " . sprintf(
+            return [sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
                 FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
@@ -61,12 +60,28 @@ class PanicStrategyTest extends TestCase
         $logMessageBuildConsent = function ($functionName) {
             $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
             return [
-                "[$flagshipSdk] " . sprintf(
+                sprintf(
                     FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
                     FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
                 ),
                 [FlagshipConstant::TAG => $functionName]];
         };
+
+
+
+        $httpClientMock->expects($this->exactly(2))->method("post")
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(200, $this->campaigns()),
+                new HttpResponse(500, [])
+            );
+
+        $configManager = (new ConfigManager())->setConfig($config);
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $logManagerStub->expects($this->exactly(11))->method('error')
             ->withConsecutive(
@@ -82,20 +97,6 @@ class PanicStrategyTest extends TestCase
                 $logMessageBuild('userExposed'),
                 $logMessageBuild('getFlagMetadata')
             );
-
-        $httpClientMock->expects($this->exactly(2))->method("post")
-            ->willReturnOnConsecutiveCalls(
-                new HttpResponse(200,$this->campaigns()),
-                new HttpResponse(500, [])
-            );
-
-        $configManager = (new ConfigManager())->setConfig($config);
-
-        $decisionManager = new ApiManager($httpClientMock, $config);
-
-        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
-
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $panicStrategy = new PanicStrategy($visitor);
 
@@ -187,7 +188,8 @@ class PanicStrategyTest extends TestCase
             true,
             true,
             true,
-            ['lookupVisitor', 'cacheVisitor']);
+            ['lookupVisitor', 'cacheVisitor']
+        );
 
         $VisitorCacheImplementationMock->expects($this->never())
             ->method("cacheVisitor");

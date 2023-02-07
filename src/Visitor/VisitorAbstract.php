@@ -61,9 +61,10 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @var array
      */
-    public  $visitorCache;
+    public $visitorCache;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->visitorCache = [];
     }
 

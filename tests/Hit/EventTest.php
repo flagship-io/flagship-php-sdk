@@ -77,15 +77,15 @@ class EventTest extends TestCase
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $errorMessage = function ($itemName, $typeName) use ($flagshipSdk) {
 
-            return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
+            return sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
         };
 
         $logManagerMock->expects($this->exactly(5))->method('error')
             ->withConsecutive(
-                ["[$flagshipSdk] " . sprintf(Event::CATEGORY_ERROR, 'category')],
+                [sprintf(Event::CATEGORY_ERROR, 'category')],
                 [$errorMessage('action', 'string')],
                 [$errorMessage('eventLabel', 'string')],
-                ["[$flagshipSdk] " . Event::VALUE_FIELD_ERROR,['TAG' => 'setValue']]
+                [ Event::VALUE_FIELD_ERROR,['TAG' => 'setValue']]
             );
 
         //Test category validation with empty

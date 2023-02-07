@@ -100,7 +100,7 @@ class TransactionTest extends TestCase
 
         $errorMessage = function ($itemName, $typeName) {
             $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
+            return sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
         };
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerMock->expects($this->exactly(10))->method('error')
@@ -108,7 +108,7 @@ class TransactionTest extends TestCase
                 [$errorMessage('transactionId', 'string')],
                 [$errorMessage('affiliation', 'string')],
                 [$errorMessage('couponCode', 'string')],
-                ["[$flagshipSdk] " . sprintf(Transaction::CURRENCY_ERROR, 'currency')],
+                [sprintf(Transaction::CURRENCY_ERROR, 'currency')],
                 [$errorMessage('itemCount', 'integer')],
                 [$errorMessage('paymentMethod', 'string')],
                 [$errorMessage('totalRevenue', 'numeric')],

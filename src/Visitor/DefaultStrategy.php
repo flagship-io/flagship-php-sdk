@@ -22,7 +22,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function setConsent($hasConsented)
     {
-        if (!$hasConsented){
+        if (!$hasConsented) {
             $this->flushVisitor();
         }
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
@@ -251,10 +251,11 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * @param VisitorAbstract $visitor
      * @return array
      */
-    protected function fetchVisitorCampaigns(VisitorAbstract $visitor){
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
+    {
         $now = $this->getNow();
         $visitorCache = $visitor->visitorCache;
-        if (!isset($visitorCache, $visitorCache[self::DATA], $visitorCache[self::DATA][self::CAMPAIGNS]) || !is_array($visitorCache[self::DATA][self::CAMPAIGNS])){
+        if (!isset($visitorCache, $visitorCache[self::DATA], $visitorCache[self::DATA][self::CAMPAIGNS]) || !is_array($visitorCache[self::DATA][self::CAMPAIGNS])) {
             return [];
         }
         $data = $visitorCache[self::DATA];
@@ -274,10 +275,16 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ]
             ];
         }
-        if (count($campaigns)){
-            $this->logDebugSprintf($this->getConfig(), FlagshipConstant::PROCESS_FETCHING_FLAGS,
-                FlagshipConstant::FETCH_CAMPAIGNS_FROM_CACHE, [$this->getVisitor()->getVisitorId(), $this->getVisitor()->getAnonymousId(),
-                    $this->getVisitor()->getContext(), $campaigns, $this->getNow() - $now]);
+        if (count($campaigns)) {
+            $this->logDebugSprintf(
+                $this->getConfig(),
+                FlagshipConstant::PROCESS_FETCHING_FLAGS,
+                FlagshipConstant::FETCH_CAMPAIGNS_FROM_CACHE,
+                [$this->getVisitor()->getVisitorId(), $this->getVisitor()->getAnonymousId(),
+                $this->getVisitor()->getContext(),
+                $campaigns,
+                $this->getNow() - $now]
+            );
         }
         return  $campaigns;
     }
@@ -301,27 +308,42 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
 
-        $this->logDebugSprintf($this->getConfig(),$functionName, FlagshipConstant::FETCH_FLAGS_STARTED,
-            [$this->getVisitor()->getVisitorId()]);
+        $this->logDebugSprintf(
+            $this->getConfig(),
+            $functionName,
+            FlagshipConstant::FETCH_FLAGS_STARTED,
+            [$this->getVisitor()->getVisitorId()]
+        );
 
         $now = $this->getNow();
 
         $campaigns = $decisionManager->getCampaigns($this->getVisitor());
 
-        $this->logDebugSprintf($this->getConfig(),$functionName, FlagshipConstant::FETCH_CAMPAIGNS_SUCCESS,
+        $this->logDebugSprintf(
+            $this->getConfig(),
+            $functionName,
+            FlagshipConstant::FETCH_CAMPAIGNS_SUCCESS,
             [$this->getVisitor()->getVisitorId(), $this->getVisitor()->getAnonymousId(),
-                $this->getVisitor()->getContext(), $campaigns, $this->getNow() - $now]);
+            $this->getVisitor()->getContext(),
+            $campaigns,
+            $this->getNow() - $now]
+        );
 
-        if (!is_array($campaigns)){
+        if (!is_array($campaigns)) {
             $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
         }
         $this->getVisitor()->campaigns = $campaigns;
         $flagsDTO = $decisionManager->getModifications($campaigns);
         $this->getVisitor()->setFlagsDTO($flagsDTO);
 
-        $this->logDebugSprintf($this->getConfig(),$functionName, FlagshipConstant::FETCH_FLAGS_FROM_CAMPAIGNS,
+        $this->logDebugSprintf(
+            $this->getConfig(),
+            $functionName,
+            FlagshipConstant::FETCH_FLAGS_FROM_CAMPAIGNS,
             [$this->getVisitor()->getVisitorId(), $this->getVisitor()->getAnonymousId(),
-                $this->getVisitor()->getContext(), $flagsDTO]);
+            $this->getVisitor()->getContext(),
+            $flagsDTO]
+        );
     }
 
 
@@ -367,7 +389,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setAnonymousId($this->visitor->getAnonymousId());
 
 
-        $this->getTrackingManager()->activateFlag( $activateHit);
+        $this->getTrackingManager()->activateFlag($activateHit);
     }
 
     /**
@@ -425,7 +447,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return ;
         }
 
-        if (gettype($defaultValue)!= self::TYPE_NULL && gettype($flag->getValue())!= self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
+        if (gettype($defaultValue)!= self::TYPE_NULL &&
+            gettype($flag->getValue())!= self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
             $this->logInfoSprintf(
                 $this->getConfig(),
                 FlagshipConstant::FLAG_USER_EXPOSED,
@@ -452,7 +475,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
     {
-        $functionName = __FUNCTION__;
         if (!$flag) {
             $this->logInfoSprintf(
                 $this->getConfig(),
@@ -463,7 +485,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return  $defaultValue;
         }
 
-        if (gettype($flag->getValue()) === self::TYPE_NULL){
+        if (gettype($flag->getValue()) === self::TYPE_NULL) {
             if ($userExposed) {
                 $this->userExposed($key, $defaultValue, $flag);
             }
@@ -483,7 +505,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->userExposed($key, $defaultValue, $flag);
         }
 
-        $this->logDebugSprintf($this->getConfig(),
+        $this->logDebugSprintf(
+            $this->getConfig(),
             FlagshipConstant::FLAG_VALUE,
             FlagshipConstant::GET_FLAG_VALUE,
             [$this->getVisitor()->getVisitorId(), $key, $flag->getValue()]

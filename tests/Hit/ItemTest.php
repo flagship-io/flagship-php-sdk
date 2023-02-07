@@ -73,8 +73,7 @@ class ItemTest extends TestCase
         $item->getConfig()->setLogManager($logManagerMock);
 
         $errorMessage = function ($itemName, $typeName) {
-            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
+            return sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
         };
 
         $logManagerMock->expects($this->exactly(6))->method('error')->withConsecutive(

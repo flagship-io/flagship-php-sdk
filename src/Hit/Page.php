@@ -14,7 +14,8 @@ class Page extends HitAbstract
 {
     const ERROR_MESSAGE = 'Page url is required';
 
-    public static function getClassName(){
+    public static function getClassName()
+    {
         return __CLASS__;
     }
 

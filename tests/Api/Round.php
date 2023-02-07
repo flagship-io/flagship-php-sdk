@@ -1,6 +1,6 @@
 <?php
 
-namespace Flagship\Assets {
+namespace Flagship\Api {
 
     class Round
     {
@@ -8,9 +8,7 @@ namespace Flagship\Assets {
     }
 }
 
-namespace Flagship\Hit {
-
-    use Flagship\Assets\Round;
+namespace Flagship\Api {
 
     function round($num, $precision = 0, $mode = PHP_ROUND_HALF_UP)
     {

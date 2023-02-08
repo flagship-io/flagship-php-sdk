@@ -30,7 +30,8 @@ class ActivateBatch
     /**
      * @return array
      */
-    public function toArray(){
+    public function toApiKeys()
+    {
         $activates = [];
         foreach ($this->hits as $hit) {
             $apiKeys = $hit->toApiKeys();

@@ -58,7 +58,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
 
         $activateBatch = new ActivateBatch($this->config, [$hit]);
 
-        $requestBody = $activateBatch->toArray();
+        $requestBody = $activateBatch->toApiKeys();
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 

@@ -220,7 +220,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         $activateBatch = new ActivateBatch($this->config, $this->activatePoolQueue);
 
-        $requestBody = $activateBatch->toArray();
+        $requestBody = $activateBatch->toApiKeys();
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
         $now = $this->getNow();
 
@@ -347,9 +347,6 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $this->hitsPoolQueue = [];
             $this->flushBatchedHits($hitKeysToRemove);
         } catch (\Exception $exception) {
-            foreach ($hits as $hit) {
-                $this->hitsPoolQueue[$hit->getKey()] = $hit;
-            }
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,

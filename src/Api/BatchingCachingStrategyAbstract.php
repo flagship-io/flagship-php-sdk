@@ -420,7 +420,12 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
             $hitCacheImplementation->flushHits($hitKeys);
 
-            $this->logDebugSprintf($this->config, FlagshipConstant::PROCESS_CACHE, FlagshipConstant::HIT_DATA_FLUSHED, [$hitKeys]);
+            $this->logDebugSprintf(
+                $this->config,
+                FlagshipConstant::PROCESS_CACHE,
+                FlagshipConstant::HIT_DATA_FLUSHED,
+                [$hitKeys]
+            );
         } catch (\Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,

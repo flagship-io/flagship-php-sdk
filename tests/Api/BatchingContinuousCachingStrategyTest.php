@@ -339,12 +339,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $config = new DecisionApiConfig();
         $visitorId = "visitorId";
         //Mock class Curl
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
-        );
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
 
         $url = FlagshipConstant::HIT_EVENT_URL;
 
@@ -362,7 +357,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["flushHits","logDebugSprintf","cacheHit"]
+            ["flushHits","logDebugSprintf","cacheHit","flushAllHits"]
         );
 
         $strategy->addHit($page);
@@ -394,6 +389,15 @@ class BatchingContinuousCachingStrategyTest extends TestCase
                 }
                 return true;
             }));
+
+        $strategy
+            ->expects($this->never())
+            ->method("flushAllHits");
+
+        $strategy
+            ->expects($this->never())
+            ->method("cacheHit")
+            ->with([]);
 
         $logMessage = $this->getLogFormat(
             null,

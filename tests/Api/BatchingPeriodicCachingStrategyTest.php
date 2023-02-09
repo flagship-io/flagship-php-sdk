@@ -9,7 +9,9 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\Event;
+use Flagship\Hit\HitBatch;
 use Flagship\Hit\Page;
+use Flagship\Hit\Screen;
 use Flagship\Traits\LogTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -287,6 +289,82 @@ class BatchingPeriodicCachingStrategyTest extends TestCase
         $strategy->sendBatch();
 
         $this->assertCount(2, $strategy->getActivatePoolQueue());
+    }
+
+    public function testSendBatch()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $url = FlagshipConstant::HIT_EVENT_URL;
+
+        $page = new Page("https://myurl.com");
+        $page->setConfig($config)->setVisitorId($visitorId);
+
+        $screen = new Screen("home");
+        $screen->setConfig($config)->setVisitorId($visitorId);
+
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingPeriodicCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["flushHits","logDebugSprintf","cacheHit","flushAllHits"]
+        );
+
+        $strategy->addHit($page);
+        $strategy->addHit($screen);
+
+        $batchHit = new HitBatch($config, $strategy->getHitsPoolQueue());
+        $batchHit->setConfig($config);
+
+        $requestBody = $batchHit->toApiKeys();
+
+        $httpClientMock->expects($this->once())->method("post")
+            ->with($url, [], $requestBody);
+
+        $headers = [FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON];
+
+        $httpClientMock->expects($this->once())->method('setHeaders')->with($headers);
+        $httpClientMock->expects($this->once())->method("setTimeout")->with($config->getTimeout());
+
+        $strategy
+            ->expects($this->never())
+            ->method("flushHits");
+
+        $strategy
+            ->expects($this->once())
+            ->method("cacheHit")
+            ->with([]);
+
+        $strategy
+            ->expects($this->once())
+            ->method("flushAllHits");
+
+        $logMessage = $this->getLogFormat(
+            null,
+            $url,
+            $requestBody,
+            $headers,
+            0
+        );
+
+        $strategy->expects($this->once())->method("logDebugSprintf")
+            ->with(
+                $config,
+                FlagshipConstant::TRACKING_MANAGER,
+                FlagshipConstant::HIT_SENT_SUCCESS,
+                [FlagshipConstant::SEND_BATCH, $logMessage ]
+            );
+
+        $this->assertCount(2, $strategy->getHitsPoolQueue());
+        $strategy->sendBatch();
+        $this->assertCount(0, $strategy->getHitsPoolQueue());
     }
 
 }

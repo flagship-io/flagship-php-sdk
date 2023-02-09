@@ -156,7 +156,12 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         $this->addActivateHitInPoolQueue($hit);
 
-        $this->logDebugSprintf($this->config, FlagshipConstant::TRACKING_MANAGER, FlagshipConstant::ACTIVATE_HIT_ADDED_IN_QUEUE, [$hit->toApiKeys()]);
+        $this->logDebugSprintf(
+            $this->config,
+            FlagshipConstant::TRACKING_MANAGER,
+            FlagshipConstant::ACTIVATE_HIT_ADDED_IN_QUEUE,
+            [$hit->toApiKeys()]
+        );
     }
 
     /**

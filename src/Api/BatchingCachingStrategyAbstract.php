@@ -319,6 +319,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $batchHit = new HitBatch($this->config, $hits);
 
         if (!count($hits)) {
+            $this->postPrecessSendBatch();
             return;
         }
 

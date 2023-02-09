@@ -120,16 +120,16 @@ class BatchingPeriodicCachingStrategyTest extends TestCase
         $activate->setConfig($config)->setVisitorId($visitorId);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingContinuousCachingStrategy",
+            "Flagship\Api\BatchingPeriodicCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
             true,
             true,
-            ["cacheHit"]
+            ["cacheHit","flushAllHits"]
         );
 
-        $strategy->expects($this->exactly(1))
+        $strategy->expects($this->never())
             ->method("cacheHit")->with([$activate]);
 
         $strategy->activateFlag($activate);

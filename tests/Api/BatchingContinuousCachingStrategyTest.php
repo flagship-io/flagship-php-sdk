@@ -304,8 +304,12 @@ class BatchingContinuousCachingStrategyTest extends TestCase
             ->with($url, [], $requestBody)->willThrowException($exception);
 
         $strategy
-            ->expects($this->exactly(0))
+            ->expects($this->never())
             ->method("flushHits");
+
+        $strategy
+            ->expects($this->never())
+            ->method("cacheHit");
 
         $logMessage = $this->getLogFormat(
             $exception->getMessage(),

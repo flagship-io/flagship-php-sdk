@@ -2,6 +2,7 @@
 
 namespace Flagship\Api;
 
+use Exception;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
@@ -215,5 +216,77 @@ class BatchingPeriodicCachingStrategyTest extends TestCase
         $this->assertCount(0, $strategy->getActivatePoolQueue());
     }
 
+    public function testSendActivateHitFailed()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
+
+        $activate = new Activate("varGrId", "VarId");
+        $activate->setConfig($config)->setVisitorId($visitorId);
+
+        $activate2 = new Activate("varGrId", "VarId");
+        $activate2->setConfig($config)->setVisitorId($visitorId);
+
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingPeriodicCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["flushHits","logErrorSprintf","cacheHit"]
+        );
+
+        $strategy->activateFlag($activate);
+        $strategy->activateFlag($activate2);
+
+        $activateBatch = new ActivateBatch($config, $strategy->getActivatePoolQueue());
+
+        $requestBody = $activateBatch->toApiKeys();
+
+        $exception = new Exception("activate error");
+        $httpClientMock->expects($this->once())->method("post")
+            ->with($url, [], $requestBody)->willThrowException($exception);
+
+        $strategy
+            ->expects($this->exactly(0))
+            ->method("flushHits");
+
+        $strategy
+            ->expects($this->once())
+            ->method("cacheHit")
+            ->with([$activate, $activate2]);
+
+        $strategy
+            ->expects($this->once())
+            ->method("flushAllHits");
+
+        $logMessage = $this->getLogFormat(
+            $exception->getMessage(),
+            $url,
+            $requestBody,
+            $strategy->getActivateHeaders(),
+            0
+        );
+
+        $strategy->expects($this->once())->method("logErrorSprintf")
+            ->with(
+                $config,
+                FlagshipConstant::TRACKING_MANAGER,
+                FlagshipConstant::TRACKING_MANAGER_ERROR,
+                [FlagshipConstant::SEND_ACTIVATE, $logMessage ]
+            );
+
+        $this->assertCount(2, $strategy->getActivatePoolQueue());
+
+        $strategy->sendBatch();
+
+        $this->assertCount(2, $strategy->getActivatePoolQueue());
+    }
 
 }

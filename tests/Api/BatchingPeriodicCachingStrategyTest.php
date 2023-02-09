@@ -241,7 +241,7 @@ class BatchingPeriodicCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["flushHits","logErrorSprintf","cacheHit"]
+            ["flushHits","logErrorSprintf","cacheHit","flushAllHits"]
         );
 
         $strategy->activateFlag($activate);
@@ -262,7 +262,7 @@ class BatchingPeriodicCachingStrategyTest extends TestCase
         $strategy
             ->expects($this->once())
             ->method("cacheHit")
-            ->with([$activate, $activate2]);
+            ->with($strategy->getActivatePoolQueue());
 
         $strategy
             ->expects($this->once())
@@ -365,6 +365,79 @@ class BatchingPeriodicCachingStrategyTest extends TestCase
         $this->assertCount(2, $strategy->getHitsPoolQueue());
         $strategy->sendBatch();
         $this->assertCount(0, $strategy->getHitsPoolQueue());
+    }
+
+    public function testSendBatchFailed()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+        //Mock class Curl
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $url = FlagshipConstant::HIT_EVENT_URL;
+
+        $page = new Page("https://myurl.com");
+        $page->setConfig($config)->setVisitorId($visitorId);
+
+        $screen = new Screen("home");
+        $screen->setConfig($config)->setVisitorId($visitorId);
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingPeriodicCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["flushHits","logErrorSprintf","cacheHit", "flushAllHits"]
+        );
+
+        $strategy->addHit($page);
+        $strategy->addHit($screen);
+
+        $batchHit = new HitBatch($config, $strategy->getHitsPoolQueue());
+        $batchHit->setConfig($config);
+
+        $requestBody = $batchHit->toApiKeys();
+
+        $exception = new Exception("batch error");
+        $httpClientMock->expects($this->once())->method("post")
+            ->with($url, [], $requestBody)->willThrowException($exception);
+
+        $headers = [FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON];
+
+        $strategy
+            ->expects($this->never())
+            ->method("flushHits");
+
+        $strategy
+            ->expects($this->once())
+            ->method("flushAllHits");
+
+        $strategy
+            ->expects($this->once())
+            ->method("cacheHit")
+            ->with($strategy->getHitsPoolQueue());
+
+        $logMessage = $this->getLogFormat(
+            $exception->getMessage(),
+            $url,
+            $requestBody,
+            $headers,
+            0
+        );
+
+        $strategy->expects($this->once())->method("logErrorSprintf")
+            ->with(
+                $config,
+                FlagshipConstant::TRACKING_MANAGER,
+                FlagshipConstant::TRACKING_MANAGER_ERROR,
+                [FlagshipConstant::SEND_BATCH, $logMessage ]
+            );
+
+        $this->assertCount(2, $strategy->getHitsPoolQueue());
+        $strategy->sendBatch();
+        $this->assertCount(2, $strategy->getHitsPoolQueue());
     }
 
 }

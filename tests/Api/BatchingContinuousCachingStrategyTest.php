@@ -173,7 +173,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $activate->setConfig($config)->setVisitorId($visitorId);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -207,7 +207,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $activate2->setConfig($config)->setVisitorId($visitorId);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -283,7 +283,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
 
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -352,7 +352,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
 
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -428,7 +428,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $screen->setConfig($config)->setVisitorId($visitorId);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -495,7 +495,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $screen->setConfig($config)->setVisitorId($visitorId);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -552,7 +552,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $config->setHitCacheImplementation($hitCacheImplementationMock);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -601,7 +601,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $config->setHitCacheImplementation($hitCacheImplementationMock);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -641,7 +641,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $config->setHitCacheImplementation($hitCacheImplementationMock);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -677,7 +677,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $config->setHitCacheImplementation($hitCacheImplementationMock);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -713,7 +713,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $config->setHitCacheImplementation($hitCacheImplementationMock);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,
@@ -770,7 +770,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $config->setHitCacheImplementation($hitCacheImplementationMock);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingCachingStrategyAbstract",
+            "Flagship\Api\BatchingContinuousCachingStrategy",
             [$config, $httpClientMock],
             "",
             true,

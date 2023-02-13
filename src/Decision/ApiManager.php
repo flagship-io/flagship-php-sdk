@@ -33,13 +33,11 @@ class ApiManager extends DecisionManagerAbstract
                 "visitorId" => $visitor->getVisitorId(),
                 "anonymousId" => $visitor->getAnonymousId(),
                 "trigger_hit" => false,
-                "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null
+                "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
+                "visitor_consent" => $visitor->hasConsented()
             ];
             $query = [FlagshipConstant::EXPOSE_ALL_KEYS => "true"];
 
-            if (!$visitor->hasConsented()) {
-                $query[FlagshipConstant::SEND_CONTEXT_EVENT] = "false";
-            }
             $response = $this->httpClient->post($url, $query, $postData);
             $body = $response->getBody();
             $hasPanicMode = !empty($body["panic"]);

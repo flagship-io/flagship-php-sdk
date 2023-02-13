@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1656935707">
-  <project timestamp="1656935707">
+<coverage generated="1666798023">
+  <project timestamp="1666798023">
     <package name="Flagship\Api">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Api/TrackingManager.php">
         <class name="TrackingManager" namespace="Flagship\Api" fullPackage="Flagship" package="Flagship">
@@ -209,9 +209,9 @@
     <package name="Flagship\Decision">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Decision/ApiManager.php">
         <class name="ApiManager" namespace="Flagship\Decision" fullPackage="Flagship" package="Flagship">
-          <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="27" elements="29" coveredelements="29"/>
+          <metrics methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="27" coveredelements="27"/>
         </class>
-        <line num="24" type="method" name="getCampaigns" crap="5" count="15"/>
+        <line num="24" type="method" name="getCampaigns" crap="4" count="15"/>
         <line num="25" type="stmt" count="4"/>
         <line num="27" type="stmt" count="15"/>
         <line num="28" type="stmt" count="15"/>
@@ -223,24 +223,22 @@
         <line num="36" type="stmt" count="15"/>
         <line num="37" type="stmt" count="15"/>
         <line num="38" type="stmt" count="15"/>
-        <line num="40" type="stmt" count="15"/>
-        <line num="41" type="stmt" count="1"/>
-        <line num="42" type="stmt" count="1"/>
-        <line num="43" type="stmt" count="15"/>
-        <line num="44" type="stmt" count="13"/>
+        <line num="39" type="stmt" count="15"/>
+        <line num="41" type="stmt" count="15"/>
+        <line num="42" type="stmt" count="13"/>
+        <line num="43" type="stmt" count="13"/>
         <line num="45" type="stmt" count="13"/>
         <line num="47" type="stmt" count="13"/>
-        <line num="49" type="stmt" count="13"/>
-        <line num="50" type="stmt" count="13"/>
-        <line num="52" type="stmt" count="4"/>
+        <line num="48" type="stmt" count="13"/>
+        <line num="50" type="stmt" count="4"/>
+        <line num="51" type="stmt" count="2"/>
+        <line num="52" type="stmt" count="2"/>
         <line num="53" type="stmt" count="2"/>
-        <line num="54" type="stmt" count="2"/>
-        <line num="55" type="stmt" count="2"/>
-        <line num="57" type="stmt" count="4"/>
-        <line num="63" type="method" name="getCampaignModifications" crap="1" count="3"/>
-        <line num="65" type="stmt" count="3"/>
-        <line num="66" type="stmt" count="3"/>
-        <metrics loc="68" ncloc="53" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="27" elements="29" coveredelements="29"/>
+        <line num="55" type="stmt" count="4"/>
+        <line num="61" type="method" name="getCampaignModifications" crap="1" count="3"/>
+        <line num="63" type="stmt" count="3"/>
+        <line num="64" type="stmt" count="3"/>
+        <metrics loc="66" ncloc="51" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="27" coveredelements="27"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Decision/BucketingManager.php">
         <class name="BucketingManager" namespace="Flagship\Decision">
@@ -1729,7 +1727,7 @@
     <package name="Flagship\Visitor">
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/DefaultStrategy.php">
         <class name="DefaultStrategy" namespace="Flagship\Visitor">
-          <metrics methods="21" coveredmethods="21" conditionals="0" coveredconditionals="0" statements="237" coveredstatements="237" elements="258" coveredelements="258"/>
+          <metrics methods="21" coveredmethods="21" conditionals="0" coveredconditionals="0" statements="238" coveredstatements="238" elements="259" coveredelements="259"/>
         </class>
         <line num="24" type="method" name="setConsent" crap="3" count="50"/>
         <line num="25" type="stmt" count="3"/>
@@ -1749,6 +1747,7 @@
         <line num="44" type="stmt" count="2"/>
         <line num="45" type="stmt" count="2"/>
         <line num="46" type="stmt" count="2"/>
+        <line num="47" type="stmt" count="9"/>
         <line num="49" type="stmt" count="49"/>
         <line num="50" type="stmt" count="8"/>
         <line num="53" type="stmt" count="49"/>
@@ -1989,7 +1988,7 @@
         <line num="424" type="stmt" count="1"/>
         <line num="425" type="stmt" count="1"/>
         <line num="427" type="stmt" count="1"/>
-        <metrics loc="429" ncloc="371" classes="1" methods="21" coveredmethods="21" conditionals="0" coveredconditionals="0" statements="237" coveredstatements="237" elements="258" coveredelements="258"/>
+        <metrics loc="429" ncloc="371" classes="1" methods="21" coveredmethods="21" conditionals="0" coveredconditionals="0" statements="238" coveredstatements="238" elements="259" coveredelements="259"/>
       </file>
       <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/NoConsentStrategy.php">
         <class name="NoConsentStrategy" namespace="Flagship\Visitor" fullPackage="Flagship" package="Flagship">
@@ -2527,6 +2526,6 @@
     <file name="/home/runner/work/flagship-php-sdk/flagship-php-sdk/src/Visitor/VisitorInterface.php">
       <metrics loc="95" ncloc="30" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="55" loc="6896" ncloc="4669" classes="46" methods="387" coveredmethods="387" conditionals="0" coveredconditionals="0" statements="1814" coveredstatements="1814" elements="2201" coveredelements="2201"/>
+    <metrics files="55" loc="6894" ncloc="4667" classes="46" methods="387" coveredmethods="387" conditionals="0" coveredconditionals="0" statements="1813" coveredstatements="1813" elements="2200" coveredelements="2200"/>
   </project>
 </coverage>

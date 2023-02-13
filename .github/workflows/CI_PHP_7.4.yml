@@ -41,8 +41,9 @@ jobs:
         tools: phpunit:${{ matrix.phpunit-versions }}
 
     - run: rm composer.lock
+
     - name: Remove current phpunit version
-      run: composer remove phpunit/phpunit
+      run: composer remove phpunit/phpunit --dev
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress

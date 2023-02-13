@@ -17,7 +17,7 @@ class TrackingManager extends TrackingManagerAbstract
      */
     public function addHit(HitAbstract $hit)
     {
-        $this->strategy->addHit($hit);
+        $this->getStrategy()->addHit($hit);
     }
 
     /**
@@ -25,7 +25,7 @@ class TrackingManager extends TrackingManagerAbstract
      */
     public function activateFlag(Activate $hit)
     {
-        $this->strategy->activateFlag($hit);
+        $this->getStrategy()->activateFlag($hit);
     }
 
     /**
@@ -33,6 +33,6 @@ class TrackingManager extends TrackingManagerAbstract
      */
     public function sendBatch()
     {
-        $this->strategy->sendBatch();
+        $this->getStrategy()->sendBatch();
     }
 }

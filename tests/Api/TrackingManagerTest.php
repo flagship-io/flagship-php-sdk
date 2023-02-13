@@ -50,6 +50,54 @@ class TrackingManagerTest extends TestCase
         $this->assertInstanceOf("Flagship\Api\NoBatchingContinuousCachingStrategy", $strategy);
     }
 
+    public function testCommonMethod(){
+        $config = new DecisionApiConfig();
+        $httpClient = new HttpClient();
+
+        $BatchingCachingStrategyMock = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingCachingStrategyAbstract",
+            [$config, $httpClient],
+            "",
+            true,
+            true,
+            true,
+            ["addHit", "activateFlag", "sendBatch"]
+        );
+
+        $trackingManager = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManager",
+            [$config, $httpClient],
+            "",
+            true,
+            true,
+            true,
+            ["getStrategy"]
+        );
+
+        $trackingManager->expects($this->exactly(3))
+            ->method("getStrategy")
+            ->willReturn($BatchingCachingStrategyMock);
+
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("addHit");
+
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("activateFlag");
+
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("sendBatch");
+
+        $page = new Page("http://localhost");
+        $page->setConfig($config);
+        $trackingManager->addHit($page);
+
+        $activate = new Activate("varGrId", "varId");
+        $activate->setConfig($config);
+        $trackingManager->activateFlag($activate);
+
+        $trackingManager->sendBatch();
+    }
+
     public function testLookupHits()
     {
         $config = new DecisionApiConfig();

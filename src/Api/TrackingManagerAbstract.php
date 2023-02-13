@@ -73,6 +73,16 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     /**
      * @return BatchingCachingStrategyAbstract
      */
+    public function getStrategy()
+    {
+        return $this->strategy;
+    }
+
+
+
+    /**
+     * @return BatchingCachingStrategyAbstract
+     */
     public function initStrategy()
     {
         switch ($this->config->getCacheStrategy()) {
@@ -171,7 +181,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                     case HitType::ACTIVATE:
                         $hit = HitAbstract::hydrate(Activate::getClassName(), $content);
                         $hit->setConfig($this->config);
-                        $this->strategy->hydrateActivatePoolQueue($hit->getKey(), $hit);
+                        $this->getStrategy()->hydrateActivatePoolQueue($hit->getKey(), $hit);
                         continue 2;
                     case HitType::TRANSACTION:
                         $hit = HitAbstract::hydrate(Transaction::getClassName(), $content);
@@ -180,10 +190,10 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                         continue 2;
                 }
                 $hit->setConfig($this->config);
-                $this->strategy->hydrateHitsPoolQueue($hit->getKey(), $hit);
+                $this->getStrategy()->hydrateHitsPoolQueue($hit->getKey(), $hit);
             }
 
-            $this->strategy->flushHits($hitKeysToRemove);
+            $this->getStrategy()->flushHits($hitKeysToRemove);
         } catch (\Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,

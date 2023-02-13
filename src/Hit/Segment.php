@@ -10,7 +10,8 @@ class Segment extends HitAbstract
     const SL_MESSAGE_ERROR = "Sl value must be an associative array";
     const ERROR_MESSAGE  = 'sl is required';
 
-    public static function getClassName(){
+    public static function getClassName()
+    {
         return __CLASS__;
     }
 
@@ -33,8 +34,8 @@ class Segment extends HitAbstract
      */
     public function setSl(array $sl)
     {
-        if (!$this->isAssoc($sl)){
-            $this->logError($this->getConfig(),self::SL_MESSAGE_ERROR,[FlagshipConstant::TAG=>__FUNCTION__]);
+        if (!$this->isAssoc($sl)) {
+            $this->logError($this->getConfig(), self::SL_MESSAGE_ERROR, [FlagshipConstant::TAG=>__FUNCTION__]);
             return $this;
         }
         $this->sl = $sl;
@@ -67,11 +68,7 @@ class Segment extends HitAbstract
     public function toApiKeys()
     {
         $arrayParent = parent::toApiKeys();
-        $context = [];
-        foreach ($this->sl as  $key=>$value){
-            $context[$key] = is_string($value) ? $value : json_encode($value);
-        }
-        $arrayParent[FlagshipConstant::SL_API_ITEM] = $context;
+        $arrayParent[FlagshipConstant::SL_API_ITEM] = $this->getSl();
         return $arrayParent;
     }
 

@@ -178,7 +178,7 @@ class LogTraitTest extends TestCase
 
         $message = "hello %s %s";
         $tag = __FUNCTION__;
-        $args = ["there", ["key"=>"value"]];
+        $args = ["there", ["key" => "value"]];
         $context = [FlagshipConstant::TAG => $tag];
 
         $logArgs = [$args[0], json_encode($args[1])];
@@ -210,7 +210,7 @@ class LogTraitTest extends TestCase
 
 
         $message = "message";
-        $url ="http://localhost";
+        $url = "http://localhost";
         $requestBody = [
             "key" => "value"
         ];

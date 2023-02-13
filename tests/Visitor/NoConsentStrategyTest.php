@@ -64,7 +64,7 @@ class NoConsentStrategyTest extends TestCase
 
         $modificationKey = $modifications[0]->getKey();
         $modificationValue = $modifications[0]->getValue();
-        
+
         $httpClientMock->expects($this->exactly(2))->method("post")
             ->willReturnOnConsecutiveCalls(
                 new HttpResponse(200, $this->campaigns()),
@@ -141,12 +141,12 @@ class NoConsentStrategyTest extends TestCase
             $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
             $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
 
-            $campaigns[]=[
+            $campaigns[] = [
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
-                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
                 VisitorStrategyAbstract::ACTIVATED => false,
                 VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];

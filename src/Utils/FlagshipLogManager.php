@@ -90,7 +90,7 @@ class FlagshipLogManager implements LoggerInterface
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $customMessage = "[$flagshipSdk] [$level] ";
         $contextString = $this->parseContextToString($context);
-        error_log($customMessage.$message." ".$contextString);
+        error_log($customMessage . $message . " " . $contextString);
     }
 
     /**

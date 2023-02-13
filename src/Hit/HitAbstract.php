@@ -385,7 +385,7 @@ abstract class HitAbstract
         $reflector = new ReflectionClass($class);
         $objet = $reflector->newInstanceWithoutConstructor();
         foreach ($data as $key => $value) {
-            $method = 'set'.ucwords($key);
+            $method = 'set' . ucwords($key);
             if (is_callable(array($objet, $method))) {
                 $objet->$method($value);
             }
@@ -402,7 +402,7 @@ abstract class HitAbstract
         $properties = $reflector->getProperties();
         $outArray = [];
         foreach ($properties as $property) {
-            if ($property->getName()==='config') {
+            if ($property->getName() === 'config') {
                 continue;
             }
             $property->setAccessible(true);

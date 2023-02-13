@@ -2,8 +2,8 @@
 
 namespace Flagship\Api;
 
-require_once __DIR__. "/Round.php";
-require_once __DIR__. "/../Assets/Round.php";
+require_once __DIR__ . "/Round.php";
+require_once __DIR__ . "/../Assets/Round.php";
 
 use Exception;
 use Flagship\Config\DecisionApiConfig;
@@ -22,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 class BatchingContinuousCachingStrategyTest extends TestCase
 {
     use LogTrait;
+
     public function testGeneralMethods()
     {
         $config = new DecisionApiConfig("envId", "apiKey");
@@ -34,12 +35,12 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $key = "page-key";
 
         $strategy->hydrateHitsPoolQueue($key, $page);
-        $this->assertSame([$key=>$page], $strategy->getHitsPoolQueue());
+        $this->assertSame([$key => $page], $strategy->getHitsPoolQueue());
 
         $activate = new Activate("varGroupId", "varID");
         $activateKey = "activate-key";
         $strategy->hydrateActivatePoolQueue($activateKey, $activate);
-        $this->assertSame([$activateKey=>$activate], $strategy->getActivatePoolQueue());
+        $this->assertSame([$activateKey => $activate], $strategy->getActivatePoolQueue());
 
         //Test getNow method
         $this->assertEquals(0, $strategy->getNow());
@@ -85,11 +86,11 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $strategy->expects($this->once())
             ->method("flushHits")
             ->with($this->callback(function ($args) use ($visitorId) {
-                if (count($args)!=2) {
+                if (count($args) != 2) {
                     return  false;
                 }
                 foreach ($args as $arg) {
-                    if (preg_match("#^$visitorId#", $arg)!==1) {
+                    if (preg_match("#^$visitorId#", $arg) !== 1) {
                         return  false;
                     }
                 }
@@ -188,7 +189,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
 
         $strategy->expects($this->exactly(1))
             ->method("cacheHit")->with([$activate]);
-        
+
         $strategy->activateFlag($activate);
 
         $this->assertContains($activate, $strategy->getActivatePoolQueue());
@@ -236,11 +237,11 @@ class BatchingContinuousCachingStrategyTest extends TestCase
             ->expects($this->exactly(1))
             ->method("flushHits")
             ->with($this->callback(function ($args) use ($visitorId) {
-                if (count($args)!=2) {
+                if (count($args) != 2) {
                     return  false;
                 }
                 foreach ($args as $arg) {
-                    if (preg_match("#^$visitorId#", $arg)!==1) {
+                    if (preg_match("#^$visitorId#", $arg) !== 1) {
                         return  false;
                     }
                 }
@@ -322,7 +323,7 @@ class BatchingContinuousCachingStrategyTest extends TestCase
             $strategy->getActivateHeaders(),
             0
         );
-        
+
         $strategy->expects($this->once())->method("logErrorSprintf")
         ->with(
             $config,
@@ -383,11 +384,11 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $strategy
             ->expects($this->exactly(1))
             ->method("flushHits")->with($this->callback(function ($args) use ($visitorId) {
-                if (count($args)!=2) {
+                if (count($args) != 2) {
                     return  false;
                 }
                 foreach ($args as $arg) {
-                    if (preg_match("#^$visitorId#", $arg)!==1) {
+                    if (preg_match("#^$visitorId#", $arg) !== 1) {
                         return  false;
                     }
                 }
@@ -545,11 +546,11 @@ class BatchingContinuousCachingStrategyTest extends TestCase
         $strategy
             ->expects($this->exactly(1))
             ->method("flushHits")->with($this->callback(function ($args) use ($visitorId) {
-                if (count($args)!=2) {
+                if (count($args) != 2) {
                     return  false;
                 }
                 foreach ($args as $arg) {
-                    if (preg_match("#^$visitorId#", $arg)!==1) {
+                    if (preg_match("#^$visitorId#", $arg) !== 1) {
                         return  false;
                     }
                 }

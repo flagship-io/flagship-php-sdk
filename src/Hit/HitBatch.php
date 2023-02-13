@@ -26,7 +26,7 @@ class HitBatch extends HitAbstract
     public function __construct(FlagshipConfig $config, array $hits)
     {
         parent::__construct("BATCH");
-        $this->hits=$hits;
+        $this->hits = $hits;
         $this->config = $config;
     }
 

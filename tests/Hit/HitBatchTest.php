@@ -42,5 +42,4 @@ class HitBatchTest extends TestCase
 
         $batch->getErrorMessage();
     }
-
 }

@@ -12,7 +12,7 @@ class HttpResponseTest extends TestCase
         $statusCode = 200;
         $body = 'Body';
         $headers = [
-            "accept"=>"application/json"
+            "accept" => "application/json"
         ];
         $httpResponse = new HttpResponse($statusCode, $body, $headers);
 

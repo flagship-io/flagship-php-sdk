@@ -21,8 +21,10 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
      */
     public function addHit(HitAbstract $hit)
     {
-        if (($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
-            $hit->getLabel() === FlagshipConstant::SDK_LANGUAGE . ":false") {
+        if (
+            ($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
+            $hit->getLabel() === FlagshipConstant::SDK_LANGUAGE . ":false"
+        ) {
             $this->notConsent($hit->getVisitorId());
         }
 
@@ -37,7 +39,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
     {
         $hitKey = $this->generateHitKey($hit->getVisitorId());
         $hit->setKey($hitKey);
-        $this->cacheHitKeys[]= $hitKey;
+        $this->cacheHitKeys[] = $hitKey;
         $this->cacheHit([$hit]);
     }
 

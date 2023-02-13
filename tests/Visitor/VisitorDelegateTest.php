@@ -41,7 +41,7 @@ class VisitorDelegateTest extends TestCase
             [],
             "",
             false
-            );
+        );
 
         $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
 

@@ -439,5 +439,4 @@ class BatchingPeriodicCachingStrategyTest extends TestCase
         $strategy->sendBatch();
         $this->assertCount(2, $strategy->getHitsPoolQueue());
     }
-
 }

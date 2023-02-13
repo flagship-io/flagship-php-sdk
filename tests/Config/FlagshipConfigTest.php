@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class FlagshipConfigTest extends TestCase
 {
-    public  function configData()
+    public function configData()
     {
         return ['envId' => 'env_value','apiKey' => 'key_value'];
     }

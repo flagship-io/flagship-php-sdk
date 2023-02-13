@@ -16,7 +16,8 @@ use Flagship\Utils\HttpClientInterface;
 
 abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonInterface
 {
-    use Guid, LogTrait;
+    use Guid;
+    use LogTrait;
 
     /**
      * @var HitAbstract[]
@@ -131,8 +132,10 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         $this->addHitInPoolQueue($hit);
 
-        if (($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
-            $hit->getLabel() === FlagshipConstant::SDK_LANGUAGE . ":false") {
+        if (
+            ($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
+            $hit->getLabel() === FlagshipConstant::SDK_LANGUAGE . ":false"
+        ) {
             $this->notConsent($hit->getVisitorId());
         }
 
@@ -272,8 +275,10 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $hitKeys = [];
         $keysToFlush = [];
         foreach ($this->hitsPoolQueue as $item) {
-            if (($item instanceof Event && $item->getAction() === FlagshipConstant::FS_CONSENT) ||
-                ($visitorId !== $item->getVisitorId() && $visitorId !== $item->getAnonymousId())) {
+            if (
+                ($item instanceof Event && $item->getAction() === FlagshipConstant::FS_CONSENT) ||
+                ($visitorId !== $item->getVisitorId() && $visitorId !== $item->getAnonymousId())
+            ) {
                 continue;
             }
             $hitKeys[] = $item->getKey();

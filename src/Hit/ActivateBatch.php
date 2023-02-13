@@ -40,7 +40,7 @@ class ActivateBatch
         }
         return [
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->config->getEnvId(),
-            FlagshipConstant::BATCH =>$activates
+            FlagshipConstant::BATCH => $activates
         ];
     }
 }

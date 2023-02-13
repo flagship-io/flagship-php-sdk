@@ -39,7 +39,7 @@ class FlagMetadataTest extends TestCase
             "variationId" => "",
             "isReference" => false,
             "campaignType" => "",
-            "slug"=>null
+            "slug" => null
         ]);
 
         $this->assertJsonStringEqualsJsonString(json_encode(FlagMetadata::getEmpty()), $metadataJson);

@@ -22,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 class TrackingManagerTest extends TestCase
 {
     use BuildApiTrait;
+
     const PSR_LOG_INTERFACE = 'Psr\Log\LoggerInterface';
 
     public function testConstruct()
@@ -131,7 +132,7 @@ class TrackingManagerTest extends TestCase
         $screen = new Screen("home");
         $screen->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key4");
 
-        $segment = new Segment(["key"=>"value"]);
+        $segment = new Segment(["key" => "value"]);
         $segment->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key5");
 
         $activate = new Activate("varGrid", "varId");
@@ -157,7 +158,7 @@ class TrackingManagerTest extends TestCase
             $data[$hit->getKey()] = $hitData;
         }
 
-        $data["$visitorId:key8"]=[
+        $data["$visitorId:key8"] = [
             HitCacheFields::VERSION => 1,
             HitCacheFields::DATA => [
                 HitCacheFields::VISITOR_ID => $page->getVisitorId(),
@@ -168,7 +169,7 @@ class TrackingManagerTest extends TestCase
             ]
         ];
 
-        $data["$visitorId:key9"]=[
+        $data["$visitorId:key9"] = [
             HitCacheFields::VERSION => 1,
             HitCacheFields::DATA => [
                 HitCacheFields::VISITOR_ID => $page->getVisitorId(),
@@ -180,7 +181,7 @@ class TrackingManagerTest extends TestCase
         ];
 
         $key10 = "$visitorId:key10";
-        $data[$key10]=[
+        $data[$key10] = [
             HitCacheFields::DATA => [
                 HitCacheFields::VISITOR_ID => $page->getVisitorId(),
                 HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),

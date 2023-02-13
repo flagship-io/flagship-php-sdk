@@ -11,7 +11,8 @@ class BatchingPeriodicCachingStrategy extends BatchingCachingStrategyAbstract
     /**
      * @return void
      */
-    protected function cacheMergedPoolQueue(){
+    protected function cacheMergedPoolQueue()
+    {
         $mergedQueue = array_merge($this->hitsPoolQueue, $this->activatePoolQueue);
         $this->flushAllHits();
         $this->cacheHit($mergedQueue);
@@ -25,7 +26,7 @@ class BatchingPeriodicCachingStrategy extends BatchingCachingStrategyAbstract
     {
         $keysToFlush = $this->commonNotConsent($visitorId);
 
-        if (!count($keysToFlush)){
+        if (!count($keysToFlush)) {
             return;
         }
 

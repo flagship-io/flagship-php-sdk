@@ -26,7 +26,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->flushVisitor();
         }
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
-        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . ($hasConsented?"true":"false"));
+        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . ($hasConsented ? "true" : "false"));
         $this->sendHit($consentHit);
     }
 
@@ -262,7 +262,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $visitor->updateContextCollection($data[self::CONTEXT]);
         $campaigns = [];
         foreach ($data[self::CAMPAIGNS] as $item) {
-            $campaigns[] =[
+            $campaigns[] = [
                 FlagshipField::FIELD_ID => $item[FlagshipField::FIELD_CAMPAIGN_ID],
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION => [
@@ -447,8 +447,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return ;
         }
 
-        if (gettype($defaultValue)!= self::TYPE_NULL &&
-            gettype($flag->getValue())!= self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
+        if (
+            gettype($defaultValue) != self::TYPE_NULL &&
+            gettype($flag->getValue()) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)
+        ) {
             $this->logInfoSprintf(
                 $this->getConfig(),
                 FlagshipConstant::FLAG_USER_EXPOSED,
@@ -492,7 +494,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return  $defaultValue;
         }
 
-        if (gettype($defaultValue)!=self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
+        if (gettype($defaultValue) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
             $this->logInfoSprintf(
                 $this->getConfig(),
                 FlagshipConstant::FLAG_VALUE,

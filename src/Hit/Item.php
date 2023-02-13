@@ -14,7 +14,8 @@ class Item extends HitAbstract
 {
     const ERROR_MESSAGE = 'Transaction Id, Item name and item code are required';
 
-    public static function getClassName(){
+    public static function getClassName()
+    {
         return __CLASS__;
     }
 

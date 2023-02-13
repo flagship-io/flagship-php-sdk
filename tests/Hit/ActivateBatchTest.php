@@ -28,7 +28,7 @@ class ActivateBatchTest extends TestCase
 
         $this->assertSame([
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-            FlagshipConstant::BATCH =>[$apiKeys]
+            FlagshipConstant::BATCH => [$apiKeys]
         ], $activateBatch->toApiKeys());
     }
 }

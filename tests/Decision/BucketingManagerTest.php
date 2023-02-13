@@ -42,7 +42,7 @@ class BucketingManagerTest extends TestCase
 
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        $bucketingFile =\file_get_contents(__DIR__ . '/bucketing.json');
+        $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $httpClientMock->expects($this->exactly(6))
             ->method('get')
             ->with($bucketingUrl)
@@ -280,7 +280,7 @@ class BucketingManagerTest extends TestCase
             FlagshipField::FIELD_ID => "9273BKSDJtoto",
             FlagshipField::FIELD_VARIATIONS => $realloCvariations
         ];
-        $assignmentsHistory = ["9273BKSDJtoto"=>"c20j9lgbcahhf2mvhbf0"];
+        $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
             VisitorStrategyAbstract::VERSION => 1,
             VisitorStrategyAbstract::DATA => [
@@ -325,7 +325,7 @@ class BucketingManagerTest extends TestCase
             FlagshipField::FIELD_ID => "9273BKSDJtoto",
             FlagshipField::FIELD_VARIATIONS => $reallovariations
         ];
-        $assignmentsHistory = ["9273BKSDJtoto"=>"c20j9lgbcahhf2mvhbf0"];
+        $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
             VisitorStrategyAbstract::VERSION => 1,
             VisitorStrategyAbstract::DATA => [

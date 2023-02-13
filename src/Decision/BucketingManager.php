@@ -63,7 +63,7 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function sendContext(VisitorAbstract $visitor)
     {
-        if (count($visitor->getContext())<= self::NB_MIN_CONTEXT_KEYS) {
+        if (count($visitor->getContext()) <= self::NB_MIN_CONTEXT_KEYS) {
             return;
         }
 
@@ -133,7 +133,7 @@ class BucketingManager extends DecisionManagerAbstract
                 $campaign[FlagshipField::FIELD_ID],
                 $visitor,
                 $campaign[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null
+                isset($campaign[FlagshipField::FIELD_SLUG]) ? $campaign[FlagshipField::FIELD_SLUG] : null
             );
             $visitorCampaigns = array_merge($visitorCampaigns, $currentCampaigns);
         }
@@ -179,7 +179,8 @@ class BucketingManager extends DecisionManagerAbstract
     private function getVisitorAssignmentsHistory($variationGroupId, VisitorAbstract $visitor)
     {
 
-        if (!is_array($visitor->visitorCache) ||
+        if (
+            !is_array($visitor->visitorCache) ||
             !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]) ||
             !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY]) ||
             !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId])

@@ -96,7 +96,7 @@ class Flag implements FlagInterface
             $flagDTO ? $flagDTO->getVariationId() : "",
             $flagDTO ? $flagDTO->getIsReference() : false,
             $flagDTO ? $flagDTO->getCampaignType() : "",
-            $flagDTO ? $flagDTO->getSlug():null
+            $flagDTO ? $flagDTO->getSlug() : null
         );
 
         if (!$flagDTO) {

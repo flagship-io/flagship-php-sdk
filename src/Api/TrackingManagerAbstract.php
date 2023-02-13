@@ -25,6 +25,7 @@ use Flagship\Utils\HttpClientInterface;
 abstract class TrackingManagerAbstract implements TrackingManagerInterface
 {
     use LogTrait;
+
     /**
      * @var HttpClientInterface
      */
@@ -110,7 +111,8 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
 
     protected function checkLookupHitData(array $item)
     {
-        if (isset($item[HitCacheFields::VERSION]) && $item[HitCacheFields::VERSION] == 1 &&
+        if (
+            isset($item[HitCacheFields::VERSION]) && $item[HitCacheFields::VERSION] == 1 &&
             isset($item[HitCacheFields::DATA]) && isset($item[HitCacheFields::DATA][HitCacheFields::TYPE]) &&
             isset($item[HitCacheFields::DATA][HitCacheFields::CONTENT])
         ) {
@@ -128,7 +130,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     protected function checkHitTime($time)
     {
         $now = round(microtime(true) * 1000);
-        return ($now - $time)>= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
+        return ($now - $time) >= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
     }
     public function lookupHits()
     {
@@ -154,8 +156,10 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
 
             foreach ($hitsCache as $key => $item) {
                 $hitKeysToRemove [] = $key;
-                if (!$this->checkLookupHitData($item) ||
-                    $this->checkHitTime($item[HitCacheFields::DATA][HitCacheFields::TIME])) {
+                if (
+                    !$this->checkLookupHitData($item) ||
+                    $this->checkHitTime($item[HitCacheFields::DATA][HitCacheFields::TIME])
+                ) {
                     continue;
                 }
 

@@ -18,7 +18,8 @@ class Transaction extends HitAbstract
     /**
      * @return string
      */
-    public static function getClassName(){
+    public static function getClassName()
+    {
         return __CLASS__;
     }
 

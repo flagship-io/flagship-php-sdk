@@ -57,6 +57,5 @@ class ActivateTest extends TestCase
         $this->assertTrue($activate->isReady());
 
         $this->assertSame(Activate::ERROR_MESSAGE, $activate->getErrorMessage());
-
     }
 }

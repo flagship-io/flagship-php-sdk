@@ -15,9 +15,9 @@ class SegmentTest extends TestCase
         $visitorId = "visitorId";
 
         $context = [
-            "key1"=>"value1",
-            "key2"=>1,
-            "key3"=>true
+            "key1" => "value1",
+            "key2" => 1,
+            "key3" => true
         ];
 
         $config = new DecisionApiConfig($envId);
@@ -47,6 +47,5 @@ class SegmentTest extends TestCase
         $this->assertTrue($segment->isReady());
 
         $this->assertSame(Segment::ERROR_MESSAGE, $segment->getErrorMessage());
-
     }
 }

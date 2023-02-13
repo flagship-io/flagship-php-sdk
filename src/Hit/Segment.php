@@ -35,7 +35,7 @@ class Segment extends HitAbstract
     public function setSl(array $sl)
     {
         if (!$this->isAssoc($sl)) {
-            $this->logError($this->getConfig(), self::SL_MESSAGE_ERROR, [FlagshipConstant::TAG=>__FUNCTION__]);
+            $this->logError($this->getConfig(), self::SL_MESSAGE_ERROR, [FlagshipConstant::TAG => __FUNCTION__]);
             return $this;
         }
         $this->sl = $sl;

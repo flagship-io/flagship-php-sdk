@@ -137,7 +137,8 @@ class NotReadyStrategyTest extends TestCase
             true,
             true,
             true,
-            ['lookupVisitor', 'cacheVisitor']);
+            ['lookupVisitor', 'cacheVisitor']
+        );
 
         $VisitorCacheImplementationMock->expects($this->never())
             ->method("cacheVisitor");

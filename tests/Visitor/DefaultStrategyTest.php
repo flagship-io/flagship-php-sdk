@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 class DefaultStrategyTest extends TestCase
 {
     use CampaignsData;
+
     /**
      * @return \array[][]|FlagDTO[]
      */
@@ -1479,11 +1480,11 @@ class DefaultStrategyTest extends TestCase
                         FlagshipField::FIELD_VARIATION_GROUP_ID => "c8pimlr7n0ig3a0pt2jg",
                         FlagshipField::FIELD_VARIATION_ID => "c8pimlr7n0ig3a0pt2kg",
                         FlagshipField::FIELD_IS_REFERENCE => false,
-                        FlagshipField::FIELD_CAMPAIGN_TYPE =>"ab",
+                        FlagshipField::FIELD_CAMPAIGN_TYPE => "ab",
                         VisitorStrategyAbstract::ACTIVATED => false,
                         VisitorStrategyAbstract::FLAGS => [
                             "Number" => 5,
-                            "isBool"=> false,
+                            "isBool" => false,
                             "background" => "EE3300",
                             "borderColor" => "blue",
                             "Null" => null,
@@ -1654,13 +1655,13 @@ class DefaultStrategyTest extends TestCase
             $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
             $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
 
-            $campaigns[]=[
+            $campaigns[] = [
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
-                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG])?$campaign[FlagshipField::FIELD_SLUG]:null,
+                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG]) ? $campaign[FlagshipField::FIELD_SLUG] : null,
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
-                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
                 VisitorStrategyAbstract::ACTIVATED => false,
                 VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
@@ -1686,14 +1687,14 @@ class DefaultStrategyTest extends TestCase
             $assignmentsHistory2[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] =
                 $variation[FlagshipField::FIELD_ID];
 
-            $campaigns2[]=[
+            $campaigns2[] = [
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
-                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG])?
-                    $campaign[FlagshipField::FIELD_SLUG]:null,
+                FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG]) ?
+                    $campaign[FlagshipField::FIELD_SLUG] : null,
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
-                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
                 VisitorStrategyAbstract::ACTIVATED => false,
                 VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
@@ -1891,12 +1892,12 @@ class DefaultStrategyTest extends TestCase
             $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
             $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
 
-            $campaigns[]=[
+            $campaigns[] = [
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
-                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
                 VisitorStrategyAbstract::ACTIVATED => false,
                 VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];

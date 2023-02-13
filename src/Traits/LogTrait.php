@@ -125,19 +125,19 @@ trait LogTrait
     {
         $format = [];
         if ($message) {
-            $format["message"] = $message;
+            $format[FlagshipConstant::LOG_FORMAT_MESSAGE] = $message;
         }
         if ($url) {
-            $format["url"] = $url;
+            $format[FlagshipConstant::LOG_FORMAT_URL] = $url;
         }
         if ($requestBody) {
-            $format['body'] = $requestBody;
+            $format[FlagshipConstant::LOG_FORMAT_BODY] = $requestBody;
         }
         if ($headers) {
-            $format['headers'] = $headers;
+            $format[FlagshipConstant::LOG_FORMAT_HEADERS] = $headers;
         }
         if ($duration) {
-            $format['duration'] = $duration;
+            $format[FlagshipConstant::LOG_FORMAT_DURATION] = $duration;
         }
         return  $format;
     }

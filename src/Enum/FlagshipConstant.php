@@ -167,9 +167,16 @@ class FlagshipConstant
     const FETCH_FLAGS_STARTED = 'visitor `%s` fetchFlags process is started';
     const PROCESS_FETCHING_FLAGS = 'FETCH_FLAGS';
     const FETCH_CAMPAIGNS_SUCCESS = 'Visitor %s, anonymousId %s with context %s has just fetched campaigns %s in %s ms';
-    const FETCH_CAMPAIGNS_FROM_CACHE = 'Visitor %s, anonymousId %s with context %s has just fetched campaigns from cache %s in % ms';
-    const FETCH_FLAGS_FROM_CAMPAIGNS = 'Visitor %s, anonymousId %s with context %s has just fetched flags %s from Campaigns';
+    const FETCH_CAMPAIGNS_FROM_CACHE =
+        'Visitor %s, anonymousId %s with context %s has just fetched campaigns from cache %s in % ms';
+    const FETCH_FLAGS_FROM_CAMPAIGNS =
+        'Visitor %s, anonymousId %s with context %s has just fetched flags %s from Campaigns';
     const FLAG_USER_EXPOSED = 'FLAG_USER_EXPOSED';
     const FLAG_VALUE = 'FLAG_VALUE';
     const GET_FLAG_VALUE = 'Visitor %s, Flag for key %s returns value %s';
+    const LOG_FORMAT_MESSAGE = "message";
+    const LOG_FORMAT_URL = "url";
+    const LOG_FORMAT_BODY = 'body';
+    const LOG_FORMAT_HEADERS = 'headers';
+    const LOG_FORMAT_DURATION = 'duration';
 }

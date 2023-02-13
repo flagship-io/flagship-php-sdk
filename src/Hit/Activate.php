@@ -19,7 +19,8 @@ class Activate extends HitAbstract
      */
     private $variationId;
 
-    public static function getClassName(){
+    public static function getClassName()
+    {
         return __CLASS__;
     }
 
@@ -27,7 +28,7 @@ class Activate extends HitAbstract
      * @param string $variationGroupId
      * @param string $variationId
      */
-    public  function __construct($variationGroupId, $variationId)
+    public function __construct($variationGroupId, $variationId)
     {
         parent::__construct(HitType::ACTIVATE);
         $this->variationGroupId = $variationGroupId;
@@ -77,13 +78,13 @@ class Activate extends HitAbstract
     {
         $apiKeys = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
-            FlagshipConstant::VARIATION_ID_API_ITEM => $this->getVisitorId(),
+            FlagshipConstant::VARIATION_ID_API_ITEM => $this->getVariationId(),
             FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $this->getVariationGroupId(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->config->getEnvId(),
             FlagshipConstant::ANONYMOUS_ID => null
         ];
 
-        if ($this->getVisitorId() && $this->getAnonymousId()){
+        if ($this->getVisitorId() && $this->getAnonymousId()) {
             $apiKeys[FlagshipConstant::VISITOR_ID_API_ITEM]  = $this->getVisitorId();
             $apiKeys[FlagshipConstant::ANONYMOUS_ID] = $this->getAnonymousId();
         }
@@ -108,6 +109,4 @@ class Activate extends HitAbstract
     {
         return self::ERROR_MESSAGE;
     }
-
-
 }

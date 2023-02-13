@@ -50,7 +50,8 @@ class TrackingManagerTest extends TestCase
         $this->assertInstanceOf("Flagship\Api\NoBatchingContinuousCachingStrategy", $strategy);
     }
 
-    public function testCommonMethod(){
+    public function testCommonMethod()
+    {
         $config = new DecisionApiConfig();
         $httpClient = new HttpClient();
 
@@ -200,7 +201,6 @@ class TrackingManagerTest extends TestCase
                 FlagshipConstant::PROCESS_CACHE,
                 FlagshipConstant::HIT_CACHE_LOADED,
                 [$data]]
-
             );
 
         Round::$returnValue = \round(microtime(true) * 1000);

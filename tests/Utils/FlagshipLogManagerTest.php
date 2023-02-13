@@ -13,22 +13,17 @@ class FlagshipLogManagerTest extends TestCase
 {
     public function contextDataProvider()
     {
-        return [
-            [
+        return
                 [
                     'flagshipSdk' => FlagshipConstant::FLAGSHIP_SDK,
                     'context' => ['process' => 'testError', 'context2' => 'value 2'],
-                    'contextString' => '[process => testError, context2 => value 2]'
-                ]
-            ]
-        ];
+                    'contextString' => '[process => testError, context2 => value 2]' ];
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testError($data)
+
+    public function testError()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test Error';
         $logManager = new FlagshipLogManager();
         $logManager->error($message, $data['context']);
@@ -38,11 +33,10 @@ class FlagshipLogManagerTest extends TestCase
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testInfo($data)
+
+    public function testInfo()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test info';
         $logManager = new FlagshipLogManager();
         $logManager->info($message, $data['context']);
@@ -52,11 +46,9 @@ class FlagshipLogManagerTest extends TestCase
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testAlert($data)
+    public function testAlert()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test Error';
         $logManager = new FlagshipLogManager();
         $logManager->alert($message, $data['context']);
@@ -66,11 +58,9 @@ class FlagshipLogManagerTest extends TestCase
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testEmergency($data)
+    public function testEmergency()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test Error';
         $logManager = new FlagshipLogManager();
         $logManager->emergency($message, $data['context']);
@@ -80,11 +70,10 @@ class FlagshipLogManagerTest extends TestCase
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testLog($data)
+
+    public function testLog()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test Error';
         $logManager = new FlagshipLogManager();
         $level = LogLevel::EMERGENCY;
@@ -94,11 +83,10 @@ class FlagshipLogManagerTest extends TestCase
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testWarning($data)
+
+    public function testWarning()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test Error';
         $logManager = new FlagshipLogManager();
         $logManager->warning($message, $data['context']);
@@ -108,11 +96,9 @@ class FlagshipLogManagerTest extends TestCase
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testCritical($data)
+    public function testCritical()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test Error';
         $logManager = new FlagshipLogManager();
         $logManager->critical($message, $data['context']);
@@ -122,11 +108,9 @@ class FlagshipLogManagerTest extends TestCase
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testNotice($data)
+    public function testNotice()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test Notice';
         $logManager = new FlagshipLogManager();
         $logManager->notice($message, $data['context']);
@@ -136,11 +120,10 @@ class FlagshipLogManagerTest extends TestCase
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testDebug($data)
+
+    public function testDebug()
     {
+        $data = $this->contextDataProvider();
         $message = 'Test Debug';
         $logManager = new FlagshipLogManager();
         $logManager->debug($message, $data['context']);

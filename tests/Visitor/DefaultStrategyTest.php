@@ -36,7 +36,7 @@ class DefaultStrategyTest extends TestCase
      */
     public function modifications()
     {
-        return [[[
+        return [
             (new FlagDTO())
                 ->setKey('background')
                 ->setValue('EE3300')
@@ -79,7 +79,7 @@ class DefaultStrategyTest extends TestCase
                 ->setVariationGroupId('c1e3t1sddfu1ncqfcdcp0')
                 ->setCampaignId('c1slf3t1nvfu1ncqfcdcfd')
                 ->setVariationId('cleo3t1nvfu1ncqfcdcsdf'),
-        ]]];
+        ];
     }
 
 
@@ -489,12 +489,10 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame($defaultValue, $modificationValue);
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testSynchronizeModificationsWithoutDecisionManager($modifications)
+
+    public function testSynchronizeModificationsWithoutDecisionManager()
     {
+        $modifications = $this->modifications();
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -630,21 +628,11 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame($defaultValue, $modificationValue);
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testFetchFlagsWithoutDecisionManager($modifications)
+
+    public function testFetchFlagsWithoutDecisionManager()
     {
-        $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
-            [],
-            "",
-            true,
-            true,
-            true,
-            ['error']
-        );
+        $modifications = $this->modifications();
+        $logManagerStub = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
 
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
@@ -727,13 +715,10 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->getModification($modifications[2]->getKey(), 'defaultValue', true);
     }
 
-    /**
-     *
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testGetModificationLog($modifications)
+
+    public function testGetModificationLog()
     {
+        $modifications = $this->modifications();
         $apiManagerStub = $this->getMockForAbstractClass(
             'Flagship\Decision\DecisionManagerAbstract',
             [],
@@ -810,12 +795,10 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategyMock->getModification($key, $defaultValue);
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testGetModificationInfo($modifications)
+
+    public function testGetModificationInfo()
     {
+        $modifications = $this->modifications();
         $modifications = $this->campaignsModifications();
         $config = new DecisionApiConfig('envId', 'apiKey');
         $httpClientMock = $this->getMockForAbstractClass(
@@ -897,13 +880,9 @@ class DefaultStrategyTest extends TestCase
         $this->assertNull($campaign);
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testActivateModification($modifications)
-    {
 
+    public function testActivateModification()
+    {
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -975,11 +954,8 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->activateModification($key);
     }
 
-    /**
-     * @dataProvider modifications
-     * @param FlagDTO[] $modifications
-     */
-    public function testActivateModificationWithoutTrackerManager($modifications)
+
+    public function testActivateModificationWithoutTrackerManager()
     {
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
@@ -1536,7 +1512,7 @@ class DefaultStrategyTest extends TestCase
 
         $functionName = "lookupVisitor";
 
-        $lookupVisitorJson  = function () use ($flagshipSdk, $functionName) {
+        $lookupVisitorJson  = function () use ($functionName) {
             return [VisitorStrategyAbstract::LOOKUP_VISITOR_JSON_OBJECT_ERROR,
                 [FlagshipConstant::TAG => $functionName]];
         };

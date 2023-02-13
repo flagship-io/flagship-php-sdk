@@ -44,7 +44,7 @@ jobs:
       run: composer remove phpunit/phpunit --dev
 
     - name: install new phpunit version
-      run: composer require phpunit/phpunit --dev
+      run: composer require phpunit/phpunit:9.6 --dev
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress

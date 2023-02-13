@@ -12,17 +12,15 @@ use PHPUnit\Framework\TestCase;
 
 class FlagshipConfigTest extends TestCase
 {
-    public function configData()
+    public  function configData()
     {
-        return [[['envId' => 'env_value','apiKey' => 'key_value']]];
+        return ['envId' => 'env_value','apiKey' => 'key_value'];
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testSetTimeOut($configData)
+
+    public function testSetTimeOut()
     {
+        $configData = $this->configData();
         $timeOut = 5000;
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
 
@@ -60,58 +58,48 @@ class FlagshipConfigTest extends TestCase
     }
 
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testSetApiKey($configData)
+
+    public function testSetApiKey()
     {
+        $configData = $this->configData();
         $newApiKey = 'new_api_key';
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $config->setApiKey($newApiKey);
         $this->assertEquals($newApiKey, $config->getApiKey());
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testSetEnvId($configData)
+
+    public function testSetEnvId()
     {
+        $configData = $this->configData();
         $newEnvId = 'new_env_id';
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $config->setEnvId($newEnvId);
         $this->assertEquals($newEnvId, $config->getEnvId());
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testDecisionMode($configData)
+
+    public function testDecisionMode()
     {
+        $configData = $this->configData();
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $this->assertEquals(DecisionMode::DECISION_API, $config->getDecisionMode());
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testConstruct($configData)
+
+    public function testConstruct()
     {
+        $configData = $this->configData();
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $this->assertInstanceOf("Flagship\Config\DecisionApiConfig", $config);
         $this->assertEquals($config->getEnvId(), $configData['envId']);
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testSetDecisionMode($configData)
+
+    public function testSetDecisionMode()
     {
+        $configData = $this->configData();
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $setDecisionMode = Utils::getMethod($config, 'setDecisionMode');
         $setDecisionMode->invokeArgs($config, [DecisionMode::DECISION_API]);

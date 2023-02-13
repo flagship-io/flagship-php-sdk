@@ -14,7 +14,8 @@ use Flagship\Enum\HitType;
 class Event extends HitAbstract
 {
     const ERROR_MESSAGE  = 'event category and event action are required';
-    const CATEGORY_ERROR = "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
+    const CATEGORY_ERROR =
+        "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
     const VALUE_FIELD_ERROR = 'value must be an integer and be >= 0';
 
     public static function getClassName()

@@ -55,7 +55,11 @@ class BatchingContinuousCachingStrategyTest extends TestCase
 
         //Test generateHitKey method
         $visitorId = "visitorId";
-        $this->assertRegExp("/^$visitorId:/", $strategy->generateHitKey($visitorId));
+        if (method_exists($this, "assertMatchesRegularExpression")) {
+            $this->assertMatchesRegularExpression("/^$visitorId:/", $strategy->generateHitKey($visitorId));
+        } else {
+            $this->assertRegExp("/^$visitorId:/", $strategy->generateHitKey($visitorId));
+        }
     }
 
     public function testAddHit()

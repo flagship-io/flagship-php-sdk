@@ -15,5 +15,5 @@ RUN composer remove phpunit/phpunit --dev
 
 RUN composer install
 
-RUN composer require phpunit/phpunit --dev
+RUN composer require phpunit/phpunit:9.6 --dev
 

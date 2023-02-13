@@ -40,10 +40,15 @@ jobs:
         coverage: xdebug        
         tools: phpunit:${{ matrix.phpunit-versions }}
 
+    - name: Remove current phpunit version
+      run: composer remove phpunit/phpunit --dev
+
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
+    - name: install new phpunit version
+      run: composer require phpunit/phpunit:9.6 --dev
 
     - name: Run test suite
-      run: composer run-script test
+      run: composer run-script test -- -c phpunit.8.xml
 

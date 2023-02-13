@@ -40,9 +40,14 @@ jobs:
         coverage: xdebug        
         tools: phpunit:${{ matrix.phpunit-versions }}
 
+    - run: composer remove phpunit/phpunit
+    - run: composer remove psr/log
+
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
+    - run: composer require phpunit/phpunit --dev -W
+    - run: composer remove psr/log:^1 -W
 
     - name: Run test suite
       run: composer run-script test

@@ -16,4 +16,10 @@ RUN docker-php-ext-install zip
 
 RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer --disable-tls
 
+RUN composer remove psr/log
+RUN composer Remove phpunit/phpunit
+
+RUN composer require psr/log:^1 -W
+RUN composer require phpunit/phpunit -W
+
 RUN composer install

@@ -43,7 +43,7 @@ class HitBatch extends HitAbstract
             FlagshipConstant::H_API_ITEM => []
         ];
 
-        foreach ($this->hits as $hit) {
+        foreach ($this->getHits() as $hit) {
             $hitApiKey = $hit->toApiKeys();
             unset($hitApiKey[FlagshipConstant::DS_API_ITEM]);
             unset($hitApiKey[FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM]);

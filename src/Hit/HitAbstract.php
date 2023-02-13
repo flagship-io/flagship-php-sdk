@@ -92,6 +92,7 @@ abstract class HitAbstract
     public function __construct($type)
     {
         $this->type = $type;
+        $this->ds = FlagshipConstant::SDK_APP;
         $this->createdAt =  round(microtime(true) * 1000);
     }
 
@@ -330,7 +331,7 @@ abstract class HitAbstract
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getCreatedAt()
     {

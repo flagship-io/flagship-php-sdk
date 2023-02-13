@@ -107,7 +107,6 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 $this->getLogFormat(null, $url, $requestBody, $headers, $this->getNow() - $now)]
             );
         } catch (\Exception $exception) {
-            var_dump($exception->getMessage());
             $this->onError($hit);
             $this->logErrorSprintf(
                 $this->config,

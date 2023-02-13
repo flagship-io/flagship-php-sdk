@@ -114,6 +114,12 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
         );
         return  false;
     }
+
+    protected function checkHitTime($time)
+    {
+        $now = round(microtime(true) * 1000);
+        return ($now - $time)>= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
+    }
     public function lookupHits()
     {
         try {
@@ -134,19 +140,12 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                 return;
             }
 
-
-            function checkHitTime($time)
-            {
-                $now = round(microtime(true) * 1000);
-                return ($now - $time)>= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
-            }
-
             $hitKeysToRemove = [];
 
             foreach ($hitsCache as $key => $item) {
                 $hitKeysToRemove [] = $key;
                 if (!$this->checkLookupHitData($item) ||
-                    checkHitTime($item[HitCacheFields::DATA][HitCacheFields::TIME])) {
+                    $this->checkHitTime($item[HitCacheFields::DATA][HitCacheFields::TIME])) {
                     continue;
                 }
 

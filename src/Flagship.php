@@ -275,10 +275,10 @@ class Flagship
     public static function close()
     {
         $instance = self::getInstance();
-        if (!$instance->configManager) {
+        if (!$instance->getConfigManager()) {
             return;
         }
-        $instance->configManager->getTrackingManager()->sendBatch();
+        $instance->getConfigManager()->getTrackingManager()->sendBatch();
     }
 
     /**

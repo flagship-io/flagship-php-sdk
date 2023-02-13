@@ -488,4 +488,77 @@ class FlagshipTest extends TestCase
 
         $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
     }
+
+    public function testClose()
+    {
+        //Test Start Flagship
+        $envId = "end_id";
+        $apiKey = "apiKey";
+        $config = new DecisionApiConfig($envId, $apiKey);
+        $logManager = new FlagshipLogManager();
+        $config->setLogManager($logManager);
+
+        $flagshipMock = $this->getMockBuilder(
+            'Flagship\Flagship'
+        )->setMethods(['logInfo', 'logError', 'getContainer', "getConfigManager"])
+            ->disableOriginalConstructor()->getMock();
+
+        $configManagerMock = $this->getMockBuilder("Flagship\Utils\ConfigManager")
+            ->setMethods(["getTrackingManager"])
+            ->getMock();
+
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false
+        );
+
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
+        $instance = $instanceMethod->invoke(null);
+
+        Utils::setPrivateProperty($instance, 'instance', $flagshipMock);
+
+
+        $trackingManagerMock->expects($this->once())->method("sendBatch");
+
+        $configManagerMock->expects($this->once())->method("getTrackingManager")->willReturn($trackingManagerMock);
+
+        $flagshipMock->expects($this->exactly(2))->method("getConfigManager")
+            ->willReturn($configManagerMock);
+
+        Flagship::Close();
+    }
+
+    public function testCloseNull()
+    {
+        //Test Start Flagship
+        $envId = "end_id";
+        $apiKey = "apiKey";
+        $config = new DecisionApiConfig($envId, $apiKey);
+        $logManager = new FlagshipLogManager();
+        $config->setLogManager($logManager);
+
+        $flagshipMock = $this->getMockBuilder(
+            'Flagship\Flagship'
+        )->setMethods(['logInfo', 'logError', 'getContainer', "getConfigManager"])
+            ->disableOriginalConstructor()->getMock();
+
+        $configManagerMock = $this->getMockBuilder("Flagship\Utils\ConfigManager")
+            ->setMethods(["getTrackingManager"])
+            ->getMock();
+
+        $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
+        $instance = $instanceMethod->invoke(null);
+
+        Utils::setPrivateProperty($instance, 'instance', $flagshipMock);
+
+
+        $configManagerMock->expects($this->never())->method("getTrackingManager");
+
+        $flagshipMock->expects($this->once())->method("getConfigManager")
+            ->willReturn(null);
+
+        Flagship::Close();
+    }
 }

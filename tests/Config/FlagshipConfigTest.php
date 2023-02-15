@@ -6,7 +6,6 @@ use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
-use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
@@ -162,7 +161,7 @@ class FlagshipConfigTest extends TestCase
             json_encode($data),
             json_encode($config)
         );
-        $logManager = new FlagshipLogManager();
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
         $config->setLogManager($logManager);
         $this->assertSame($logManager, $config->getLogManager());
     }

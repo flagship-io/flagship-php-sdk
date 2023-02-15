@@ -14,7 +14,6 @@ use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
-use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\MurmurHash;
 use Flagship\Visitor\Visitor;
 use Flagship\Visitor\VisitorDelegate;
@@ -52,10 +51,17 @@ class FlagshipTest extends TestCase
             'Flagship\Utils\HttpClientInterface',
             'Flagship\Utils\HttpClient'
         );
-        $container->bind(
-            'Psr\Log\LoggerInterface',
-            'Flagship\Utils\FlagshipLogManager'
-        );
+        if (version_compare(phpversion(), '8', '>=')) {
+            $container->bind(
+                'Psr\Log\LoggerInterface',
+                'Flagship\Utils\FlagshipLogManager8'
+            );
+        } else {
+            $container->bind(
+                'Psr\Log\LoggerInterface',
+                'Flagship\Utils\FlagshipLogManager'
+            );
+        }
         return $container;
     }
 
@@ -191,7 +197,7 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = new FlagshipLogManager();
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder(
@@ -274,7 +280,7 @@ class FlagshipTest extends TestCase
         $apiKey = "apiKey";
 
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = new FlagshipLogManager();
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
@@ -310,7 +316,7 @@ class FlagshipTest extends TestCase
         $apiKey = "apiKey";
 
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = new FlagshipLogManager();
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
@@ -389,12 +395,31 @@ class FlagshipTest extends TestCase
 
     public function testStatusCallback()
     {
-        $config = new DecisionApiConfig();
-        $callback = function ($status) {
-            echo $status;
+        $config = $this->getMockForAbstractClass(
+            "Flagship\Config\FlagshipConfig",
+            [],
+        "",
+        false,
+        false,
+        true,
+        [ "getStatusChangedCallback"]);
+
+        $count= 0;
+        $callable = function ($status) use (&$count){
+            if ($count==0){
+                $this->assertSame(FlagshipStatus::STARTING, $status);
+            }
+            else{
+                $this->assertSame(FlagshipStatus::READY, $status);
+            }
+            $count++;
         };
-        $config->setStatusChangedCallback($callback);
-        $this->expectOutputString('14'); //Callback status STARTING then READY
+
+        $config->setLogLevel(0);
+        $config->expects($this->exactly(4))
+            ->method("getStatusChangedCallback")
+            ->willReturn($callable);
+
         Flagship::start('envId', 'apiKey', $config);
     }
 
@@ -495,7 +520,7 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = new FlagshipLogManager();
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder(
@@ -536,7 +561,7 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = new FlagshipLogManager();
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder(

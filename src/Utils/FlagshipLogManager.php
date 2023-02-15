@@ -2,12 +2,13 @@
 
 namespace Flagship\Utils;
 
-use Flagship\Enum\FlagshipConstant;
+use Flagship\Traits\CommonLogManagerTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 class FlagshipLogManager implements LoggerInterface
 {
+    use CommonLogManagerTrait;
 
     /**
      * @inheritDoc
@@ -87,32 +88,6 @@ class FlagshipLogManager implements LoggerInterface
      */
     public function log($level, $message, array $context = [])
     {
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $customMessage = "[$flagshipSdk] [$level] ";
-        $contextString = $this->parseContextToString($context);
-        error_log($customMessage . $message . " " . $contextString);
-    }
-
-    /**
-     * @param $context
-     * @return false|string
-     */
-    private function parseContextToString($context)
-    {
-        $contextToString = "";
-
-        if (count($context) > 0) {
-            $contextToString .= '[';
-        }
-        foreach ($context as $key => $item) {
-            $contextToString .= "$key => $item, ";
-        }
-
-        $contextToString = substr($contextToString, 0, -2);
-
-        if (count($context) > 0) {
-            $contextToString .= ']';
-        }
-        return $contextToString;
+        $this->customLog($level, $message, $context);
     }
 }

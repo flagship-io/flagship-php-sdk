@@ -177,10 +177,17 @@ class Flagship
             'Flagship\Utils\HttpClientInterface',
             'Flagship\Utils\HttpClient'
         );
-        $newContainer->bind(
-            'Psr\Log\LoggerInterface',
-            'Flagship\Utils\FlagshipLogManager'
-        );
+        if (version_compare(phpversion(), '8', '>=')) {
+            $newContainer->bind(
+                'Psr\Log\LoggerInterface',
+                'Flagship\Utils\FlagshipLogManager8'
+            );
+        } else {
+            $newContainer->bind(
+                'Psr\Log\LoggerInterface',
+                'Flagship\Utils\FlagshipLogManager'
+            );
+        }
         return $newContainer;
     }
 

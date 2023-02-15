@@ -2,12 +2,12 @@
 
 namespace Flagship\Utils;
 
-require_once __dir__ . '/../Assets/ErrorLog.php';
+require_once __DIR__ . "/../Traits/ErrorLog.php";
 
-use Flagship\Assets\ErrorLog;
 use Flagship\Enum\FlagshipConstant;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use Flagship\Traits\ErrorLog;
 
 class FlagshipLogManagerTest extends TestCase
 {
@@ -19,7 +19,6 @@ class FlagshipLogManagerTest extends TestCase
                     'context' => ['process' => 'testError', 'context2' => 'value 2'],
                     'contextString' => '[process => testError, context2 => value 2]' ];
     }
-
 
     public function testError()
     {

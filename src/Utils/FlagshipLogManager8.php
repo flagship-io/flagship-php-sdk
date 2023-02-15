@@ -5,7 +5,6 @@ namespace Flagship\Utils;
 use Flagship\Traits\CommonLogManagerTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use Stringable;
 
 /**
  * Default log manager to use with php 8>=
@@ -16,7 +15,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function emergency(Stringable|string $message, array $context = []): void
+    public function emergency(mixed $message, array $context = []): void
     {
         $this->log(LogLevel::EMERGENCY, $message, $context);
     }
@@ -24,7 +23,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function alert(Stringable|string $message, array $context = []): void
+    public function alert(mixed $message, array $context = []): void
     {
         $this->log(LogLevel::ALERT, $message, $context);
     }
@@ -32,7 +31,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function critical(Stringable|string $message, array $context = []): void
+    public function critical(mixed $message, array $context = []): void
     {
         $this->log(LogLevel::CRITICAL, $message, $context);
     }
@@ -40,7 +39,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function error(Stringable|string $message, array $context = []): void
+    public function error(mixed $message, array $context = []): void
     {
         $this->log(LogLevel::ERROR, $message, $context);
     }
@@ -48,7 +47,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function warning(Stringable|string $message, array $context = []): void
+    public function warning(mixed $message, array $context = []): void
     {
         $this->log(LogLevel::WARNING, $message, $context);
     }
@@ -56,7 +55,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function notice(Stringable|string $message, array $context = []): void
+    public function notice(mixed $message, array $context = []): void
     {
         $this->log(LogLevel::NOTICE, $message, $context);
     }
@@ -64,7 +63,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function info(Stringable|string $message, array $context = []): void
+    public function info(mixed $message, array $context = []): void
     {
         $this->log(LogLevel::INFO, $message, $context);
     }
@@ -72,7 +71,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function debug(Stringable|string $message, array $context = []): void
+    public function debug(mixed $message, array $context = []): void
     {
         $this->log(LogLevel::DEBUG, $message, $context);
     }
@@ -80,7 +79,7 @@ class FlagshipLogManager8 implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function log($level, Stringable|string $message, array $context = []): void
+    public function log($level, mixed $message, array $context = []): void
     {
         $this->customLog($level, $message, $context);
     }

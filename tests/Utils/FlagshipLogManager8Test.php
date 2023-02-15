@@ -24,11 +24,18 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
+
         $logManager->error($message, $data['context']);
         $level = LogLevel::ERROR;
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -37,11 +44,17 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test info';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
         $logManager->info($message, $data['context']);
         $level = LogLevel::INFO;
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -49,11 +62,17 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
         $logManager->alert($message, $data['context']);
         $level = LogLevel::ALERT;
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -61,11 +80,17 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
         $logManager->emergency($message, $data['context']);
         $level = LogLevel::EMERGENCY;
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -74,11 +99,17 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
         $level = LogLevel::EMERGENCY;
         $logManager->log($level, $message, $data['context']);
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -87,11 +118,17 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
         $logManager->warning($message, $data['context']);
         $level = LogLevel::WARNING;
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -99,11 +136,17 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
         $logManager->critical($message, $data['context']);
         $level = LogLevel::CRITICAL;
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -111,11 +154,17 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Notice';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
         $logManager->notice($message, $data['context']);
         $level = LogLevel::NOTICE;
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -124,11 +173,17 @@ class FlagshipLogManager8Test extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Debug';
-        $logManager = new FlagshipLogManager8();
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
+            ->getMock();
+        $formatDate = "2023-02-15 11:08:10.455";
+        $logManager->expects($this->once())
+            ->method("getDateTime")
+            ->willReturn($formatDate);
         $logManager->debug($message, $data['context']);
         $level = LogLevel::DEBUG;
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
         $this->assertSame($messageError, ErrorLog::$error);
     }
 }

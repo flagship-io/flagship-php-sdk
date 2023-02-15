@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         php-versions: ['7.4']
-        phpunit-versions: ['9.6']
+        phpunit-versions: ['5.7']
 
     steps:
     - uses: actions/checkout@v2
@@ -42,15 +42,15 @@ jobs:
 
     - run: rm composer.lock
 
-    - name: Remove current phpunit version
-      run: composer remove phpunit/phpunit --dev
+    - run: composer remove phpunit/phpunit --dev --no-update
+    - run: composer remove psr/log --no-update
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    - name: install new phpunit version
-      run: composer require phpunit/phpunit:9.6 --dev
+    - run: composer require phpunit/phpunit --dev -W
+    - run: composer require psr/log:^1 -W
 
     - name: Run test suite
-      run: composer run-script test -- -c phpunit.8.xml
+      run: composer run-script test
 

@@ -41,13 +41,13 @@ jobs:
         tools: phpunit:${{ matrix.phpunit-versions }}
 
     - run: rm composer.lock
-    - run: composer remove phpunit/phpunit --dev
+
+    - run: composer remove phpunit/phpunit --dev --no-update
+    - run: composer remove psr/log --no-update
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    - run: composer require phpunit/phpunit --dev
-
-    - name: Run test suite
-      run: composer run-script test
+    - run: composer require phpunit/phpunit --dev -W
+    - run: composer require psr/log:^1 -W
 

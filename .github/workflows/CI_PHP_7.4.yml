@@ -48,7 +48,7 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    - run: composer require phpunit/phpunit --dev -W
+    - run: composer require phpunit/phpunit:5.7 --dev -W
     - run: composer require psr/log:^1 -W
 
     - name: Run test suite

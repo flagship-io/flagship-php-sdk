@@ -20,6 +20,11 @@ class FlagshipLogManager8Test extends TestCase
                 'contextString' => '[process => testError, context2 => value 2]' ];
     }
 
+    public function getMessageError($formatDate,$level, $message, $tag ){
+        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        return "[$formatDate] [$flagshipSdk] [$level] {$tag} $message";
+    }
+
     public function testError()
     {
         $data = $this->contextDataProvider();
@@ -34,8 +39,7 @@ class FlagshipLogManager8Test extends TestCase
 
         $logManager->error($message, $data['context']);
         $level = LogLevel::ERROR;
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -53,8 +57,7 @@ class FlagshipLogManager8Test extends TestCase
             ->willReturn($formatDate);
         $logManager->info($message, $data['context']);
         $level = LogLevel::INFO;
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -71,8 +74,7 @@ class FlagshipLogManager8Test extends TestCase
             ->willReturn($formatDate);
         $logManager->alert($message, $data['context']);
         $level = LogLevel::ALERT;
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -89,8 +91,7 @@ class FlagshipLogManager8Test extends TestCase
             ->willReturn($formatDate);
         $logManager->emergency($message, $data['context']);
         $level = LogLevel::EMERGENCY;
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -108,8 +109,7 @@ class FlagshipLogManager8Test extends TestCase
             ->willReturn($formatDate);
         $level = LogLevel::EMERGENCY;
         $logManager->log($level, $message, $data['context']);
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -127,8 +127,7 @@ class FlagshipLogManager8Test extends TestCase
             ->willReturn($formatDate);
         $logManager->warning($message, $data['context']);
         $level = LogLevel::WARNING;
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -145,8 +144,7 @@ class FlagshipLogManager8Test extends TestCase
             ->willReturn($formatDate);
         $logManager->critical($message, $data['context']);
         $level = LogLevel::CRITICAL;
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -163,8 +161,7 @@ class FlagshipLogManager8Test extends TestCase
             ->willReturn($formatDate);
         $logManager->notice($message, $data['context']);
         $level = LogLevel::NOTICE;
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 
@@ -182,8 +179,7 @@ class FlagshipLogManager8Test extends TestCase
             ->willReturn($formatDate);
         $logManager->debug($message, $data['context']);
         $level = LogLevel::DEBUG;
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $messageError = "[$formatDate] [$flagshipSdk] [$level] $message {$data['contextString']}";
+        $messageError = $this->getMessageError($formatDate, $level, $message, $data['contextString']);
         $this->assertSame($messageError, ErrorLog::$error);
     }
 }

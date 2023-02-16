@@ -451,6 +451,9 @@ class FlagshipTest extends TestCase
         $trackingManager = new TrackingManager($config, $httpClientMock);
 
         $configManager = new ConfigManager();
+        $configManager->setConfig($config)
+            ->setTrackingManager($trackingManager)
+            ->setDecisionManager($apiManager);
 
         $visitorId = 'Visitor_1';
 

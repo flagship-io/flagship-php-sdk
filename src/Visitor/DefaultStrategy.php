@@ -26,8 +26,17 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->flushVisitor();
         }
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
-        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . ($hasConsented ? "true" : "false"));
-        $this->sendHit($consentHit);
+        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . ($hasConsented ? "true" : "false"))
+        ->setConfig($this->getConfig())
+            ->setVisitorId($this->getVisitor()->getVisitorId())
+        ->setAnonymousId($this->getVisitor()->getAnonymousId());
+
+        $trackingManger = $this->getTrackingManager();
+        if (!$trackingManger)
+        {
+            return;
+        }
+        $trackingManger->addHit($consentHit);
     }
 
     /**

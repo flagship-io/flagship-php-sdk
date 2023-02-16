@@ -59,10 +59,10 @@ class VisitorDelegateTest extends TestCase
             return new DefaultStrategy($params[0]);
         };
 
-        $containerMock->method('get')->willReturnCallback($containerGetMethod);
+        $containerMock->method('get')->will($this->returnCallback($containerGetMethod));
 
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
-        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . "true")
+        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . "false")
             ->setConfig($config)
             ->setVisitorId($visitorId);
 
@@ -72,8 +72,8 @@ class VisitorDelegateTest extends TestCase
             ->setVisitorId($newVisitorId);
 
         $trackerManager->expects($this->exactly(2))
-            ->method('addHit');
-//            ->withConsecutive([$consentHit], [$consentHit2]);
+            ->method('addHit')
+            ->withConsecutive([$consentHit],[$consentHit2]);
 
         $visitorDelegate = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext);
 
@@ -96,6 +96,7 @@ class VisitorDelegateTest extends TestCase
         $this->assertFalse($visitorDelegate->hasConsented());
         $visitorDelegate->setConsent(true);
         $this->assertTrue($visitorDelegate->hasConsented());
+
 
         //Test Config
         $this->assertSame($config, $visitorDelegate->getConfig());
@@ -376,7 +377,7 @@ class VisitorDelegateTest extends TestCase
         $setStatusMethod->invoke($instance, FlagshipStatus::NOT_INITIALIZED);
 
         $decisionManagerMock = $this->getMockBuilder('Flagship\Api\TrackingManager')
-            ->setMethods(['sendConsentHit'])
+            ->setMethods(['addHit'])
             ->disableOriginalConstructor()->getMock();
 
         $config = new DecisionApiConfig();

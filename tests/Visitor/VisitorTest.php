@@ -27,7 +27,7 @@ class VisitorTest extends TestCase
         ];
 
         $decisionManagerMock = $this->getMockBuilder('Flagship\Api\TrackingManager')
-            ->setMethods(['sendConsentHit'])
+            ->setMethods(['addHit'])
             ->disableOriginalConstructor()->getMock();
 
 

@@ -26,7 +26,7 @@ class BatchingPeriodicCachingStrategy extends BatchingCachingStrategyAbstract
     {
         $keysToFlush = $this->commonNotConsent($visitorId);
 
-        if (!count($keysToFlush)) {
+        if (count($keysToFlush) === 0) {
             return;
         }
 

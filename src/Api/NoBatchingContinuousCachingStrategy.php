@@ -128,7 +128,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
     {
         $keysToFlush = $this->commonNotConsent($visitorId);
         $mergedQueue = array_merge($keysToFlush, $this->cacheHitKeys);
-        if (!count($mergedQueue)) {
+        if (count($mergedQueue) === 0) {
             return;
         }
         $this->flushHits($mergedQueue);

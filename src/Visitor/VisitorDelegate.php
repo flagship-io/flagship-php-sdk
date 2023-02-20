@@ -44,13 +44,12 @@ class VisitorDelegate extends VisitorAbstract
         $this->setConfigManager($configManager);
         $this->loadPredefinedContext();
 
-        $this->setConsent($hasConsented);
-
         if ($isAuthenticated && $this->getConfig()->getDecisionMode() == DecisionMode::DECISION_API) {
             $anonymousId  = $this->newGuid();
             $this->setAnonymousId($anonymousId);
         }
 
+        $this->setConsent($hasConsented);
         $this->getStrategy()->lookupVisitor();
     }
 

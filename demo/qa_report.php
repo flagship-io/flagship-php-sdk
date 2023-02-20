@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
 use Flagship\Flagship;
 use Flagship\Hit\Event;
@@ -9,8 +10,8 @@ use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 
 
-$config = new \Flagship\Config\DecisionApiConfig();
-$config->setTimeout(20000);
+$config = new DecisionApiConfig();
+$config->setTimeout(20000)->setLogLevel(\Flagship\Enum\LogLevel::ALL);
 
 Flagship::start("", "", $config);
 
@@ -26,13 +27,7 @@ function scenario1()
     echo "value 1:" . $flag->getValue() . PHP_EOL;
 
     $visitor->sendHit(new Screen("I LOVE QA"));
-
-    $flag->userExposed();
-
     $visitor->sendHit(new Page("I LOVE QA"));
-
-    $flag->userExposed();
-
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
 
@@ -47,13 +42,7 @@ function scenario2()
     echo "value 2:" . $flag->getValue() . PHP_EOL;
 
     $visitor->sendHit(new Screen("I LOVE QA"));
-
-    $flag->userExposed();
-
     $visitor->sendHit(new Page("I LOVE QA"));
-
-    $flag->userExposed();
-
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
 
@@ -66,9 +55,7 @@ function scenario3()
     echo "value 3:" . $visitor->getFlag('qa_report_var', 'test')->getValue(false) . PHP_EOL;
 
     $visitor->sendHit(new Screen("I LOVE QA"));
-
     $visitor->sendHit(new Page("I LOVE QA"));
-
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
 
@@ -97,9 +84,7 @@ function scenario5()
     $visitor->setConsent(false);
 
     $visitor->sendHit(new Screen("I LOVE QA"));
-
     $visitor->sendHit(new Page("I LOVE QA"));
-
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
 
@@ -113,7 +98,6 @@ function scenario6()
 
     $visitor->sendHit(new Screen("I LOVE QA"));
     $visitor->sendHit(new Page("I LOVE QA"));
-
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
 
@@ -126,7 +110,6 @@ function scenario7()
     echo "value 7:" . $visitor->getFlag('qa_report_var', 'test')->getValue() . PHP_EOL;
 
     $visitor->sendHit(new Screen("I LOVE QA"));
-
     $visitor->sendHit(new Event(EventCategory::ACTION_TRACKING, "KP2"));
 }
 
@@ -137,4 +120,5 @@ scenario4();
 scenario5();
 scenario6();
 
+Flagship::close();
 //scenario7();

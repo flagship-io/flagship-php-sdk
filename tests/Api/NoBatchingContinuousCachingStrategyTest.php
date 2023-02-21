@@ -9,6 +9,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\Event;
+use Flagship\Hit\HitAbstract;
 use Flagship\Hit\Page;
 use Flagship\Traits\LogTrait;
 use PHPUnit\Framework\TestCase;
@@ -197,6 +198,8 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
         $visitorId = "visitorId";
         $newVisitor = "newVisitor";
 
+        $page3Key = "$visitorId:b1b48180-0d72-410d-8e9b-44ee90dfafc6";
+
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
 
         $strategy = $this->getMockForAbstractClass(
@@ -215,18 +218,36 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
         $key2 = "$visitorId:key2";
 
         $strategy->expects($this->once())
-            ->method("flushHits")->with([$key1, $key2]);
-
+            ->method("flushHits")->with([$page3Key]);
 
         $page = new Page("http://localhost");
         $page->setConfig($config)->setVisitorId($visitorId)->setKey($key1);
-
 
         $page2 = new Page("http://localhost2");
         $page2->setConfig($config)->setVisitorId($visitorId)->setKey($key2);
 
         $strategy->hydrateHitsPoolQueue($key1, $page);
         $strategy->hydrateHitsPoolQueue($key2, $page2);
+
+        $contentPage3= [
+            'pageUrl' => 'page1',
+            'visitorId' => $visitorId,
+            'ds' => 'APP',
+            'type' => 'PAGEVIEW',
+            'anonymousId' => NULL,
+            'userIP' => NULL,
+            'pageResolution' => NULL,
+            'locale' => NULL,
+            'sessionNumber' => NULL,
+            'key' => $page3Key,
+            'createdAt' => 1676542078047,
+        ];
+
+        $page3 = HitAbstract::hydrate(Event::getClassName(), $contentPage3);
+
+        $page3->setConfig($config);
+
+        $strategy->hydrateHitsPoolQueue($page3Key, $page3);
 
         $consentHit1 = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
         $consentHit1->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . "false");
@@ -247,7 +268,7 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
         $httpClientMock->expects($this->exactly(2))->method('setHeaders')->with($headers);
         $httpClientMock->expects($this->exactly(2))->method("setTimeout")->with($config->getTimeout());
 
-        $this->assertCount(2, $strategy->getHitsPoolQueue());
+        $this->assertCount(3, $strategy->getHitsPoolQueue());
         $this->assertCount(0, $strategy->getActivatePoolQueue());
         //Test consent false
         $strategy->addHit($consentHit1);

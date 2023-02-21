@@ -79,6 +79,11 @@ abstract class HitAbstract
     protected $createdAt;
 
     /**
+     * @var bool
+     */
+    protected $isFromCache;
+
+    /**
      * HitAbstract constructor.
      *
      * @param string $type  Hit type
@@ -94,6 +99,7 @@ abstract class HitAbstract
         $this->type = $type;
         $this->ds = FlagshipConstant::SDK_APP;
         $this->createdAt =  round(microtime(true) * 1000);
+        $this->isFromCache = false;
     }
 
     /**
@@ -349,6 +355,24 @@ abstract class HitAbstract
     }
 
     /**
+     * @return bool
+     */
+    public function getIsFromCache()
+    {
+        return $this->isFromCache;
+    }
+
+    /**
+     * @param bool $isFromCache
+     * @return HitAbstract
+     */
+    protected function setIsFromCache($isFromCache)
+    {
+        $this->isFromCache = $isFromCache;
+        return $this;
+    }
+
+    /**
      * Return an associative array of the class with Api parameters as keys
      *
      * @return array
@@ -390,6 +414,7 @@ abstract class HitAbstract
                 $objet->$method($value);
             }
         }
+        $objet->setIsFromCache(true);
         return $objet;
     }
 
@@ -402,7 +427,7 @@ abstract class HitAbstract
         $properties = $reflector->getProperties();
         $outArray = [];
         foreach ($properties as $property) {
-            if ($property->getName() === 'config') {
+            if ($property->getName() === 'config' || $property->getName() === 'isFromCache') {
                 continue;
             }
             $property->setAccessible(true);

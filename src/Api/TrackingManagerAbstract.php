@@ -87,20 +87,14 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     public function initStrategy()
     {
         switch ($this->config->getCacheStrategy()) {
-            case CacheStrategy::CONTINUOUS_CACHING:
-                $strategy = new BatchingContinuousCachingStrategy(
-                    $this->config,
-                    $this->httpClient
-                );
-                break;
-            case CacheStrategy::PERIODIC_CACHING:
-                $strategy = new BatchingPeriodicCachingStrategy(
+            case CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE:
+                $strategy = new NoBatchingContinuousCachingStrategy(
                     $this->config,
                     $this->httpClient
                 );
                 break;
             default:
-                $strategy = new NoBatchingContinuousCachingStrategy(
+                $strategy = new BatchingOnFailedCachingStrategy(
                     $this->config,
                     $this->httpClient
                 );
@@ -193,6 +187,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                     default:
                         continue 2;
                 }
+
                 $hit->setConfig($this->config);
                 $this->getStrategy()->hydrateHitsPoolQueue($hit->getKey(), $hit);
             }

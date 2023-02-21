@@ -40,15 +40,15 @@ class TrackingManagerTest extends TestCase
         $httpClient = new HttpClient();
         $trackingManager = new TrackingManager($config, $httpClient);
         $strategy = $trackingManager->initStrategy();
-        $this->assertInstanceOf("Flagship\Api\BatchingContinuousCachingStrategy", $strategy);
+        $this->assertInstanceOf("Flagship\Api\BatchingOnFailedCachingStrategy", $strategy);
 
-        $config->setCacheStrategy(CacheStrategy::PERIODIC_CACHING);
-        $strategy = $trackingManager->initStrategy();
-        $this->assertInstanceOf("Flagship\Api\BatchingPeriodicCachingStrategy", $strategy);
-
-        $config->setCacheStrategy(CacheStrategy::NO_BATCHING);
+        $config->setCacheStrategy(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE);
         $strategy = $trackingManager->initStrategy();
         $this->assertInstanceOf("Flagship\Api\NoBatchingContinuousCachingStrategy", $strategy);
+
+        $config->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE);
+        $strategy = $trackingManager->initStrategy();
+        $this->assertInstanceOf("Flagship\Api\BatchingOnFailedCachingStrategy", $strategy);
     }
 
     public function testCommonMethod()

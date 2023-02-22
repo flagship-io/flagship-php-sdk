@@ -33,6 +33,7 @@ class TrackingManager extends TrackingManagerAbstract
      */
     public function sendBatch()
     {
+        $this->lookupHits();
         $this->getStrategy()->sendBatch();
     }
 }

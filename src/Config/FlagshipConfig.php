@@ -210,6 +210,7 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
+     * Return the strategy uses for hit caching with tracking manager
      * @return int
      */
     public function getCacheStrategy()
@@ -218,6 +219,7 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
+     * Define the strategy that will be used for hit caching with tracking manager
      * @param int $cacheStrategy
      * @return FlagshipConfig
      */

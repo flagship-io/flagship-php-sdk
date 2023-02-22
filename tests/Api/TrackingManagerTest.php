@@ -73,12 +73,14 @@ class TrackingManagerTest extends TestCase
             true,
             true,
             true,
-            ["getStrategy"]
+            ["getStrategy", "lookupHits"]
         );
 
         $trackingManager->expects($this->exactly(3))
             ->method("getStrategy")
             ->willReturn($BatchingCachingStrategyMock);
+
+        $trackingManager->expects($this->once())->method("lookupHits");
 
         $BatchingCachingStrategyMock->expects($this->once())
             ->method("addHit");
@@ -88,6 +90,7 @@ class TrackingManagerTest extends TestCase
 
         $BatchingCachingStrategyMock->expects($this->once())
             ->method("sendBatch");
+
 
         $page = new Page("http://localhost");
         $page->setConfig($config);

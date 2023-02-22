@@ -279,6 +279,11 @@ class Flagship
         return $this->container;
     }
 
+    /**
+     * Every time your **application** (**script**) is about to **terminate**, you must call this method
+     * to batch and send all hits that are in the pool
+     * @return void
+     */
     public static function close()
     {
         $instance = self::getInstance();

@@ -52,7 +52,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
         $this->httpClient = $httpClient;
         $this->config = $config;
         $this->strategy = $this->initStrategy();
-        $this->lookupHits();
+//        $this->lookupHits();
     }
 
     /**

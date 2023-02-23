@@ -437,8 +437,9 @@ class FlagshipTest extends TestCase
             "panic" => true
         ];
 
-        $httpClientMock->expects($this->exactly(2))->method('post')
+        $httpClientMock->expects($this->exactly(3))->method('post')
             ->willReturnOnConsecutiveCalls(
+                new HttpResponse(20, null),
                 new HttpResponse(204, $body),
                 new HttpResponse(204, [
                     "visitorId" => $visitorId,

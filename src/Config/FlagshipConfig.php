@@ -69,14 +69,14 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * Create a new FlagshipConfig configuration.
      *
-     * @param string $envId : Environment id provided by Flagship.
-     * @param string $apiKey : Secure api key provided by Flagship.
+     * @param string $envId  Environment id provided by Flagship.
+     * @param string $apiKey  Secure api key provided by Flagship.
      */
     public function __construct($envId = null, $apiKey = null)
     {
         $this->envId = $envId;
         $this->apiKey = $apiKey;
-        $this->cacheStrategy = CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE;
+        $this->cacheStrategy = CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE;
     }
 
     /**

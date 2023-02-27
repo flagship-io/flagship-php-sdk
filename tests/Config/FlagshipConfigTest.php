@@ -2,6 +2,7 @@
 
 namespace Flagship\Config;
 
+use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
@@ -33,6 +34,8 @@ class FlagshipConfigTest extends TestCase
 
         $config->setTimeout("not a number");
         $this->assertEquals($timeOut, $config->getTimeout());
+
+
     }
 
     public function testSetLogLevel()
@@ -93,6 +96,22 @@ class FlagshipConfigTest extends TestCase
         $this->assertInstanceOf("Flagship\Config\DecisionApiConfig", $config);
         $this->assertEquals($config->getEnvId(), $configData['envId']);
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
+        $this->assertNull($config->getVisitorCacheImplementation());
+        $this->assertNull($config->getHitCacheImplementation());
+        $this->assertSame(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE, $config->getCacheStrategy());
+
+        $config->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE);
+        $this->assertSame(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE, $config->getCacheStrategy());
+
+        $visitorCacheImplementation = $this->getMockForAbstractClass("Flagship\Cache\IVisitorCacheImplementation");
+        $config->setVisitorCacheImplementation($visitorCacheImplementation);
+
+        $this->assertSame($visitorCacheImplementation, $config->getVisitorCacheImplementation());
+
+        $hitCacheImplementation = $this->getMockForAbstractClass("Flagship\Cache\IHitCacheImplementation");
+        $config->setHitCacheImplementation($hitCacheImplementation);
+
+        $this->assertSame($hitCacheImplementation, $config->getHitCacheImplementation());
     }
 
 
@@ -109,15 +128,7 @@ class FlagshipConfigTest extends TestCase
 
     public function testSetStatusChangedCallback()
     {
-        $logManagerMock = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['error', 'info']
-        );
+        $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
 
         $logManagerMock->expects($this->once())
             ->method('error')
@@ -143,6 +154,36 @@ class FlagshipConfigTest extends TestCase
         $config->setStatusChangedCallback($callable);
 
         $this->assertSame($callable, $config->getStatusChangedCallback());
+    }
+
+    public function testSetOnUserExposure()
+    {
+        $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
+
+        $logManagerMock->expects($this->once())
+            ->method('error')
+            ->with(
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
+                [
+                    FlagshipConstant::TAG => "setOnUserExposure"
+                ]
+            );
+
+        $config = new DecisionApiConfig();
+
+        $config->setLogManager($logManagerMock);
+
+        $this->assertNull($config->getOnUserExposure());
+
+        $config->setOnUserExposure([]);
+
+        $this->assertNull($config->getOnUserExposure());
+
+        $callable = function () {
+        };
+        $config->setOnUserExposure($callable);
+
+        $this->assertSame($callable, $config->getOnUserExposure());
     }
 
     public function testJson()

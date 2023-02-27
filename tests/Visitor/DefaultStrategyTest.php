@@ -1215,8 +1215,17 @@ class DefaultStrategyTest extends TestCase
             ->setValue("value");
         $defaultValue = "default";
 
+        $flagMetadata = new FlagMetadata($flagDTO->getCampaignId(),
+            $flagDTO->getVariationGroupId(), $flagDTO->getVariationId(),
+            $flagDTO->getIsReference(), $flagDTO->getCampaignType(), $flagDTO->getSlug());
+
         $activate = new Activate($flagDTO->getVariationGroupId(), $flagDTO->getVariationId());
-        $activate->setVisitorId($visitor->getVisitorId())->setConfig($config);
+        $activate->setVisitorId($visitor->getVisitorId())
+            ->setConfig($config)
+            ->setFlagKey($flagDTO->getKey())
+            ->setFlagValue($flagDTO->getValue())
+            ->setFlagMetadata($flagMetadata)
+            ->setVisitorContext($visitor->getContext());
 
         $trackerManagerStub->expects($this->exactly(2))
             ->method('activateFlag')
@@ -1288,11 +1297,20 @@ class DefaultStrategyTest extends TestCase
         $key = "key";
         $defaultValue = "defaultValue";
         $flagDTO = new FlagDTO();
-
-        $activate = new Activate($flagDTO->getVariationGroupId(), $flagDTO->getVariationId());
-        $activate->setVisitorId($visitor->getVisitorId())->setConfig($config);
         $flagDTO->setKey($key)
             ->setValue("value");
+
+        $flagMetadata = new FlagMetadata($flagDTO->getCampaignId(),
+            $flagDTO->getVariationGroupId(), $flagDTO->getVariationId(),
+            $flagDTO->getIsReference(), $flagDTO->getCampaignType(), $flagDTO->getSlug());
+
+        $activate = new Activate($flagDTO->getVariationGroupId(), $flagDTO->getVariationId());
+        $activate->setVisitorId($visitor->getVisitorId())
+            ->setConfig($config)
+            ->setFlagKey($flagDTO->getKey())
+            ->setFlagValue($flagDTO->getValue())
+            ->setFlagMetadata($flagMetadata)
+            ->setVisitorContext($visitor->getContext());
 
         $functionName = FlagshipConstant::FLAG_VALUE;
 
@@ -1340,6 +1358,7 @@ class DefaultStrategyTest extends TestCase
         $this->assertEquals($value, $defaultValue);
 
         // Test flag with value null
+        $activate->setFlagValue(null);
         $flagDTO->setValue(null);
         $value = $defaultStrategy->getFlagValue($key, $defaultValue, $flagDTO);
 

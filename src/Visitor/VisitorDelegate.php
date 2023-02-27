@@ -18,23 +18,24 @@ class VisitorDelegate extends VisitorAbstract
 {
     use Guid;
 
+
     /**
      * Create a new VisitorDelegate.
      *
      * @param ContainerInterface $dependencyIContainer
-     * @param ConfigManager $configManager
-     * @param string $visitorId : visitor unique identifier.
-     * @param bool $isAuthenticated
-     * @param array $context : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
-     * @param bool $hasConsented
+     * @param ConfigManager      $configManager
+     * @param string             $visitorId            : visitor unique identifier.
+     * @param boolean            $isAuthenticated
+     * @param array              $context              : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
+     * @param boolean            $hasConsented
      */
     public function __construct(
         ContainerInterface $dependencyIContainer,
         ConfigManager $configManager,
         $visitorId,
-        $isAuthenticated = false,
-        array $context = [],
-        $hasConsented = false
+        $isAuthenticated=false,
+        array $context=[],
+        $hasConsented=false
     ) {
         parent::__construct();
         $this->setDependencyIContainer($dependencyIContainer);
@@ -45,28 +46,30 @@ class VisitorDelegate extends VisitorAbstract
         $this->loadPredefinedContext();
 
         if ($isAuthenticated && $this->getConfig()->getDecisionMode() == DecisionMode::DECISION_API) {
-            $anonymousId  = $this->newGuid();
+            $anonymousId = $this->newGuid();
             $this->setAnonymousId($anonymousId);
         }
 
         $this->setConsent($hasConsented);
         $this->getStrategy()->lookupVisitor();
-    }
+
+    }//end __construct()
+
 
     /**
      * @return void
      */
     private function loadPredefinedContext()
     {
-        $defaultContext = [
-            FlagshipContext::OS_NAME => PHP_OS,
-        ];
+        $defaultContext = [FlagshipContext::OS_NAME => PHP_OS];
         $this->updateContextCollection($defaultContext);
 
-        $this->context[FlagshipConstant::FS_CLIENT] = FlagshipConstant::SDK_LANGUAGE;
+        $this->context[FlagshipConstant::FS_CLIENT]  = FlagshipConstant::SDK_LANGUAGE;
         $this->context[FlagshipConstant::FS_VERSION] = FlagshipConstant::SDK_VERSION;
-        $this->context[FlagshipConstant::FS_USERS] = $this->getVisitorId();
-    }
+        $this->context[FlagshipConstant::FS_USERS]   = $this->getVisitorId();
+
+    }//end loadPredefinedContext()
+
 
     /**
      * @inheritDoc
@@ -74,7 +77,9 @@ class VisitorDelegate extends VisitorAbstract
     public function updateContext($key, $value)
     {
         $this->getStrategy()->updateContext($key, $value);
-    }
+
+    }//end updateContext()
+
 
     /**
      * @inheritDoc
@@ -82,7 +87,9 @@ class VisitorDelegate extends VisitorAbstract
     public function updateContextCollection(array $context)
     {
         $this->getStrategy()->updateContextCollection($context);
-    }
+
+    }//end updateContextCollection()
+
 
     /**
      * @inheritDoc
@@ -91,7 +98,9 @@ class VisitorDelegate extends VisitorAbstract
     {
         $this->getStrategy()->clearContext();
         $this->loadPredefinedContext();
-    }
+
+    }//end clearContext()
+
 
     /**
      * @inheritDoc
@@ -100,7 +109,9 @@ class VisitorDelegate extends VisitorAbstract
     {
         $this->getStrategy()->authenticate($visitorId);
         $this->loadPredefinedContext();
-    }
+
+    }//end authenticate()
+
 
     /**
      * @inheritDoc
@@ -109,15 +120,19 @@ class VisitorDelegate extends VisitorAbstract
     {
         $this->getStrategy()->unauthenticate();
         $this->loadPredefinedContext();
-    }
+
+    }//end unauthenticate()
+
 
     /**
      * @inheritDoc
      */
-    public function getModification($key, $defaultValue, $activate = false)
+    public function getModification($key, $defaultValue, $activate=false)
     {
         return $this->getStrategy()->getModification($key, $defaultValue, $activate);
-    }
+
+    }//end getModification()
+
 
     /**
      * @inheritDoc
@@ -125,7 +140,9 @@ class VisitorDelegate extends VisitorAbstract
     public function getModificationInfo($key)
     {
         return $this->getStrategy()->getModificationInfo($key);
-    }
+
+    }//end getModificationInfo()
+
 
     /**
      * @inheritDoc
@@ -134,7 +151,8 @@ class VisitorDelegate extends VisitorAbstract
     {
         $this->getStrategy()->synchronizeModifications();
         $this->getStrategy()->cacheVisitor();
-    }
+
+    }//end synchronizeModifications()
 
 
     /**
@@ -143,7 +161,9 @@ class VisitorDelegate extends VisitorAbstract
     public function activateModification($key)
     {
         $this->getStrategy()->activateModification($key);
-    }
+
+    }//end activateModification()
+
 
     /**
      * @inheritDoc
@@ -151,29 +171,37 @@ class VisitorDelegate extends VisitorAbstract
     public function sendHit(HitAbstract $hit)
     {
         $this->getStrategy()->sendHit($hit);
-    }
+
+    }//end sendHit()
+
 
     public function fetchFlags()
     {
         $this->getStrategy()->fetchFlags();
         $this->getStrategy()->cacheVisitor();
-    }
+
+    }//end fetchFlags()
+
 
     /**
      * @inheritDoc
      */
-    public function userExposed($key, $defaultValue, FlagDTO $flag = null)
+    public function userExposed($key, $defaultValue, FlagDTO $flag=null)
     {
         $this->getStrategy()->userExposed($key, $defaultValue, $flag);
-    }
+
+    }//end userExposed()
+
 
     /**
      * @inheritDoc
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    public function getFlagValue($key, $defaultValue, FlagDTO $flag=null, $userExposed=true)
     {
         return $this->getStrategy()->getFlagValue($key, $defaultValue, $flag, $userExposed);
-    }
+
+    }//end getFlagValue()
+
 
     /**
      * @inheritDoc
@@ -181,7 +209,9 @@ class VisitorDelegate extends VisitorAbstract
     public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
     {
         return $this->getStrategy()->getFlagMetadata($key, $metadata, $hasSameType);
-    }
+
+    }//end getFlagMetadata()
+
 
     protected function findFlagDTO($key)
     {
@@ -190,8 +220,12 @@ class VisitorDelegate extends VisitorAbstract
                 return $flagDTO;
             }
         }
+
         return null;
-    }
+
+    }//end findFlagDTO()
+
+
     /**
      * @inheritDoc
      */
@@ -199,7 +233,7 @@ class VisitorDelegate extends VisitorAbstract
     {
         $flagDTO = $this->findFlagDTO($key);
 
-        if ($flagDTO) {
+        if ($flagDTO !== null) {
             $metadata = new FlagMetadata(
                 $flagDTO->getCampaignId(),
                 $flagDTO->getVariationGroupId(),
@@ -209,8 +243,12 @@ class VisitorDelegate extends VisitorAbstract
                 $flagDTO->getSlug()
             );
         } else {
-            $metadata = new FlagMetadata("", "", "", false, "", null);
+            $metadata = new FlagMetadata('', '', '', false, '', null);
         }
-        return new Flag($key, $this, $defaultValue, $metadata, $flagDTO);
-    }
-}
+
+        return new Flag($key, $this, $defaultValue);
+
+    }//end getFlag()
+
+
+}//end class

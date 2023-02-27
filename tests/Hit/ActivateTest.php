@@ -4,6 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Flag\FlagMetadata;
 use PHPUnit\Framework\TestCase;
 
 class ActivateTest extends TestCase
@@ -14,6 +15,10 @@ class ActivateTest extends TestCase
         $variationGroupId = "varGrId";
         $envId = "envId";
         $visitorId = "visitorId";
+        $flagKey = "key";
+        $flagValue = "value";
+        $visitorContext = ["key"=>"value"];
+        $flagMetadata = new FlagMetadata("campaignId", $variationGroupId, $variationId, false, "ab", null);
 
         $config = new DecisionApiConfig($envId);
 
@@ -57,5 +62,15 @@ class ActivateTest extends TestCase
         $this->assertTrue($activate->isReady());
 
         $this->assertSame(Activate::ERROR_MESSAGE, $activate->getErrorMessage());
+
+        $activate->setFlagKey($flagKey)
+            ->setFlagValue($flagValue)
+            ->setFlagMetadata($flagMetadata)
+            ->setVisitorContext($visitorContext);
+
+        $this->assertSame($flagKey, $activate->getFlagKey());
+        $this->assertSame($flagValue, $activate->getFlagValue());
+        $this->assertSame($flagMetadata, $activate->getFlagMetadata());
+        $this->assertSame($visitorContext, $activate->getVisitorContext());
     }
 }

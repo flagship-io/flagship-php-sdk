@@ -4,6 +4,8 @@ namespace Flagship\Hit;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FlagMetadataInterface;
 
 class Activate extends HitAbstract
 {
@@ -19,10 +21,32 @@ class Activate extends HitAbstract
      */
     private $variationId;
 
+    /**
+     * @var string
+     */
+    private $flagKey;
+
+    /**
+     * @var string
+     */
+    private $flagValue;
+
+    /**
+     * @var array
+     */
+    private $visitorContext;
+
+    /**
+     * @var FlagMetadataInterface
+     */
+    private $flagMetadata;
+
     public static function getClassName()
     {
         return __CLASS__;
     }
+
+
 
     /**
      * @param string $variationGroupId
@@ -70,6 +94,80 @@ class Activate extends HitAbstract
         $this->variationId = $variationId;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getFlagKey()
+    {
+        return $this->flagKey;
+    }
+
+    /**
+     * @param string $flagKey
+     * @return Activate
+     */
+    public function setFlagKey($flagKey)
+    {
+        $this->flagKey = $flagKey;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFlagValue()
+    {
+        return $this->flagValue;
+    }
+
+    /**
+     * @param string $flagValue
+     * @return Activate
+     */
+    public function setFlagValue($flagValue)
+    {
+        $this->flagValue = $flagValue;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVisitorContext()
+    {
+        return $this->visitorContext;
+    }
+
+    /**
+     * @param array $visitorContext
+     * @return Activate
+     */
+    public function setVisitorContext($visitorContext)
+    {
+        $this->visitorContext = $visitorContext;
+        return $this;
+    }
+
+    /**
+     * @return FlagMetadataInterface
+     */
+    public function getFlagMetadata()
+    {
+        return $this->flagMetadata;
+    }
+
+    /**
+     * @param FlagMetadataInterface $flagMetadata
+     * @return Activate
+     */
+    public function setFlagMetadata($flagMetadata)
+    {
+        $this->flagMetadata = $flagMetadata;
+        return $this;
+    }
+
+
 
     /**
      * @inheritDoc

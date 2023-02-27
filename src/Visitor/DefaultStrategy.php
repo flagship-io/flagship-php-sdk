@@ -14,10 +14,11 @@ use Flagship\Model\FlagDTO;
 
 class DefaultStrategy extends VisitorStrategyAbstract
 {
-    const TYPE_NULL = "NULL";
+    const TYPE_NULL = 'NULL';
+
 
     /**
-     * @param bool $hasConsented
+     * @param  boolean $hasConsented
      * @return void
      */
     public function setConsent($hasConsented)
@@ -25,19 +26,19 @@ class DefaultStrategy extends VisitorStrategyAbstract
         if (!$hasConsented) {
             $this->flushVisitor();
         }
+
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
-        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ":" . ($hasConsented ? "true" : "false"))
-        ->setConfig($this->getConfig())
-            ->setVisitorId($this->getVisitor()->getVisitorId())
-        ->setAnonymousId($this->getVisitor()->getAnonymousId());
+        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE.':'.($hasConsented ? 'true' : 'false'))->setConfig($this->getConfig())->setVisitorId($this->getVisitor()->getVisitorId())->setAnonymousId($this->getVisitor()->getAnonymousId());
 
         $trackingManger = $this->getTrackingManager();
-        if (!$trackingManger)
-        {
+        if (!$trackingManger) {
             return;
         }
+
         $trackingManger->addHit($consentHit);
-    }
+
+    }//end setConsent()
+
 
     /**
      * @inheritDoc
@@ -50,21 +51,23 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 FlagshipConstant::CONTEXT_PARAM_ERROR,
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_UPDATE_CONTEXT]
             );
-            return ;
+            return;
         }
 
-        if (preg_match("/^fs_/i", $key)) {
-            return ;
+        if (preg_match('/^fs_/i', $key)) {
+            return;
         }
 
         $check = $this->checkFlagshipContext($key, $value, $this->visitor->getConfig());
 
         if ($check !== null && !$check) {
-            return ;
+            return;
         }
 
         $this->getVisitor()->context[$key] = $value;
-    }
+
+    }//end updateContext()
+
 
     /**
      * @inheritDoc
@@ -74,7 +77,9 @@ class DefaultStrategy extends VisitorStrategyAbstract
         foreach ($context as $itemKey => $item) {
             $this->updateContext($itemKey, $item);
         }
-    }
+
+    }//end updateContextCollection()
+
 
     /**
      * @inheritDoc
@@ -82,10 +87,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function clearContext()
     {
         $this->getVisitor()->context = [];
-    }
+
+    }//end clearContext()
+
 
     /**
-     * @param string $functionName
+     * @param  string $functionName
      * @return void
      */
     private function logDeactivate($functionName)
@@ -98,11 +105,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ),
             [FlagshipConstant::TAG => $functionName]
         );
-    }
+
+    }//end logDeactivate()
 
 
     /**
-     * @param string $visitorId
+     * @param  string $visitorId
      * @return void
      */
     public function authenticate($visitorId)
@@ -111,6 +119,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->logDeactivate(__FUNCTION__);
             return;
         }
+
         if (empty($visitorId)) {
             $this->logError(
                 $this->getVisitor()->getConfig(),
@@ -119,9 +128,11 @@ class DefaultStrategy extends VisitorStrategyAbstract
             );
             return;
         }
+
         $this->getVisitor()->setAnonymousId($this->getVisitor()->getVisitorId());
         $this->getVisitor()->setVisitorId($visitorId);
-    }
+
+    }//end authenticate()
 
 
     /**
@@ -133,6 +144,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->logDeactivate(__FUNCTION__);
             return;
         }
+
         $anonymousId = $this->getVisitor()->getAnonymousId();
         if (!$anonymousId) {
             $this->logError(
@@ -142,9 +154,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
             );
             return;
         }
+
         $this->getVisitor()->setVisitorId($anonymousId);
         $this->getVisitor()->setAnonymousId(null);
-    }
+
+    }//end unauthenticate()
+
 
     /**
      * Return the Modification that matches the key, otherwise return null
@@ -159,17 +174,19 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 return $modification;
             }
         }
+
         return null;
-    }
+
+    }//end getObjetModification()
 
 
     /**
-     * @param string $key
-     * @param mixed $defaultValue
-     * @param bool $activate
-     * @return bool|float|int|string
+     * @param  string  $key
+     * @param  mixed   $defaultValue
+     * @param  boolean $activate
+     * @return boolean|float|integer|string
      */
-    public function getModification($key, $defaultValue, $activate = false)
+    public function getModification($key, $defaultValue, $activate=false)
     {
         if (!$this->isKeyValid($key)) {
             $this->logError(
@@ -200,14 +217,18 @@ class DefaultStrategy extends VisitorStrategyAbstract
             if (is_null($modification->getValue())) {
                 $this->activateModification($key);
             }
+
             return $defaultValue;
         }
 
         if ($activate) {
             $this->activateModification($key);
         }
+
         return $modification->getValue();
-    }
+
+    }//end getModification()
+
 
     /**
      * Build the Campaign of Modification
@@ -218,17 +239,18 @@ class DefaultStrategy extends VisitorStrategyAbstract
     private function parseToCampaign(FlagDTO $modification)
     {
         return [
-            FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
+            FlagshipField::FIELD_CAMPAIGN_ID        => $modification->getCampaignId(),
             FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
-            FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
-            FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference(),
-            FlagshipField::FIELD_VALUE => $modification->getValue()
+            FlagshipField::FIELD_VARIATION_ID       => $modification->getVariationId(),
+            FlagshipField::FIELD_IS_REFERENCE       => $modification->getIsReference(),
+            FlagshipField::FIELD_VALUE              => $modification->getValue(),
         ];
-    }
+
+    }//end parseToCampaign()
 
 
     /**
-     * @param string $key
+     * @param  string $key
      * @return array|null
      */
     public function getModificationInfo($key)
@@ -254,49 +276,59 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $this->parseToCampaign($modification);
-    }
+
+    }//end getModificationInfo()
+
 
     /**
-     * @param VisitorAbstract $visitor
+     * @param  VisitorAbstract $visitor
      * @return array
      */
     protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
     {
-        $now = $this->getNow();
+        $now          = $this->getNow();
         $visitorCache = $visitor->visitorCache;
         if (!isset($visitorCache, $visitorCache[self::DATA], $visitorCache[self::DATA][self::CAMPAIGNS]) || !is_array($visitorCache[self::DATA][self::CAMPAIGNS])) {
             return [];
         }
+
         $data = $visitorCache[self::DATA];
         $visitor->updateContextCollection($data[self::CONTEXT]);
         $campaigns = [];
         foreach ($data[self::CAMPAIGNS] as $item) {
             $campaigns[] = [
-                FlagshipField::FIELD_ID => $item[FlagshipField::FIELD_CAMPAIGN_ID],
+                FlagshipField::FIELD_ID                 => $item[FlagshipField::FIELD_CAMPAIGN_ID],
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                FlagshipField::FIELD_VARIATION => [
-                    FlagshipField::FIELD_ID => $item[self::CAMPAIGN_ID],
-                    FlagshipField::FIELD_REFERENCE => $item[FlagshipField::FIELD_IS_REFERENCE],
+                FlagshipField::FIELD_VARIATION          => [
+                    FlagshipField::FIELD_ID            => $item[self::CAMPAIGN_ID],
+                    FlagshipField::FIELD_REFERENCE     => $item[FlagshipField::FIELD_IS_REFERENCE],
                     FlagshipField::FIELD_MODIFICATIONS => [
                         FlagshipField::FIELD_CAMPAIGN_TYPE => $item[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                        FlagshipField::FIELD_VALUE => $item[self::FLAGS]
-                    ]
-                ]
+                        FlagshipField::FIELD_VALUE         => $item[self::FLAGS],
+                    ],
+                ],
             ];
         }
+
         if (count($campaigns)) {
             $this->logDebugSprintf(
                 $this->getConfig(),
                 FlagshipConstant::PROCESS_FETCHING_FLAGS,
                 FlagshipConstant::FETCH_CAMPAIGNS_FROM_CACHE,
-                [$this->getVisitor()->getVisitorId(), $this->getVisitor()->getAnonymousId(),
-                $this->getVisitor()->getContext(),
-                $campaigns,
-                $this->getNow() - $now]
+                [
+                    $this->getVisitor()->getVisitorId(),
+                    $this->getVisitor()->getAnonymousId(),
+                    $this->getVisitor()->getContext(),
+                    $campaigns,
+                    ($this->getNow() - $now),
+                ]
             );
         }
-        return  $campaigns;
-    }
+
+        return $campaigns;
+
+    }//end fetchVisitorCampaigns()
+
 
     /**
      * @return float
@@ -304,10 +336,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function getNow()
     {
         return round(microtime(true) * 1000);
-    }
+
+    }//end getNow()
+
 
     /**
-     * @param string $functionName
+     * @param  string $functionName
      * @return void
      */
     private function synchronizeFlags($functionName)
@@ -332,15 +366,19 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->getConfig(),
             $functionName,
             FlagshipConstant::FETCH_CAMPAIGNS_SUCCESS,
-            [$this->getVisitor()->getVisitorId(), $this->getVisitor()->getAnonymousId(),
-            $this->getVisitor()->getContext(),
-            $campaigns,
-            $this->getNow() - $now]
+            [
+                $this->getVisitor()->getVisitorId(),
+                $this->getVisitor()->getAnonymousId(),
+                $this->getVisitor()->getContext(),
+                $campaigns,
+                ($this->getNow() - $now),
+            ]
         );
 
         if (!is_array($campaigns)) {
             $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
         }
+
         $this->getVisitor()->campaigns = $campaigns;
         $flagsDTO = $decisionManager->getModifications($campaigns);
         $this->getVisitor()->setFlagsDTO($flagsDTO);
@@ -349,11 +387,15 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->getConfig(),
             $functionName,
             FlagshipConstant::FETCH_FLAGS_FROM_CAMPAIGNS,
-            [$this->getVisitor()->getVisitorId(), $this->getVisitor()->getAnonymousId(),
-            $this->getVisitor()->getContext(),
-            $flagsDTO]
+            [
+                $this->getVisitor()->getVisitorId(),
+                $this->getVisitor()->getAnonymousId(),
+                $this->getVisitor()->getContext(),
+                $flagsDTO,
+            ]
         );
-    }
+
+    }//end synchronizeFlags()
 
 
     /**
@@ -362,7 +404,9 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function synchronizeModifications()
     {
         $this->synchronizeFlags(__FUNCTION__);
-    }
+
+    }//end synchronizeModifications()
+
 
     /**
      * @inheritDoc
@@ -370,45 +414,47 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function fetchFlags()
     {
         $this->synchronizeFlags(__FUNCTION__);
-    }
+
+    }//end fetchFlags()
 
 
     /**
-     * @param string $key
+     * @param  string $key
      * @return void
      */
     public function activateModification($key)
     {
         $modification = $this->getObjetModification($key);
-        if (!$modification) {
+        if ($modification === null) {
             $this->logInfo(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]
             );
-            return ;
+            return;
         }
-        $trackingManager =  $this->getTrackingManager(__FUNCTION__);
-        if (!$trackingManager) {
-            return ;
-        }
-        $activateHit = new Activate($modification->getVariationGroupId(), $modification->getVariationId());
-        $activateHit->setConfig($this->getConfig())
-            ->setVisitorId($this->visitor->getVisitorId())
-            ->setAnonymousId($this->visitor->getAnonymousId());
 
+        $trackingManager = $this->getTrackingManager(__FUNCTION__);
+        if ($trackingManager === null) {
+            return;
+        }
+
+        $activateHit = new Activate($modification->getVariationGroupId(), $modification->getVariationId());
+        $activateHit->setConfig($this->getConfig())->setVisitorId($this->visitor->getVisitorId())->setAnonymousId($this->visitor->getAnonymousId());
 
         $this->getTrackingManager()->activateFlag($activateHit);
-    }
+
+    }//end activateModification()
+
 
     /**
      * @inheritDoc
      */
     public function sendHit(HitAbstract $hit)
     {
-        $trackingManager =  $this->getTrackingManager(__FUNCTION__);
+        $trackingManager = $this->getTrackingManager(__FUNCTION__);
 
-        if (!$trackingManager) {
+        if ($trackingManager === null) {
             return;
         }
 
@@ -417,7 +463,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setAnonymousId($this->getVisitor()->getAnonymousId())
             ->setDs(FlagshipConstant::SDK_APP);
 
-        if (!$hit->isReady()) {
+        if ($hit->isReady() === false) {
             $this->logError(
                 $this->getVisitor()->getConfig(),
                 $hit->getErrorMessage(),
@@ -427,7 +473,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $trackingManager->addHit($hit);
-    }
+
+    }//end sendHit()
 
 
     /**
@@ -436,71 +483,92 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function getModifications()
     {
         return $this->getVisitor()->getModifications();
-    }
+
+    }//end getModifications()
+
 
     /**
-     * @param string $key
-     * @param mixed $defaultValue
-     * @param FlagDTO|null $flag
+     * @param  string       $key
+     * @param  mixed        $defaultValue
+     * @param  FlagDTO|null $flag
      * @return void
      */
-    public function userExposed($key, $defaultValue, FlagDTO $flag = null)
+    public function userExposed($key, $defaultValue, FlagDTO $flag=null)
     {
         if (!$flag) {
             $this->logInfoSprintf(
                 $this->getConfig(),
                 FlagshipConstant::FLAG_USER_EXPOSED,
                 FlagshipConstant::USER_EXPOSED_NO_FLAG_ERROR,
-                [$this->getVisitor()->getVisitorId(), $key]
+                [
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
+                ]
             );
-            return ;
+            return;
         }
 
-        if (
-            gettype($defaultValue) != self::TYPE_NULL &&
-            gettype($flag->getValue()) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)
+        if (gettype($defaultValue) != self::TYPE_NULL
+            && gettype($flag->getValue()) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)
         ) {
             $this->logInfoSprintf(
                 $this->getConfig(),
                 FlagshipConstant::FLAG_USER_EXPOSED,
                 FlagshipConstant::USER_EXPOSED_CAST_ERROR,
-                [$this->getVisitor()->getVisitorId(), $key]
+                [
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
+                ]
             );
-            return ;
+            return;
         }
 
+        $flagMetadata = new FlagMetadata(
+            $flag->getCampaignId(),
+            $flag->getVariationGroupId(),
+            $flag->getVariationId(),
+            $flag->getIsReference(),
+            $flag->getCampaignType(),
+            $flag->getSlug()
+        );
+
         $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
-        $activateHit->setConfig($this->getConfig())
-            ->setVisitorId($this->visitor->getVisitorId())
-            ->setAnonymousId($this->visitor->getAnonymousId());
+        $activateHit->setConfig($this->getConfig())->setVisitorId($this->visitor->getVisitorId())->setAnonymousId($this->visitor->getAnonymousId())->setFlagKey($flag->getKey())->setFlagValue($flag->getValue())->setVisitorContext($this->getVisitor()->getContext())->setFlagMetadata($flagMetadata);
 
         $this->getTrackingManager()->activateFlag($activateHit);
-    }
+
+    }//end userExposed()
+
 
     /**
-     * @param string $key
-     * @param mixed $defaultValue
-     * @param FlagDTO|null $flag
-     * @param bool $userExposed
-     * @return array|bool|float|int|string
+     * @param  string       $key
+     * @param  mixed        $defaultValue
+     * @param  FlagDTO|null $flag
+     * @param  boolean      $userExposed
+     * @return array|boolean|float|integer|string
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    public function getFlagValue($key, $defaultValue, FlagDTO $flag=null, $userExposed=true)
     {
         if (!$flag) {
             $this->logInfoSprintf(
                 $this->getConfig(),
                 FlagshipConstant::FLAG_VALUE,
                 FlagshipConstant::GET_FLAG_MISSING_ERROR,
-                [$this->getVisitor()->getVisitorId(), $key, $defaultValue]
+                [
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
+                    $defaultValue,
+                ]
             );
-            return  $defaultValue;
+            return $defaultValue;
         }
 
         if (gettype($flag->getValue()) === self::TYPE_NULL) {
             if ($userExposed) {
                 $this->userExposed($key, $defaultValue, $flag);
             }
-            return  $defaultValue;
+
+            return $defaultValue;
         }
 
         if (gettype($defaultValue) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
@@ -508,10 +576,15 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 $this->getConfig(),
                 FlagshipConstant::FLAG_VALUE,
                 FlagshipConstant::GET_FLAG_CAST_ERROR,
-                [$this->getVisitor()->getVisitorId(), $key, $defaultValue]
+                [
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
+                    $defaultValue,
+                ]
             );
-            return  $defaultValue;
+            return $defaultValue;
         }
+
         if ($userExposed) {
             $this->userExposed($key, $defaultValue, $flag);
         }
@@ -520,16 +593,22 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $this->getConfig(),
             FlagshipConstant::FLAG_VALUE,
             FlagshipConstant::GET_FLAG_VALUE,
-            [$this->getVisitor()->getVisitorId(), $key, $flag->getValue()]
+            [
+                $this->getVisitor()->getVisitorId(),
+                $key,
+                $flag->getValue(),
+            ]
         );
 
-        return  $flag->getValue();
-    }
+        return $flag->getValue();
+
+    }//end getFlagValue()
+
 
     /**
-     * @param string $key
-     * @param FlagMetadata $metadata
-     * @param bool $hasSameType
+     * @param  string       $key
+     * @param  FlagMetadata $metadata
+     * @param  boolean      $hasSameType
      * @return FlagMetadata
      */
     public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
@@ -541,8 +620,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]
             );
-            return  FlagMetadata::getEmpty();
+            return FlagMetadata::getEmpty();
         }
-        return  $metadata;
-    }
-}
+
+        return $metadata;
+
+    }//end getFlagMetadata()
+
+
+}//end class

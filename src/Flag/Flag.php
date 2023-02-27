@@ -14,6 +14,7 @@ class Flag implements FlagInterface
      * @var string
      */
     private $key;
+
     /**
      * @var VisitorAbstract
      */
@@ -24,24 +25,27 @@ class Flag implements FlagInterface
      */
     private $defaultValue;
 
+
     /***
-     * @param string $key
+     * @param string          $key
      * @param VisitorAbstract $visitorDelegate
-     * @param mixed $defaultValue
+     * @param mixed           $defaultValue
      */
     public function __construct(
         $key,
         VisitorAbstract $visitorDelegate,
         $defaultValue
     ) {
-        $this->key = $key;
+        $this->key             = $key;
         $this->visitorDelegate = $visitorDelegate;
 
         $this->defaultValue = $defaultValue;
-    }
+
+    }//end __construct()
+
 
     /**
-     * @param $key
+     * @param  $key
      * @return FlagDTO|null
      */
     protected function findFlagDTO($key)
@@ -51,16 +55,22 @@ class Flag implements FlagInterface
                 return $flagDTO;
             }
         }
+
         return null;
-    }
+
+    }//end findFlagDTO()
+
+
     /**
      * @inheritDoc
      */
-    public function getValue($userExposed = true)
+    public function getValue($userExposed=true)
     {
         $flagDTO = $this->findFlagDTO($this->key);
         return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $flagDTO, $userExposed);
-    }
+
+    }//end getValue()
+
 
     /**
      * @inheritDoc
@@ -69,7 +79,9 @@ class Flag implements FlagInterface
     {
         $flagDTO = $this->findFlagDTO($this->key);
         return $flagDTO && $flagDTO->getCampaignId() && $flagDTO->getVariationId() && $flagDTO->getVariationGroupId();
-    }
+
+    }//end exists()
+
 
     /**
      * @inheritDoc
@@ -82,20 +94,22 @@ class Flag implements FlagInterface
             $this->defaultValue,
             $flagDTO
         );
-    }
+
+    }//end userExposed()
+
 
     /**
      * @inheritDoc
      */
     public function getMetadata()
     {
-        $flagDTO = $this->findFlagDTO($this->key);
+        $flagDTO  = $this->findFlagDTO($this->key);
         $metadata = new FlagMetadata(
-            $flagDTO ? $flagDTO->getCampaignId() : "",
-            $flagDTO ? $flagDTO->getVariationGroupId() : "",
-            $flagDTO ? $flagDTO->getVariationId() : "",
+            $flagDTO ? $flagDTO->getCampaignId() : '',
+            $flagDTO ? $flagDTO->getVariationGroupId() : '',
+            $flagDTO ? $flagDTO->getVariationId() : '',
             $flagDTO ? $flagDTO->getIsReference() : false,
-            $flagDTO ? $flagDTO->getCampaignType() : "",
+            $flagDTO ? $flagDTO->getCampaignType() : '',
             $flagDTO ? $flagDTO->getSlug() : null
         );
 
@@ -103,10 +117,13 @@ class Flag implements FlagInterface
             return $metadata;
         }
 
-        return  $this->visitorDelegate->getFlagMetadata(
+        return $this->visitorDelegate->getFlagMetadata(
             $this->key,
             $metadata,
             !$flagDTO->getValue() || $this->hasSameType($flagDTO->getValue(), $this->defaultValue)
         );
-    }
-}
+
+    }//end getMetadata()
+
+
+}//end class

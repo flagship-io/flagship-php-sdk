@@ -5,11 +5,14 @@ namespace Flagship\Api;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
+use Flagship\Model\ExposedFlag;
+use Flagship\Model\ExposedUser;
 use Flagship\Traits\Guid;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClientInterface;
@@ -210,6 +213,27 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     }
 
     /**
+     * @param Activate $activate
+     * @return void
+     */
+    protected function onUserExposed(Activate $activate){
+        $onUserExposed = $this->config->getOnUserExposure();
+        if (!$onUserExposed){
+            return;
+        }
+
+        $exposedFlag = new ExposedFlag($activate->getFlagKey(), $activate->getFlagValue(), $activate->getFlagMetadata());
+        $exposedUser = new ExposedUser($activate->getVisitorId(), $activate->getAnonymousId(), $activate->getVisitorContext());
+
+        try {
+            call_user_func($onUserExposed, $exposedUser, $exposedFlag);
+        }
+        catch (\Exception $exception){
+            $this->logErrorSprintf($this->config, __FUNCTION__, $exception->getMessage());
+        }
+    }
+
+    /**
      * @return void
      */
     protected function sendActivateHit()
@@ -242,6 +266,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 if ($item->getIsFromCache()){
                     $hitKeysToRemove[] = $item->getKey();
                 }
+                $this->onUserExposed($item);
             }
 
             $this->activatePoolQueue = [];

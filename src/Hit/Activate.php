@@ -4,7 +4,6 @@ namespace Flagship\Hit;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
-use Flagship\Flag\FlagMetadata;
 use Flagship\Flag\FlagMetadataInterface;
 
 class Activate extends HitAbstract
@@ -27,7 +26,7 @@ class Activate extends HitAbstract
     private $flagKey;
 
     /**
-     * @var string
+     * @var  bool|numeric|string|array
      */
     private $flagValue;
 
@@ -40,6 +39,11 @@ class Activate extends HitAbstract
      * @var FlagMetadataInterface
      */
     private $flagMetadata;
+
+    /**
+     * @var  bool|numeric|string|array
+     */
+    private $flagDefaultValue;
 
     public static function getClassName()
     {
@@ -114,7 +118,7 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return  bool|numeric|string|array
      */
     public function getFlagValue()
     {
@@ -122,7 +126,7 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @param string $flagValue
+     * @param  bool|numeric|string|array $flagValue
      * @return Activate
      */
     public function setFlagValue($flagValue)
@@ -166,6 +170,25 @@ class Activate extends HitAbstract
         $this->flagMetadata = $flagMetadata;
         return $this;
     }
+
+    /**
+     * @return  bool|numeric|string|array
+     */
+    public function getFlagDefaultValue()
+    {
+        return $this->flagDefaultValue;
+    }
+
+    /**
+     * @param  bool|numeric|string|array $flagDefaultValue
+     * @return Activate
+     */
+    public function setFlagDefaultValue($flagDefaultValue)
+    {
+        $this->flagDefaultValue = $flagDefaultValue;
+        return $this;
+    }
+
 
 
 

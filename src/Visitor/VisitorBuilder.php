@@ -102,7 +102,7 @@ class VisitorBuilder
 
     /**
      * Create a new visitor.
-     * @return Visitor
+     * @return VisitorInterface
      */
     public function build()
     {

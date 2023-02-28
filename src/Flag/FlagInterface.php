@@ -35,7 +35,7 @@ interface FlagInterface extends ExposedFlagInterface
     public function visitorExposed();
 
     /**
-     * @return FlagMetadata
+     * @inheritdoc
      */
     public function getMetadata();
 }

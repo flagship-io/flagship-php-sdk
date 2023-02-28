@@ -2,7 +2,6 @@
 
 namespace Flagship\Flag;
 
-use Flagship\Enum\FlagshipConstant;
 use JsonSerializable;
 
 class FlagMetadata implements JsonSerializable, FlagMetadataInterface

@@ -12,6 +12,9 @@ use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 
+/**
+ * DefaultStrategy
+ */
 class DefaultStrategy extends VisitorStrategyAbstract
 {
     const TYPE_NULL = 'NULL';
@@ -28,7 +31,11 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
-        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ':' . ($hasConsented ? 'true' : 'false'))->setConfig($this->getConfig())->setVisitorId($this->getVisitor()->getVisitorId())->setAnonymousId($this->getVisitor()->getAnonymousId());
+        $consentHit->setLabel(
+            FlagshipConstant::SDK_LANGUAGE . ':' . ($hasConsented ? 'true' : 'false')
+        )->setConfig($this->getConfig())
+            ->setVisitorId($this->getVisitor()->getVisitorId())
+            ->setAnonymousId($this->getVisitor()->getAnonymousId());
 
         $trackingManger = $this->getTrackingManager();
         if (!$trackingManger) {
@@ -140,7 +147,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $anonymousId = $this->getVisitor()->getAnonymousId();
-        if (!$anonymousId) {
+        if ($anonymousId === null) {
             $this->logError(
                 $this->getVisitor()->getConfig(),
                 FlagshipConstant::FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE,
@@ -180,7 +187,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function getModification($key, $defaultValue, $activate = false)
     {
-        if (!$this->isKeyValid($key)) {
+        if ($this->isKeyValid($key) === false) {
             $this->logError(
                 $this->getVisitor()->getConfig(),
                 sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
@@ -213,7 +220,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return $defaultValue;
         }
 
-        if ($activate) {
+        if ($activate === true) {
             $this->activateModification($key);
         }
 
@@ -277,7 +284,12 @@ class DefaultStrategy extends VisitorStrategyAbstract
     {
         $now          = $this->getNow();
         $visitorCache = $visitor->visitorCache;
-        if (!isset($visitorCache, $visitorCache[self::DATA], $visitorCache[self::DATA][self::CAMPAIGNS]) || !is_array($visitorCache[self::DATA][self::CAMPAIGNS])) {
+        if (!isset(
+            $visitorCache,
+            $visitorCache[self::DATA],
+            $visitorCache[self::DATA][self::CAMPAIGNS]
+        ) ||
+            !is_array($visitorCache[self::DATA][self::CAMPAIGNS])) {
             return [];
         }
 
@@ -464,9 +476,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }//end getModifications()
 
     /**
-     * @param $key
-     * @param $defaultValue
      * @param FlagDTO $flag
+     * @param mixed $defaultValue
      * @return void
      */
     protected function activateFlag(FlagDTO $flag, $defaultValue = null)
@@ -514,8 +525,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
 
-        if (
-            gettype($defaultValue) != self::TYPE_NULL
+        if (gettype($defaultValue) != self::TYPE_NULL
             && gettype($flag->getValue()) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)
         ) {
             $this->logInfoSprintf(

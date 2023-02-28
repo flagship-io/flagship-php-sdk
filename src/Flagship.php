@@ -12,7 +12,6 @@ use Flagship\Enum\FlagshipStatus;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
-use Flagship\Visitor\Visitor;
 use Flagship\Visitor\VisitorBuilder;
 
 /**
@@ -82,8 +81,8 @@ class Flagship
     /**
      * Start the flagship SDK
      *
-     * @param $envId : Environment id provided by Flagship.
-     * @param $apiKey : Secure api key provided by Flagship.
+     * @param string $envId  Environment id provided by Flagship.
+     * @param string $apiKey Secure api key provided by Flagship.
      * @param BucketingConfig|DecisionApiConfig|null $config : (optional) SDK configuration.
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
@@ -247,7 +246,7 @@ class Flagship
 
     /**
      * Return current status of Flagship SDK.
-     * @see \Flagship\Enum\FlagshipStatus
+     * @see FlagshipStatus
      * @return int
      */
     public static function getStatus()

@@ -6,7 +6,6 @@ use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Flag\Flag;
-use Flagship\Flag\FlagInterface;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
@@ -24,9 +23,9 @@ class VisitorDelegate extends VisitorAbstract
      *
      * @param ContainerInterface $dependencyIContainer
      * @param ConfigManager      $configManager
-     * @param string             $visitorId            : visitor unique identifier.
+     * @param string             $visitorId             visitor unique identifier.
      * @param boolean            $isAuthenticated
-     * @param array              $context              : visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
+     * @param array              $context     visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
      * @param boolean            $hasConsented
      */
     public function __construct(
@@ -196,39 +195,11 @@ class VisitorDelegate extends VisitorAbstract
         return $this->getStrategy()->getFlagMetadata($key, $metadata, $hasSameType);
     }//end getFlagMetadata()
 
-
-    protected function findFlagDTO($key)
-    {
-        foreach ($this->getFlagsDTO() as $flagDTO) {
-            if ($flagDTO->getKey() === $key) {
-                return $flagDTO;
-            }
-        }
-
-        return null;
-    }//end findFlagDTO()
-
-
     /**
      * @inheritDoc
      */
     public function getFlag($key, $defaultValue)
     {
-        $flagDTO = $this->findFlagDTO($key);
-
-        if ($flagDTO !== null) {
-            $metadata = new FlagMetadata(
-                $flagDTO->getCampaignId(),
-                $flagDTO->getVariationGroupId(),
-                $flagDTO->getVariationId(),
-                $flagDTO->getIsReference(),
-                $flagDTO->getCampaignType(),
-                $flagDTO->getSlug()
-            );
-        } else {
-            $metadata = new FlagMetadata('', '', '', false, '', null);
-        }
-
         return new Flag($key, $this, $defaultValue);
     }//end getFlag()
 }//end class

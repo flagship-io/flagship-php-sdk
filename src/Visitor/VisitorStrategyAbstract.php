@@ -132,7 +132,11 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         $visitorId = $data[self::VISITOR_ID];
 
         if ($visitorId !== $this->getVisitor()->getVisitorId()) {
-            throw new Exception(sprintf(self::VISITOR_ID_MISMATCH_ERROR, $visitorId, $this->getVisitor()->getVisitorId()));
+            throw new Exception(sprintf(
+                self::VISITOR_ID_MISMATCH_ERROR,
+                $visitorId,
+                $this->getVisitor()->getVisitorId()
+            ));
         }
 
         if (!isset($data[self::CAMPAIGNS])) {
@@ -145,7 +149,12 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         foreach ($campaigns as $item) {
-            if (!isset($item[self::CAMPAIGN_ID], $item[self::CAMPAIGN_TYPE], $item[self::VARIATION_GROUP_ID], $item[self::VARIATION_ID])) {
+            if (!isset(
+                $item[self::CAMPAIGN_ID],
+                $item[self::CAMPAIGN_TYPE],
+                $item[self::VARIATION_GROUP_ID],
+                $item[self::VARIATION_ID]
+            )) {
                 return false;
             }
         }
@@ -215,11 +224,13 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             foreach ($visitor->campaigns as $campaign) {
                 $variation     = $campaign[FlagshipField::FIELD_VARIATION];
                 $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
-                $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
+                $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] =
+                    $variation[FlagshipField::FIELD_ID];
 
                 $campaigns[] = [
                     FlagshipField::FIELD_CAMPAIGN_ID        => $campaign[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_SLUG               => isset($campaign[FlagshipField::FIELD_SLUG]) ? $campaign[FlagshipField::FIELD_SLUG] : null,
+                    FlagshipField::FIELD_SLUG               => isset($campaign[FlagshipField::FIELD_SLUG]) ?
+                        $campaign[FlagshipField::FIELD_SLUG] : null,
                     FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                     FlagshipField::FIELD_VARIATION_ID       => $variation[FlagshipField::FIELD_ID],
                     FlagshipField::FIELD_IS_REFERENCE       => $variation[FlagshipField::FIELD_REFERENCE],
@@ -229,8 +240,15 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
                 ];
             }
 
-            if (isset($visitor->visitorCache, $visitor->visitorCache[self::DATA], $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY])) {
-                $assignmentsHistory = array_merge($visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY], $assignmentsHistory);
+            if (isset(
+                $visitor->visitorCache,
+                $visitor->visitorCache[self::DATA],
+                $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY]
+            )) {
+                $assignmentsHistory = array_merge(
+                    $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY],
+                    $assignmentsHistory
+                );
             }
 
             $data = [

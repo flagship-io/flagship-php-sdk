@@ -217,12 +217,13 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @return void
      */
     protected function onUserExposed(Activate $activate){
-        $onUserExposed = $this->config->getOnUserExposure();
+        $onUserExposed = $this->config->getOnVisitorExposed();
         if (!$onUserExposed){
             return;
         }
 
-        $exposedFlag = new ExposedFlag($activate->getFlagKey(), $activate->getFlagValue(), $activate->getFlagMetadata());
+        $exposedFlag = new ExposedFlag($activate->getFlagKey(),
+            $activate->getFlagValue(), $activate->getFlagDefaultValue(), $activate->getFlagMetadata());
         $exposedUser = new ExposedUser($activate->getVisitorId(), $activate->getAnonymousId(), $activate->getVisitorContext());
 
         try {

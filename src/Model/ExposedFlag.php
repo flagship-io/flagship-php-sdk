@@ -23,15 +23,22 @@ class ExposedFlag implements ExposedFlagInterface
     private $metadata;
 
     /**
+     * @var bool|numeric|string|array
+     */
+    private $defaultValue;
+
+    /**
      * @param string $key
-     * @param mixed $value
+     * @param bool|numeric|string|array $value
+     * @param bool|numeric|string|array $defaultValue
      * @param FlagMetadataInterface $metadata
      */
-    public function __construct($key, $value, FlagMetadataInterface $metadata)
+    public function __construct($key, $value, $defaultValue, FlagMetadataInterface $metadata)
     {
         $this->key = $key;
         $this->value = $value;
         $this->metadata = $metadata;
+        $this->defaultValue = $defaultValue;
     }
 
     /**
@@ -56,5 +63,13 @@ class ExposedFlag implements ExposedFlagInterface
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
     }
 }

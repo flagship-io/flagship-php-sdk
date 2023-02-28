@@ -310,6 +310,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $campaignId1 = "campaignId";
         $flagKey1 = "key1";
         $flagValue1 = "value1";
+        $flagDefaultValue1 = "defaultValue1";
 
         $activate = new Activate($variationGroupId1, $variationId1);
 
@@ -320,6 +321,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->setVisitorContext($context)
             ->setFlagKey($flagKey1)
             ->setFlagValue($flagValue1)
+            ->setFlagDefaultValue($flagDefaultValue1)
             ->setFlagMetadata($flagMetadata1);
 
         $variationGroupId2 = "variationGroupId2";
@@ -327,6 +329,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $campaignId2 = "campaignId2";
         $flagKey2 = "key2";
         $flagValue2 = "value2";
+        $flagDefaultValue2 = "defaultValue2";
 
         $flagMetadata2 = new FlagMetadata($campaignId2, $variationGroupId2, $variationId2, false, "ab", null);
 
@@ -336,6 +339,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->setVisitorContext($context)
             ->setFlagKey($flagKey2)
             ->setFlagValue($flagValue2)
+            ->setFlagDefaultValue($flagDefaultValue2)
             ->setFlagMetadata($flagMetadata2);
 
         $strategy = $this->getMockForAbstractClass(
@@ -362,10 +366,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $check2 = false;
         $count = 0;
 
-        $config->setOnUserExposure(function (ExposedUser $exposedUser, ExposedFlag $exposedFlag)
+        $config->setOnVisitorExposed(function (ExposedUser $exposedUser, ExposedFlag $exposedFlag)
         use($visitorId, $context, &$check1, &$check2, &$count,
-             $flagKey1, $flagValue1, $flagMetadata1,
-            $flagKey2, $flagValue2, $flagMetadata2
+             $flagKey1, $flagValue1, $flagMetadata1, $flagDefaultValue1,
+            $flagKey2, $flagValue2, $flagMetadata2, $flagDefaultValue2
         ) {
             $count++;
             if ($count === 1){
@@ -374,7 +378,8 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
                     $exposedUser->getContext() === $context &&
                 $exposedFlag->getValue() === $flagValue1 &&
                 $exposedFlag->getKey() === $flagKey1 &&
-                $exposedFlag->getMetadata() === $flagMetadata1;
+                $exposedFlag->getMetadata() === $flagMetadata1 &&
+                $exposedFlag->getDefaultValue() === $flagDefaultValue1;
             }
             else{
                 $check2 = $exposedUser->getVisitorId() === $visitorId &&
@@ -382,7 +387,8 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
                     $exposedUser->getContext() === $context &&
                     $exposedFlag->getValue() === $flagValue2 &&
                     $exposedFlag->getKey() === $flagKey2 &&
-                    $exposedFlag->getMetadata() === $flagMetadata2;
+                    $exposedFlag->getMetadata() === $flagMetadata2 &&
+                $exposedFlag->getDefaultValue() === $flagDefaultValue2;
             }
         });
 
@@ -466,7 +472,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $count = 0;
 
 
-        $config->setOnUserExposure(function (ExposedUser $exposedUser, ExposedFlag $exposedFlag)
+        $config->setOnVisitorExposed(function (ExposedUser $exposedUser, ExposedFlag $exposedFlag)
         use( &$count) {
             $exceptionMessage = "Message error";
             $count++;

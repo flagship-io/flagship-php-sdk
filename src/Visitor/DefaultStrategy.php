@@ -438,11 +438,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         if ($trackingManager === null) {
             return;
         }
-
-        $activateHit = new Activate($modification->getVariationGroupId(), $modification->getVariationId());
-        $activateHit->setConfig($this->getConfig())->setVisitorId($this->visitor->getVisitorId())->setAnonymousId($this->visitor->getAnonymousId());
-
-        $this->getTrackingManager()->activateFlag($activateHit);
+        $this->activateFlag($modification);
 
     }//end activateModification()
 
@@ -486,6 +482,34 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
     }//end getModifications()
 
+    /**
+     * @param $key
+     * @param $defaultValue
+     * @param FlagDTO $flag
+     * @return void
+     */
+    protected function activateFlag(FlagDTO $flag, $defaultValue = null){
+        $flagMetadata = new FlagMetadata(
+            $flag->getCampaignId(),
+            $flag->getVariationGroupId(),
+            $flag->getVariationId(),
+            $flag->getIsReference(),
+            $flag->getCampaignType(),
+            $flag->getSlug()
+        );
+
+        $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
+        $activateHit->setConfig($this->getConfig())
+            ->setVisitorId($this->visitor->getVisitorId())
+            ->setAnonymousId($this->visitor->getAnonymousId())
+            ->setFlagKey($flag->getKey())
+            ->setFlagValue($flag->getValue())
+            ->setFlagDefaultValue($defaultValue)
+            ->setVisitorContext($this->getVisitor()->getContext())
+            ->setFlagMetadata($flagMetadata);
+
+        $this->getTrackingManager()->activateFlag($activateHit);
+    }
 
     /**
      * @param  string       $key
@@ -523,19 +547,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
 
-        $flagMetadata = new FlagMetadata(
-            $flag->getCampaignId(),
-            $flag->getVariationGroupId(),
-            $flag->getVariationId(),
-            $flag->getIsReference(),
-            $flag->getCampaignType(),
-            $flag->getSlug()
-        );
-
-        $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
-        $activateHit->setConfig($this->getConfig())->setVisitorId($this->visitor->getVisitorId())->setAnonymousId($this->visitor->getAnonymousId())->setFlagKey($flag->getKey())->setFlagValue($flag->getValue())->setVisitorContext($this->getVisitor()->getContext())->setFlagMetadata($flagMetadata);
-
-        $this->getTrackingManager()->activateFlag($activateHit);
+        $this->activateFlag($flag, $defaultValue);
 
     }//end userExposed()
 

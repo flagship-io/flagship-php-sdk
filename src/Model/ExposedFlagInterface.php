@@ -20,4 +20,9 @@ interface ExposedFlagInterface
      * @return FlagMetadataInterface
      */
     public function getMetadata();
+
+    /**
+     * @return bool|numeric|string|array
+     */
+    public function getDefaultValue();
 }

@@ -21,7 +21,7 @@ class Flag implements FlagInterface
     private $visitorDelegate;
 
     /**
-     * @var mixed
+     * @var array|bool|float|int|string
      */
     private $defaultValue;
 
@@ -64,10 +64,10 @@ class Flag implements FlagInterface
     /**
      * @inheritDoc
      */
-    public function getValue($userExposed=true)
+    public function getValue($visitorExposed = true)
     {
         $flagDTO = $this->findFlagDTO($this->key);
-        return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $flagDTO, $userExposed);
+        return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $flagDTO, $visitorExposed);
 
     }//end getValue()
 
@@ -88,13 +88,7 @@ class Flag implements FlagInterface
      */
     public function userExposed()
     {
-        $flagDTO = $this->findFlagDTO($this->key);
-        $this->visitorDelegate->userExposed(
-            $this->key,
-            $this->defaultValue,
-            $flagDTO
-        );
-
+        $this->visitorExposed();
     }//end userExposed()
 
 
@@ -126,4 +120,32 @@ class Flag implements FlagInterface
     }//end getMetadata()
 
 
+    /**
+     * @inheritDoc
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function visitorExposed()
+    {
+        $flagDTO = $this->findFlagDTO($this->key);
+        $this->visitorDelegate->userExposed(
+            $this->key,
+            $this->defaultValue,
+            $flagDTO
+        );
+    }
 }//end class

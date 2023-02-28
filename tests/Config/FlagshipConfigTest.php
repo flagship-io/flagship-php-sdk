@@ -165,7 +165,7 @@ class FlagshipConfigTest extends TestCase
             ->with(
                 sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
                 [
-                    FlagshipConstant::TAG => "setOnUserExposure"
+                    FlagshipConstant::TAG => "setOnVisitorExposed"
                 ]
             );
 
@@ -173,17 +173,17 @@ class FlagshipConfigTest extends TestCase
 
         $config->setLogManager($logManagerMock);
 
-        $this->assertNull($config->getOnUserExposure());
+        $this->assertNull($config->getOnVisitorExposed());
 
-        $config->setOnUserExposure([]);
+        $config->setOnVisitorExposed([]);
 
-        $this->assertNull($config->getOnUserExposure());
+        $this->assertNull($config->getOnVisitorExposed());
 
         $callable = function () {
         };
-        $config->setOnUserExposure($callable);
+        $config->setOnVisitorExposed($callable);
 
-        $this->assertSame($callable, $config->getOnUserExposure());
+        $this->assertSame($callable, $config->getOnVisitorExposed());
     }
 
     public function testJson()

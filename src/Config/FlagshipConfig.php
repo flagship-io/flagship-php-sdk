@@ -70,7 +70,7 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @var callable
      */
-    protected $onUserExposure;
+    protected $onVisitorExposed;
 
     /**
      * Create a new FlagshipConfig configuration.
@@ -304,23 +304,23 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @return callable
      */
-    public function getOnUserExposure()
+    public function getOnVisitorExposed()
     {
-        return $this->onUserExposure;
+        return $this->onVisitorExposed;
     }
 
     /**
-     * @param callable $onUserExposure
+     * @param callable $onVisitorExposed
      * @return FlagshipConfig
      */
-    public function setOnUserExposure($onUserExposure)
+    public function setOnVisitorExposed($onVisitorExposed)
     {
-        if (is_callable($onUserExposure)) {
-            $this->onUserExposure = $onUserExposure;
+        if (is_callable($onVisitorExposed)) {
+            $this->onVisitorExposed = $onVisitorExposed;
         } else {
             $this->logError(
                 $this,
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($onUserExposure)),
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($onVisitorExposed)),
                 [
                     FlagshipConstant::TAG => __FUNCTION__
                 ]

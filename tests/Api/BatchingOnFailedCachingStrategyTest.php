@@ -107,16 +107,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy->addHit($page2);
 
-        $contentPage3= [
+        $contentPage3 = [
             'pageUrl' => 'page1',
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'PAGEVIEW',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $page3Key,
             'createdAt' => 1676542078047,
         ];
@@ -142,16 +142,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'ACTIVATE',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $activate3Key,
             'createdAt' => 1676542078044,
         ];
 
-        $activate3= HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
+        $activate3 = HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
         $activate3->setConfig($config);
 
         $strategy->hydrateActivatePoolQueue($activate3Key, $activate3);
@@ -243,16 +243,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'ACTIVATE',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $activate3Key,
             'createdAt' => 1676542078044,
         ];
 
-        $activate3= HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
+        $activate3 = HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
         $activate3->setConfig($config);
 
         $strategy->hydrateActivatePoolQueue($activate3Key, $activate3);
@@ -298,7 +298,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitorId";
-        $context = ["key"=>"value"];
+        $context = ["key" => "value"];
 
 
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
@@ -366,13 +366,27 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $check2 = false;
         $count = 0;
 
-        $config->setOnVisitorExposed(function (ExposedUser $exposedUser, ExposedFlag $exposedFlag)
-        use($visitorId, $context, &$check1, &$check2, &$count,
-             $flagKey1, $flagValue1, $flagMetadata1, $flagDefaultValue1,
-            $flagKey2, $flagValue2, $flagMetadata2, $flagDefaultValue2
+        $config->setOnVisitorExposed(function (
+            ExposedUser $exposedUser,
+            ExposedFlag $exposedFlag
+        )
+ use (
+            $visitorId,
+            $context,
+            &$check1,
+            &$check2,
+            &$count,
+            $flagKey1,
+            $flagValue1,
+            $flagMetadata1,
+            $flagDefaultValue1,
+            $flagKey2,
+            $flagValue2,
+            $flagMetadata2,
+            $flagDefaultValue2
         ) {
             $count++;
-            if ($count === 1){
+            if ($count === 1) {
                 $check1 = $exposedUser->getVisitorId() === $visitorId &&
                     $exposedUser->getAnonymousId() === null &&
                     $exposedUser->getContext() === $context &&
@@ -380,8 +394,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
                 $exposedFlag->getKey() === $flagKey1 &&
                 $exposedFlag->getMetadata() === $flagMetadata1 &&
                 $exposedFlag->getDefaultValue() === $flagDefaultValue1;
-            }
-            else{
+            } else {
                 $check2 = $exposedUser->getVisitorId() === $visitorId &&
                     $exposedUser->getAnonymousId() === null &&
                     $exposedUser->getContext() === $context &&
@@ -408,7 +421,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitorId";
-        $context = ["key"=>"value"];
+        $context = ["key" => "value"];
 
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
 
@@ -473,7 +486,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
 
         $config->setOnVisitorExposed(function (ExposedUser $exposedUser, ExposedFlag $exposedFlag)
-        use( &$count) {
+ use (&$count) {
             $exceptionMessage = "Message error";
             $count++;
             throw new Exception($exceptionMessage);
@@ -490,7 +503,6 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $this->assertCount(0, $strategy->getActivatePoolQueue());
 
         $strategy->activateFlag($activate2);
-
     }
     public function testSendActivateHitFailed()
     {
@@ -592,16 +604,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $strategy->addHit($screen);
 
         $page3Key = "$visitorId:b1b48180-0d72-410d-8e9b-44ee90dfafc6";
-        $contentPage3= [
+        $contentPage3 = [
             'pageUrl' => 'page1',
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'PAGEVIEW',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $page3Key,
             'createdAt' => 1676542078047,
         ];

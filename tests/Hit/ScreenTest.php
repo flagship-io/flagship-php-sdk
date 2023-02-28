@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class ScreenTest extends TestCase
 {
-
     public function testConstruct()
     {
         $screenName = 'screenName';

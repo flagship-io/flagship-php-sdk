@@ -17,7 +17,7 @@ class ActivateTest extends TestCase
         $visitorId = "visitorId";
         $flagKey = "key";
         $flagValue = "value";
-        $visitorContext = ["key"=>"value"];
+        $visitorContext = ["key" => "value"];
         $flagMetadata = new FlagMetadata("campaignId", $variationGroupId, $variationId, false, "ab", null);
 
         $config = new DecisionApiConfig($envId);

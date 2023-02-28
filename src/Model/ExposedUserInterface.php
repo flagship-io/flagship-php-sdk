@@ -2,7 +2,6 @@
 
 namespace Flagship\Model;
 
-
 /**
  *
  */

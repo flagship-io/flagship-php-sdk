@@ -50,7 +50,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     public function __construct(VisitorAbstract $visitor)
     {
         $this->visitor = $visitor;
-
     }//end __construct()
 
 
@@ -60,7 +59,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getVisitor()
     {
         return $this->visitor;
-
     }//end getVisitor()
 
 
@@ -70,7 +68,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getConfigManager()
     {
         return $this->getVisitor()->getConfigManager();
-
     }//end getConfigManager()
 
 
@@ -80,7 +77,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getConfig()
     {
         return $this->getVisitor()->getConfig();
-
     }//end getConfig()
 
 
@@ -88,7 +84,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
      * @param  string $process
      * @return TrackingManagerAbstract|null
      */
-    protected function getTrackingManager($process=null)
+    protected function getTrackingManager($process = null)
     {
         $trackingManager = $this->getConfigManager()->getTrackingManager();
 
@@ -101,7 +97,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         return $trackingManager;
-
     }//end getTrackingManager()
 
 
@@ -109,7 +104,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
      * @param  string $process
      * @return DecisionManagerAbstract|null
      */
-    protected function getDecisionManager($process=null)
+    protected function getDecisionManager($process = null)
     {
         $decisionManager = $this->getConfigManager()->getDecisionManager();
         if (!$decisionManager) {
@@ -121,7 +116,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         return $decisionManager;
-
     }//end getDecisionManager()
 
 
@@ -157,7 +151,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         return true;
-
     }//end checkLookupVisitorDataV1()
 
 
@@ -173,7 +166,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         return false;
-
     }//end checkLookupVisitorData()
 
 
@@ -202,7 +194,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
-
     }//end lookupVisitor()
 
 
@@ -260,7 +251,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }//end try
-
     }//end cacheVisitor()
 
 
@@ -279,8 +269,5 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
-
     }//end flushVisitor()
-
-
 }//end class

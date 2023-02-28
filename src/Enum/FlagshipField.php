@@ -9,7 +9,6 @@ namespace Flagship\Enum;
  */
 class FlagshipField
 {
-
     const FIELD_MODIFICATIONS = 'modifications';
     const FIELD_CAMPAIGNS = 'campaigns';
     const FIELD_VALUE = 'value';

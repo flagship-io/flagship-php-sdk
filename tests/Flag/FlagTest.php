@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class FlagTest extends TestCase
 {
-
     public function testFlag()
     {
         $key = "key";

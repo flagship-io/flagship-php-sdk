@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class VisitorTest extends TestCase
 {
-
     /**
      * @return Visitor
      */

@@ -216,20 +216,24 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param Activate $activate
      * @return void
      */
-    protected function onUserExposed(Activate $activate){
+    protected function onUserExposed(Activate $activate)
+    {
         $onUserExposed = $this->config->getOnVisitorExposed();
-        if (!$onUserExposed){
+        if (!$onUserExposed) {
             return;
         }
 
-        $exposedFlag = new ExposedFlag($activate->getFlagKey(),
-            $activate->getFlagValue(), $activate->getFlagDefaultValue(), $activate->getFlagMetadata());
+        $exposedFlag = new ExposedFlag(
+            $activate->getFlagKey(),
+            $activate->getFlagValue(),
+            $activate->getFlagDefaultValue(),
+            $activate->getFlagMetadata()
+        );
         $exposedUser = new ExposedUser($activate->getVisitorId(), $activate->getAnonymousId(), $activate->getVisitorContext());
 
         try {
             call_user_func($onUserExposed, $exposedUser, $exposedFlag);
-        }
-        catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->logErrorSprintf($this->config, __FUNCTION__, $exception->getMessage());
         }
     }
@@ -264,14 +268,14 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
             $hitKeysToRemove = [];
             foreach ($this->activatePoolQueue as $item) {
-                if ($item->getIsFromCache()){
+                if ($item->getIsFromCache()) {
                     $hitKeysToRemove[] = $item->getKey();
                 }
                 $this->onUserExposed($item);
             }
 
             $this->activatePoolQueue = [];
-            if (count($hitKeysToRemove)>0){
+            if (count($hitKeysToRemove) > 0) {
                 $this->flushSentActivateHit($hitKeysToRemove);
             }
         } catch (\Exception $exception) {
@@ -302,7 +306,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 continue;
             }
             $hitKeys[] = $item->getKey();
-            if ($item->getIsFromCache()){
+            if ($item->getIsFromCache()) {
                 $keysToFlush[] = $item->getKey();
             }
         }
@@ -314,7 +318,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
             $activateKeys[] = $item->getKey();
 
-            if ($item->getIsFromCache()){
+            if ($item->getIsFromCache()) {
                 $keysToFlush[] = $item->getKey();
             }
         }
@@ -345,7 +349,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         foreach ($this->hitsPoolQueue as $item) {
             $now = $this->getNow();
 
-            if ($item->getIsFromCache()){
+            if ($item->getIsFromCache()) {
                 $hitKeysToRemove[] = $item->getKey();
             }
             if (($now - $item->getCreatedAt()) >= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS) {
@@ -383,7 +387,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             );
 
             $this->hitsPoolQueue = [];
-            if (count($hitKeysToRemove)>0){
+            if (count($hitKeysToRemove) > 0) {
                 $this->flushBatchedHits($hitKeysToRemove);
             }
         } catch (\Exception $exception) {

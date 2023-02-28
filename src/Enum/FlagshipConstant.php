@@ -9,7 +9,6 @@ namespace Flagship\Enum;
  */
 class FlagshipConstant
 {
-
     /**
      * Default request timeout in second
      */

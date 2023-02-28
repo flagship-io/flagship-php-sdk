@@ -20,7 +20,8 @@ class FlagshipLogManager8Test extends TestCase
                 'contextString' => '[process => testError, context2 => value 2]' ];
     }
 
-    public function getMessageError($formatDate,$level, $message, $tag ){
+    public function getMessageError($formatDate, $level, $message, $tag)
+    {
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         return "[$formatDate] [$flagshipSdk] [$level] {$tag} $message";
     }

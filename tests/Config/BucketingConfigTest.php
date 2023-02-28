@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class BucketingConfigTest extends TestCase
 {
-
     public function testBucketingUrl()
     {
         $bucketingUrl = "http:127.0.0.1:3000";

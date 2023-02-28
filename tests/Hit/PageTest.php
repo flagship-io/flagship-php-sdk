@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class PageTest extends TestCase
 {
-
     public function testConstruct()
     {
         $pageUrl = 'ScreenName';

@@ -12,6 +12,7 @@ use Psr\Log\LogLevel;
 class FlagshipLogManager8 implements LoggerInterface
 {
     use CommonLogManagerTrait;
+
     /**
      * @inheritDoc
      */

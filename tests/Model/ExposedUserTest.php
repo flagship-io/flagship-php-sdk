@@ -6,11 +6,10 @@ use PHPUnit\Framework\TestCase;
 
 class ExposedUserTest extends TestCase
 {
-
     public function testConstruct()
     {
         $visitorId = 'visitorId';
-        $visitorContext = ["key"=>"value"];
+        $visitorContext = ["key" => "value"];
         $anonymousId = "anonymousId";
         $exposedUser = new ExposedUser($visitorId, $anonymousId, $visitorContext);
 

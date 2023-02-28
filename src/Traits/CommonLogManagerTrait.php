@@ -24,7 +24,7 @@ trait CommonLogManagerTrait
         $formatDate = $this->getDateTime();
         $customMessage = "[$formatDate] [$flagshipSdk] [$level] ";
         $contextString = $this->parseContextToString($context);
-        error_log($customMessage. $contextString ." ". $message);
+        error_log($customMessage . $contextString . " " . $message);
     }
 
     /**

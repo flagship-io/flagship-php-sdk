@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class ItemTest extends TestCase
 {
-
     public function testConstruct()
     {
         $transactionId = "transactionId";

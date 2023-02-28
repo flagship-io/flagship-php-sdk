@@ -28,7 +28,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
-        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE.':'.($hasConsented ? 'true' : 'false'))->setConfig($this->getConfig())->setVisitorId($this->getVisitor()->getVisitorId())->setAnonymousId($this->getVisitor()->getAnonymousId());
+        $consentHit->setLabel(FlagshipConstant::SDK_LANGUAGE . ':' . ($hasConsented ? 'true' : 'false'))->setConfig($this->getConfig())->setVisitorId($this->getVisitor()->getVisitorId())->setAnonymousId($this->getVisitor()->getAnonymousId());
 
         $trackingManger = $this->getTrackingManager();
         if (!$trackingManger) {
@@ -36,7 +36,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $trackingManger->addHit($consentHit);
-
     }//end setConsent()
 
 
@@ -65,7 +64,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $this->getVisitor()->context[$key] = $value;
-
     }//end updateContext()
 
 
@@ -77,7 +75,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         foreach ($context as $itemKey => $item) {
             $this->updateContext($itemKey, $item);
         }
-
     }//end updateContextCollection()
 
 
@@ -87,7 +84,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function clearContext()
     {
         $this->getVisitor()->context = [];
-
     }//end clearContext()
 
 
@@ -105,7 +101,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ),
             [FlagshipConstant::TAG => $functionName]
         );
-
     }//end logDeactivate()
 
 
@@ -131,7 +126,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $this->getVisitor()->setAnonymousId($this->getVisitor()->getVisitorId());
         $this->getVisitor()->setVisitorId($visitorId);
-
     }//end authenticate()
 
 
@@ -157,7 +151,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $this->getVisitor()->setVisitorId($anonymousId);
         $this->getVisitor()->setAnonymousId(null);
-
     }//end unauthenticate()
 
 
@@ -176,7 +169,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return null;
-
     }//end getObjetModification()
 
 
@@ -186,7 +178,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * @param  boolean $activate
      * @return boolean|float|integer|string
      */
-    public function getModification($key, $defaultValue, $activate=false)
+    public function getModification($key, $defaultValue, $activate = false)
     {
         if (!$this->isKeyValid($key)) {
             $this->logError(
@@ -226,7 +218,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $modification->getValue();
-
     }//end getModification()
 
 
@@ -245,7 +236,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
             FlagshipField::FIELD_IS_REFERENCE       => $modification->getIsReference(),
             FlagshipField::FIELD_VALUE              => $modification->getValue(),
         ];
-
     }//end parseToCampaign()
 
 
@@ -276,7 +266,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $this->parseToCampaign($modification);
-
     }//end getModificationInfo()
 
 
@@ -326,7 +315,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $campaigns;
-
     }//end fetchVisitorCampaigns()
 
 
@@ -336,7 +324,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function getNow()
     {
         return round(microtime(true) * 1000);
-
     }//end getNow()
 
 
@@ -394,7 +381,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 $flagsDTO,
             ]
         );
-
     }//end synchronizeFlags()
 
 
@@ -404,7 +390,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function synchronizeModifications()
     {
         $this->synchronizeFlags(__FUNCTION__);
-
     }//end synchronizeModifications()
 
 
@@ -414,7 +399,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function fetchFlags()
     {
         $this->synchronizeFlags(__FUNCTION__);
-
     }//end fetchFlags()
 
 
@@ -439,7 +423,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
         $this->activateFlag($modification);
-
     }//end activateModification()
 
 
@@ -469,7 +452,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $trackingManager->addHit($hit);
-
     }//end sendHit()
 
 
@@ -479,7 +461,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function getModifications()
     {
         return $this->getVisitor()->getModifications();
-
     }//end getModifications()
 
     /**
@@ -488,7 +469,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * @param FlagDTO $flag
      * @return void
      */
-    protected function activateFlag(FlagDTO $flag, $defaultValue = null){
+    protected function activateFlag(FlagDTO $flag, $defaultValue = null)
+    {
         $flagMetadata = new FlagMetadata(
             $flag->getCampaignId(),
             $flag->getVariationGroupId(),
@@ -517,7 +499,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * @param  FlagDTO|null $flag
      * @return void
      */
-    public function userExposed($key, $defaultValue, FlagDTO $flag=null)
+    public function userExposed($key, $defaultValue, FlagDTO $flag = null)
     {
         if (!$flag) {
             $this->logInfoSprintf(
@@ -532,7 +514,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
 
-        if (gettype($defaultValue) != self::TYPE_NULL
+        if (
+            gettype($defaultValue) != self::TYPE_NULL
             && gettype($flag->getValue()) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)
         ) {
             $this->logInfoSprintf(
@@ -548,7 +531,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $this->activateFlag($flag, $defaultValue);
-
     }//end userExposed()
 
 
@@ -559,7 +541,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * @param  boolean      $userExposed
      * @return array|boolean|float|integer|string
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag=null, $userExposed=true)
+    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
     {
         if (!$flag) {
             $this->logInfoSprintf(
@@ -613,7 +595,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         );
 
         return $flag->getValue();
-
     }//end getFlagValue()
 
 
@@ -636,8 +617,5 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $metadata;
-
     }//end getFlagMetadata()
-
-
 }//end class

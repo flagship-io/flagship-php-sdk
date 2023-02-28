@@ -149,7 +149,7 @@ class ApiManagerTest extends TestCase
                 "trigger_hit" => false,
                 "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
                 "visitor_consent" => false
-            ]
+                ]
             ]
         );
 

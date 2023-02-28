@@ -8,7 +8,6 @@ use Flagship\Enum\LogLevel;
 
 trait LogTrait
 {
-
     /**
      * @param array $args
      * @return array

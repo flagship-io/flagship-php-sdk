@@ -34,8 +34,6 @@ class FlagshipConfigTest extends TestCase
 
         $config->setTimeout("not a number");
         $this->assertEquals($timeOut, $config->getTimeout());
-
-
     }
 
     public function testSetLogLevel()

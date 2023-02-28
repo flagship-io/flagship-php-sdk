@@ -40,7 +40,6 @@ class Flag implements FlagInterface
         $this->visitorDelegate = $visitorDelegate;
 
         $this->defaultValue = $defaultValue;
-
     }//end __construct()
 
 
@@ -57,7 +56,6 @@ class Flag implements FlagInterface
         }
 
         return null;
-
     }//end findFlagDTO()
 
 
@@ -68,7 +66,6 @@ class Flag implements FlagInterface
     {
         $flagDTO = $this->findFlagDTO($this->key);
         return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $flagDTO, $visitorExposed);
-
     }//end getValue()
 
 
@@ -79,7 +76,6 @@ class Flag implements FlagInterface
     {
         $flagDTO = $this->findFlagDTO($this->key);
         return $flagDTO && $flagDTO->getCampaignId() && $flagDTO->getVariationId() && $flagDTO->getVariationGroupId();
-
     }//end exists()
 
 
@@ -116,7 +112,6 @@ class Flag implements FlagInterface
             $metadata,
             !$flagDTO->getValue() || $this->hasSameType($flagDTO->getValue(), $this->defaultValue)
         );
-
     }//end getMetadata()
 
 

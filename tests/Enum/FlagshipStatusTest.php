@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 
 class FlagshipStatusTest extends TestCase
 {
-
     public function testGetStatusName()
     {
         $this->assertEquals("NOT_INITIALIZED", FlagshipStatus::getStatusName(FlagshipStatus::NOT_INITIALIZED));

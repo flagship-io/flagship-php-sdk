@@ -4,7 +4,6 @@ namespace Flagship\Traits;
 
 trait Guid
 {
-
     /**
      * @return string
      */

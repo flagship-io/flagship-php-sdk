@@ -20,6 +20,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @var FlagshipConfig
      */
     protected $config;
+
     /**
      * @var string
      */
@@ -29,6 +30,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @var string
      */
     private $anonymousId;
+
     /**
      * @var array
      */
@@ -48,8 +50,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @var ConfigManager
      */
     protected $configManager;
+
     /**
-     * @var bool
+     * @var boolean
      */
     public $hasConsented = false;
 
@@ -63,10 +66,12 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     public $visitorCache;
 
+
     public function __construct()
     {
         $this->visitorCache = [];
-    }
+    }//end __construct()
+
 
     /**
      * @return ConfigManager
@@ -74,36 +79,41 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getConfigManager()
     {
         return $this->configManager;
-    }
+    }//end getConfigManager()
+
 
     /**
      * @deprecated use setFlagsDTO instead
-     * @param FlagDTO[] $modifications
-     * @return VisitorAbstract
+     * @param      FlagDTO[] $modifications
+     * @return     VisitorAbstract
      */
     public function setModifications($modifications)
     {
         $this->flagsDTO = $modifications;
         return $this;
-    }
+    }//end setModifications()
+
+
     /**
      * @deprecated use getFlagsDTO instead
-     * @return array
+     * @return     array
      */
     public function getModifications()
     {
         return $this->flagsDTO;
-    }
+    }//end getModifications()
+
 
     /**
-     * @param FlagDTO[] $flagsDTO
+     * @param  FlagDTO[] $flagsDTO
      * @return VisitorAbstract
      */
     public function setFlagsDTO($flagsDTO)
     {
         $this->flagsDTO = $flagsDTO;
         return $this;
-    }
+    }//end setFlagsDTO()
+
 
     /**
      * @return FlagDTO[]
@@ -111,16 +121,19 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getFlagsDTO()
     {
         return $this->flagsDTO;
-    }
+    }//end getFlagsDTO()
+
+
     /**
-     * @param ConfigManager $configManager
+     * @param  ConfigManager $configManager
      * @return VisitorAbstract
      */
     public function setConfigManager($configManager)
     {
         $this->configManager = $configManager;
         return $this;
-    }
+    }//end setConfigManager()
+
 
     /**
      * @return string
@@ -128,10 +141,11 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getVisitorId()
     {
         return $this->visitorId;
-    }
+    }//end getVisitorId()
+
 
     /**
-     * @param string $visitorId
+     * @param  string $visitorId
      * @return VisitorAbstract
      */
     public function setVisitorId($visitorId)
@@ -145,8 +159,10 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         } else {
             $this->visitorId = $visitorId;
         }
+
         return $this;
-    }
+    }//end setVisitorId()
+
 
     /**
      * @return string
@@ -154,17 +170,19 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getAnonymousId()
     {
         return $this->anonymousId;
-    }
+    }//end getAnonymousId()
+
 
     /**
-     * @param string $anonymousId
+     * @param  string $anonymousId
      * @return VisitorAbstract
      */
     public function setAnonymousId($anonymousId)
     {
         $this->anonymousId = $anonymousId;
         return $this;
-    }
+    }//end setAnonymousId()
+
 
     /**
      * @return array
@@ -172,10 +190,11 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getContext()
     {
         return $this->context;
-    }
+    }//end getContext()
+
 
     /**
-    * /**
+     * /**
      * Clear the current context and set a new context value
      *
      * @param  array $context : collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
@@ -186,7 +205,8 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         $this->context = [];
         $this->updateContextCollection($context);
         return $this;
-    }
+    }//end setContext()
+
 
     /**
      * @return FlagshipConfig
@@ -194,17 +214,19 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getConfig()
     {
         return $this->config;
-    }
+    }//end getConfig()
+
 
     /**
-     * @param FlagshipConfig $config
+     * @param  FlagshipConfig $config
      * @return VisitorAbstract
      */
     public function setConfig($config)
     {
         $this->config = $config;
         return $this;
-    }
+    }//end setConfig()
+
 
     /**
      * @return VisitorStrategyAbstract
@@ -212,34 +234,42 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     protected function getStrategy()
     {
         if (Flagship::getStatus() === FlagshipStatus::NOT_INITIALIZED) {
-            $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\NotReadyStrategy", [$this], true);
+            $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\NotReadyStrategy', [$this], true);
         } elseif (Flagship::getStatus() === FlagshipStatus::READY_PANIC_ON) {
-            $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\PanicStrategy", [$this], true);
+            $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\PanicStrategy', [$this], true);
         } elseif (!$this->hasConsented()) {
-            $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\NoConsentStrategy", [$this], true);
+            $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\NoConsentStrategy', [$this], true);
         } else {
-            $strategy = $this->getDependencyIContainer()->get("Flagship\Visitor\DefaultStrategy", [$this], true);
+            $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\DefaultStrategy', [$this], true);
         }
+
         return $strategy;
-    }
+    }//end getStrategy()
+
+
     /**
      * Return True or False if the visitor has consented for private data usage.
-     * @return bool
+     *
+     * @return boolean
      */
     public function hasConsented()
     {
         return $this->hasConsented;
-    }
+    }//end hasConsented()
+
 
     /**
      * Set if visitor has consented for private data usage.
-     * @param bool $hasConsented True if the visitor has consented false otherwise.
+     *
+     * @param  $hasConsented True if the visitor has consented false otherwise.
+     * @return void
      */
     public function setConsent($hasConsented)
     {
         $this->hasConsented = $hasConsented;
         $this->getStrategy()->setConsent($hasConsented);
-    }
+    }//end setConsent()
+
 
     /**
      * @return ContainerInterface
@@ -247,24 +277,30 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getDependencyIContainer()
     {
         return $this->dependencyIContainer;
-    }
+    }//end getDependencyIContainer()
 
+
+    /**
+     * @param  ContainerInterface $dependencyIContainer
+     * @return void
+     */
     public function setDependencyIContainer(ContainerInterface $dependencyIContainer)
     {
         $this->dependencyIContainer = $dependencyIContainer;
-    }
+    }//end setDependencyIContainer()
+
 
     /**
      * @inheritDoc
-     * @return mixed
+     * @return     mixed
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [
-            'visitorId' => $this->getVisitorId(),
-            'context' => $this->getContext(),
-            'hasConsent' => $this->hasConsented()
+            'visitorId'  => $this->getVisitorId(),
+            'context'    => $this->getContext(),
+            'hasConsent' => $this->hasConsented(),
         ];
-    }
-}
+    }//end jsonSerialize()
+}//end class

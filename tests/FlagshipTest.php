@@ -197,7 +197,8 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
+        ;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder(
@@ -280,7 +281,8 @@ class FlagshipTest extends TestCase
         $apiKey = "apiKey";
 
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
+        ;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
@@ -316,7 +318,8 @@ class FlagshipTest extends TestCase
         $apiKey = "apiKey";
 
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
+        ;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
@@ -398,18 +401,18 @@ class FlagshipTest extends TestCase
         $config = $this->getMockForAbstractClass(
             "Flagship\Config\FlagshipConfig",
             [],
-        "",
-        false,
-        false,
-        true,
-        [ "getStatusChangedCallback"]);
+            "",
+            false,
+            false,
+            true,
+            [ "getStatusChangedCallback"]
+        );
 
-        $count= 0;
-        $callable = function ($status) use (&$count){
-            if ($count==0){
+        $count = 0;
+        $callable = function ($status) use (&$count) {
+            if ($count == 0) {
                 $this->assertSame(FlagshipStatus::STARTING, $status);
-            }
-            else{
+            } else {
                 $this->assertSame(FlagshipStatus::READY, $status);
             }
             $count++;
@@ -524,7 +527,8 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
+        ;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder(
@@ -565,7 +569,8 @@ class FlagshipTest extends TestCase
         $envId = "end_id";
         $apiKey = "apiKey";
         $config = new DecisionApiConfig($envId, $apiKey);
-        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");;
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
+        ;
         $config->setLogManager($logManager);
 
         $flagshipMock = $this->getMockBuilder(

@@ -3,7 +3,6 @@
 namespace Flagship\Visitor;
 
 use Flagship\Flag\FlagInterface;
-use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 
 /**
@@ -25,9 +24,9 @@ interface VisitorInterface extends VisitorCoreInterface
      * Retrieve a modification value by its key. If no modification match the given
      * key or if the stored value type and default value type do not match, default value will be returned.
      *
-     * @param string              $key          : key associated to the modification.
+     * @param string              $key          key associated to the modification.
      * @param string|bool|numeric|array $defaultValue : default value to return.
-     * @param bool                $activate     : Set this parameter to true to automatically
+     * @param bool                $activate     Set this parameter to true to automatically
      *                                          report on our server that the
      *                                          current visitor has seen this modification. It is possible to call
      *                                          activateModification() later.
@@ -72,7 +71,7 @@ interface VisitorInterface extends VisitorCoreInterface
     /**
      * Get the campaign modification information value matching the given key.
      * @deprecated
-     * @param string $key : key which identify the modification.
+     * @param string $key key which identify the modification.
      * @return array|null
      */
     public function getModificationInfo($key);
@@ -93,7 +92,7 @@ interface VisitorInterface extends VisitorCoreInterface
      * Report this user has seen this modification.
      *
      * @deprecated
-     * @param $key : key which identify the modification to activate.
+     * @param string $key key which identify the modification to activate.
      * @return void
      */
     public function activateModification($key);

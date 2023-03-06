@@ -12,37 +12,46 @@ use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 
+/**
+ *
+ */
 abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorFlagInterface
 {
     use ValidatorTrait;
     use HasSameTypeTrait;
 
-    const DATA = "data";
-    const CAMPAIGNS = 'campaigns';
+    const DATA       = 'data';
+    const CAMPAIGNS  = 'campaigns';
     const VISITOR_ID = 'visitorId';
     const VISITOR_ID_MISMATCH_ERROR = "Visitor ID mismatch: '%s' vs '%s'";
-    const CAMPAIGN_ID = "campaignId";
-    const CAMPAIGN_TYPE = "type";
-    const VARIATION_GROUP_ID = "variationGroupId";
-    const VARIATION_ID = "variationId";
+    const CAMPAIGN_ID               = 'campaignId';
+    const CAMPAIGN_TYPE             = 'type';
+    const VARIATION_GROUP_ID        = 'variationGroupId';
+    const VARIATION_ID              = 'variationId';
     const LOOKUP_VISITOR_JSON_OBJECT_ERROR = 'JSON DATA must fit the type VisitorCache';
-    const VERSION = "version";
-    const CURRENT_VERSION = 1;
+    const VERSION             = 'version';
+    const CURRENT_VERSION     = 1;
     const ASSIGNMENTS_HISTORY = 'assignmentsHistory';
-    const FLAGS = "flags";
-    const ACTIVATED = "activated";
-    const ANONYMOUS_ID = 'anonymousId';
-    const CONSENT = 'consent';
-    const CONTEXT = 'context';
+    const FLAGS               = 'flags';
+    const ACTIVATED           = 'activated';
+    const ANONYMOUS_ID        = 'anonymousId';
+    const CONSENT             = 'consent';
+    const CONTEXT             = 'context';
+
     /**
      * @var VisitorAbstract
      */
     protected $visitor;
 
+
+    /**
+     * @param VisitorAbstract $visitor
+     */
     public function __construct(VisitorAbstract $visitor)
     {
         $this->visitor = $visitor;
-    }
+    }//end __construct()
+
 
     /**
      * @return VisitorAbstract
@@ -50,7 +59,8 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getVisitor()
     {
         return $this->visitor;
-    }
+    }//end getVisitor()
+
 
     /**
      * @return ConfigManager
@@ -58,7 +68,8 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getConfigManager()
     {
         return $this->getVisitor()->getConfigManager();
-    }
+    }//end getConfigManager()
+
 
     /**
      * @return FlagshipConfig
@@ -66,10 +77,11 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getConfig()
     {
         return $this->getVisitor()->getConfig();
-    }
+    }//end getConfig()
+
 
     /**
-     * @param string $process
+     * @param  string $process
      * @return TrackingManagerAbstract|null
      */
     protected function getTrackingManager($process = null)
@@ -83,11 +95,13 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
                 [FlagshipConstant::TAG => $process]
             );
         }
+
         return $trackingManager;
-    }
+    }//end getTrackingManager()
+
 
     /**
-     * @param string $process
+     * @param  string $process
      * @return DecisionManagerAbstract|null
      */
     protected function getDecisionManager($process = null)
@@ -100,8 +114,10 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
                 [FlagshipConstant::TAG => $process]
             );
         }
+
         return $decisionManager;
-    }
+    }//end getDecisionManager()
+
 
     /**
      * @throws Exception
@@ -111,43 +127,56 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         if (!$item || !isset($item[self::DATA]) || !isset($item[self::DATA][self::VISITOR_ID])) {
             return false;
         }
-        $data = $item[self::DATA];
+
+        $data      = $item[self::DATA];
         $visitorId = $data[self::VISITOR_ID];
 
         if ($visitorId !== $this->getVisitor()->getVisitorId()) {
-            throw new Exception(sprintf(self::VISITOR_ID_MISMATCH_ERROR, $visitorId, $this->getVisitor()->getVisitorId()));
+            throw new Exception(sprintf(
+                self::VISITOR_ID_MISMATCH_ERROR,
+                $visitorId,
+                $this->getVisitor()->getVisitorId()
+            ));
         }
 
         if (!isset($data[self::CAMPAIGNS])) {
-            return  true;
+            return true;
         }
 
         $campaigns = $data[self::CAMPAIGNS];
         if (!is_array($campaigns)) {
-             return  false;
+             return false;
         }
 
         foreach ($campaigns as $item) {
-            if (!isset($item[self::CAMPAIGN_ID], $item[self::CAMPAIGN_TYPE], $item[self::VARIATION_GROUP_ID], $item[self::VARIATION_ID])) {
-                return  false;
+            if (!isset(
+                $item[self::CAMPAIGN_ID],
+                $item[self::CAMPAIGN_TYPE],
+                $item[self::VARIATION_GROUP_ID],
+                $item[self::VARIATION_ID]
+            )) {
+                return false;
             }
         }
 
         return true;
-    }
+    }//end checkLookupVisitorDataV1()
+
 
     /**
-     * @param array $item
-     * @return bool
+     * @param  array $item
+     * @return boolean
      * @throws Exception
      */
     private function checkLookupVisitorData(array $item)
     {
         if (isset($item[self::VERSION]) && $item[self::VERSION] == 1) {
-            return  $this->checkLookupVisitorDataV1($item);
+            return $this->checkLookupVisitorDataV1($item);
         }
+
         return false;
-    }
+    }//end checkLookupVisitorData()
+
 
     /**
      * @return void
@@ -159,6 +188,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             if (!$visitorCacheInstance) {
                 return;
             }
+
             $visitorCache = $visitorCacheInstance->lookupVisitor($this->visitor->getVisitorId());
 
             if (!is_array($visitorCache)) {
@@ -166,13 +196,15 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             }
 
             if (!$this->checkLookupVisitorData($visitorCache)) {
-                throw  new Exception(self::LOOKUP_VISITOR_JSON_OBJECT_ERROR);
+                throw new Exception(self::LOOKUP_VISITOR_JSON_OBJECT_ERROR);
             }
+
             $this->getVisitor()->visitorCache = $visitorCache;
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
-    }
+    }//end lookupVisitor()
+
 
     /**
      * @return void
@@ -185,41 +217,50 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
                 return;
             }
 
-            $visitor = $this->getVisitor();
+            $visitor            = $this->getVisitor();
             $assignmentsHistory = [];
-            $campaigns = [];
+            $campaigns          = [];
 
             foreach ($visitor->campaigns as $campaign) {
-                $variation = $campaign[FlagshipField::FIELD_VARIATION];
+                $variation     = $campaign[FlagshipField::FIELD_VARIATION];
                 $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
-                $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
+                $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] =
+                    $variation[FlagshipField::FIELD_ID];
 
                 $campaigns[] = [
-                    FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_SLUG => isset($campaign[FlagshipField::FIELD_SLUG]) ? $campaign[FlagshipField::FIELD_SLUG] : null,
+                    FlagshipField::FIELD_CAMPAIGN_ID        => $campaign[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_SLUG               => isset($campaign[FlagshipField::FIELD_SLUG]) ?
+                        $campaign[FlagshipField::FIELD_SLUG] : null,
                     FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                    FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
-                    FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                    self::ACTIVATED => false,
-                    self::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+                    FlagshipField::FIELD_VARIATION_ID       => $variation[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_IS_REFERENCE       => $variation[FlagshipField::FIELD_REFERENCE],
+                    FlagshipField::FIELD_CAMPAIGN_TYPE      => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                    self::ACTIVATED                         => false,
+                    self::FLAGS                             => $modifications[FlagshipField::FIELD_VALUE],
                 ];
             }
 
-            if (isset($visitor->visitorCache, $visitor->visitorCache[self::DATA], $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY])) {
-                $assignmentsHistory = array_merge($visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY], $assignmentsHistory);
+            if (isset(
+                $visitor->visitorCache,
+                $visitor->visitorCache[self::DATA],
+                $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY]
+            )) {
+                $assignmentsHistory = array_merge(
+                    $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY],
+                    $assignmentsHistory
+                );
             }
 
             $data = [
                 self::VERSION => self::CURRENT_VERSION,
-                self::DATA => [
-                    self::VISITOR_ID => $visitor->getVisitorId(),
-                    self::ANONYMOUS_ID => $visitor->getAnonymousId(),
-                    self::CONSENT => $visitor->hasConsented(),
-                    self::CONTEXT => $visitor->getContext(),
-                    self::CAMPAIGNS => $campaigns,
-                    self::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
-                ]
+                self::DATA    => [
+                    self::VISITOR_ID          => $visitor->getVisitorId(),
+                    self::ANONYMOUS_ID        => $visitor->getAnonymousId(),
+                    self::CONSENT             => $visitor->hasConsented(),
+                    self::CONTEXT             => $visitor->getContext(),
+                    self::CAMPAIGNS           => $campaigns,
+                    self::ASSIGNMENTS_HISTORY => $assignmentsHistory,
+                ],
             ];
 
             $visitorCacheInstance->cacheVisitor($visitor->getVisitorId(), $data);
@@ -227,8 +268,9 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             $visitor->visitorCache = $data;
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
-        }
-    }
+        }//end try
+    }//end cacheVisitor()
+
 
     /**
      * @return void
@@ -245,5 +287,5 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
-    }
-}
+    }//end flushVisitor()
+}//end class

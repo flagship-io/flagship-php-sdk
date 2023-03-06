@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 
 class DecisionModeTest extends TestCase
 {
-
     public function testIsDecisionMode()
     {
         $this->assertTrue(DecisionMode::isDecisionMode(DecisionMode::DECISION_API));

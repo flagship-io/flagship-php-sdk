@@ -5,11 +5,14 @@ namespace Flagship\Api;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
+use Flagship\Model\ExposedFlag;
+use Flagship\Model\ExposedVisitor;
 use Flagship\Traits\Guid;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClientInterface;
@@ -210,6 +213,32 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     }
 
     /**
+     * @param Activate $activate
+     * @return void
+     */
+    protected function onUserExposed(Activate $activate)
+    {
+        $onUserExposed = $this->config->getOnVisitorExposed();
+        if (!$onUserExposed) {
+            return;
+        }
+
+        $exposedFlag = new ExposedFlag(
+            $activate->getFlagKey(),
+            $activate->getFlagValue(),
+            $activate->getFlagDefaultValue(),
+            $activate->getFlagMetadata()
+        );
+        $exposedUser = new ExposedVisitor($activate->getVisitorId(), $activate->getAnonymousId(), $activate->getVisitorContext());
+
+        try {
+            call_user_func($onUserExposed, $exposedUser, $exposedFlag);
+        } catch (\Exception $exception) {
+            $this->logErrorSprintf($this->config, __FUNCTION__, $exception->getMessage());
+        }
+    }
+
+    /**
      * @return void
      */
     protected function sendActivateHit()
@@ -239,13 +268,14 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
             $hitKeysToRemove = [];
             foreach ($this->activatePoolQueue as $item) {
-                if ($item->getIsFromCache()){
+                if ($item->getIsFromCache()) {
                     $hitKeysToRemove[] = $item->getKey();
                 }
+                $this->onUserExposed($item);
             }
 
             $this->activatePoolQueue = [];
-            if (count($hitKeysToRemove)>0){
+            if (count($hitKeysToRemove) > 0) {
                 $this->flushSentActivateHit($hitKeysToRemove);
             }
         } catch (\Exception $exception) {
@@ -276,7 +306,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 continue;
             }
             $hitKeys[] = $item->getKey();
-            if ($item->getIsFromCache()){
+            if ($item->getIsFromCache()) {
                 $keysToFlush[] = $item->getKey();
             }
         }
@@ -288,7 +318,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
             $activateKeys[] = $item->getKey();
 
-            if ($item->getIsFromCache()){
+            if ($item->getIsFromCache()) {
                 $keysToFlush[] = $item->getKey();
             }
         }
@@ -319,7 +349,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         foreach ($this->hitsPoolQueue as $item) {
             $now = $this->getNow();
 
-            if ($item->getIsFromCache()){
+            if ($item->getIsFromCache()) {
                 $hitKeysToRemove[] = $item->getKey();
             }
             if (($now - $item->getCreatedAt()) >= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS) {
@@ -357,7 +387,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             );
 
             $this->hitsPoolQueue = [];
-            if (count($hitKeysToRemove)>0){
+            if (count($hitKeysToRemove) > 0) {
                 $this->flushBatchedHits($hitKeysToRemove);
             }
         } catch (\Exception $exception) {

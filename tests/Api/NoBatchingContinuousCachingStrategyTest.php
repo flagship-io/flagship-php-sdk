@@ -229,16 +229,16 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
         $strategy->hydrateHitsPoolQueue($key1, $page);
         $strategy->hydrateHitsPoolQueue($key2, $page2);
 
-        $contentPage3= [
+        $contentPage3 = [
             'pageUrl' => 'page1',
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'PAGEVIEW',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $page3Key,
             'createdAt' => 1676542078047,
         ];

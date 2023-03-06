@@ -10,6 +10,7 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
+use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\Event;
@@ -17,6 +18,8 @@ use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
 use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
+use Flagship\Model\ExposedFlag;
+use Flagship\Model\ExposedVisitor;
 use Flagship\Traits\LogTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -104,16 +107,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy->addHit($page2);
 
-        $contentPage3= [
+        $contentPage3 = [
             'pageUrl' => 'page1',
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'PAGEVIEW',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $page3Key,
             'createdAt' => 1676542078047,
         ];
@@ -139,16 +142,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'ACTIVATE',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $activate3Key,
             'createdAt' => 1676542078044,
         ];
 
-        $activate3= HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
+        $activate3 = HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
         $activate3->setConfig($config);
 
         $strategy->hydrateActivatePoolQueue($activate3Key, $activate3);
@@ -240,16 +243,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'ACTIVATE',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $activate3Key,
             'createdAt' => 1676542078044,
         ];
 
-        $activate3= HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
+        $activate3 = HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
         $activate3->setConfig($config);
 
         $strategy->hydrateActivatePoolQueue($activate3Key, $activate3);
@@ -291,6 +294,216 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $this->assertCount(0, $strategy->getActivatePoolQueue());
     }
 
+    public function testOnUserExposed()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+        $context = ["key" => "value"];
+
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
+
+        $variationGroupId1 = "variationGroupId";
+        $variationId1 = "variationId";
+        $campaignId1 = "campaignId";
+        $flagKey1 = "key1";
+        $flagValue1 = "value1";
+        $flagDefaultValue1 = "defaultValue1";
+
+        $activate = new Activate($variationGroupId1, $variationId1);
+
+        $flagMetadata1 = new FlagMetadata($campaignId1, $variationGroupId1, $variationId1, false, "ab", null);
+
+        $activate->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setVisitorContext($context)
+            ->setFlagKey($flagKey1)
+            ->setFlagValue($flagValue1)
+            ->setFlagDefaultValue($flagDefaultValue1)
+            ->setFlagMetadata($flagMetadata1);
+
+        $variationGroupId2 = "variationGroupId2";
+        $variationId2 = "variationId2";
+        $campaignId2 = "campaignId2";
+        $flagKey2 = "key2";
+        $flagValue2 = "value2";
+        $flagDefaultValue2 = "defaultValue2";
+
+        $flagMetadata2 = new FlagMetadata($campaignId2, $variationGroupId2, $variationId2, false, "ab", null);
+
+        $activate2 = new Activate($variationGroupId2, $variationId2);
+        $activate2->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setVisitorContext($context)
+            ->setFlagKey($flagKey2)
+            ->setFlagValue($flagValue2)
+            ->setFlagDefaultValue($flagDefaultValue2)
+            ->setFlagMetadata($flagMetadata2);
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["flushHits","logDebugSprintf","cacheHit", "logErrorSprintf"]
+        );
+
+        $strategy->activateFlag($activate);
+        $strategy->activateFlag($activate2);
+
+        $activateBatch = new ActivateBatch($config, $strategy->getActivatePoolQueue());
+
+        $requestBody = $activateBatch->toApiKeys();
+
+        $httpClientMock->expects($this->once())->method("post")
+            ->with($url, [], $requestBody);
+
+        $check1 = false;
+        $check2 = false;
+        $count = 0;
+
+        $config->setOnVisitorExposed(function (
+            ExposedVisitor $exposedUser,
+            ExposedFlag    $exposedFlag
+        )
+ use (
+            $visitorId,
+            $context,
+            &$check1,
+            &$check2,
+            &$count,
+            $flagKey1,
+            $flagValue1,
+            $flagMetadata1,
+            $flagDefaultValue1,
+            $flagKey2,
+            $flagValue2,
+            $flagMetadata2,
+            $flagDefaultValue2
+        ) {
+            $count++;
+            if ($count === 1) {
+                $check1 = $exposedUser->getId() === $visitorId &&
+                    $exposedUser->getAnonymousId() === null &&
+                    $exposedUser->getContext() === $context &&
+                $exposedFlag->getValue() === $flagValue1 &&
+                $exposedFlag->getKey() === $flagKey1 &&
+                $exposedFlag->getMetadata() === $flagMetadata1 &&
+                $exposedFlag->getDefaultValue() === $flagDefaultValue1;
+            } else {
+                $check2 = $exposedUser->getId() === $visitorId &&
+                    $exposedUser->getAnonymousId() === null &&
+                    $exposedUser->getContext() === $context &&
+                    $exposedFlag->getValue() === $flagValue2 &&
+                    $exposedFlag->getKey() === $flagKey2 &&
+                    $exposedFlag->getMetadata() === $flagMetadata2 &&
+                $exposedFlag->getDefaultValue() === $flagDefaultValue2;
+            }
+        });
+
+
+        $this->assertCount(2, $strategy->getActivatePoolQueue());
+
+
+        $strategy->sendBatch();
+
+        $this->assertSame(2, $count);
+        $this->assertCount(0, $strategy->getActivatePoolQueue());
+        $this->assertTrue($check1);
+        $this->assertTrue($check2);
+    }
+
+    public function testOnUserExposedError()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+        $context = ["key" => "value"];
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
+
+        $variationGroupId1 = "variationGroupId";
+        $variationId1 = "variationId";
+        $campaignId1 = "campaignId";
+        $flagKey1 = "key1";
+        $flagValue1 = "value1";
+
+        $activate = new Activate($variationGroupId1, $variationId1);
+
+        $flagMetadata1 = new FlagMetadata($campaignId1, $variationGroupId1, $variationId1, false, "ab", null);
+
+        $activate->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setVisitorContext($context)
+            ->setFlagKey($flagKey1)
+            ->setFlagValue($flagValue1)
+            ->setFlagMetadata($flagMetadata1);
+
+        $variationGroupId2 = "variationGroupId2";
+        $variationId2 = "variationId2";
+        $campaignId2 = "campaignId2";
+        $flagKey2 = "key2";
+        $flagValue2 = "value2";
+
+        $flagMetadata2 = new FlagMetadata($campaignId2, $variationGroupId2, $variationId2, false, "ab", null);
+
+        $activate2 = new Activate($variationGroupId2, $variationId2);
+        $activate2->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setVisitorContext($context)
+            ->setFlagKey($flagKey2)
+            ->setFlagValue($flagValue2)
+            ->setFlagMetadata($flagMetadata2);
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["flushHits","logDebugSprintf","cacheHit", "logErrorSprintf"]
+        );
+
+        $strategy->activateFlag($activate);
+        $strategy->activateFlag($activate2);
+
+        $activateBatch = new ActivateBatch($config, $strategy->getActivatePoolQueue());
+
+        $requestBody = $activateBatch->toApiKeys();
+
+        $httpClientMock->expects($this->once())->method("post")
+            ->with($url, [], $requestBody);
+
+        $check1 = false;
+        $check2 = false;
+        $count = 0;
+
+
+        $config->setOnVisitorExposed(function (ExposedVisitor $exposedUser, ExposedFlag $exposedFlag)
+ use (&$count) {
+            $exceptionMessage = "Message error";
+            $count++;
+            throw new Exception($exceptionMessage);
+        });
+
+        $strategy->expects($this->exactly(2))
+            ->method("logErrorSprintf");
+
+        $this->assertCount(2, $strategy->getActivatePoolQueue());
+
+        $strategy->sendBatch();
+
+        $this->assertSame(2, $count);
+        $this->assertCount(0, $strategy->getActivatePoolQueue());
+
+        $strategy->activateFlag($activate2);
+    }
     public function testSendActivateHitFailed()
     {
         $config = new DecisionApiConfig();
@@ -391,16 +604,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $strategy->addHit($screen);
 
         $page3Key = "$visitorId:b1b48180-0d72-410d-8e9b-44ee90dfafc6";
-        $contentPage3= [
+        $contentPage3 = [
             'pageUrl' => 'page1',
             'visitorId' => $visitorId,
             'ds' => 'APP',
             'type' => 'PAGEVIEW',
-            'anonymousId' => NULL,
-            'userIP' => NULL,
-            'pageResolution' => NULL,
-            'locale' => NULL,
-            'sessionNumber' => NULL,
+            'anonymousId' => null,
+            'userIP' => null,
+            'pageResolution' => null,
+            'locale' => null,
+            'sessionNumber' => null,
             'key' => $page3Key,
             'createdAt' => 1676542078047,
         ];

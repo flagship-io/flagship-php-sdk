@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class FlagTest extends TestCase
 {
-
     public function testFlag()
     {
         $key = "key";
@@ -81,6 +80,9 @@ class FlagTest extends TestCase
         $metadataValue = $flag->getMetadata();
 
         $this->assertSame($metadataValue, $metadata);
+
+        $this->assertSame($key, $flag->getKey());
+        $this->assertSame($defaultValue, $flag->getDefaultValue());
     }
 
     public function testFlagNull()

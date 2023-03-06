@@ -66,6 +66,12 @@ abstract class FlagshipConfig implements JsonSerializable
      * @var int
      */
     protected $cacheStrategy;
+
+    /**
+     * @var callable
+     */
+    protected $onVisitorExposed;
+
     /**
      * Create a new FlagshipConfig configuration.
      *
@@ -294,6 +300,36 @@ abstract class FlagshipConfig implements JsonSerializable
         $this->hitCacheImplementation = $hitCacheImplementation;
         return $this;
     }
+
+    /**
+     * @return callable
+     */
+    public function getOnVisitorExposed()
+    {
+        return $this->onVisitorExposed;
+    }
+
+    /**
+     * @param callable $onVisitorExposed
+     * @return FlagshipConfig
+     */
+    public function setOnVisitorExposed($onVisitorExposed)
+    {
+        if (is_callable($onVisitorExposed)) {
+            $this->onVisitorExposed = $onVisitorExposed;
+        } else {
+            $this->logError(
+                $this,
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($onVisitorExposed)),
+                [
+                    FlagshipConstant::TAG => __FUNCTION__
+                ]
+            );
+        }
+
+        return $this;
+    }
+
 
 
     /**

@@ -65,7 +65,7 @@ class VisitorBuilder
     /**
      * Specify if the visitor is authenticated or anonymous.
      *
-     * @param bool $isAuthenticated : true for an authenticated visitor, false for an anonymous visitor.
+     * @param bool $isAuthenticated true for an authenticated visitor, false for an anonymous visitor.
      * @return VisitorBuilder
      */
     public function isAuthenticated($isAuthenticated)
@@ -79,7 +79,7 @@ class VisitorBuilder
      * When false some features will be deactivated,
      * cache will be deactivated and cleared.
      *
-     * @param bool $hasConsented : Set to true when the visitor has consented, false otherwise.
+     * @param bool $hasConsented Set to true when the visitor has consented, false otherwise.
      * @return VisitorBuilder
      */
     public function hasConsented($hasConsented)
@@ -102,7 +102,7 @@ class VisitorBuilder
 
     /**
      * Create a new visitor.
-     * @return Visitor
+     * @return VisitorInterface
      */
     public function build()
     {

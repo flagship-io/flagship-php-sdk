@@ -73,7 +73,7 @@ class VisitorDelegateTest extends TestCase
 
         $trackerManager->expects($this->exactly(2))
             ->method('addHit')
-            ->withConsecutive([$consentHit],[$consentHit2]);
+            ->withConsecutive([$consentHit], [$consentHit2]);
 
         $visitorDelegate = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext);
 

@@ -11,7 +11,6 @@ use Flagship\Hit\HitAbstract;
  */
 class TrackingManager extends TrackingManagerAbstract
 {
-
     /**
      * @inheritDoc
      */

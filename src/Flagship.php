@@ -297,9 +297,9 @@ class Flagship
      * or null if the SDK hasn't started successfully.
      *
      * @param string $visitorId : Unique visitor identifier.
-     * @return VisitorBuilder|null
+     * @return VisitorBuilder
      */
-    public static function newVisitor($visitorId)
+    public static function newVisitor($visitorId = null)
     {
         $instance = self::getInstance();
         return VisitorBuilder::builder($visitorId, $instance->getConfigManager(), $instance->getContainer());

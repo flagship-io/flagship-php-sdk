@@ -19,7 +19,7 @@ use Flagship\Hit\HitBatch;
 use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Model\ExposedFlag;
-use Flagship\Model\ExposedUser;
+use Flagship\Model\ExposedVisitor;
 use Flagship\Traits\LogTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -367,8 +367,8 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $count = 0;
 
         $config->setOnVisitorExposed(function (
-            ExposedUser $exposedUser,
-            ExposedFlag $exposedFlag
+            ExposedVisitor $exposedUser,
+            ExposedFlag    $exposedFlag
         )
  use (
             $visitorId,
@@ -387,7 +387,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         ) {
             $count++;
             if ($count === 1) {
-                $check1 = $exposedUser->getVisitorId() === $visitorId &&
+                $check1 = $exposedUser->getId() === $visitorId &&
                     $exposedUser->getAnonymousId() === null &&
                     $exposedUser->getContext() === $context &&
                 $exposedFlag->getValue() === $flagValue1 &&
@@ -395,7 +395,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
                 $exposedFlag->getMetadata() === $flagMetadata1 &&
                 $exposedFlag->getDefaultValue() === $flagDefaultValue1;
             } else {
-                $check2 = $exposedUser->getVisitorId() === $visitorId &&
+                $check2 = $exposedUser->getId() === $visitorId &&
                     $exposedUser->getAnonymousId() === null &&
                     $exposedUser->getContext() === $context &&
                     $exposedFlag->getValue() === $flagValue2 &&
@@ -485,7 +485,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $count = 0;
 
 
-        $config->setOnVisitorExposed(function (ExposedUser $exposedUser, ExposedFlag $exposedFlag)
+        $config->setOnVisitorExposed(function (ExposedVisitor $exposedUser, ExposedFlag $exposedFlag)
  use (&$count) {
             $exceptionMessage = "Message error";
             $count++;

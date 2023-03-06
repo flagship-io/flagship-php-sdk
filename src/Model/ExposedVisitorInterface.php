@@ -2,22 +2,22 @@
 
 namespace Flagship\Model;
 
-/**
- *
- */
-interface ExposedUserInterface
+interface ExposedVisitorInterface
 {
     /**
+     * Visitor id
      * @return string
      */
-    public function getVisitorId();
+    public function getId();
 
     /**
+     * visitor anonymous id
      * @return string
      */
     public function getAnonymousId();
 
     /**
+     * visitor context
      * @return array
      */
     public function getContext();

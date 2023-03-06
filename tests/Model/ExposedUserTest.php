@@ -11,9 +11,9 @@ class ExposedUserTest extends TestCase
         $visitorId = 'visitorId';
         $visitorContext = ["key" => "value"];
         $anonymousId = "anonymousId";
-        $exposedUser = new ExposedUser($visitorId, $anonymousId, $visitorContext);
+        $exposedUser = new ExposedVisitor($visitorId, $anonymousId, $visitorContext);
 
-        $this->assertSame($visitorId, $exposedUser->getVisitorId());
+        $this->assertSame($visitorId, $exposedUser->getId());
         $this->assertSame($anonymousId, $exposedUser->getAnonymousId());
         $this->assertSame($visitorContext, $exposedUser->getContext());
     }

@@ -12,7 +12,7 @@ use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
 use Flagship\Model\ExposedFlag;
-use Flagship\Model\ExposedUser;
+use Flagship\Model\ExposedVisitor;
 use Flagship\Traits\Guid;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClientInterface;
@@ -229,7 +229,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $activate->getFlagDefaultValue(),
             $activate->getFlagMetadata()
         );
-        $exposedUser = new ExposedUser($activate->getVisitorId(), $activate->getAnonymousId(), $activate->getVisitorContext());
+        $exposedUser = new ExposedVisitor($activate->getVisitorId(), $activate->getAnonymousId(), $activate->getVisitorContext());
 
         try {
             call_user_func($onUserExposed, $exposedUser, $exposedFlag);

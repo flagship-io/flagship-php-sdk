@@ -5,12 +5,12 @@ namespace Flagship\Model;
 /**
  *
  */
-class ExposedUser implements ExposedUserInterface
+class ExposedVisitor implements ExposedVisitorInterface
 {
     /**
      * @var string
      */
-    private $visitorId;
+    private $id;
 
     /**
      * @var string
@@ -23,13 +23,13 @@ class ExposedUser implements ExposedUserInterface
     private $context;
 
     /**
-     * @param string $visitorId
+     * @param string $id
      * @param string $anonymousId
      * @param array $context
      */
-    public function __construct($visitorId, $anonymousId, array $context)
+    public function __construct($id, $anonymousId, array $context)
     {
-        $this->visitorId = $visitorId;
+        $this->id = $id;
         $this->anonymousId = $anonymousId;
         $this->context = $context;
     }
@@ -37,9 +37,9 @@ class ExposedUser implements ExposedUserInterface
     /**
      * @return string
      */
-    public function getVisitorId()
+    public function getId()
     {
-        return $this->visitorId;
+        return $this->id;
     }
 
     /**

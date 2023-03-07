@@ -1238,12 +1238,12 @@ class DefaultStrategyTest extends TestCase
             ->method('activateFlag')
             ->with($activate);
 
-        $defaultStrategy->userExposed($key, $defaultValue, $flagDTO);
+        $defaultStrategy->visitorExposed($key, $defaultValue, $flagDTO);
 
         //Test defaultValue null
 
         $activate->setFlagDefaultValue(null);
-        $defaultStrategy->userExposed($key, null, $flagDTO);
+        $defaultStrategy->visitorExposed($key, null, $flagDTO);
 
         $functionName = FlagshipConstant::FLAG_USER_EXPOSED;
 
@@ -1264,10 +1264,10 @@ class DefaultStrategyTest extends TestCase
             );
 
         $activate->setFlagDefaultValue($defaultValue);
-        $defaultStrategy->userExposed($key, $defaultValue, null);
+        $defaultStrategy->visitorExposed($key, $defaultValue, null);
 
         $activate->setFlagDefaultValue(false);
-        $defaultStrategy->userExposed($key, false, $flagDTO);
+        $defaultStrategy->visitorExposed($key, false, $flagDTO);
     }
 
     public function testGetFlagValue()

@@ -172,9 +172,9 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function userExposed($key, $defaultValue, FlagDTO $flag = null)
+    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null)
     {
-        $this->getStrategy()->userExposed($key, $defaultValue, $flag);
+        $this->getStrategy()->visitorExposed($key, $defaultValue, $flag);
     }//end userExposed()
 
 

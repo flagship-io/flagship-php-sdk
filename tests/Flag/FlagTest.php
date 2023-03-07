@@ -63,7 +63,7 @@ class FlagTest extends TestCase
 
         $this->assertTrue($flag->exists());
 
-        $visitorDelegateMock->expects($this->once())->method('userExposed')->with(
+        $visitorDelegateMock->expects($this->once())->method('visitorExposed')->with(
             $key,
             $defaultValue,
             $flagDTO

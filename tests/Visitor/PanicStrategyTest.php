@@ -95,7 +95,7 @@ class PanicStrategyTest extends TestCase
                 $logMessageBuild('sendHit'),
                 $logMessageBuildConsent('setConsent'),
                 $logMessageBuild('getFlagValue'),
-                $logMessageBuild('userExposed'),
+                $logMessageBuild('visitorExposed'),
                 $logMessageBuild('getFlagMetadata')
             );
 
@@ -140,7 +140,7 @@ class PanicStrategyTest extends TestCase
         $this->assertEquals(true, $value);
 
         //Test userExposed
-        $panicStrategy->userExposed('key', true, null);
+        $panicStrategy->visitorExposed('key', true, null);
 
         //Test getFlagMetadata
         $panicStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);

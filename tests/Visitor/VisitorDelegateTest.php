@@ -198,7 +198,7 @@ class VisitorDelegateTest extends TestCase
                 'setContext', 'updateContext', 'updateContextCollection', "cacheVisitor",
                 'clearContext', 'authenticate', 'unauthenticate', 'getModification',
                 'getModificationInfo', 'synchronizeModifications', 'setConsent',
-                'activateModification', 'sendHit', 'fetchFlags','userExposed', 'getFlagValue', 'getFlagMetadata','lookupVisitor'
+                'activateModification', 'sendHit', 'fetchFlags', 'visitorExposed', 'getFlagValue', 'getFlagMetadata','lookupVisitor'
             ])->disableOriginalConstructor()
             ->getMock();
 
@@ -300,9 +300,9 @@ class VisitorDelegateTest extends TestCase
         //Test userExposed
         $key = 'key';
         $flagDTO = new FlagDTO();
-        $defaultStrategy->expects($this->once())->method('userExposed')
+        $defaultStrategy->expects($this->once())->method('visitorExposed')
             ->with($key, true, $flagDTO);
-        $visitor->userExposed($key, true, $flagDTO);
+        $visitor->visitorExposed($key, true, $flagDTO);
 
         //Test getFlagValue
         $key = 'key';

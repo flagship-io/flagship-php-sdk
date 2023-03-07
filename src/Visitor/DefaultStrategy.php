@@ -510,7 +510,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * @param  FlagDTO|null $flag
      * @return void
      */
-    public function userExposed($key, $defaultValue, FlagDTO $flag = null)
+    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null)
     {
         if (!$flag) {
             $this->logInfoSprintf(
@@ -569,7 +569,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         if (gettype($flag->getValue()) === self::TYPE_NULL) {
             if ($userExposed) {
-                $this->userExposed($key, $defaultValue, $flag);
+                $this->visitorExposed($key, $defaultValue, $flag);
             }
 
             return $defaultValue;
@@ -590,7 +590,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         if ($userExposed) {
-            $this->userExposed($key, $defaultValue, $flag);
+            $this->visitorExposed($key, $defaultValue, $flag);
         }
 
         $this->logDebugSprintf(

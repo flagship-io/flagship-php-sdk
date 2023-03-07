@@ -60,7 +60,7 @@ class NotReadyStrategyTest extends TestCase
                 $logMessageBuild('sendHit'),
                 $logMessageBuild('fetchFlags'),
                 $logMessageBuild('getFlagValue'),
-                $logMessageBuild('userExposed'),
+                $logMessageBuild('visitorExposed'),
                 $logMessageBuild('getFlagMetadata')
             );
 
@@ -125,7 +125,7 @@ class NotReadyStrategyTest extends TestCase
         $this->assertEquals(true, $value);
 
         //Test userExposed
-        $notReadyStrategy->userExposed('key', true, null);
+        $notReadyStrategy->visitorExposed('key', true, null);
 
         //Test getFlagMetadata
         $notReadyStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);

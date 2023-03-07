@@ -137,7 +137,7 @@ class Flag implements FlagInterface
     public function visitorExposed()
     {
         $flagDTO = $this->findFlagDTO($this->key);
-        $this->visitorDelegate->userExposed(
+        $this->visitorDelegate->visitorExposed(
             $this->key,
             $this->defaultValue,
             $flagDTO

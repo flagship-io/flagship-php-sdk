@@ -135,8 +135,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         $this->addHitInPoolQueue($hit);
 
-        if (
-            ($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
+        if (($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
             $hit->getLabel() === FlagshipConstant::SDK_LANGUAGE . ":false"
         ) {
             $this->notConsent($hit->getVisitorId());
@@ -216,7 +215,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param Activate $activate
      * @return void
      */
-    protected function onUserExposed(Activate $activate)
+    protected function onVisitorExposed(Activate $activate)
     {
         $onUserExposed = $this->config->getOnVisitorExposed();
         if (!$onUserExposed) {
@@ -229,7 +228,11 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $activate->getFlagDefaultValue(),
             $activate->getFlagMetadata()
         );
-        $exposedUser = new ExposedVisitor($activate->getVisitorId(), $activate->getAnonymousId(), $activate->getVisitorContext());
+        $exposedUser = new ExposedVisitor(
+            $activate->getVisitorId(),
+            $activate->getAnonymousId(),
+            $activate->getVisitorContext()
+        );
 
         try {
             call_user_func($onUserExposed, $exposedUser, $exposedFlag);
@@ -271,7 +274,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 if ($item->getIsFromCache()) {
                     $hitKeysToRemove[] = $item->getKey();
                 }
-                $this->onUserExposed($item);
+                $this->onVisitorExposed($item);
             }
 
             $this->activatePoolQueue = [];
@@ -299,8 +302,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $hitKeys = [];
         $keysToFlush = [];
         foreach ($this->hitsPoolQueue as $item) {
-            if (
-                ($item instanceof Event && $item->getAction() === FlagshipConstant::FS_CONSENT) ||
+            if (($item instanceof Event && $item->getAction() === FlagshipConstant::FS_CONSENT) ||
                 ($visitorId !== $item->getVisitorId() && $visitorId !== $item->getAnonymousId())
             ) {
                 continue;

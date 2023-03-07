@@ -82,7 +82,7 @@ class NoConsentStrategyTest extends TestCase
                 $logMessageBuild('activateModification'),
                 $logMessageBuild('activateModification'),
                 $logMessageBuild('sendHit'),
-                $logMessageBuild('userExposed')
+                $logMessageBuild('visitorExposed')
             );
 
         $noConsentStrategy = new NoConsentStrategy($visitor);
@@ -131,7 +131,7 @@ class NoConsentStrategyTest extends TestCase
         $noConsentStrategy->sendHit(new Page('http://localhost'));
 
         //Test userExposed
-        $noConsentStrategy->userExposed('key', true, null);
+        $noConsentStrategy->visitorExposed('key', true, null);
 
         $campaignsData = $this->campaigns();
         $assignmentsHistory = [];

@@ -2,10 +2,9 @@
 
 namespace Flagship\Flag;
 
-use Flagship\Enum\FlagshipConstant;
 use JsonSerializable;
 
-class FlagMetadata implements JsonSerializable
+class FlagMetadata implements JsonSerializable, FlagMetadataInterface
 {
     /**
      * @var string
@@ -107,6 +106,7 @@ class FlagMetadata implements JsonSerializable
 
     /**
      * @inheritDoc
+     * @return mixed
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()

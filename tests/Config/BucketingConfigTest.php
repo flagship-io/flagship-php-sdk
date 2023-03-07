@@ -4,12 +4,10 @@ namespace Flagship\Config;
 
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
-use Flagship\Utils\FlagshipLogManager;
 use PHPUnit\Framework\TestCase;
 
 class BucketingConfigTest extends TestCase
 {
-
     public function testBucketingUrl()
     {
         $bucketingUrl = "http:127.0.0.1:3000";
@@ -42,7 +40,7 @@ class BucketingConfigTest extends TestCase
             json_encode($data),
             json_encode($config)
         );
-        $logManager = new FlagshipLogManager();
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
         $config->setLogManager($logManager);
         $this->assertSame($logManager, $config->getLogManager());
     }

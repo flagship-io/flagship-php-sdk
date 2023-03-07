@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class VisitorTest extends TestCase
 {
-
     /**
      * @return Visitor
      */
@@ -27,7 +26,7 @@ class VisitorTest extends TestCase
         ];
 
         $decisionManagerMock = $this->getMockBuilder('Flagship\Api\TrackingManager')
-            ->setMethods(['sendConsentHit'])
+            ->setMethods(['addHit'])
             ->disableOriginalConstructor()->getMock();
 
 

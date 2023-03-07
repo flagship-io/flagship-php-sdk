@@ -9,8 +9,14 @@ use Flagship\Model\HttpResponse;
 
 class HttpClient implements HttpClientInterface
 {
+    /**
+     * @var mixed
+     */
     private $curl;
 
+    /**
+     * @var array
+     */
     private $options = [];
 
     /**
@@ -30,6 +36,9 @@ class HttpClient implements HttpClientInterface
         }
     }
 
+    /**
+     * @return void
+     */
     private function curlInit()
     {
         $this->curl = curl_init();
@@ -59,7 +68,7 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getOptions()
     {
@@ -200,7 +209,7 @@ class HttpClient implements HttpClientInterface
      * @access public
      * @param  $opt
      *
-     * @return mixed
+     * @return int|string
      */
     private function getInfo($opt = null)
     {

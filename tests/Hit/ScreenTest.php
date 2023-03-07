@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class ScreenTest extends TestCase
 {
-
     public function testConstruct()
     {
         $screenName = 'screenName';
@@ -35,7 +34,7 @@ class ScreenTest extends TestCase
             FlagshipConstant::DL_API_ITEM => $screenName
         ];
 
-        $this->assertSame($screenArray, $screen->toArray());
+        $this->assertSame($screenArray, $screen->toApiKeys());
 
         $screen->setScreenName([]);
         $this->assertSame($screenName, $screen->getScreenName());

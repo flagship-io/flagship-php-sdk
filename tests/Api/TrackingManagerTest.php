@@ -1,345 +1,255 @@
 <?php
 
 namespace Flagship\Api;
-require_once __dir__ . "/../Assets/ShellExec.php";
 
-use Exception;
-use Flagship\Assets\ShellExec;
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\HitType;
+use Flagship\Enum\HitCacheFields;
+use Flagship\Hit\Activate;
+use Flagship\Hit\Event;
+use Flagship\Hit\Item;
 use Flagship\Hit\Page;
-use Flagship\Model\HttpResponse;
-use Flagship\Model\FlagDTO;
+use Flagship\Hit\Screen;
+use Flagship\Hit\Segment;
+use Flagship\Hit\Transaction;
 use Flagship\Traits\BuildApiTrait;
-use Flagship\Utils\ConfigManager;
-use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
-use Flagship\Visitor;
+use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
 class TrackingManagerTest extends TestCase
 {
     use BuildApiTrait;
+
     const PSR_LOG_INTERFACE = 'Psr\Log\LoggerInterface';
-
-    protected function buildBackRequest($url, $body, $headers, $timeout, $logFile)
-    {
-        $bodyArg = escapeshellarg(json_encode($body));
-        $headersArg = escapeshellarg(json_encode($headers));
-        $timeoutArg = $timeout;
-        $args = " --url=$url";
-        $args .= " --body=$bodyArg";
-        $args .= " --header=$headersArg";
-        $args .= " --timeout=$timeoutArg";
-
-
-
-        $reflector = new \ReflectionClass("Flagship\Api\TrackingManager");
-        $directory = dirname($reflector->getFileName());
-        return "nohup php " . $directory . "/backgroundRequest.php $args >>" . $directory . "/$logFile 2>&1  &";
-    }
 
     public function testConstruct()
     {
+        $config = new DecisionApiConfig();
         $httpClient = new HttpClient();
-        $trackingManager = new TrackingManager($httpClient);
+        $trackingManager = new TrackingManager($config, $httpClient);
         $this->assertSame($httpClient, $trackingManager->getHttpClient());
+        $this->assertSame($config, $trackingManager->getConfig());
     }
 
-    public function testSendActive()
+    public function testInitStrategy()
     {
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
-        );
+        $config = new DecisionApiConfig();
+        $httpClient = new HttpClient();
+        $trackingManager = new TrackingManager($config, $httpClient);
+        $strategy = $trackingManager->initStrategy();
+        $this->assertInstanceOf("Flagship\Api\NoBatchingContinuousCachingStrategy", $strategy);
 
-        $trackingManager = new TrackingManager($httpClientMock);
+        $config->setCacheStrategy(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE);
+        $strategy = $trackingManager->initStrategy();
+        $this->assertInstanceOf("Flagship\Api\NoBatchingContinuousCachingStrategy", $strategy);
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
-
-        $configManager = new ConfigManager();
-        $configManager->setConfig($config)->setTrackingManager($trackingManager);
-
-        $modification = new FlagDTO();
-        $modification
-            ->setKey('background')
-            ->setValue('EE3300')
-            ->setIsReference(false)
-            ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
-            ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
-            ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
-
-        $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
-
-        $authenticatedId = "authenticatedId";
-
-        $httpClientMock->expects($this->exactly(2))->method('post')->withConsecutive(
-            [$url,
-                [],
-                [
-                    FlagshipConstant::VISITOR_ID_API_ITEM => $visitor->getVisitorId(),
-                    FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
-                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
-                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-                    FlagshipConstant::ANONYMOUS_ID => null
-                ]],
-            [$url,
-                [],
-                [
-                    FlagshipConstant::VISITOR_ID_API_ITEM => $authenticatedId,
-                    FlagshipConstant::VARIATION_ID_API_ITEM => $modification->getVariationId(),
-                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $modification->getVariationGroupId(),
-                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-                    FlagshipConstant::ANONYMOUS_ID => $visitor->getVisitorId()
-                ]]
-        )->willReturn(new HttpResponse(204, null));
-
-        $trackingManager->sendActive($visitor, $modification);
-
-        $visitor->authenticate($authenticatedId);
-
-        $trackingManager->sendActive($visitor, $modification);
+        $config->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE);
+        $strategy = $trackingManager->initStrategy();
+        $this->assertInstanceOf("Flagship\Api\BatchingOnFailedCachingStrategy", $strategy);
     }
 
-    public function testSendActiveThrowException()
+    public function testCommonMethod()
     {
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
+        $config = new DecisionApiConfig();
+        $httpClient = new HttpClient();
+
+        $BatchingCachingStrategyMock = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingCachingStrategyAbstract",
+            [$config, $httpClient],
+            "",
+            true,
+            true,
+            true,
+            ["addHit", "activateFlag", "sendBatch"]
         );
 
-        $logManagerStub = $this->getMockForAbstractClass(
-            self::PSR_LOG_INTERFACE,
-            ['error'],
-            '',
-            false
+        $trackingManager = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManager",
+            [$config, $httpClient],
+            "",
+            true,
+            true,
+            true,
+            ["getStrategy", "lookupHits"]
         );
 
-        $trackingManager = new TrackingManager($httpClientMock);
+        $trackingManager->expects($this->exactly(3))
+            ->method("getStrategy")
+            ->willReturn($BatchingCachingStrategyMock);
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
-        $config->setLogManager($logManagerStub);
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("addHit");
 
-        $configManager = new ConfigManager();
-        $configManager->setConfig($config)->setTrackingManager($trackingManager);
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("activateFlag");
 
-        $modification = new FlagDTO();
-
-        $modification
-            ->setKey('background')
-            ->setValue('EE3300')
-            ->setIsReference(false)
-            ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
-            ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
-            ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
-
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
-
-        $exception = new Exception();
-        $httpClientMock->expects($this->once())->method('post')->willThrowException($exception);
-
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $logManagerStub->expects($this->once())
-            ->method('error')
-            ->with("[$flagshipSdk] " . $exception->getMessage());
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("sendBatch");
 
 
-        $trackingManager->sendActive($visitor, $modification);
-    }
-
-    public function testSendHit()
-    {
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
-        );
-
-        $config = new DecisionApiConfig('envId', 'apiKey');
-
-        $trackingManager = new TrackingManager($httpClientMock);
-
-
-        $modification = new FlagDTO();
-        $modification
-            ->setKey('background')
-            ->setValue('EE3300')
-            ->setIsReference(false)
-            ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
-            ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
-            ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
-
-        $pageUrl = "https://localhost";
-        $page = new Page($pageUrl);
-        $page->setConfig(new DecisionApiConfig());
-
-        $url = FlagshipConstant::HIT_API_URL;
-
+        $page = new Page("http://localhost");
         $page->setConfig($config);
-        $trackingManager->sendHit($page);
+        $trackingManager->addHit($page);
 
-        $command = $this->buildBackRequest($url, $page->toArray(), $this->buildHeader($config->getApiKey()), $config->getTimeout()/1000, TrackingManager::HIT_LOG);
-        $this->assertEquals($command, ShellExec::$command);
-        ShellExec::$command = null;
+        $activate = new Activate("varGrId", "varId");
+        $activate->setConfig($config);
+        $trackingManager->activateFlag($activate);
+
+        $trackingManager->sendBatch();
     }
 
-
-    public function testSendHitThrowException()
+    public function testLookupHits()
     {
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
+        $config = new DecisionApiConfig();
+        $httpClient = new HttpClient();
+        $hitCacheImplementationMock = $this->getMockForAbstractClass("Flagship\Cache\IHitCacheImplementation");
+
+        $trackingManager = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManager",
+            [$config, $httpClient],
+            "",
+            true,
+            true,
+            true,
+            ["logDebugSprintf","logErrorSprintf"]
         );
 
-        $logManagerStub = $this->getMockForAbstractClass(
-            self::PSR_LOG_INTERFACE,
-            ['error'],
-            '',
-            false
-        );
+        $config->setHitCacheImplementation($hitCacheImplementationMock);
 
-        $trackingManager = new TrackingManager($httpClientMock);
+        $visitorId = "visitorId";
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
+        $event = new Event(EventCategory::ACTION_TRACKING, "click");
+        $event->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key1");
 
-        $config->setLogManager($logManagerStub);
+        $item = new Item("transactId", "productName", "code");
+        $item->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key2");
 
-        $modification = new FlagDTO();
+        $page = new Page("http://localhost");
+        $page->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key3");
 
-        $modification
-            ->setKey('background')
-            ->setValue('EE3300')
-            ->setIsReference(false)
-            ->setVariationGroupId('c1e3t1nvfu1ncqfcdcp0')
-            ->setCampaignId('c1e3t1nvfu1ncqfcdco0')
-            ->setVariationId('c1e3t1nvfu1ncqfcdcq0');
+        $screen = new Screen("home");
+        $screen->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key4");
 
-        $pageUrl = "Https://localhost";
-        $page = new Page($pageUrl);
-        $page->setConfig(new DecisionApiConfig());
+        $segment = new Segment(["key" => "value"]);
+        $segment->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key5");
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
+        $activate = new Activate("varGrid", "varId");
+        $activate->setVisitorId($visitorId)->setConfig($config)->setKey("$visitorId:key6");
 
-        $exceptionMessage = "message error";
+        $transaction = new Transaction("transId", "aff");
+        $transaction->setVisitorId($visitorId)->setConfig($config)->setKey("$visitorId:key7");
 
-        $logManagerStub->expects($this->once())
-            ->method('error')
-            ->with("[$flagshipSdk] " . $exceptionMessage);
+        $hits = [$event, $item, $page, $screen, $segment, $activate, $transaction];
+        $data = [];
 
-        $page->getConfig()->setLogManager($logManagerStub);
+        foreach ($hits as $hit) {
+            $hitData = [
+                HitCacheFields::VERSION => 1,
+                HitCacheFields::DATA => [
+                    HitCacheFields::VISITOR_ID => $hit->getVisitorId(),
+                    HitCacheFields::ANONYMOUS_ID => $hit->getAnonymousId(),
+                    HitCacheFields::TYPE => $hit->getType(),
+                    HitCacheFields::CONTENT => $hit->toArray(),
+                    HitCacheFields::TIME => \round(microtime(true) * 1000)
+                ]
+            ];
+            $data[$hit->getKey()] = $hitData;
+        }
 
-        ShellExec::$toThrowException = $exceptionMessage;
-        $trackingManager->sendHit($page);
-
-        ShellExec::$toThrowException = null;
-    }
-
-    public function testSendConsentHit()
-    {
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
-        );
-
-        $trackingManager = new TrackingManager($httpClientMock);
-
-        $config = new DecisionApiConfig('envId', 'apiKey');
-
-        $configManager = new ConfigManager();
-        $configManager->setConfig($config)->setTrackingManager($trackingManager);
-
-        $authenticatedId = "authenticatedId";
-        $visitorId = 'visitorId';
-
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, $visitorId, false, []);
-
-        $url = FlagshipConstant::HIT_CONSENT_URL;
-
-        $body = [
-            FlagshipConstant::T_API_ITEM => HitType::EVENT,
-            FlagshipConstant::EVENT_LABEL_API_ITEM =>
-                FlagshipConstant::SDK_LANGUAGE . ":" . ($visitor->hasConsented() ? "true" : "false"),
-            FlagshipConstant::EVENT_ACTION_API_ITEM => "fs_content",
-            FlagshipConstant::EVENT_CATEGORY_API_ITEM => EventCategory::USER_ENGAGEMENT,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-            FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::CUSTOMER_UID => null
+        $data["$visitorId:key8"] = [
+            HitCacheFields::VERSION => 1,
+            HitCacheFields::DATA => [
+                HitCacheFields::VISITOR_ID => $page->getVisitorId(),
+                HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
+                HitCacheFields::TYPE => $page->getType(),
+                HitCacheFields::CONTENT => $page->toArray(),
+                HitCacheFields::TIME => (new \DateTime("2020/01/01"))->format("Uv")
+            ]
         ];
 
-        $command = $this->buildBackRequest($url, $body, $this->buildHeader($config->getApiKey()), $config->getTimeout()/1000, TrackingManager::HIT_LOG);
-        $trackingManager->sendConsentHit($visitor, $config);
-
-        $this->assertEquals($command, ShellExec::$command);
-
-        $visitor->authenticate($authenticatedId);
-
-        $trackingManager->sendConsentHit($visitor, $config);
-
-        $body = [
-            FlagshipConstant::T_API_ITEM => HitType::EVENT,
-            FlagshipConstant::EVENT_LABEL_API_ITEM =>
-                FlagshipConstant::SDK_LANGUAGE . ":" . ($visitor->hasConsented() ? "true" : "false"),
-            FlagshipConstant::EVENT_ACTION_API_ITEM => "fs_content",
-            FlagshipConstant::EVENT_CATEGORY_API_ITEM => EventCategory::USER_ENGAGEMENT,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-            FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::CUSTOMER_UID => $authenticatedId
+        $data["$visitorId:key9"] = [
+            HitCacheFields::VERSION => 1,
+            HitCacheFields::DATA => [
+                HitCacheFields::VISITOR_ID => $page->getVisitorId(),
+                HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
+                HitCacheFields::TYPE => "unknown",
+                HitCacheFields::CONTENT => $page->toArray(),
+                HitCacheFields::TIME => \round(microtime(true) * 1000)
+            ]
         ];
 
-        $command = $this->buildBackRequest($url, $body, $this->buildHeader($config->getApiKey()), $config->getTimeout()/1000, TrackingManager::HIT_LOG);
-        $this->assertEquals($command, ShellExec::$command);
+        $key10 = "$visitorId:key10";
+        $data[$key10] = [
+            HitCacheFields::DATA => [
+                HitCacheFields::VISITOR_ID => $page->getVisitorId(),
+                HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
+                HitCacheFields::TYPE => "unknown",
+                HitCacheFields::CONTENT => $page->toArray(),
+                HitCacheFields::TIME => \round(microtime(true) * 1000)
+            ]
+        ];
+
+        $hitCacheImplementationMock->expects($this->exactly(2))
+            ->method("lookupHits")
+            ->willReturnOnConsecutiveCalls($data, []);
+
+        $trackingManager->expects($this->exactly(2))
+            ->method("logDebugSprintf")
+            ->withConsecutive(
+                [ $config,
+                FlagshipConstant::PROCESS_CACHE,
+                FlagshipConstant::HIT_CACHE_LOADED,
+                [$data]]
+            );
+
+        Round::$returnValue = \round(microtime(true) * 1000);
+
+        $trackingManager->lookupHits();
+
+        $strategy = Utils::getProperty($trackingManager, 'strategy')->getValue($trackingManager);
+
+        $this->assertCount(6, $strategy->getHitsPoolQueue());
+        $this->assertCount(1, $strategy->getActivatePoolQueue());
+
+        $trackingManager->lookupHits();
     }
 
-    public function testSendConsentHitThrowException()
+    public function testLookupHitsFailed()
     {
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
+        $config = new DecisionApiConfig();
+        $httpClient = new HttpClient();
+        $hitCacheImplementationMock = $this->getMockForAbstractClass("Flagship\Cache\IHitCacheImplementation");
+
+        $trackingManager = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManager",
+            [$config, $httpClient],
+            "",
+            true,
+            true,
+            true,
+            ["logErrorSprintf"]
         );
 
-        $logManagerStub = $this->getMockForAbstractClass(
-            self::PSR_LOG_INTERFACE,
-            ['error'],
-            '',
-            false
-        );
+        $config->setHitCacheImplementation($hitCacheImplementationMock);
 
-        $trackingManager = new TrackingManager($httpClientMock);
+        $exception = new \Exception("error");
 
-        $config = new DecisionApiConfig('envId', 'apiKey');
-        $config->setLogManager($logManagerStub);
+        $hitCacheImplementationMock->expects($this->exactly(1))
+            ->method("lookupHits")
+            ->willThrowException($exception);
 
-        $configManager = new ConfigManager();
-        $configManager->setConfig($config)->setTrackingManager($trackingManager);
+        $trackingManager->expects($this->once())
+            ->method("logErrorSprintf")
+            ->with(
+                $config,
+                FlagshipConstant::PROCESS_CACHE,
+                FlagshipConstant::HIT_CACHE_ERROR,
+                ["lookupHits", $exception->getMessage()]
+            );
 
-        $visitor = new Visitor\VisitorDelegate(new Container(), $configManager, 'visitorId', false, []);
-
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $exceptionMessage = "message error";
-
-        $logManagerStub->expects($this->once())
-            ->method('error')
-            ->with("[$flagshipSdk] " . $exceptionMessage);
-
-        ShellExec::$toThrowException = $exceptionMessage;
-        $trackingManager->sendConsentHit($visitor, $config);
-
-        ShellExec::$toThrowException = null;
+        $trackingManager->lookupHits();
     }
 }

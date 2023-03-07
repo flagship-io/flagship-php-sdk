@@ -6,6 +6,9 @@ use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\LogTrait;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionObject;
 
 /**
  * Class HitAbstract
@@ -21,11 +24,12 @@ abstract class HitAbstract
     /**
      * @var string
      */
-    private $visitorId;
+    protected $visitorId;
+
     /**
      * @var string
      */
-    private $ds;
+    protected $ds;
 
     /**
      * @var string
@@ -65,19 +69,37 @@ abstract class HitAbstract
     protected $sessionNumber;
 
     /**
+     * @var string
+     */
+    protected $key;
+
+    /**
+     * @var int
+     */
+    protected $createdAt;
+
+    /**
+     * @var bool
+     */
+    protected $isFromCache;
+
+    /**
      * HitAbstract constructor.
      *
-     * @param string $type : Hit type
-     *                     <code>
-     *                     Flagship\Enum\HitType::EVENT,
-     *                     Flagship\Enum\HitType::ITEM,
-     *                     Flagship\Enum\HitType::PAGEVIEW,
-     *                     Flagship\Enum\HitType::TRANSACTION
-     *                     </code>
+     * @param string $type  Hit type
+     *<code>
+     *Flagship\Enum\HitType::EVENT,
+     *Flagship\Enum\HitType::ITEM,
+     *Flagship\Enum\HitType::PAGEVIEW,
+     *Flagship\Enum\HitType::TRANSACTION
+     *</code>
      */
     public function __construct($type)
     {
         $this->type = $type;
+        $this->ds = FlagshipConstant::SDK_APP;
+        $this->createdAt =  round(microtime(true) * 1000);
+        $this->isFromCache = false;
     }
 
     /**
@@ -296,36 +318,125 @@ abstract class HitAbstract
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
 
+    /**
+     * @param string $key
+     * @return HitAbstract
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+        return $this;
+    }
 
+    /**
+     * @return int
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param string $createdAt
+     * @return HitAbstract
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsFromCache()
+    {
+        return $this->isFromCache;
+    }
+
+    /**
+     * @param bool $isFromCache
+     * @return HitAbstract
+     */
+    protected function setIsFromCache($isFromCache)
+    {
+        $this->isFromCache = $isFromCache;
+        return $this;
+    }
 
     /**
      * Return an associative array of the class with Api parameters as keys
      *
      * @return array
      */
-    public function toArray()
+    public function toApiKeys()
     {
         $data = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
+            FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId ?: $this->anonymousId,
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
             FlagshipConstant::T_API_ITEM => $this->getType(),
             FlagshipConstant::USER_IP_API_ITEM => $this->getUserIP(),
             FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $this->getScreenResolution(),
             FlagshipConstant::USER_LANGUAGE => $this->getLocale(),
-            FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber()
+            FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber(),
+            FlagshipConstant::CUSTOMER_UID => null
         ];
 
         if ($this->visitorId && $this->anonymousId) {
             $data[FlagshipConstant::VISITOR_ID_API_ITEM] = $this->anonymousId;
             $data[FlagshipConstant::CUSTOMER_UID] = $this->visitorId;
-        } else {
-            $data[FlagshipConstant::VISITOR_ID_API_ITEM] = $this->visitorId ?: $this->anonymousId;
-            $data[FlagshipConstant::CUSTOMER_UID] = null;
         }
         return $data;
     }
+
+    /**
+     * @param $class
+     * @param $data
+     * @return object
+     * @throws ReflectionException
+     */
+    public static function hydrate($class, $data)
+    {
+        $reflector = new ReflectionClass($class);
+        $objet = $reflector->newInstanceWithoutConstructor();
+        foreach ($data as $key => $value) {
+            $method = 'set' . ucwords($key);
+            if (is_callable(array($objet, $method))) {
+                $objet->$method($value);
+            }
+        }
+        $objet->setIsFromCache(true);
+        return $objet;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $reflector = new ReflectionObject($this);
+        $properties = $reflector->getProperties();
+        $outArray = [];
+        foreach ($properties as $property) {
+            if ($property->getName() === 'config' || $property->getName() === 'isFromCache') {
+                continue;
+            }
+            $property->setAccessible(true);
+            $value = $property->getValue($this);
+            $outArray[$property->getName()] = $value;
+        }
+        return $outArray;
+    }
+
 
     /**
      * Return true if all required attributes are given, otherwise return false

@@ -9,13 +9,14 @@ namespace Flagship\Enum;
  */
 class FlagshipConstant
 {
-
     /**
      * Default request timeout in second
      */
     const REQUEST_TIME_OUT = 2;
 
     const DEFAULT_POLLING_INTERVAL = 1;
+
+    const DEFAULT_HIT_CACHE_TIME_MS = 14400000;
 
     /**
      * SDK language
@@ -32,6 +33,7 @@ class FlagshipConstant
     const HIT_CONSENT_URL = "https://ariane.abtasty.com";
     const URL_CAMPAIGNS = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
+    const HIT_EVENT_URL = 'https://events.flagship.io';
 
     const EXPOSE_ALL_KEYS = "exposeAllKeys";
     const SEND_CONTEXT_EVENT = "sendContextEvent";
@@ -39,7 +41,7 @@ class FlagshipConstant
     /**
      * SDK version
      */
-    const SDK_VERSION = "3.0.2";
+    const SDK_VERSION = "3.1.0";
 
     //Message Error
     const INITIALIZATION_PARAM_ERROR = "Params 'envId' and 'apiKey' must not be null or empty.";
@@ -51,11 +53,11 @@ class FlagshipConstant
     const GET_MODIFICATION_KEY_ERROR = "Key '%s' must not be null. Default value is returned.";
     const GET_MODIFICATION_ERROR = "No modification for key '%s'.";
     const GET_FLAG_ERROR = "No flag for key '%s'.";
-    const USER_EXPOSED_NO_FLAG_ERROR = "No flag for key '%s', no activate will be sent";
-    const GET_FLAG_MISSING_ERROR = "No Flag for key '%s'. Default value is returned.";
+    const USER_EXPOSED_NO_FLAG_ERROR = "Visitor %s, No Flags found for key %s: User exposition wont be sent";
+    const GET_FLAG_MISSING_ERROR = "Visitor %s, No Flags found for key %s : Default value is returned %s";
     const GET_METADATA_CAST_ERROR = "Flag for key '%s' has a different type with defaultValue, an empty metadata object is returned";
-    const GET_FLAG_CAST_ERROR = "Flag for key '%s' has a different type. Default value is returned.";
-    const USER_EXPOSED_CAST_ERROR = "Flag for key '%s' has a different type with defaultValue, no activate will be sent";
+    const GET_FLAG_CAST_ERROR = "Visitor %s, Flag for key %s has a different type with default value : Default value is returned %s";
+    const USER_EXPOSED_CAST_ERROR = "Visitor %s, Flag for key %s has a different type with default value: User exposition wont be sent";
     const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null.";
     const TRACKER_MANAGER_MISSING_ERROR = "trackerManager must not be null.";
     const CURL_LIBRARY_IS_NOT_LOADED = 'curl library is not loaded';
@@ -111,6 +113,9 @@ class FlagshipConstant
     const IP_API_ITEM = "ip";
     const IQ_API_ITEM = "iq";
     const IV_API_ITEM = "iv";
+    const VISITOR_CONSENT = "vc";
+    const SL_API_ITEM = "sl";
+    const H_API_ITEM = 'h';
     const EVENT_CATEGORY_API_ITEM = "ec";
     const EVENT_ACTION_API_ITEM = "ea";
     const EVENT_LABEL_API_ITEM = "el";
@@ -119,6 +124,7 @@ class FlagshipConstant
     const SCREEN_RESOLUTION_API_ITEM = "sr";
     const USER_LANGUAGE = "ul";
     const SESSION_NUMBER = "sn";
+    const QT_API_ITEM = 'qt';
 
     const HEADER_X_API_KEY = 'x-api-key';
     const HEADER_CONTENT_TYPE = 'Content-Type';
@@ -129,7 +135,47 @@ class FlagshipConstant
     const LOG_LEVEL_ERROR = "Loglevel value invalid, please use \Flagship\Enum\LogLevel ";
     const BUCKETING_DIRECTORY = "flagship";
 
+
     const FS_CLIENT = "fs_client";
     const FS_VERSION = "fs_version";
     const FS_USERS = "fs_users";
+
+    const FS_CONSENT = 'fs_consent';
+    const TRACKING_MANAGER = 'TRACKING_MANAGER';
+    const HIT_ADDED_IN_QUEUE = "The HIT has been added into the pool queue : '%s'";
+    const ACTIVATE_HIT_ADDED_IN_QUEUE = "The ACTIVATE hit has been added into the pool queue : '%s'";
+    const HIT_SENT_SUCCESS = "%s has been sent : %s";
+    const TRACKING_MANAGER_ERROR = '%s Unexpected Error occurred %s';
+    const BATCH_HIT = 'BATCH_HIT';
+    const PROCESS_CACHE = 'CACHE';
+    const SEND_BATCH = 'HIT BATCH';
+    const SEND_HIT = 'SEND_HIT';
+    const SEND_ACTIVATE = 'HIT ACTIVATE';
+
+    const VISITOR_CACHE_ERROR = 'visitor {0}. {1} threw an exception {2}';
+    const HIT_CACHE_ERROR = '{0} threw an exception {1}';
+    const VISITOR_CACHE_LOADED = 'Visitor {0}, visitor cache has been loaded from database: {1}';
+    const VISITOR_CACHE_SAVED = 'Visitor {0}, visitor cache has been saved into database : {0}';
+    const VISITOR_CACHE_FLUSHED = 'Visitor {0}, visitor cache has been flushed from database.';
+    const HIT_CACHE_LOADED = 'Hits cache has been loaded from database: %s';
+    const HIT_CACHE_SAVED = 'Hit cache has been saved into database : %s';
+    const HIT_DATA_FLUSHED = 'The following hit keys have been flushed from database : %s';
+    const ALL_HITS_FLUSHED = 'All hits cache has been flushed from database';
+    const BATCH = "batch";
+    const HIT_CACHE_FORMAT_ERROR = "Hit cache format error %s";
+    const FETCH_FLAGS_STARTED = 'visitor `%s` fetchFlags process is started';
+    const PROCESS_FETCHING_FLAGS = 'FETCH_FLAGS';
+    const FETCH_CAMPAIGNS_SUCCESS = 'Visitor %s, anonymousId %s with context %s has just fetched campaigns %s in %s ms';
+    const FETCH_CAMPAIGNS_FROM_CACHE =
+    'Visitor %s, anonymousId %s with context %s has just fetched campaigns from cache %s in %s ms';
+    const FETCH_FLAGS_FROM_CAMPAIGNS =
+    'Visitor %s, anonymousId %s with context %s has just fetched flags %s from Campaigns';
+    const FLAG_USER_EXPOSED = 'FLAG_USER_EXPOSED';
+    const FLAG_VALUE = 'FLAG_VALUE';
+    const GET_FLAG_VALUE = 'Visitor %s, Flag for key %s returns value %s';
+    const LOG_FORMAT_MESSAGE = "message";
+    const LOG_FORMAT_URL = "url";
+    const LOG_FORMAT_BODY = 'body';
+    const LOG_FORMAT_HEADERS = 'headers';
+    const LOG_FORMAT_DURATION = 'duration';
 }

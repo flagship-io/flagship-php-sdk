@@ -75,10 +75,11 @@ trait CampaignsData
         ];
     }
 
-    public function campaigns(){
+    public function campaigns()
+    {
         return [
             "visitorId" => "",
-            "campaigns"=> [
+            "campaigns" => [
                 [
                     "id" => "c8pimlr7n0ig3a0pt2ig",
                     "slug" => "campaign_1",
@@ -90,7 +91,7 @@ trait CampaignsData
                             "type" => "FLAG",
                             "value" => [
                                 "Number" => 5,
-                                "isBool"=> false,
+                                "isBool" => false,
                                 "background" => "EE3300",
                                 "borderColor" => "blue",
                                 "Null" => null,
@@ -104,26 +105,27 @@ trait CampaignsData
                     "id" => "c7q1lmuru9u05agq3aog",
                     "slug" => "campaign_2",
                     "type" => "ab",
-                    "variationGroupId"=> "c7q1lmuru9u05agq3apg",
+                    "variationGroupId" => "c7q1lmuru9u05agq3apg",
                     "variation" => [
-                        "id"=> "c7q1m8p172r04gs741og",
-                        "modifications"=> [
-                            "type"=> "FLAG",
+                        "id" => "c7q1m8p172r04gs741og",
+                        "modifications" => [
+                            "type" => "FLAG",
                             "value" => [
-                                "php"=> "value2"
+                                "php" => "value2"
                             ]
                         ],
-                        "reference"=> false
+                        "reference" => false
                     ]
                 ]
             ]
         ];
     }
 
-    public function campaigns2(){
+    public function campaigns2()
+    {
         return [
             "visitorId" => "",
-            "campaigns"=> [
+            "campaigns" => [
                 [
                     "id" => "c69sir3q6mc0ggqin8ag",
                     "slug" => "campaign_3",
@@ -133,7 +135,7 @@ trait CampaignsData
                         "id" => "c69sir3q6mc0ggqin8c0",
                         "modifications" => [
                             "type" => "FLAG",
-                            "value"=> [
+                            "value" => [
                                 "myAwesomeFeature" => 10
                             ]
                         ],

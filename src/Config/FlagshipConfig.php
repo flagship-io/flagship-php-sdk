@@ -2,7 +2,9 @@
 
 namespace Flagship\Config;
 
+use Flagship\Cache\IHitCacheImplementation;
 use Flagship\Cache\IVisitorCacheImplementation;
+use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
@@ -55,17 +57,32 @@ abstract class FlagshipConfig implements JsonSerializable
      */
     private $visitorCacheImplementation;
 
+    /**
+     * @var IHitCacheImplementation
+     */
+    private $hitCacheImplementation;
+
+    /**
+     * @var int
+     */
+    protected $cacheStrategy;
+
+    /**
+     * @var callable
+     */
+    protected $onVisitorExposed;
 
     /**
      * Create a new FlagshipConfig configuration.
      *
-     * @param string $envId : Environment id provided by Flagship.
-     * @param string $apiKey : Secure api key provided by Flagship.
+     * @param string $envId  Environment id provided by Flagship.
+     * @param string $apiKey  Secure api key provided by Flagship.
      */
     public function __construct($envId = null, $apiKey = null)
     {
         $this->envId = $envId;
         $this->apiKey = $apiKey;
+        $this->cacheStrategy = CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE;
     }
 
     /**
@@ -199,6 +216,26 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
+     * Return the strategy uses for hit caching with tracking manager
+     * @return int
+     */
+    public function getCacheStrategy()
+    {
+        return $this->cacheStrategy;
+    }
+
+    /**
+     * Define the strategy that will be used for hit caching with tracking manager
+     * @param int $cacheStrategy
+     * @return FlagshipConfig
+     */
+    public function setCacheStrategy($cacheStrategy)
+    {
+        $this->cacheStrategy = $cacheStrategy;
+        return $this;
+    }
+
+    /**
      * @return callable
      */
     public function getStatusChangedCallback()
@@ -246,10 +283,58 @@ abstract class FlagshipConfig implements JsonSerializable
         return $this;
     }
 
+    /**
+     * @return IHitCacheImplementation
+     */
+    public function getHitCacheImplementation()
+    {
+        return $this->hitCacheImplementation;
+    }
+
+    /**
+     * @param IHitCacheImplementation $hitCacheImplementation
+     * @return FlagshipConfig
+     */
+    public function setHitCacheImplementation($hitCacheImplementation)
+    {
+        $this->hitCacheImplementation = $hitCacheImplementation;
+        return $this;
+    }
+
+    /**
+     * @return callable
+     */
+    public function getOnVisitorExposed()
+    {
+        return $this->onVisitorExposed;
+    }
+
+    /**
+     * @param callable $onVisitorExposed
+     * @return FlagshipConfig
+     */
+    public function setOnVisitorExposed($onVisitorExposed)
+    {
+        if (is_callable($onVisitorExposed)) {
+            $this->onVisitorExposed = $onVisitorExposed;
+        } else {
+            $this->logError(
+                $this,
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($onVisitorExposed)),
+                [
+                    FlagshipConstant::TAG => __FUNCTION__
+                ]
+            );
+        }
+
+        return $this;
+    }
+
 
 
     /**
      * @inheritDoc
+     * @return mixed
      */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()

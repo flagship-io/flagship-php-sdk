@@ -14,6 +14,15 @@ class Transaction extends HitAbstract
 {
     const CURRENCY_ERROR = "'%s' must be a string and have exactly 3 letters";
     const ERROR_MESSAGE  = 'Transaction Id and Transaction affiliation are required';
+
+    /**
+     * @return string
+     */
+    public static function getClassName()
+    {
+        return __CLASS__;
+    }
+
     /**
      * @var string
      */
@@ -305,7 +314,7 @@ class Transaction extends HitAbstract
     /**
      * Total shipping cost of the transaction
      *
-     * @return string
+     * @return float
      */
     public function getShippingCosts()
     {
@@ -330,9 +339,9 @@ class Transaction extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toArray()
+    public function toApiKeys()
     {
-        $arrayParent = parent::toArray();
+        $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::TID_API_ITEM] = $this->getTransactionId();
         $arrayParent[FlagshipConstant::TA_API_ITEM] = $this->getAffiliation();
 

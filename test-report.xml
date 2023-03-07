@@ -1,235 +1,246 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="my test" tests="124" assertions="508" failures="0" errors="0" time="4.702083">
-    <testsuite name="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" tests="7" assertions="10" failures="0" errors="0" time="0.224212">
-      <testcase name="testConstruct" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="23" assertions="1" time="0.012546"/>
-      <testcase name="testSendActive" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="30" assertions="1" time="0.046406"/>
-      <testcase name="testSendActiveThrowException" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="73" assertions="2" time="0.038402"/>
-      <testcase name="testSendHit" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="121" assertions="1" time="0.024920"/>
-      <testcase name="testSendHitThrowException" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="156" assertions="2" time="0.027042"/>
-      <testcase name="testSendConsentHit" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="211" assertions="1" time="0.033249"/>
-      <testcase name="testSendConsentHitThrowException" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="250" assertions="2" time="0.041647"/>
+  <testsuite name="my test" tests="163" assertions="752" failures="0" errors="0" time="5.361099">
+    <testsuite name="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" tests="14" assertions="65" failures="0" errors="0" time="0.588840">
+      <testcase name="testGeneralMethods" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="26" assertions="5" time="0.027613"/>
+      <testcase name="testAddHit" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="66" assertions="26" time="0.041938"/>
+      <testcase name="testActivateFlag" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="170" assertions="3" time="0.038149"/>
+      <testcase name="testSendActivateHit" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="199" assertions="4" time="0.045373"/>
+      <testcase name="testSendActivateHitFailed" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="274" assertions="4" time="0.035730"/>
+      <testcase name="testSendBatch" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="342" assertions="4" time="0.045248"/>
+      <testcase name="testSendBatchFailed" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="428" assertions="4" time="0.045703"/>
+      <testcase name="testSendBatchWithExpiredHit" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="501" assertions="3" time="0.047884"/>
+      <testcase name="testFlushHits" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="565" assertions="2" time="0.034821"/>
+      <testcase name="testFlushHitsFailed" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="604" assertions="2" time="0.031087"/>
+      <testcase name="testFlushAllHits" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="654" assertions="2" time="0.071382"/>
+      <testcase name="testFlushAllHitsFailed" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="690" assertions="2" time="0.031395"/>
+      <testcase name="testCacheHit" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="726" assertions="2" time="0.054484"/>
+      <testcase name="testCacheHitFailed" class="Flagship\Api\BatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/BatchingContinuousCachingStrategyTest.php" line="783" assertions="2" time="0.038033"/>
     </testsuite>
-    <testsuite name="Flagship\Config\BucketingConfigTest" file="/home/app/tests/Config/BucketingConfigTest.php" tests="3" assertions="9" failures="0" errors="0" time="0.042743">
-      <testcase name="testSetPollingInterval" class="Flagship\Config\BucketingConfigTest" file="/home/app/tests/Config/BucketingConfigTest.php" line="14" assertions="3" time="0.011371"/>
-      <testcase name="testSetBucketingDirectory" class="Flagship\Config\BucketingConfigTest" file="/home/app/tests/Config/BucketingConfigTest.php" line="33" assertions="2" time="0.013384"/>
-      <testcase name="testJson" class="Flagship\Config\BucketingConfigTest" file="/home/app/tests/Config/BucketingConfigTest.php" line="50" assertions="4" time="0.017988"/>
+    <testsuite name="Flagship\Api\BatchingPeriodicCachingStrategyTest" file="/home/app/tests/Api/BatchingPeriodicCachingStrategyTest.php" tests="6" assertions="45" failures="0" errors="0" time="0.277190">
+      <testcase name="testAddHit" class="Flagship\Api\BatchingPeriodicCachingStrategyTest" file="/home/app/tests/Api/BatchingPeriodicCachingStrategyTest.php" line="22" assertions="26" time="0.052489"/>
+      <testcase name="testActivateFlag" class="Flagship\Api\BatchingPeriodicCachingStrategyTest" file="/home/app/tests/Api/BatchingPeriodicCachingStrategyTest.php" line="119" assertions="3" time="0.033249"/>
+      <testcase name="testSendActivateHit" class="Flagship\Api\BatchingPeriodicCachingStrategyTest" file="/home/app/tests/Api/BatchingPeriodicCachingStrategyTest.php" line="148" assertions="4" time="0.052530"/>
+      <testcase name="testSendActivateHitFailed" class="Flagship\Api\BatchingPeriodicCachingStrategyTest" file="/home/app/tests/Api/BatchingPeriodicCachingStrategyTest.php" line="221" assertions="4" time="0.043992"/>
+      <testcase name="testSendBatch" class="Flagship\Api\BatchingPeriodicCachingStrategyTest" file="/home/app/tests/Api/BatchingPeriodicCachingStrategyTest.php" line="294" assertions="4" time="0.053699"/>
+      <testcase name="testSendBatchFailed" class="Flagship\Api\BatchingPeriodicCachingStrategyTest" file="/home/app/tests/Api/BatchingPeriodicCachingStrategyTest.php" line="370" assertions="4" time="0.041231"/>
     </testsuite>
-    <testsuite name="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" tests="9" assertions="25" failures="0" errors="0" time="0.140124">
-      <testsuite name="Flagship\Config\FlagshipConfigTest::testSetTimeOut" tests="1" assertions="4" failures="0" errors="0" time="0.013811">
-        <testcase name="testSetTimeOut with data set #0" assertions="4" time="0.013811"/>
-      </testsuite>
-      <testcase name="testSetLogLevel" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="41" assertions="5" time="0.011639"/>
-      <testsuite name="Flagship\Config\FlagshipConfigTest::testSetApiKey" tests="1" assertions="1" failures="0" errors="0" time="0.012128">
-        <testcase name="testSetApiKey with data set #0" assertions="1" time="0.012128"/>
-      </testsuite>
-      <testsuite name="Flagship\Config\FlagshipConfigTest::testSetEnvId" tests="1" assertions="1" failures="0" errors="0" time="0.016096">
-        <testcase name="testSetEnvId with data set #0" assertions="1" time="0.016096"/>
-      </testsuite>
-      <testsuite name="Flagship\Config\FlagshipConfigTest::testDecisionMode" tests="1" assertions="1" failures="0" errors="0" time="0.011328">
-        <testcase name="testDecisionMode with data set #0" assertions="1" time="0.011328"/>
-      </testsuite>
-      <testsuite name="Flagship\Config\FlagshipConfigTest::testConstruct" tests="1" assertions="3" failures="0" errors="0" time="0.015166">
-        <testcase name="testConstruct with data set #0" assertions="3" time="0.015166"/>
-      </testsuite>
-      <testsuite name="Flagship\Config\FlagshipConfigTest::testSetDecisionMode" tests="1" assertions="2" failures="0" errors="0" time="0.015114">
-        <testcase name="testSetDecisionMode with data set #0" assertions="2" time="0.015114"/>
-      </testsuite>
-      <testcase name="testSetStatusChangedCallback" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="123" assertions="4" time="0.021711"/>
-      <testcase name="testJson" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="163" assertions="4" time="0.023131"/>
+    <testsuite name="Flagship\Api\NoBatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/NoBatchingContinuousCachingStrategyTest.php" tests="5" assertions="30" failures="0" errors="0" time="0.251620">
+      <testcase name="testAddHit" class="Flagship\Api\NoBatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/NoBatchingContinuousCachingStrategyTest.php" line="20" assertions="6" time="0.060135"/>
+      <testcase name="testAddHitFailed" class="Flagship\Api\NoBatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/NoBatchingContinuousCachingStrategyTest.php" line="128" assertions="6" time="0.053021"/>
+      <testcase name="testAddHitConsent" class="Flagship\Api\NoBatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/NoBatchingContinuousCachingStrategyTest.php" line="194" assertions="6" time="0.047217"/>
+      <testcase name="testActivateFlag" class="Flagship\Api\NoBatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/NoBatchingContinuousCachingStrategyTest.php" line="260" assertions="6" time="0.051043"/>
+      <testcase name="testActivateFlagFailed" class="Flagship\Api\NoBatchingContinuousCachingStrategyTest" file="/home/app/tests/Api/NoBatchingContinuousCachingStrategyTest.php" line="347" assertions="6" time="0.040204"/>
     </testsuite>
-    <testsuite name="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" tests="5" assertions="21" failures="0" errors="0" time="0.145572">
-      <testcase name="testConstruct" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="18" assertions="4" time="0.014113"/>
-      <testcase name="testGetCampaignModifications" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="30" assertions="10" time="0.045424"/>
-      <testcase name="testGetCampaignModificationsWithPanicMode" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="176" assertions="4" time="0.027892"/>
-      <testcase name="testGetCampaignModificationsWithSomeFailed" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="212" assertions="1" time="0.027960"/>
-      <testcase name="testGetCampaignThrowException" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="283" assertions="2" time="0.030183"/>
+    <testsuite name="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" tests="5" assertions="13" failures="0" errors="0" time="0.148981">
+      <testcase name="testConstruct" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="28" assertions="2" time="0.019066"/>
+      <testcase name="testInitStrategy" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="37" assertions="3" time="0.016408"/>
+      <testcase name="testCommonMethod" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="54" assertions="2" time="0.031618"/>
+      <testcase name="testLookupHits" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="103" assertions="4" time="0.044817"/>
+      <testcase name="testLookupHitsFailed" class="Flagship\Api\TrackingManagerTest" file="/home/app/tests/Api/TrackingManagerTest.php" line="219" assertions="2" time="0.037072"/>
     </testsuite>
-    <testsuite name="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" tests="7" assertions="71" failures="0" errors="0" time="0.180908">
-      <testcase name="testGetCampaignModification" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="23" assertions="7" time="0.038215"/>
-      <testcase name="testSendContext" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="92" assertions="2" time="0.039471"/>
-      <testcase name="testSendContextWithError" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="150" assertions="2" time="0.032683"/>
-      <testcase name="testGetVariation" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="205" assertions="3" time="0.015204"/>
-      <testcase name="testIsMatchTargeting" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="269" assertions="7" time="0.017879"/>
-      <testcase name="testCheckAndTargeting" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="430" assertions="8" time="0.017636"/>
-      <testcase name="testOperator" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="522" assertions="42" time="0.019820"/>
+    <testsuite name="Flagship\Config\BucketingConfigTest" file="/home/app/tests/Config/BucketingConfigTest.php" tests="2" assertions="6" failures="0" errors="0" time="0.040419">
+      <testcase name="testBucketingUrl" class="Flagship\Config\BucketingConfigTest" file="/home/app/tests/Config/BucketingConfigTest.php" line="12" assertions="2" time="0.015808"/>
+      <testcase name="testJson" class="Flagship\Config\BucketingConfigTest" file="/home/app/tests/Config/BucketingConfigTest.php" line="26" assertions="4" time="0.024611"/>
     </testsuite>
-    <testsuite name="Flagship\Decision\BucketingPollingTest" file="/home/app/tests/Decision/BucketingPollingTest.php" tests="3" assertions="7" failures="0" errors="0" time="2.069469">
-      <testcase name="testStartPolling" class="Flagship\Decision\BucketingPollingTest" file="/home/app/tests/Decision/BucketingPollingTest.php" line="16" assertions="4" time="0.022615"/>
-      <testcase name="testStartPollingThrowError" class="Flagship\Decision\BucketingPollingTest" file="/home/app/tests/Decision/BucketingPollingTest.php" line="53" assertions="2" time="0.020656"/>
-      <testcase name="testCheckAndUpdateField" class="Flagship\Decision\BucketingPollingTest" file="/home/app/tests/Decision/BucketingPollingTest.php" line="73" assertions="1" time="2.026198"/>
+    <testsuite name="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" tests="10" assertions="27" failures="0" errors="0" time="0.183002">
+      <testcase name="testSetTimeOut" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="20" assertions="4" time="0.013318"/>
+      <testcase name="testSetLogLevel" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="38" assertions="5" time="0.017084"/>
+      <testcase name="testSetApiKey" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="61" assertions="1" time="0.016986"/>
+      <testcase name="testSetEnvId" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="71" assertions="1" time="0.019251"/>
+      <testcase name="testDecisionMode" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="81" assertions="1" time="0.013480"/>
+      <testcase name="testConstruct" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="89" assertions="3" time="0.013889"/>
+      <testcase name="testSetDecisionMode" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="99" assertions="2" time="0.013388"/>
+      <testcase name="testSetStatusChangedCallback" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="110" assertions="4" time="0.029267"/>
+      <testcase name="testJson" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="148" assertions="4" time="0.026335"/>
+      <testcase name="testBuilder" class="Flagship\Config\FlagshipConfigTest" file="/home/app/tests/Config/FlagshipConfigTest.php" line="169" assertions="2" time="0.020003"/>
     </testsuite>
-    <testsuite name="Flagship\Enum\DecisionModeTest" file="/home/app/tests/Enum/DecisionModeTest.php" tests="1" assertions="5" failures="0" errors="0" time="0.010882">
-      <testcase name="testIsDecisionMode" class="Flagship\Enum\DecisionModeTest" file="/home/app/tests/Enum/DecisionModeTest.php" line="10" assertions="5" time="0.010882"/>
+    <testsuite name="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" tests="5" assertions="21" failures="0" errors="0" time="0.195520">
+      <testcase name="testConstruct" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="18" assertions="4" time="0.024315"/>
+      <testcase name="testGetCampaignModifications" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="30" assertions="10" time="0.045251"/>
+      <testcase name="testGetCampaignModificationsWithPanicMode" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="182" assertions="4" time="0.043570"/>
+      <testcase name="testGetCampaignModificationsWithSomeFailed" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="218" assertions="1" time="0.042448"/>
+      <testcase name="testGetCampaignThrowException" class="Flagship\Decision\ApiManagerTest" file="/home/app/tests/Decision/ApiManagerTest.php" line="289" assertions="2" time="0.039936"/>
     </testsuite>
-    <testsuite name="Flagship\Enum\FlagshipStatusTest" file="/home/app/tests/Enum/FlagshipStatusTest.php" tests="1" assertions="9" failures="0" errors="0" time="0.010400">
-      <testcase name="testGetStatusName" class="Flagship\Enum\FlagshipStatusTest" file="/home/app/tests/Enum/FlagshipStatusTest.php" line="10" assertions="9" time="0.010400"/>
+    <testsuite name="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" tests="6" assertions="72" failures="0" errors="0" time="0.222940">
+      <testcase name="testGetCampaignModification" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="22" assertions="8" time="0.058836"/>
+      <testcase name="testSendContext" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="98" assertions="2" time="0.057924"/>
+      <testcase name="testGetVariation" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="173" assertions="5" time="0.024860"/>
+      <testcase name="testIsMatchTargeting" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="343" assertions="7" time="0.023837"/>
+      <testcase name="testCheckAndTargeting" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="505" assertions="8" time="0.025486"/>
+      <testcase name="testOperator" class="Flagship\Decision\BucketingManagerTest" file="/home/app/tests/Decision/BucketingManagerTest.php" line="598" assertions="42" time="0.031997"/>
     </testsuite>
-    <testsuite name="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" tests="14" assertions="58" failures="0" errors="0" time="0.292337">
-      <testcase name="testInstance" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="62" assertions="3" time="0.012790"/>
-      <testcase name="testStart" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="76" assertions="11" time="0.017673"/>
-      <testcase name="testStartWithoutConfig" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="108" assertions="11" time="0.024225"/>
-      <testcase name="testStartWithLog" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="188" assertions="4" time="0.027711"/>
-      <testcase name="testStartFailed" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="224" assertions="10" time="0.019621"/>
-      <testcase name="testStartFailedWithLog" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="270" assertions="4" time="0.031569"/>
-      <testcase name="testStartFailedThrowException" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="306" assertions="2" time="0.028926"/>
-      <testcase name="testGetStatus" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="348" assertions="5" time="0.016878"/>
-      <testcase name="testIsReady" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="369" assertions="1" time="0.012539"/>
-      <testcase name="testNewVisitor" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="375" assertions="1" time="0.018169"/>
-      <testcase name="testNewVisitorFailed" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="390" assertions="1" time="0.016295"/>
-      <testcase name="testNewVisitorFailedWithoutStart" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="406" assertions="1" time="0.012521"/>
-      <testcase name="testStatusCallback" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="417" assertions="1" time="0.017142"/>
-      <testcase name="testGetPanicModeStatus" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="428" assertions="3" time="0.036278"/>
+    <testsuite name="Flagship\Enum\DecisionModeTest" file="/home/app/tests/Enum/DecisionModeTest.php" tests="1" assertions="5" failures="0" errors="0" time="0.016489">
+      <testcase name="testIsDecisionMode" class="Flagship\Enum\DecisionModeTest" file="/home/app/tests/Enum/DecisionModeTest.php" line="10" assertions="5" time="0.016489"/>
     </testsuite>
-    <testsuite name="Flagship\Hit\EventTest" file="/home/app/tests/Hit/EventTest.php" tests="3" assertions="13" failures="0" errors="0" time="0.050477">
-      <testcase name="testConstruct" class="Flagship\Hit\EventTest" file="/home/app/tests/Hit/EventTest.php" line="13" assertions="5" time="0.023886"/>
-      <testcase name="testSetCategory" class="Flagship\Hit\EventTest" file="/home/app/tests/Hit/EventTest.php" line="106" assertions="3" time="0.012426"/>
-      <testcase name="testIsReady" class="Flagship\Hit\EventTest" file="/home/app/tests/Hit/EventTest.php" line="122" assertions="5" time="0.014165"/>
+    <testsuite name="Flagship\Enum\FlagshipStatusTest" file="/home/app/tests/Enum/FlagshipStatusTest.php" tests="1" assertions="9" failures="0" errors="0" time="0.016842">
+      <testcase name="testGetStatusName" class="Flagship\Enum\FlagshipStatusTest" file="/home/app/tests/Enum/FlagshipStatusTest.php" line="10" assertions="9" time="0.016842"/>
     </testsuite>
-    <testsuite name="Flagship\Hit\ItemTest" file="/home/app/tests/Hit/ItemTest.php" tests="2" assertions="10" failures="0" errors="0" time="0.043528">
-      <testcase name="testConstruct" class="Flagship\Hit\ItemTest" file="/home/app/tests/Hit/ItemTest.php" line="13" assertions="5" time="0.029542"/>
-      <testcase name="testIsReady" class="Flagship\Hit\ItemTest" file="/home/app/tests/Hit/ItemTest.php" line="112" assertions="5" time="0.013986"/>
+    <testsuite name="Flagship\Flag\FlagMetadataTest" file="/home/app/tests/Flag/FlagMetadataTest.php" tests="1" assertions="12" failures="0" errors="0" time="0.020926">
+      <testcase name="testConstruct" class="Flagship\Flag\FlagMetadataTest" file="/home/app/tests/Flag/FlagMetadataTest.php" line="9" assertions="12" time="0.020926"/>
     </testsuite>
-    <testsuite name="Flagship\Hit\PageTest" file="/home/app/tests/Hit/PageTest.php" tests="2" assertions="6" failures="0" errors="0" time="0.029049">
-      <testcase name="testConstruct" class="Flagship\Hit\PageTest" file="/home/app/tests/Hit/PageTest.php" line="13" assertions="1" time="0.014177"/>
-      <testcase name="testIsReady" class="Flagship\Hit\PageTest" file="/home/app/tests/Hit/PageTest.php" line="42" assertions="5" time="0.014872"/>
+    <testsuite name="Flagship\Flag\FlagTest" file="/home/app/tests/Flag/FlagTest.php" tests="2" assertions="8" failures="0" errors="0" time="0.090695">
+      <testcase name="testFlag" class="Flagship\Flag\FlagTest" file="/home/app/tests/Flag/FlagTest.php" line="11" assertions="5" time="0.050625"/>
+      <testcase name="testFlagNull" class="Flagship\Flag\FlagTest" file="/home/app/tests/Flag/FlagTest.php" line="86" assertions="3" time="0.040070"/>
     </testsuite>
-    <testsuite name="Flagship\Hit\ScreenTest" file="/home/app/tests/Hit/ScreenTest.php" tests="2" assertions="7" failures="0" errors="0" time="0.028760">
-      <testcase name="testConstruct" class="Flagship\Hit\ScreenTest" file="/home/app/tests/Hit/ScreenTest.php" line="13" assertions="2" time="0.013297"/>
-      <testcase name="testIsReady" class="Flagship\Hit\ScreenTest" file="/home/app/tests/Hit/ScreenTest.php" line="44" assertions="5" time="0.015463"/>
+    <testsuite name="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" tests="14" assertions="63" failures="0" errors="0" time="0.445308">
+      <testcase name="testInstance" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="68" assertions="3" time="0.017466"/>
+      <testcase name="testStart" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="82" assertions="11" time="0.021749"/>
+      <testcase name="testStartWithoutConfig" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="114" assertions="11" time="0.037437"/>
+      <testcase name="testStartWithLog" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="194" assertions="4" time="0.043726"/>
+      <testcase name="testStartFailed" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="230" assertions="10" time="0.022362"/>
+      <testcase name="testStartFailedWithLog" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="276" assertions="4" time="0.050373"/>
+      <testcase name="testStartFailedThrowException" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="312" assertions="2" time="0.055351"/>
+      <testcase name="testGetStatus" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="354" assertions="5" time="0.020807"/>
+      <testcase name="testIsReady" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="375" assertions="1" time="0.015197"/>
+      <testcase name="testNewVisitor" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="381" assertions="1" time="0.023637"/>
+      <testcase name="testStatusCallback" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="396" assertions="3" time="0.028870"/>
+      <testcase name="testGetPanicModeStatus" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="426" assertions="3" time="0.048483"/>
+      <testcase name="testClose" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="517" assertions="3" time="0.030151"/>
+      <testcase name="testCloseNull" class="Flagship\FlagshipTest" file="/home/app/tests/FlagshipTest.php" line="558" assertions="2" time="0.029699"/>
     </testsuite>
-    <testsuite name="Flagship\Hit\TransactionTest" file="/home/app/tests/Hit/TransactionTest.php" tests="2" assertions="24" failures="0" errors="0" time="0.046308">
-      <testcase name="testConstruct" class="Flagship\Hit\TransactionTest" file="/home/app/tests/Hit/TransactionTest.php" line="13" assertions="19" time="0.032538"/>
-      <testcase name="testIsReady" class="Flagship\Hit\TransactionTest" file="/home/app/tests/Hit/TransactionTest.php" line="159" assertions="5" time="0.013770"/>
+    <testsuite name="Flagship\Hit\ActivateBatchTest" file="/home/app/tests/Hit/ActivateBatchTest.php" tests="1" assertions="1" failures="0" errors="0" time="0.014353">
+      <testcase name="testToApiKeys" class="Flagship\Hit\ActivateBatchTest" file="/home/app/tests/Hit/ActivateBatchTest.php" line="11" assertions="1" time="0.014353"/>
     </testsuite>
-    <testsuite name="Flagship\Model\HttpResponseTest" file="/home/app/tests/Model/HttpResponseTest.php" tests="1" assertions="5" failures="0" errors="0" time="0.012031">
-      <testcase name="testConstruct" class="Flagship\Model\HttpResponseTest" file="/home/app/tests/Model/HttpResponseTest.php" line="10" assertions="5" time="0.012031"/>
+    <testsuite name="Flagship\Hit\ActivateTest" file="/home/app/tests/Hit/ActivateTest.php" tests="1" assertions="8" failures="0" errors="0" time="0.015789">
+      <testcase name="testTestConstruct" class="Flagship\Hit\ActivateTest" file="/home/app/tests/Hit/ActivateTest.php" line="11" assertions="8" time="0.015789"/>
     </testsuite>
-    <testsuite name="Flagship\Model\ModificationTest" file="/home/app/tests/Model/ModificationTest.php" tests="1" assertions="9" failures="0" errors="0" time="0.015531">
-      <testcase name="testModificationInstance" class="Flagship\Model\ModificationTest" file="/home/app/tests/Model/ModificationTest.php" line="10" assertions="9" time="0.015531"/>
+    <testsuite name="Flagship\Hit\EventTest" file="/home/app/tests/Hit/EventTest.php" tests="3" assertions="15" failures="0" errors="0" time="0.070414">
+      <testcase name="testConstruct" class="Flagship\Hit\EventTest" file="/home/app/tests/Hit/EventTest.php" line="13" assertions="7" time="0.035208"/>
+      <testcase name="testSetCategory" class="Flagship\Hit\EventTest" file="/home/app/tests/Hit/EventTest.php" line="118" assertions="3" time="0.017950"/>
+      <testcase name="testIsReady" class="Flagship\Hit\EventTest" file="/home/app/tests/Hit/EventTest.php" line="134" assertions="5" time="0.017256"/>
     </testsuite>
-    <testsuite name="Flagship\Traits\BuildApiTraitTest" file="/home/app/tests/Traits/BuildApiTraitTest.php" tests="2" assertions="5" failures="0" errors="0" time="0.029450">
-      <testcase name="testBuildHeader" class="Flagship\Traits\BuildApiTraitTest" file="/home/app/tests/Traits/BuildApiTraitTest.php" line="11" assertions="2" time="0.014043"/>
-      <testcase name="testSetVisitorBodyParams" class="Flagship\Traits\BuildApiTraitTest" file="/home/app/tests/Traits/BuildApiTraitTest.php" line="45" assertions="3" time="0.015407"/>
+    <testsuite name="Flagship\Hit\HitBatchTest" file="/home/app/tests/Hit/HitBatchTest.php" tests="1" assertions="1" failures="0" errors="0" time="0.021947">
+      <testcase name="testToApiKeys" class="Flagship\Hit\HitBatchTest" file="/home/app/tests/Hit/HitBatchTest.php" line="11" assertions="1" time="0.021947"/>
     </testsuite>
-    <testsuite name="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" tests="2" assertions="2" failures="0" errors="0" time="0.046437">
-      <testcase name="testLoginError" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="13" assertions="1" time="0.023087"/>
-      <testcase name="testLoginInfo" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="63" assertions="1" time="0.023350"/>
+    <testsuite name="Flagship\Hit\ItemTest" file="/home/app/tests/Hit/ItemTest.php" tests="2" assertions="10" failures="0" errors="0" time="0.049755">
+      <testcase name="testConstruct" class="Flagship\Hit\ItemTest" file="/home/app/tests/Hit/ItemTest.php" line="13" assertions="5" time="0.034652"/>
+      <testcase name="testIsReady" class="Flagship\Hit\ItemTest" file="/home/app/tests/Hit/ItemTest.php" line="111" assertions="5" time="0.015103"/>
     </testsuite>
-    <testsuite name="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" tests="6" assertions="31" failures="0" errors="0" time="0.106463">
-      <testcase name="testIsValueValid" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="13" assertions="5" time="0.014935"/>
-      <testcase name="testIsKeyValid" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="37" assertions="8" time="0.015852"/>
-      <testcase name="testCheckType" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="72" assertions="8" time="0.014633"/>
-      <testcase name="testCheckFlagshipContext" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="98" assertions="4" time="0.025283"/>
-      <testcase name="testIsJsonObject" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="150" assertions="3" time="0.014230"/>
-      <testcase name="testIsNumeric" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="168" assertions="3" time="0.021530"/>
+    <testsuite name="Flagship\Hit\PageTest" file="/home/app/tests/Hit/PageTest.php" tests="2" assertions="6" failures="0" errors="0" time="0.032707">
+      <testcase name="testConstruct" class="Flagship\Hit\PageTest" file="/home/app/tests/Hit/PageTest.php" line="13" assertions="1" time="0.015838"/>
+      <testcase name="testIsReady" class="Flagship\Hit\PageTest" file="/home/app/tests/Hit/PageTest.php" line="42" assertions="5" time="0.016869"/>
     </testsuite>
-    <testsuite name="Flagship\Utils\ConfigManagerTest" file="/home/app/tests/Utils/ConfigManagerTest.php" tests="1" assertions="6" failures="0" errors="0" time="0.015344">
-      <testcase name="testInstance" class="Flagship\Utils\ConfigManagerTest" file="/home/app/tests/Utils/ConfigManagerTest.php" line="12" assertions="6" time="0.015344"/>
+    <testsuite name="Flagship\Hit\ScreenTest" file="/home/app/tests/Hit/ScreenTest.php" tests="2" assertions="7" failures="0" errors="0" time="0.040043">
+      <testcase name="testConstruct" class="Flagship\Hit\ScreenTest" file="/home/app/tests/Hit/ScreenTest.php" line="13" assertions="2" time="0.018921"/>
+      <testcase name="testIsReady" class="Flagship\Hit\ScreenTest" file="/home/app/tests/Hit/ScreenTest.php" line="44" assertions="5" time="0.021122"/>
     </testsuite>
-    <testsuite name="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" tests="6" assertions="19" failures="0" errors="0" time="0.100666">
-      <testcase name="testGet" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="10" assertions="4" time="0.012928"/>
-      <testcase name="testGetWithDefaultArgs" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="43" assertions="3" time="0.012109"/>
-      <testcase name="testGetNotInstantiable" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="53" assertions="1" time="0.013544"/>
-      <testcase name="testGetWithCustomArgument" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="63" assertions="3" time="0.025351"/>
-      <testcase name="testFactory" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="76" assertions="3" time="0.025033"/>
-      <testcase name="testBind" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="88" assertions="5" time="0.011701"/>
+    <testsuite name="Flagship\Hit\SegmentTest" file="/home/app/tests/Hit/SegmentTest.php" tests="1" assertions="4" failures="0" errors="0" time="0.016810">
+      <testcase name="testConstructor" class="Flagship\Hit\SegmentTest" file="/home/app/tests/Hit/SegmentTest.php" line="12" assertions="4" time="0.016810"/>
     </testsuite>
-    <testsuite name="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" tests="9" assertions="9" failures="0" errors="0" time="0.124318">
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testError" tests="1" assertions="1" failures="0" errors="0" time="0.015212">
-        <testcase name="testError with data set #0" assertions="1" time="0.015212"/>
-      </testsuite>
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testInfo" tests="1" assertions="1" failures="0" errors="0" time="0.012670">
-        <testcase name="testInfo with data set #0" assertions="1" time="0.012670"/>
-      </testsuite>
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testAlert" tests="1" assertions="1" failures="0" errors="0" time="0.012781">
-        <testcase name="testAlert with data set #0" assertions="1" time="0.012781"/>
-      </testsuite>
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testEmergency" tests="1" assertions="1" failures="0" errors="0" time="0.013128">
-        <testcase name="testEmergency with data set #0" assertions="1" time="0.013128"/>
-      </testsuite>
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testLog" tests="1" assertions="1" failures="0" errors="0" time="0.014522">
-        <testcase name="testLog with data set #0" assertions="1" time="0.014522"/>
-      </testsuite>
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testWarning" tests="1" assertions="1" failures="0" errors="0" time="0.011143">
-        <testcase name="testWarning with data set #0" assertions="1" time="0.011143"/>
-      </testsuite>
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testCritical" tests="1" assertions="1" failures="0" errors="0" time="0.012913">
-        <testcase name="testCritical with data set #0" assertions="1" time="0.012913"/>
-      </testsuite>
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testNotice" tests="1" assertions="1" failures="0" errors="0" time="0.014350">
-        <testcase name="testNotice with data set #0" assertions="1" time="0.014350"/>
-      </testsuite>
-      <testsuite name="Flagship\Utils\FlagshipLogManagerTest::testDebug" tests="1" assertions="1" failures="0" errors="0" time="0.017599">
-        <testcase name="testDebug with data set #0" assertions="1" time="0.017599"/>
-      </testsuite>
+    <testsuite name="Flagship\Hit\TransactionTest" file="/home/app/tests/Hit/TransactionTest.php" tests="2" assertions="24" failures="0" errors="0" time="0.059428">
+      <testcase name="testConstruct" class="Flagship\Hit\TransactionTest" file="/home/app/tests/Hit/TransactionTest.php" line="13" assertions="19" time="0.042563"/>
+      <testcase name="testIsReady" class="Flagship\Hit\TransactionTest" file="/home/app/tests/Hit/TransactionTest.php" line="159" assertions="5" time="0.016865"/>
     </testsuite>
-    <testsuite name="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" tests="7" assertions="16" failures="0" errors="0" time="0.094563">
-      <testcase name="testConstructorFailed" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="13" assertions="2" time="0.013022"/>
-      <testcase name="testSetOption" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="20" assertions="1" time="0.011282"/>
-      <testcase name="testSetHeaders" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="29" assertions="3" time="0.012110"/>
-      <testcase name="testBuildUrl" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="39" assertions="2" time="0.013352"/>
-      <testcase name="testPost" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="66" assertions="3" time="0.018437"/>
-      <testcase name="testPostFailed" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="82" assertions="1" time="0.012567"/>
-      <testcase name="testGet" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="92" assertions="4" time="0.013793"/>
+    <testsuite name="Flagship\Model\HttpResponseTest" file="/home/app/tests/Model/HttpResponseTest.php" tests="1" assertions="6" failures="0" errors="0" time="0.011787">
+      <testcase name="testConstruct" class="Flagship\Model\HttpResponseTest" file="/home/app/tests/Model/HttpResponseTest.php" line="10" assertions="6" time="0.011787"/>
     </testsuite>
-    <testsuite name="Flagship\Utils\MurmurHashTest" file="/home/app/tests/Utils/MurmurHashTest.php" tests="1" assertions="4" failures="0" errors="0" time="0.014075">
-      <testcase name="testMurmurHash3Int32" class="Flagship\Utils\MurmurHashTest" file="/home/app/tests/Utils/MurmurHashTest.php" line="10" assertions="4" time="0.014075"/>
+    <testsuite name="Flagship\Model\ModificationTest" file="/home/app/tests/Model/ModificationTest.php" tests="1" assertions="9" failures="0" errors="0" time="0.031257">
+      <testcase name="testModificationInstance" class="Flagship\Model\ModificationTest" file="/home/app/tests/Model/ModificationTest.php" line="10" assertions="9" time="0.031257"/>
     </testsuite>
-    <testsuite name="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" tests="14" assertions="74" failures="0" errors="0" time="0.394243">
-      <testcase name="testUpdateContext" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="77" assertions="17" time="0.025373"/>
-      <testcase name="testUpdateContextCollection" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="191" assertions="2" time="0.018476"/>
-      <testcase name="testClearContext" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="221" assertions="2" time="0.016820"/>
-      <testcase name="testAuthenticate" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="241" assertions="7" time="0.028421"/>
-      <testcase name="testUnauthenticate" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="298" assertions="3" time="0.028204"/>
-      <testsuite name="Flagship\Visitor\DefaultStrategyTest::testSynchronizeModifications" tests="1" assertions="13" failures="0" errors="0" time="0.029211">
-        <testcase name="testSynchronizeModifications with data set #0" assertions="13" time="0.029211"/>
-      </testsuite>
-      <testsuite name="Flagship\Visitor\DefaultStrategyTest::testSynchronizeModificationsWithoutDecisionManager" tests="1" assertions="1" failures="0" errors="0" time="0.027037">
-        <testcase name="testSynchronizeModificationsWithoutDecisionManager with data set #0" assertions="1" time="0.027037"/>
-      </testsuite>
-      <testsuite name="Flagship\Visitor\DefaultStrategyTest::testGetModificationWithActive" tests="1" assertions="1" failures="0" errors="0" time="0.035961">
-        <testcase name="testGetModificationWithActive with data set #0" assertions="1" time="0.035961"/>
-      </testsuite>
-      <testsuite name="Flagship\Visitor\DefaultStrategyTest::testGetModificationLog" tests="1" assertions="1" failures="0" errors="0" time="0.035537">
-        <testcase name="testGetModificationLog with data set #0" assertions="1" time="0.035537"/>
-      </testsuite>
-      <testsuite name="Flagship\Visitor\DefaultStrategyTest::testGetModificationInfo" tests="1" assertions="4" failures="0" errors="0" time="0.029101">
-        <testcase name="testGetModificationInfo with data set #0" assertions="4" time="0.029101"/>
-      </testsuite>
-      <testsuite name="Flagship\Visitor\DefaultStrategyTest::testActivateModification" tests="1" assertions="2" failures="0" errors="0" time="0.029644">
-        <testcase name="testActivateModification with data set #0" assertions="2" time="0.029644"/>
-      </testsuite>
-      <testsuite name="Flagship\Visitor\DefaultStrategyTest::testActivateModificationWithoutTrackerManager" tests="1" assertions="1" failures="0" errors="0" time="0.026116">
-        <testcase name="testActivateModificationWithoutTrackerManager with data set #0" assertions="1" time="0.026116"/>
-      </testsuite>
-      <testcase name="testSendHit" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="848" assertions="18" time="0.033562"/>
-      <testcase name="testSendHitWithLog" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="942" assertions="2" time="0.030781"/>
+    <testsuite name="Flagship\Traits\BuildApiTraitTest" file="/home/app/tests/Traits/BuildApiTraitTest.php" tests="1" assertions="2" failures="0" errors="0" time="0.020072">
+      <testcase name="testBuildHeader" class="Flagship\Traits\BuildApiTraitTest" file="/home/app/tests/Traits/BuildApiTraitTest.php" line="11" assertions="2" time="0.020072"/>
     </testsuite>
-    <testsuite name="Flagship\Visitor\NoConsentStrategyTest" file="/home/app/tests/Visitor/NoConsentStrategyTest.php" tests="1" assertions="6" failures="0" errors="0" time="0.033592">
-      <testcase name="testMethods" class="Flagship\Visitor\NoConsentStrategyTest" file="/home/app/tests/Visitor/NoConsentStrategyTest.php" line="15" assertions="6" time="0.033592"/>
+    <testsuite name="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" tests="7" assertions="7" failures="0" errors="0" time="0.186038">
+      <testcase name="testLoginError" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="13" assertions="1" time="0.028144"/>
+      <testcase name="testLogErrorSprintf" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="49" assertions="1" time="0.028714"/>
+      <testcase name="testLoginInfo" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="79" assertions="1" time="0.031172"/>
+      <testcase name="testLogInfoSprintf" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="115" assertions="1" time="0.024658"/>
+      <testcase name="testLogDebug" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="145" assertions="1" time="0.024817"/>
+      <testcase name="testLogDebugSprintf" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="174" assertions="1" time="0.032956"/>
+      <testcase name="testGetLogFormat" class="Flagship\Traits\LogTraitTest" file="/home/app/tests/Traits/LogTraitTest.php" line="206" assertions="1" time="0.015577"/>
     </testsuite>
-    <testsuite name="Flagship\Visitor\NotReadyStrategyTest" file="/home/app/tests/Visitor/NotReadyStrategyTest.php" tests="1" assertions="6" failures="0" errors="0" time="0.033984">
-      <testcase name="testMethods" class="Flagship\Visitor\NotReadyStrategyTest" file="/home/app/tests/Visitor/NotReadyStrategyTest.php" line="15" assertions="6" time="0.033984"/>
+    <testsuite name="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" tests="6" assertions="31" failures="0" errors="0" time="0.135107">
+      <testcase name="testIsValueValid" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="13" assertions="5" time="0.016462"/>
+      <testcase name="testIsKeyValid" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="37" assertions="8" time="0.021729"/>
+      <testcase name="testCheckType" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="72" assertions="8" time="0.020609"/>
+      <testcase name="testCheckFlagshipContext" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="98" assertions="4" time="0.024310"/>
+      <testcase name="testIsJsonObject" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="153" assertions="3" time="0.018126"/>
+      <testcase name="testIsNumeric" class="Flagship\Traits\ValidatorTraitTest" file="/home/app/tests/Traits/ValidatorTraitTest.php" line="171" assertions="3" time="0.033871"/>
     </testsuite>
-    <testsuite name="Flagship\Visitor\PanicStrategyTest" file="/home/app/tests/Visitor/PanicStrategyTest.php" tests="1" assertions="5" failures="0" errors="0" time="0.047901">
-      <testcase name="testMethods" class="Flagship\Visitor\PanicStrategyTest" file="/home/app/tests/Visitor/PanicStrategyTest.php" line="15" assertions="5" time="0.047901"/>
+    <testsuite name="Flagship\Utils\ConfigManagerTest" file="/home/app/tests/Utils/ConfigManagerTest.php" tests="1" assertions="6" failures="0" errors="0" time="0.018036">
+      <testcase name="testInstance" class="Flagship\Utils\ConfigManagerTest" file="/home/app/tests/Utils/ConfigManagerTest.php" line="12" assertions="6" time="0.018036"/>
     </testsuite>
-    <testsuite name="Flagship\Visitor\VisitorBuilderTest" file="/home/app/tests/Visitor/VisitorBuilderTest.php" tests="1" assertions="6" failures="0" errors="0" time="0.030374">
-      <testcase name="testBuilder" class="Flagship\Visitor\VisitorBuilderTest" file="/home/app/tests/Visitor/VisitorBuilderTest.php" line="12" assertions="6" time="0.030374"/>
+    <testsuite name="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" tests="6" assertions="19" failures="0" errors="0" time="0.103086">
+      <testcase name="testGet" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="10" assertions="4" time="0.024321"/>
+      <testcase name="testGetWithDefaultArgs" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="43" assertions="3" time="0.013878"/>
+      <testcase name="testGetNotInstantiable" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="53" assertions="1" time="0.012046"/>
+      <testcase name="testGetWithCustomArgument" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="63" assertions="3" time="0.014924"/>
+      <testcase name="testFactory" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="76" assertions="3" time="0.023041"/>
+      <testcase name="testBind" class="Flagship\Utils\ContainerTest" file="/home/app/tests/Utils/ContainerTest.php" line="88" assertions="5" time="0.014876"/>
     </testsuite>
-    <testsuite name="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" tests="6" assertions="21" failures="0" errors="0" time="0.188403">
-      <testcase name="testConstruct" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="19" assertions="9" time="0.039210"/>
-      <testcase name="testSetAnonymous" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="79" assertions="3" time="0.018601"/>
-      <testcase name="testSetVisitorLog" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="100" assertions="1" time="0.025060"/>
-      <testcase name="testMethods" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="143" assertions="1" time="0.061321"/>
-      <testcase name="testJson" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="256" assertions="3" time="0.020985"/>
-      <testcase name="testGetStrategy" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="280" assertions="4" time="0.023226"/>
+    <testsuite name="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" tests="9" assertions="9" failures="0" errors="0" time="0.123858">
+      <testcase name="testError" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="23" assertions="1" time="0.014300"/>
+      <testcase name="testInfo" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="36" assertions="1" time="0.012384"/>
+      <testcase name="testAlert" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="48" assertions="1" time="0.014716"/>
+      <testcase name="testEmergency" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="60" assertions="1" time="0.015017"/>
+      <testcase name="testLog" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="73" assertions="1" time="0.012370"/>
+      <testcase name="testWarning" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="86" assertions="1" time="0.017598"/>
+      <testcase name="testCritical" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="98" assertions="1" time="0.012083"/>
+      <testcase name="testNotice" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="110" assertions="1" time="0.012942"/>
+      <testcase name="testDebug" class="Flagship\Utils\FlagshipLogManagerTest" file="/home/app/tests/Utils/FlagshipLogManagerTest.php" line="123" assertions="1" time="0.012448"/>
     </testsuite>
-    <testsuite name="Flagship\Visitor\VisitorTest" file="/home/app/tests/Visitor/VisitorTest.php" tests="3" assertions="9" failures="0" errors="0" time="0.099938">
-      <testcase name="testConstruct" class="Flagship\Visitor\VisitorTest" file="/home/app/tests/Visitor/VisitorTest.php" line="18" assertions="5" time="0.022531"/>
-      <testcase name="testMethods" class="Flagship\Visitor\VisitorTest" file="/home/app/tests/Visitor/VisitorTest.php" line="58" assertions="1" time="0.054550"/>
-      <testcase name="testJson" class="Flagship\Visitor\VisitorTest" file="/home/app/tests/Visitor/VisitorTest.php" line="172" assertions="3" time="0.022857"/>
+    <testsuite name="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" tests="7" assertions="16" failures="0" errors="0" time="0.106153">
+      <testcase name="testConstructorFailed" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="13" assertions="2" time="0.012516"/>
+      <testcase name="testSetOption" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="20" assertions="1" time="0.017436"/>
+      <testcase name="testSetHeaders" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="29" assertions="3" time="0.013280"/>
+      <testcase name="testBuildUrl" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="39" assertions="2" time="0.012286"/>
+      <testcase name="testPost" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="66" assertions="3" time="0.018710"/>
+      <testcase name="testPostFailed" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="82" assertions="1" time="0.016292"/>
+      <testcase name="testGet" class="Flagship\Utils\HttpClientTest" file="/home/app/tests/Utils/HttpClientTest.php" line="92" assertions="4" time="0.015633"/>
+    </testsuite>
+    <testsuite name="Flagship\Utils\MurmurHashTest" file="/home/app/tests/Utils/MurmurHashTest.php" tests="1" assertions="4" failures="0" errors="0" time="0.018094">
+      <testcase name="testMurmurHash3Int32" class="Flagship\Utils\MurmurHashTest" file="/home/app/tests/Utils/MurmurHashTest.php" line="10" assertions="4" time="0.018094"/>
+    </testsuite>
+    <testsuite name="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" tests="23" assertions="128" failures="0" errors="0" time="1.123832">
+      <testcase name="testUpdateContext" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="87" assertions="17" time="0.031215"/>
+      <testcase name="testUpdateContextCollection" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="201" assertions="2" time="0.020551"/>
+      <testcase name="testClearContext" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="231" assertions="2" time="0.024145"/>
+      <testcase name="testAuthenticate" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="251" assertions="7" time="0.043557"/>
+      <testcase name="testUnauthenticate" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="317" assertions="3" time="0.037269"/>
+      <testcase name="testSynchronizeModifications" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="382" assertions="15" time="0.058944"/>
+      <testcase name="testSynchronizeModificationsWithoutDecisionManager" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="494" assertions="1" time="0.041321"/>
+      <testcase name="testFetchFlags" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="525" assertions="15" time="0.059559"/>
+      <testcase name="testFetchFlagsWithoutDecisionManager" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="633" assertions="1" time="0.043247"/>
+      <testcase name="testGetModificationWithActive" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="655" assertions="2" time="0.070454"/>
+      <testcase name="testGetModificationLog" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="720" assertions="1" time="0.041066"/>
+      <testcase name="testGetModificationInfo" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="800" assertions="5" time="0.058714"/>
+      <testcase name="testActivateModification" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="885" assertions="3" time="0.073076"/>
+      <testcase name="testActivateModificationWithoutTrackerManager" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="959" assertions="2" time="0.043892"/>
+      <testcase name="testSendHit" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1009" assertions="18" time="0.053600"/>
+      <testcase name="testSendHitWithLog" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1104" assertions="2" time="0.053430"/>
+      <testcase name="testUserExposed" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1178" assertions="2" time="0.055085"/>
+      <testcase name="testGetFlagValue" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1254" assertions="8" time="0.068712"/>
+      <testcase name="testGetFlagMetadata" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1355" assertions="3" time="0.045393"/>
+      <testcase name="testLookupVisitor" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1396" assertions="10" time="0.044330"/>
+      <testcase name="testCacheVisitor" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1576" assertions="3" time="0.063785"/>
+      <testcase name="testFlushVisitor" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1741" assertions="3" time="0.043020"/>
+      <testcase name="testFetchVisitorCampaigns" class="Flagship\Visitor\DefaultStrategyTest" file="/home/app/tests/Visitor/DefaultStrategyTest.php" line="1827" assertions="3" time="0.049468"/>
+    </testsuite>
+    <testsuite name="Flagship\Visitor\NoConsentStrategyTest" file="/home/app/tests/Visitor/NoConsentStrategyTest.php" tests="1" assertions="8" failures="0" errors="0" time="0.074726">
+      <testcase name="testMethods" class="Flagship\Visitor\NoConsentStrategyTest" file="/home/app/tests/Visitor/NoConsentStrategyTest.php" line="20" assertions="8" time="0.074726"/>
+    </testsuite>
+    <testsuite name="Flagship\Visitor\NotReadyStrategyTest" file="/home/app/tests/Visitor/NotReadyStrategyTest.php" tests="1" assertions="8" failures="0" errors="0" time="0.060841">
+      <testcase name="testMethods" class="Flagship\Visitor\NotReadyStrategyTest" file="/home/app/tests/Visitor/NotReadyStrategyTest.php" line="16" assertions="8" time="0.060841"/>
+    </testsuite>
+    <testsuite name="Flagship\Visitor\PanicStrategyTest" file="/home/app/tests/Visitor/PanicStrategyTest.php" tests="1" assertions="8" failures="0" errors="0" time="0.084008">
+      <testcase name="testMethods" class="Flagship\Visitor\PanicStrategyTest" file="/home/app/tests/Visitor/PanicStrategyTest.php" line="21" assertions="8" time="0.084008"/>
+    </testsuite>
+    <testsuite name="Flagship\Visitor\VisitorBuilderTest" file="/home/app/tests/Visitor/VisitorBuilderTest.php" tests="1" assertions="6" failures="0" errors="0" time="0.040265">
+      <testcase name="testBuilder" class="Flagship\Visitor\VisitorBuilderTest" file="/home/app/tests/Visitor/VisitorBuilderTest.php" line="12" assertions="6" time="0.040265"/>
+    </testsuite>
+    <testsuite name="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" tests="6" assertions="23" failures="0" errors="0" time="0.264639">
+      <testcase name="testVisitorDelegateConstruct" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="22" assertions="9" time="0.033687"/>
+      <testcase name="testSetAnonymous" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="112" assertions="3" time="0.030900"/>
+      <testcase name="testSetVisitorLog" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="133" assertions="1" time="0.029730"/>
+      <testcase name="testMethods" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="176" assertions="3" time="0.111967"/>
+      <testcase name="testJson" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="347" assertions="3" time="0.028152"/>
+      <testcase name="testGetStrategy" class="Flagship\Visitor\VisitorDelegateTest" file="/home/app/tests/Visitor/VisitorDelegateTest.php" line="371" assertions="4" time="0.030203"/>
+    </testsuite>
+    <testsuite name="Flagship\Visitor\VisitorTest" file="/home/app/tests/Visitor/VisitorTest.php" tests="3" assertions="10" failures="0" errors="0" time="0.139283">
+      <testcase name="testConstruct" class="Flagship\Visitor\VisitorTest" file="/home/app/tests/Visitor/VisitorTest.php" line="18" assertions="5" time="0.027103"/>
+      <testcase name="testMethods" class="Flagship\Visitor\VisitorTest" file="/home/app/tests/Visitor/VisitorTest.php" line="58" assertions="2" time="0.088334"/>
+      <testcase name="testJson" class="Flagship\Visitor\VisitorTest" file="/home/app/tests/Visitor/VisitorTest.php" line="192" assertions="3" time="0.023846"/>
     </testsuite>
   </testsuite>
 </testsuites>

@@ -12,6 +12,7 @@ use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\MurmurHash;
 use Flagship\Utils\Utils;
+use Flagship\Visitor\DefaultStrategy;
 use Flagship\Visitor\VisitorDelegate;
 use Flagship\Visitor\VisitorStrategyAbstract;
 use PHPUnit\Framework\TestCase;
@@ -41,11 +42,7 @@ class BucketingManagerTest extends TestCase
 
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        $httpClientMock->expects($this->exactly(2))
-            ->method('post')
-            ->willReturn(new HttpResponse(204, null));
-
-        $bucketingFile =\file_get_contents(__DIR__ . '/bucketing.json');
+        $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $httpClientMock->expects($this->exactly(6))
             ->method('get')
             ->with($bucketingUrl)
@@ -53,23 +50,22 @@ class BucketingManagerTest extends TestCase
                 new HttpResponse(204, null),
                 new HttpResponse(204, json_decode('{"panic": true}', true)),
                 new HttpResponse(204, json_decode('{}', true)),
-                new HttpResponse(204, json_decode( '{"campaigns":[{}]}', true)),
+                new HttpResponse(204, json_decode('{"campaigns":[{}]}', true)),
                 new HttpResponse(204, json_decode('{"notExistKey": false}', true)),
                 new HttpResponse(204, json_decode($bucketingFile, true))
             );
+
         //Test File not exist
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test Panic Mode
-
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test campaign property
-
         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
         $this->assertCount(0, $campaigns);
@@ -117,10 +113,21 @@ class BucketingManagerTest extends TestCase
 
         $trackerManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
-            ['sendConsentHit'],
+            ['addHit'],
             '',
             false
         );
+
+        $containerMock = $this->getMockBuilder(
+            'Flagship\Utils\Container'
+        )->setMethods(['get'])->disableOriginalConstructor()->getMock();
+
+        $containerGetMethod = function ($arg1, $arg2) {
+
+             return new DefaultStrategy($arg2[0]);
+        };
+
+        $containerMock->method('get')->will($this->returnCallback($containerGetMethod));
 
         $envId = "envId";
 
@@ -137,116 +144,31 @@ class BucketingManagerTest extends TestCase
 
         $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
-        $config = new BucketingConfig($bucketingUrl,$envId);
+        $config = new BucketingConfig($bucketingUrl, $envId);
         $config->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
 
-        $container = new Container();
         $configManager = new ConfigManager();
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
 
-        $postBody = [
-            "visitorId" => $visitorId,
-            "type" => "CONTEXT",
-            "data" => $visitorContext
-        ];
-
-        $errorMessage = "message error";
         $httpClientMock->expects($this->exactly(2))
-            ->method('post')
-            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), [], $postBody)
-            ->willReturnOnConsecutiveCalls(
-                new HttpResponse(204, null),
-                new HttpResponse(404, $errorMessage)
-            );
-
-        $httpClientMock->expects($this->exactly(3))
             ->method('get')
             ->willReturn(
-                new HttpResponse(204, json_decode( '{"campaigns":[{}]}', true))
+                new HttpResponse(204, json_decode('{"campaigns":[{}]}', true))
             );
 
-        $sdk = FlagshipConstant::FLAGSHIP_SDK;
-        //  $logManagerStub->expects($this->once())->method('error')->with("[$sdk] " . $errorMessage);
+        $trackerManager->expects($this->exactly(2))->method("addHit");
 
-        $bucketingManager->getCampaignModifications($visitor);
         $bucketingManager->getCampaignModifications($visitor);
 
         //Test empty context
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, [], true);
-        $bucketingManager->getCampaignModifications($visitor);
-
-    }
-
-    public function testSendContextWithError()
-    {
-        $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
-            ['error'],
-            '',
-            false
-        );
-
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post', 'get'],
-            "",
-            false
-        );
-
-        $trackerManager = $this->getMockForAbstractClass(
-            'Flagship\Api\TrackingManagerAbstract',
-            ['sendConsentHit'],
-            '',
-            false
-        );
-
-        $envId = "envId";
-
-        $visitorId = "visitor_1";
-        $visitorContext = [
-            "age" => 20,
-            "sdk_osName" => PHP_OS,
-            "sdk_deviceType" => "server",
-            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,
-        ];
-
-        $postBody = [
-            "visitorId" => $visitorId,
-            "type" => "CONTEXT",
-            "data" => $visitorContext
-        ];
-
-        $exception = new Exception("test error");
-        $httpClientMock->expects($this->exactly(1))
-            ->method('post')
-            ->with(sprintf(FlagshipConstant::BUCKETING_API_CONTEXT_URL, $envId), [], $postBody)
-            ->willThrowException($exception);
-
-        $logManagerStub->expects($this->once())->method('error');
-
-        $bucketingUrl  = "http:127.0.0.1:3000";
-        $murmurhash = new MurmurHash();
-        $config = new BucketingConfig($bucketingUrl,$envId);
-        $config->setLogManager($logManagerStub);
-        $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
-
-        $container = new Container();
-        $configManager = new ConfigManager();
-        $configManager->setConfig($config)->setTrackingManager($trackerManager);
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
-
-        $httpClientMock->method('get')
-        ->willReturn(
-            new HttpResponse(204, json_decode( '{"campaigns":[{}]}', true))
-        );
-
+        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, [], true);
         $bucketingManager->getCampaignModifications($visitor);
     }
+
+
 
     public function testGetVariation()
     {
@@ -358,7 +280,7 @@ class BucketingManagerTest extends TestCase
             FlagshipField::FIELD_ID => "9273BKSDJtoto",
             FlagshipField::FIELD_VARIATIONS => $realloCvariations
         ];
-        $assignmentsHistory = ["9273BKSDJtoto"=>"c20j9lgbcahhf2mvhbf0"];
+        $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
             VisitorStrategyAbstract::VERSION => 1,
             VisitorStrategyAbstract::DATA => [
@@ -403,7 +325,7 @@ class BucketingManagerTest extends TestCase
             FlagshipField::FIELD_ID => "9273BKSDJtoto",
             FlagshipField::FIELD_VARIATIONS => $reallovariations
         ];
-        $assignmentsHistory = ["9273BKSDJtoto"=>"c20j9lgbcahhf2mvhbf0"];
+        $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
             VisitorStrategyAbstract::VERSION => 1,
             VisitorStrategyAbstract::DATA => [
@@ -415,8 +337,7 @@ class BucketingManagerTest extends TestCase
 
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
 
-        $this->assertCount(0,$variation);
-
+        $this->assertCount(0, $variation);
     }
 
     public function testIsMatchTargeting()

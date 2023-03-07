@@ -13,7 +13,7 @@ interface VisitorFlagInterface
      * @param FlagDTO $flag
      * @return void
      */
-    public function userExposed($key, $defaultValue, FlagDTO $flag = null);
+    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null);
 
     /**
      * @param string $key

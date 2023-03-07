@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        php-versions: ['7.3']
+        php-versions: ['7.4']
         phpunit-versions: ['5.7']
 
     steps:
@@ -40,9 +40,16 @@ jobs:
         coverage: xdebug        
         tools: phpunit:${{ matrix.phpunit-versions }}
 
+    - run: rm composer.lock
+
+    - run: composer remove phpunit/phpunit --dev --no-update
+    - run: composer remove psr/log --no-update
+
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
+    - run: composer require phpunit/phpunit:5.7 --dev -W
+    - run: composer require psr/log:^1 -W
 
     - name: Run test suite
       run: composer run-script test

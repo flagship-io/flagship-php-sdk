@@ -10,6 +10,10 @@ trait ValidatorTrait
 {
     use LogTrait;
 
+    /**
+     * @param string $string
+     * @return bool
+     */
     protected function isJsonObject($string)
     {
         $jsonObject = json_decode($string);

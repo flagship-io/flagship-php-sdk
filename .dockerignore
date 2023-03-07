@@ -4,6 +4,7 @@ dockers
 .idea
 vendor
 reports
+composer.lock
 example/vendor
 example/reports
 example/storage/logs/*

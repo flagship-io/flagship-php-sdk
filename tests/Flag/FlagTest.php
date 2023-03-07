@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class FlagTest extends TestCase
 {
-
     public function testFlag()
     {
         $key = "key";
@@ -64,7 +63,7 @@ class FlagTest extends TestCase
 
         $this->assertTrue($flag->exists());
 
-        $visitorDelegateMock->expects($this->once())->method('userExposed')->with(
+        $visitorDelegateMock->expects($this->once())->method('visitorExposed')->with(
             $key,
             $defaultValue,
             $flagDTO
@@ -81,6 +80,9 @@ class FlagTest extends TestCase
         $metadataValue = $flag->getMetadata();
 
         $this->assertSame($metadataValue, $metadata);
+
+        $this->assertSame($key, $flag->getKey());
+        $this->assertSame($defaultValue, $flag->getDefaultValue());
     }
 
     public function testFlagNull()

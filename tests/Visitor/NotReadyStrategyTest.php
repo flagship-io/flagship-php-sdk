@@ -37,13 +37,19 @@ class NotReadyStrategyTest extends TestCase
 
         $logMessageBuild = function ($functionName) {
             $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return ["[$flagshipSdk] " . sprintf(
+            return [sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
                 FlagshipStatus::NOT_INITIALIZED
             ),
                 [FlagshipConstant::TAG => $functionName]];
         };
+
+
+
+        $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
+        $visitorId = "visitorId";
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $logManagerStub->expects($this->exactly(9))->method('error')
             ->withConsecutive(
@@ -54,13 +60,9 @@ class NotReadyStrategyTest extends TestCase
                 $logMessageBuild('sendHit'),
                 $logMessageBuild('fetchFlags'),
                 $logMessageBuild('getFlagValue'),
-                $logMessageBuild('userExposed'),
+                $logMessageBuild('visitorExposed'),
                 $logMessageBuild('getFlagMetadata')
             );
-
-        $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
-        $visitorId = "visitorId";
-        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $notReadyStrategy = new NotReadyStrategy($visitor);
 
@@ -123,7 +125,7 @@ class NotReadyStrategyTest extends TestCase
         $this->assertEquals(true, $value);
 
         //Test userExposed
-        $notReadyStrategy->userExposed('key', true, null);
+        $notReadyStrategy->visitorExposed('key', true, null);
 
         //Test getFlagMetadata
         $notReadyStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);
@@ -135,7 +137,8 @@ class NotReadyStrategyTest extends TestCase
             true,
             true,
             true,
-            ['lookupVisitor', 'cacheVisitor']);
+            ['lookupVisitor', 'cacheVisitor']
+        );
 
         $VisitorCacheImplementationMock->expects($this->never())
             ->method("cacheVisitor");

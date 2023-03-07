@@ -38,7 +38,7 @@ class VisitorBuilderTest extends TestCase
         };
 
         $trackerManager = $this->getMockBuilder('Flagship\Api\TrackingManager')
-            ->setMethods(['sendConsentHit'])
+            ->setMethods(['addHit'])
             ->disableOriginalConstructor()->getMock();
 
         $containerMock = $this->getMockBuilder(

@@ -50,17 +50,17 @@ class EventTest extends TestCase
             ->setScreenResolution($screenResolution)
             ->setSessionNumber($sessionNumber);
 
-        $this->assertSame($eventArray, $event->toArray());
+        $this->assertSame($eventArray, $event->toApiKeys());
 
         $event->setLabel($eventLabel);
         $eventArray[FlagshipConstant::EVENT_LABEL_API_ITEM] = $eventLabel;
 
-        $this->assertSame($eventArray, $event->toArray());
+        $this->assertSame($eventArray, $event->toApiKeys());
 
         $event->setValue($eventValue);
         $eventArray[FlagshipConstant::EVENT_VALUE_API_ITEM] = $eventValue;
 
-        $this->assertSame($eventArray, $event->toArray());
+        $this->assertSame($eventArray, $event->toApiKeys());
 
         $logManagerMock = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
@@ -77,15 +77,15 @@ class EventTest extends TestCase
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $errorMessage = function ($itemName, $typeName) use ($flagshipSdk) {
 
-            return "[$flagshipSdk] " . sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
+            return sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
         };
 
         $logManagerMock->expects($this->exactly(5))->method('error')
             ->withConsecutive(
-                ["[$flagshipSdk] " . sprintf(Event::CATEGORY_ERROR, 'category')],
+                [sprintf(Event::CATEGORY_ERROR, 'category')],
                 [$errorMessage('action', 'string')],
                 [$errorMessage('eventLabel', 'string')],
-                ["[$flagshipSdk] " . Event::VALUE_FIELD_ERROR,['TAG' => 'setValue']]
+                [ Event::VALUE_FIELD_ERROR,['TAG' => 'setValue']]
             );
 
         //Test category validation with empty
@@ -103,14 +103,14 @@ class EventTest extends TestCase
         //Test value validation with no numeric
         $event->setValue(2.5);
 
-        $this->assertSame($eventArray, $event->toArray());
+        $this->assertSame($eventArray, $event->toApiKeys());
 
         $anonymousId = "anonymousId";
         $event->setAnonymousId($anonymousId);
 
         $eventArray[FlagshipConstant::VISITOR_ID_API_ITEM] = $anonymousId;
         $eventArray[FlagshipConstant::CUSTOMER_UID] = $visitorId;
-        $this->assertSame($eventArray, $event->toArray());
+        $this->assertSame($eventArray, $event->toApiKeys());
 
         $this->assertEquals($anonymousId, $event->getAnonymousId());
     }

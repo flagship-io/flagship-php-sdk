@@ -6,13 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 class HttpResponseTest extends TestCase
 {
-
     public function testConstruct()
     {
         $statusCode = 200;
         $body = 'Body';
         $headers = [
-            "accept"=>"application/json"
+            "accept" => "application/json"
         ];
         $httpResponse = new HttpResponse($statusCode, $body, $headers);
 

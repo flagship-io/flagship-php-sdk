@@ -16,8 +16,11 @@ namespace Flagship\Api {
     /**
      * @throws \Exception
      */
-    function shell_exec($command) {
-        if (ShellExec::$toThrowException) throw new \Exception(ShellExec::$toThrowException);
+    function shell_exec($command)
+    {
+        if (ShellExec::$toThrowException) {
+            throw new \Exception(ShellExec::$toThrowException);
+        }
         ShellExec::$command = $command;
     }
 }

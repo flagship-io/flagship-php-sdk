@@ -52,7 +52,7 @@ class NoConsentStrategyTest extends TestCase
 
         $logMessageBuild = function ($functionName) use ($visitorId) {
             $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return ["[$flagshipSdk] " . sprintf(
+            return [sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_CONSENT_ERROR,
                 $functionName,
                 $visitorId
@@ -60,21 +60,15 @@ class NoConsentStrategyTest extends TestCase
                 [FlagshipConstant::TAG => $functionName]];
         };
 
-        $logManagerStub->expects($this->exactly(4))->method('error')
-            ->withConsecutive(
-                $logMessageBuild('activateModification'),
-                $logMessageBuild('activateModification'),
-                $logMessageBuild('sendHit'),
-                $logMessageBuild('userExposed')
-            );
+
 
         $modificationKey = $modifications[0]->getKey();
         $modificationValue = $modifications[0]->getValue();
-        
+
         $httpClientMock->expects($this->exactly(2))->method("post")
             ->willReturnOnConsecutiveCalls(
-                new HttpResponse(200,$this->campaigns()),
-                new HttpResponse(500,null)
+                new HttpResponse(200, $this->campaigns()),
+                new HttpResponse(500, null)
             );
 
         $configManager = (new ConfigManager())->setConfig($config);
@@ -82,6 +76,14 @@ class NoConsentStrategyTest extends TestCase
         $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
+
+        $logManagerStub->expects($this->exactly(4))->method('error')
+            ->withConsecutive(
+                $logMessageBuild('activateModification'),
+                $logMessageBuild('activateModification'),
+                $logMessageBuild('sendHit'),
+                $logMessageBuild('visitorExposed')
+            );
 
         $noConsentStrategy = new NoConsentStrategy($visitor);
 
@@ -129,7 +131,7 @@ class NoConsentStrategyTest extends TestCase
         $noConsentStrategy->sendHit(new Page('http://localhost'));
 
         //Test userExposed
-        $noConsentStrategy->userExposed('key', true, null);
+        $noConsentStrategy->visitorExposed('key', true, null);
 
         $campaignsData = $this->campaigns();
         $assignmentsHistory = [];
@@ -139,12 +141,12 @@ class NoConsentStrategyTest extends TestCase
             $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
             $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
 
-            $campaigns[]=[
+            $campaigns[] = [
                 FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
-                FlagshipField::FIELD_CAMPAIGN_TYPE =>$modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
                 VisitorStrategyAbstract::ACTIVATED => false,
                 VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
@@ -175,7 +177,8 @@ class NoConsentStrategyTest extends TestCase
             true,
             true,
             true,
-            ['lookupVisitor', 'cacheVisitor']);
+            ['lookupVisitor', 'cacheVisitor']
+        );
 
         $VisitorCacheImplementationMock->expects($this->never())
             ->method("cacheVisitor");
@@ -191,5 +194,4 @@ class NoConsentStrategyTest extends TestCase
         // test cacheVisitor
         $noConsentStrategy->cacheVisitor();
     }
-
 }

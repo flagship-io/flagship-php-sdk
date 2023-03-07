@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 
 class MurmurHashTest extends TestCase
 {
-
     public function testMurmurHash3Int32()
     {
         $murmurHash = new MurmurHash();

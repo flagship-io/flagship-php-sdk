@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase
 {
-
     public function testGet()
     {
         $container = new Container();

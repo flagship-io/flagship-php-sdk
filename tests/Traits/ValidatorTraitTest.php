@@ -128,12 +128,13 @@ class ValidatorTraitTest extends TestCase
 
         $sdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerStub->expects($this->once())->method('error')
-            ->with("[$sdk] " .
+            ->with(
                 sprintf(
                     FlagshipConstant::FLAGSHIP_PREDEFINED_CONTEXT_ERROR,
                     "sdk_osName",
                     "string"
-                ));
+                )
+            );
         $value = 1;
         $check = $checkFlagshipContext->invokeArgs(
             $validatorTraitMock,
@@ -197,8 +198,9 @@ class ValidatorTraitTest extends TestCase
 
         $sdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerStub->expects($this->once())->method('error')
-            ->with("[$sdk] " .
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric'));
+            ->with(
+                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
+            );
 
         $this->assertFalse($isNumeric->invokeArgs($validatorTraitMock, ["abc", $itemName, $config]));
     }

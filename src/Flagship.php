@@ -12,7 +12,6 @@ use Flagship\Enum\FlagshipStatus;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
-use Flagship\Visitor\Visitor;
 use Flagship\Visitor\VisitorBuilder;
 
 /**
@@ -82,8 +81,8 @@ class Flagship
     /**
      * Start the flagship SDK
      *
-     * @param $envId  : Environment id provided by Flagship.
-     * @param $apiKey : Secure api key provided by Flagship.
+     * @param string $envId  Environment id provided by Flagship.
+     * @param string $apiKey Secure api key provided by Flagship.
      * @param BucketingConfig|DecisionApiConfig|null $config : (optional) SDK configuration.
      */
     public static function start($envId, $apiKey, FlagshipConfig $config = null)
@@ -126,7 +125,7 @@ class Flagship
 
             $configManager->setDecisionManager($decisionManager);
 
-            $trackingManager = $container->get('Flagship\Api\TrackingManager');
+            $trackingManager = $container->get('Flagship\Api\TrackingManager', [$config,$httpClient]);
 
             $configManager->setTrackingManager($trackingManager);
 
@@ -177,10 +176,17 @@ class Flagship
             'Flagship\Utils\HttpClientInterface',
             'Flagship\Utils\HttpClient'
         );
-        $newContainer->bind(
-            'Psr\Log\LoggerInterface',
-            'Flagship\Utils\FlagshipLogManager'
-        );
+        if (version_compare(phpversion(), '8', '>=')) {
+            $newContainer->bind(
+                'Psr\Log\LoggerInterface',
+                'Flagship\Utils\FlagshipLogManager8'
+            );
+        } else {
+            $newContainer->bind(
+                'Psr\Log\LoggerInterface',
+                'Flagship\Utils\FlagshipLogManager'
+            );
+        }
         return $newContainer;
     }
 
@@ -240,7 +246,7 @@ class Flagship
 
     /**
      * Return current status of Flagship SDK.
-     * @see \Flagship\Enum\FlagshipStatus
+     * @see FlagshipStatus
      * @return int
      */
     public static function getStatus()
@@ -273,20 +279,29 @@ class Flagship
     }
 
     /**
+     * Every time your **application** (**script**) is about to **terminate**, you must call this method
+     * to batch and send all hits that are in the pool
+     * @return void
+     */
+    public static function close()
+    {
+        $instance = self::getInstance();
+        if (!$instance->getConfigManager()) {
+            return;
+        }
+        $instance->getConfigManager()->getTrackingManager()->sendBatch();
+    }
+
+    /**
      * Initialize the builder and Return a \Flagship\Visitor\VisitorBuilder
      * or null if the SDK hasn't started successfully.
      *
      * @param string $visitorId : Unique visitor identifier.
-     * @return VisitorBuilder|null
+     * @return VisitorBuilder
      */
-    public static function newVisitor($visitorId)
+    public static function newVisitor($visitorId = null)
     {
-        if (empty($visitorId) || !self::isReady()) {
-            return  null;
-        }
-
         $instance = self::getInstance();
-
         return VisitorBuilder::builder($visitorId, $instance->getConfigManager(), $instance->getContainer());
     }
 }

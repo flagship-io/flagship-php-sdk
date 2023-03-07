@@ -2,11 +2,11 @@
 
 namespace Flagship\Config;
 
+use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
-use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
 
@@ -14,15 +14,13 @@ class FlagshipConfigTest extends TestCase
 {
     public function configData()
     {
-        return [[['envId' => 'env_value','apiKey' => 'key_value']]];
+        return ['envId' => 'env_value','apiKey' => 'key_value'];
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testSetTimeOut($configData)
+
+    public function testSetTimeOut()
     {
+        $configData = $this->configData();
         $timeOut = 5000;
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
 
@@ -60,58 +58,64 @@ class FlagshipConfigTest extends TestCase
     }
 
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testSetApiKey($configData)
+
+    public function testSetApiKey()
     {
+        $configData = $this->configData();
         $newApiKey = 'new_api_key';
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $config->setApiKey($newApiKey);
         $this->assertEquals($newApiKey, $config->getApiKey());
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testSetEnvId($configData)
+
+    public function testSetEnvId()
     {
+        $configData = $this->configData();
         $newEnvId = 'new_env_id';
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $config->setEnvId($newEnvId);
         $this->assertEquals($newEnvId, $config->getEnvId());
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testDecisionMode($configData)
+
+    public function testDecisionMode()
     {
+        $configData = $this->configData();
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $this->assertEquals(DecisionMode::DECISION_API, $config->getDecisionMode());
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testConstruct($configData)
+
+    public function testConstruct()
     {
+        $configData = $this->configData();
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $this->assertInstanceOf("Flagship\Config\DecisionApiConfig", $config);
         $this->assertEquals($config->getEnvId(), $configData['envId']);
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
+        $this->assertNull($config->getVisitorCacheImplementation());
+        $this->assertNull($config->getHitCacheImplementation());
+        $this->assertSame(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE, $config->getCacheStrategy());
+
+        $config->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE);
+        $this->assertSame(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE, $config->getCacheStrategy());
+
+        $visitorCacheImplementation = $this->getMockForAbstractClass("Flagship\Cache\IVisitorCacheImplementation");
+        $config->setVisitorCacheImplementation($visitorCacheImplementation);
+
+        $this->assertSame($visitorCacheImplementation, $config->getVisitorCacheImplementation());
+
+        $hitCacheImplementation = $this->getMockForAbstractClass("Flagship\Cache\IHitCacheImplementation");
+        $config->setHitCacheImplementation($hitCacheImplementation);
+
+        $this->assertSame($hitCacheImplementation, $config->getHitCacheImplementation());
     }
 
-    /**
-     * @dataProvider configData
-     * @param        array $configData
-     */
-    public function testSetDecisionMode($configData)
+
+    public function testSetDecisionMode()
     {
+        $configData = $this->configData();
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $setDecisionMode = Utils::getMethod($config, 'setDecisionMode');
         $setDecisionMode->invokeArgs($config, [DecisionMode::DECISION_API]);
@@ -122,21 +126,11 @@ class FlagshipConfigTest extends TestCase
 
     public function testSetStatusChangedCallback()
     {
-        $logManagerMock = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['error', 'info']
-        );
+        $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
 
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $logManagerMock->expects($this->once())
             ->method('error')
             ->with(
-                "[$flagshipSdk] " .
                 sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
                 [
                     FlagshipConstant::TAG => "setStatusChangedCallback"
@@ -160,6 +154,36 @@ class FlagshipConfigTest extends TestCase
         $this->assertSame($callable, $config->getStatusChangedCallback());
     }
 
+    public function testSetOnUserExposure()
+    {
+        $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
+
+        $logManagerMock->expects($this->once())
+            ->method('error')
+            ->with(
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
+                [
+                    FlagshipConstant::TAG => "setOnVisitorExposed"
+                ]
+            );
+
+        $config = new DecisionApiConfig();
+
+        $config->setLogManager($logManagerMock);
+
+        $this->assertNull($config->getOnVisitorExposed());
+
+        $config->setOnVisitorExposed([]);
+
+        $this->assertNull($config->getOnVisitorExposed());
+
+        $callable = function () {
+        };
+        $config->setOnVisitorExposed($callable);
+
+        $this->assertSame($callable, $config->getOnVisitorExposed());
+    }
+
     public function testJson()
     {
         $data =  [
@@ -176,7 +200,7 @@ class FlagshipConfigTest extends TestCase
             json_encode($data),
             json_encode($config)
         );
-        $logManager = new FlagshipLogManager();
+        $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
         $config->setLogManager($logManager);
         $this->assertSame($logManager, $config->getLogManager());
     }

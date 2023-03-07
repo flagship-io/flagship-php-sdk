@@ -6,7 +6,6 @@ use Flagship\Enum\FlagshipConstant;
 
 trait BuildApiTrait
 {
-
     /**
      * Build http request header
      *

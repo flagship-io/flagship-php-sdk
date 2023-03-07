@@ -38,6 +38,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * ApiManager constructor.
      *
      * @param HttpClientInterface $httpClient
+     * @param FlagshipConfig $config
      */
     public function __construct(HttpClientInterface $httpClient, FlagshipConfig $config)
     {
@@ -105,6 +106,10 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
         return $this;
     }
 
+    /**
+     * @param $newStatus
+     * @return void
+     */
     protected function updateFlagshipStatus($newStatus)
     {
         $callable = $this->statusChangedCallback;

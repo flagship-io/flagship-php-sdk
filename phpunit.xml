@@ -13,6 +13,7 @@
         <testsuite name="my test">
             <exclude>tests/Utils/Version8/ContainerTest.php</exclude>
             <exclude>tests/Utils/Version8/HttpClientTest.php</exclude>
+            <exclude>tests/Utils/FlagshipLogManager8Test.php</exclude>
             <directory>tests</directory>
         </testsuite>
     </testsuites>
@@ -27,7 +28,7 @@
         <whitelist>
             <directory suffix=".php">src/</directory>
             <exclude>
-                <file>src/Api/backgroundRequest.php</file>
+                <file>src/Utils/FlagshipLogManager8.php</file>
             </exclude>
         </whitelist>
     </filter>

@@ -1,6 +1,6 @@
 ## About
 
-This is an implementation of Flagship SDK PHP using Laravel framework 
+This is Flagship SDK PHP implementation using Laravel framework 
 
 ## Install Flagship
 

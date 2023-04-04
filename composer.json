@@ -11,7 +11,7 @@
   ],
   "license": "Apache-2.0",
   "require": {
-    "php": ">=7.1",
+    "php": ">=5.4",
     "ext-curl": "*",
     "ext-json": "*",
     "psr/log": "^1|^2|^3"

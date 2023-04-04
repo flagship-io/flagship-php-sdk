@@ -1,6 +1,6 @@
 ## About
 
-This is Flagship SDK PHP implementation using Laravel framework 
+This is [Flagship SDK PHP](https://docs.developers.flagship.io/docs/php-v3-1-x#introduction) implementation using Laravel framework 
 
 ## Install Flagship
 
@@ -44,7 +44,7 @@ In `FlagshipMiddleware` we are going to initialize the SDK, build flagship visit
 
 The advantage of using middleware is that you can run Flagship globally or for a particular route.
 
-In this example we are using `Decision API` mode but considering using `BUCKETING MODE` may reduce flag fetching latency.
+In this example we are using `Decision API` mode but considering using `BUCKETING MODE` may reduce flag fetching latency. [Learn more](https://docs.developers.flagship.io/docs/php-v3-1-x#decision-mode).
 
 ```php
 <?php

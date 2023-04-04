@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./example
+        working-directory: ./qa
 
     steps:
       - uses: actions/checkout@v2
@@ -31,5 +31,5 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ github.repository }}:qa
-          context: ./example/.
-          file: ./example/Dockerfile
+          context: ./qa/.
+          file: ./qa/Dockerfile

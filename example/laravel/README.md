@@ -10,7 +10,14 @@ This is Flagship SDK PHP implementation using Laravel framework
 
 ## Implementation
 
-### 1. Add Flagship credentials in the .env file
+### 1. Initialize the project 
+
+1. Rename `.env.example` to `.env` 
+2. Generate a laravel application key with the following command:
+```shell
+php artisan key:generate
+```
+3. Add Flagship credentials in the .env file
 
 ```text
 # .env
@@ -21,8 +28,8 @@ APP_KEY=base64:aDYIBQnqQmDgSl6gJ7o5E4UWdffRCAGgyoxKrj6kqgE=
 APP_DEBUG=true
 APP_URL=http://localhost
 
-FLAGSHIP_ENV_ID=c8XXXXXXXXXXX  
-FLAGSHIP_API_KEY=QXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+FS_ENV_ID=c8XXXXXXXXXXX  
+FS_API_KEY=QXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 ...
 ```
@@ -35,12 +42,12 @@ php artisan make:middleware FlagshipMiddleware
 
 In `FlagshipMiddleware` we are going to initialize the SDK, build flagship visitor and bind the visitor with service container.
 
-The advantage of using middleware is that you can run Flagship globally or for a particular route 
+The advantage of using middleware is that you can run Flagship globally or for a particular route.
+
+In this example we are using `Decision API` mode but considering using `BUCKETING MODE` may reduce flag fetching latency.
 
 ```php
 <?php
-
-//app/Http/Middleware/FlagshipMiddleware.php
 
 namespace App\Http\Middleware;
 
@@ -65,8 +72,13 @@ class FlagshipMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $envId = env("FLAGSHIP_ENV_ID"); //Get envId from environment variables
-        $apiKey = env("FLAGSHIP_API_KEY"); //Get apiKey from environment variables
+        $envId = env("FS_ENV_ID"); //Get envId
+        $apiKey = env("Fs_API_KEY"); //Get apiKey
+
+        // Uncomment in bucketing mode
+//        $fsSyncAgentHost = env("FS_SYNC_AGENT_HOST");
+//        $fsSyncAgentPort = env("FS_SYNC_AGENT_PORT");
+//        $fsSyncAgentUrl = "http://$fsSyncAgentHost:$fsSyncAgentPort/bucketing";
 
         $logger = App::make(Logger::class);
 
@@ -74,8 +86,8 @@ class FlagshipMiddleware
         Flagship::start(
             $envId,
             $apiKey,
-            FlagshipConfig::decisionApi() // or for bucketing mode: FlagshipConfig::bucketing("http://127.0.0.1:8080/bucketing")
-                ->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE)
+            FlagshipConfig::decisionApi() // or for bucketing mode: FlagshipConfig::bucketing($fsSyncAgentUrl)
+                ->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE) // Set cache strategy to batch hits
             ->setLogManager($logger)
         );
 
@@ -106,7 +118,6 @@ class FlagshipMiddleware
         Flagship::close();
     }
 }
-
 ```
 
 ### 3. Assigning `FlagshipMiddleware` to `home` route
@@ -150,4 +161,17 @@ class HomeController extends Controller
     }
 }
 
+```
+
+## 5. Run
+
+1. Run with Artisan command
+```shell
+php artisan serve
+```
+
+2. Run with Docker
+
+```shell
+docker-compose up 
 ```

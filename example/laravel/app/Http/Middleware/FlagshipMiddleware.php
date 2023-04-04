@@ -23,8 +23,13 @@ class FlagshipMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $envId = env("FLAGSHIP_ENV_ID"); //Get envId
-        $apiKey = env("FLAGSHIP_API_KEY"); //Get apiKey
+        $envId = env("FS_ENV_ID"); //Get envId
+        $apiKey = env("Fs_API_KEY"); //Get apiKey
+
+        // Uncomment in bucketing mode
+//        $fsSyncAgentHost = env("FS_SYNC_AGENT_HOST");
+//        $fsSyncAgentPort = env("FS_SYNC_AGENT_PORT");
+//        $fsSyncAgentUrl = "http://$fsSyncAgentHost:$fsSyncAgentPort/bucketing";
 
         $logger = App::make(Logger::class);
 
@@ -32,8 +37,8 @@ class FlagshipMiddleware
         Flagship::start(
             $envId,
             $apiKey,
-            FlagshipConfig::decisionApi() // or for bucketing mode: FlagshipConfig::bucketing("http://127.0.0.1:8080/bucketing")
-                ->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE)
+            FlagshipConfig::decisionApi() // or for bucketing mode: FlagshipConfig::bucketing($fsSyncAgentUrl)
+                ->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE) // Set cache strategy to batch hits
             ->setLogManager($logger)
         );
 

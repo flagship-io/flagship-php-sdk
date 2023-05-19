@@ -35,6 +35,7 @@ class EventTest extends TestCase
             FlagshipConstant::USER_LANGUAGE => $userLanguage,
             FlagshipConstant::SESSION_NUMBER => $sessionNumber,
             FlagshipConstant::CUSTOMER_UID => null,
+            FlagshipConstant::QT_API_ITEM => 0,
             FlagshipConstant::EVENT_CATEGORY_API_ITEM => $eventCategory,
             FlagshipConstant::EVENT_ACTION_API_ITEM => $eventAction,
         ];

@@ -12,12 +12,34 @@ use Flagship\Model\FlagDTO;
  */
 interface VisitorInterface extends VisitorCoreInterface
 {
+
+    /**
+     * Visitor unique identifier
+     *
+     * @return string
+     */
+    public function getVisitorId();
+
+    /**
+     * Visitor anonymous id
+     *
+     * @return string
+     */
+    public function getAnonymousId();
+
     /**
      * Set if visitor has consented for private data usage.
      * @param bool $hasConsented True if the visitor has consented false otherwise.
      * @return void
      */
     public function setConsent($hasConsented);
+
+    /**
+     * Get the current context
+     *
+     * @return array
+     */
+    public function getContext();
 
 
     /**

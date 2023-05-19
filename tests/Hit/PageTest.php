@@ -32,6 +32,7 @@ class PageTest extends TestCase
             FlagshipConstant::USER_LANGUAGE => null,
             FlagshipConstant::SESSION_NUMBER => null,
             FlagshipConstant::CUSTOMER_UID => null,
+            FlagshipConstant::QT_API_ITEM => 0,
             FlagshipConstant::DL_API_ITEM => $pageUrl
         ];
 

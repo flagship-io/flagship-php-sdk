@@ -39,7 +39,7 @@ class HitBatch extends HitAbstract
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
             FlagshipConstant::T_API_ITEM => $this->getType(),
-            FlagshipConstant::QT_API_ITEM =>    round(microtime(true) * 1000) - $this->createdAt,
+            FlagshipConstant::QT_API_ITEM => round(microtime(true) * 1000) - $this->createdAt,
             FlagshipConstant::H_API_ITEM => []
         ];
 

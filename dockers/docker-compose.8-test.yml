@@ -1,0 +1,20 @@
+version: '3'
+services:
+  app-8:
+    build:
+      context: ../.
+      dockerfile: ./dockers/Dockerfile-8
+    image: flagship-io/flagship-php-sdk:php-8
+    container_name: app-8
+    tty: true
+    environment:
+      SERVICE_NAME: app-8
+      SERVICE_TAGS: dev
+      XDEBUG_MODE: coverage
+    volumes:
+      - '..:/home/app'
+    ports:
+      - "8001:8000"
+    working_dir: /home/app
+
+  

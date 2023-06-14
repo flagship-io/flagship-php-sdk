@@ -41,7 +41,8 @@ class ActivateTest extends TestCase
             FlagshipConstant::VARIATION_ID_API_ITEM => $variationId,
             FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::ANONYMOUS_ID => null
+            FlagshipConstant::ANONYMOUS_ID => null,
+            FlagshipConstant::QT_API_ITEM => 0,
         ];
 
         $this->assertSame($apiKeys, $activate->toApiKeys());
@@ -54,7 +55,8 @@ class ActivateTest extends TestCase
             FlagshipConstant::VARIATION_ID_API_ITEM => $variationId,
             FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::ANONYMOUS_ID => $anonymousId
+            FlagshipConstant::ANONYMOUS_ID => $anonymousId,
+            FlagshipConstant::QT_API_ITEM => 0,
         ];
 
         $this->assertSame($apiKeys, $activate->toApiKeys());

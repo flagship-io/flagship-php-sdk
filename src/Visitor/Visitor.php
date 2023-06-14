@@ -26,7 +26,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function __construct(VisitorDelegate $visitorDelegate)
     {
         $this->visitorDelegate = $visitorDelegate;
-    }//end __construct()
+    } //end __construct()
 
 
     /**
@@ -35,7 +35,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     private function getVisitorDelegate()
     {
         return $this->visitorDelegate;
-    }//end getVisitorDelegate()
+    } //end getVisitorDelegate()
 
 
     /**
@@ -45,18 +45,16 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function getConfig()
     {
         return $this->getVisitorDelegate()->getConfig();
-    }//end getConfig()
+    } //end getConfig()
 
 
     /**
-     * visitor unique identifier
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getVisitorId()
     {
         return $this->getVisitorDelegate()->getVisitorId();
-    }//end getVisitorId()
+    } //end getVisitorId()
 
 
     /**
@@ -69,7 +67,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     {
         $this->getVisitorDelegate()->setVisitorId($visitorId);
         return $this;
-    }//end setVisitorId()
+    } //end setVisitorId()
 
 
     /**
@@ -80,7 +78,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function hasConsented()
     {
         return $this->getVisitorDelegate()->hasConsented();
-    }//end hasConsented()
+    } //end hasConsented()
 
 
     /**
@@ -93,21 +91,18 @@ class Visitor implements VisitorInterface, JsonSerializable
     {
         $this->getVisitorDelegate()->setConsent($hasConsented);
         return $this;
-    }//end setConsent()
+    } //end setConsent()
 
 
     /**
-     * Get the current context
-     *
-     * @return array
+     * @inheritDoc
      */
     public function getContext()
     {
         return $this->getVisitorDelegate()->getContext();
-    }//end getContext()
+    } //end getContext()
 
 
-    /**
     /**
      * Clear the current context and set a new context value
      *
@@ -118,18 +113,16 @@ class Visitor implements VisitorInterface, JsonSerializable
     {
         $this->getVisitorDelegate()->setContext($context);
         return $this;
-    }//end setContext()
+    } //end setContext()
 
 
     /**
-     * visitor anonymous id
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getAnonymousId()
     {
         return $this->getVisitorDelegate()->getAnonymousId();
-    }//end getAnonymousId()
+    } //end getAnonymousId()
 
 
     /**
@@ -138,7 +131,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function updateContext($key, $value)
     {
         $this->getVisitorDelegate()->updateContext($key, $value);
-    }//end updateContext()
+    } //end updateContext()
 
 
     /**
@@ -147,7 +140,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function updateContextCollection(array $context)
     {
         $this->getVisitorDelegate()->updateContextCollection($context);
-    }//end updateContextCollection()
+    } //end updateContextCollection()
 
 
     /**
@@ -156,7 +149,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function clearContext()
     {
         $this->getVisitorDelegate()->clearContext();
-    }//end clearContext()
+    } //end clearContext()
 
 
     /**
@@ -165,7 +158,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function authenticate($visitorId)
     {
         $this->getVisitorDelegate()->authenticate($visitorId);
-    }//end authenticate()
+    } //end authenticate()
 
 
     /**
@@ -174,7 +167,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function unauthenticate()
     {
         $this->getVisitorDelegate()->unauthenticate();
-    }//end unauthenticate()
+    } //end unauthenticate()
 
 
     /**
@@ -183,7 +176,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function getModification($key, $defaultValue, $activate = false)
     {
         return $this->getVisitorDelegate()->getModification($key, $defaultValue, $activate);
-    }//end getModification()
+    } //end getModification()
 
 
     /**
@@ -192,7 +185,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function getModificationInfo($key)
     {
         return $this->getVisitorDelegate()->getModificationInfo($key);
-    }//end getModificationInfo()
+    } //end getModificationInfo()
 
 
     /**
@@ -201,7 +194,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function synchronizeModifications()
     {
         $this->getVisitorDelegate()->synchronizeModifications();
-    }//end synchronizeModifications()
+    } //end synchronizeModifications()
 
 
     /**
@@ -210,7 +203,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function activateModification($key)
     {
         $this->getVisitorDelegate()->activateModification($key);
-    }//end activateModification()
+    } //end activateModification()
 
 
     /**
@@ -219,7 +212,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function sendHit(HitAbstract $hit)
     {
         $this->getVisitorDelegate()->sendHit($hit);
-    }//end sendHit()
+    } //end sendHit()
 
 
     /**
@@ -230,7 +223,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function jsonSerialize()
     {
         return $this->getVisitorDelegate()->jsonSerialize();
-    }//end jsonSerialize()
+    } //end jsonSerialize()
 
 
     /**
@@ -239,7 +232,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function getModifications()
     {
         return $this->getVisitorDelegate()->getModifications();
-    }//end getModifications()
+    } //end getModifications()
 
 
     /**
@@ -248,7 +241,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function fetchFlags()
     {
         $this->visitorDelegate->fetchFlags();
-    }//end fetchFlags()
+    } //end fetchFlags()
 
 
     /**
@@ -257,7 +250,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function getFlag($key, $defaultValue)
     {
         return $this->visitorDelegate->getFlag($key, $defaultValue);
-    }//end getFlag()
+    } //end getFlag()
 
 
     /**
@@ -266,5 +259,5 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function getFlagsDTO()
     {
         return $this->visitorDelegate->getFlagsDTO();
-    }//end getFlagsDTO()
+    } //end getFlagsDTO()
 }//end class

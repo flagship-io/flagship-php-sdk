@@ -388,7 +388,8 @@ abstract class HitAbstract
             FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $this->getScreenResolution(),
             FlagshipConstant::USER_LANGUAGE => $this->getLocale(),
             FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber(),
-            FlagshipConstant::CUSTOMER_UID => null
+            FlagshipConstant::CUSTOMER_UID => null,
+            FlagshipConstant::QT_API_ITEM => round(microtime(true) * 1000) - $this->createdAt,
         ];
 
         if ($this->visitorId && $this->anonymousId) {

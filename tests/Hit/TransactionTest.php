@@ -42,6 +42,7 @@ class TransactionTest extends TestCase
             FlagshipConstant::USER_LANGUAGE => null,
             FlagshipConstant::SESSION_NUMBER => null,
             FlagshipConstant::CUSTOMER_UID => null,
+            FlagshipConstant::QT_API_ITEM => 0,
             FlagshipConstant::TID_API_ITEM => $transactionId,
             FlagshipConstant::TA_API_ITEM => $transactionAffiliation
         ];

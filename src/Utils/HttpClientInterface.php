@@ -33,7 +33,7 @@ interface HttpClientInterface
      *
      * @param  $url
      * @param  array $params Collection key, value of http params
-     * @return mixed
+     * @return HttpResponse
      */
     public function get($url, array $params = []);
 

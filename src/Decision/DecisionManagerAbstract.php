@@ -7,6 +7,7 @@ use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Model\FlagDTO;
 use Flagship\Traits\BuildApiTrait;
+use Flagship\Traits\Helper;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor\VisitorAbstract;
@@ -15,6 +16,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
 {
     use ValidatorTrait;
     use BuildApiTrait;
+    use Helper;
 
     /**
      * @var bool

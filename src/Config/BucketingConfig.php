@@ -14,6 +14,11 @@ class BucketingConfig extends FlagshipConfig
     private $bucketingUrl;
 
     /**
+     * @var bool
+     */
+    protected $fetchThirdPartyData;
+
+    /**
      * @param string $bucketingUrl
      * @param string $envId
      * @param string $apiKey
@@ -40,6 +45,25 @@ class BucketingConfig extends FlagshipConfig
     public function setBucketingUrl($bucketingUrl)
     {
         $this->bucketingUrl = $bucketingUrl;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getFetchThirdPartyData()
+    {
+        return $this->fetchThirdPartyData;
+    }
+
+    /**
+     *
+     * @param bool $fetchThirdPartyData
+     * @return BucketingConfig
+     */
+    public function setFetchThirdPartyData($fetchThirdPartyData)
+    {
+        $this->fetchThirdPartyData = $fetchThirdPartyData;
         return $this;
     }
 

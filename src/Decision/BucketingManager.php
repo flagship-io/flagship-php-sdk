@@ -4,13 +4,11 @@ namespace Flagship\Decision;
 
 use Exception;
 use Flagship\Config\BucketingConfig;
-use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Hit\Segment;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Utils\MurmurHash;
-use Flagship\Visitor\DefaultStrategy;
 use Flagship\Visitor\VisitorAbstract;
 use Flagship\Visitor\VisitorStrategyAbstract;
 
@@ -18,6 +16,7 @@ class BucketingManager extends DecisionManagerAbstract
 {
     const NB_MIN_CONTEXT_KEYS = 4;
     const INVALID_BUCKETING_FILE_URL = "Invalid bucketing file url";
+    const GET_THIRD_PARTY_SEGMENT = 'GET_THIRD_PARTY_SEGMENT';
     /**
      * @var MurmurHash
      */
@@ -72,6 +71,56 @@ class BucketingManager extends DecisionManagerAbstract
     }
 
     /**
+     * @param string $visitorId
+     * @return array
+     */
+    protected function getThirdPartySegment($visitorId)
+    {
+        $url = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $this->getConfig()->getEnvId(), $visitorId);
+        $now =  $this->getNow();
+        $context = [];
+        try {
+            $response = $this->httpClient->get($url);
+            $content = $response->getBody();
+            foreach ($content as $item) {
+                $key = $item["partner"] . "::" . $item["segment"];
+                $context[$key] =  $item["value"];
+            }
+            $this->logDebugSprintf(
+                $this->config,
+                self::GET_THIRD_PARTY_SEGMENT,
+                FlagshipConstant::HIT_SENT_SUCCESS,
+                [
+                    self::GET_THIRD_PARTY_SEGMENT,
+                    $this->getLogFormat(
+                        null,
+                        $url,
+                        [],
+                        [],
+                        $this->getNow() - $now,
+                        $response->getHeaders(),
+                        $response->getBody(),
+                        $response->getStatusCode()
+                    )]
+            );
+        } catch (\Exception $exception) {
+            $this->logErrorSprintf(
+                $this->getConfig(),
+                self::GET_THIRD_PARTY_SEGMENT,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
+                [self::GET_THIRD_PARTY_SEGMENT, $this->getLogFormat(
+                    $exception->getMessage(),
+                    $url,
+                    [],
+                    [],
+                    $this->getNow() - $now
+                )]
+            );
+        }
+        return $context;
+    }
+
+    /**
      * @return mixed|null
      */
     protected function getBucketingFile()
@@ -104,7 +153,6 @@ class BucketingManager extends DecisionManagerAbstract
             return [];
         }
 
-
         if (isset($bucketingCampaigns[FlagshipField::FIELD_PANIC])) {
             $hasPanicMode = !empty($bucketingCampaigns[FlagshipField::FIELD_PANIC]);
             $this->setIsPanicMode($hasPanicMode);
@@ -120,6 +168,11 @@ class BucketingManager extends DecisionManagerAbstract
         $campaigns = $bucketingCampaigns[FlagshipField::FIELD_CAMPAIGNS];
 
         $visitorCampaigns = [];
+
+        if ($this->getConfig()->getFetchThirdPartyData()) {
+            $thirdPartySegments = $this->getThirdPartySegment($visitor->getVisitorId());
+            $visitor->updateContextCollection($thirdPartySegments);
+        }
 
         $this->sendContext($visitor);
 
@@ -182,12 +235,15 @@ class BucketingManager extends DecisionManagerAbstract
         if (
             !is_array($visitor->visitorCache) ||
             !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]) ||
-            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY]) ||
-            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId])
+            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]
+                [VisitorStrategyAbstract::ASSIGNMENTS_HISTORY]) ||
+            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]
+                [VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId])
         ) {
             return null;
         }
-        return $visitor->visitorCache[VisitorStrategyAbstract::DATA][VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId];
+        return $visitor->visitorCache[VisitorStrategyAbstract::DATA]
+        [VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId];
     }
 
     private function findVariationById(array $variations, $key)

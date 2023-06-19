@@ -9,6 +9,7 @@ use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Traits\HasSameTypeTrait;
+use Flagship\Traits\Helper;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 
@@ -19,6 +20,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
 {
     use ValidatorTrait;
     use HasSameTypeTrait;
+    use Helper;
 
     const DATA       = 'data';
     const CAMPAIGNS  = 'campaigns';

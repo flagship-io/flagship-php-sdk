@@ -179,7 +179,7 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
                 [
                     $config,
                     FlagshipConstant::TRACKING_MANAGER,
-                    FlagshipConstant::TRACKING_MANAGER_ERROR,
+                    FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                     [FlagshipConstant::SEND_HIT, $logMessage ]
                 ]
             );
@@ -419,7 +419,7 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
                 [
                     $config,
                     FlagshipConstant::TRACKING_MANAGER,
-                    FlagshipConstant::TRACKING_MANAGER_ERROR,
+                    FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                     [FlagshipConstant::SEND_ACTIVATE, $logMessage ]
                 ]
             );

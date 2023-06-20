@@ -148,6 +148,8 @@ class FlagshipConstant
     const HIT_ADDED_IN_QUEUE = "The HIT has been added into the pool queue : '%s'";
     const ACTIVATE_HIT_ADDED_IN_QUEUE = "The ACTIVATE hit has been added into the pool queue : '%s'";
     const HIT_SENT_SUCCESS = "%s has been sent : %s";
+
+    const FETCH_THIRD_PARTY_SUCCESS = "%s has been fetched : %s";
     const UNEXPECTED_ERROR_OCCURRED = '%s Unexpected Error occurred %s';
     const BATCH_HIT = 'BATCH_HIT';
     const PROCESS_CACHE = 'CACHE';

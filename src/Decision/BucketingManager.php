@@ -17,6 +17,11 @@ class BucketingManager extends DecisionManagerAbstract
     const NB_MIN_CONTEXT_KEYS = 4;
     const INVALID_BUCKETING_FILE_URL = "Invalid bucketing file url";
     const GET_THIRD_PARTY_SEGMENT = 'GET_THIRD_PARTY_SEGMENT';
+
+    const THIRD_PARTY_SEGMENT = 'THIRD_PARTY_SEGMENT';
+    const PARTNER = "partner";
+    const SEGMENT = "segment";
+    const VALUE = "value";
     /**
      * @var MurmurHash
      */
@@ -83,15 +88,15 @@ class BucketingManager extends DecisionManagerAbstract
             $response = $this->httpClient->get($url);
             $content = $response->getBody();
             foreach ($content as $item) {
-                $key = $item["partner"] . "::" . $item["segment"];
-                $context[$key] =  $item["value"];
+                $key = $item[self::PARTNER] . "::" . $item[self::SEGMENT];
+                $context[$key] =  $item[self::VALUE];
             }
             $this->logDebugSprintf(
                 $this->config,
                 self::GET_THIRD_PARTY_SEGMENT,
-                FlagshipConstant::HIT_SENT_SUCCESS,
+                FlagshipConstant::FETCH_THIRD_PARTY_SUCCESS,
                 [
-                    self::GET_THIRD_PARTY_SEGMENT,
+                    self::THIRD_PARTY_SEGMENT,
                     $this->getLogFormat(
                         null,
                         $url,
@@ -108,7 +113,7 @@ class BucketingManager extends DecisionManagerAbstract
                 $this->getConfig(),
                 self::GET_THIRD_PARTY_SEGMENT,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [self::GET_THIRD_PARTY_SEGMENT, $this->getLogFormat(
+                [self::THIRD_PARTY_SEGMENT, $this->getLogFormat(
                     $exception->getMessage(),
                     $url,
                     [],

@@ -347,7 +347,6 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         foreach ($this->hitsPoolQueue as $item) {
             $now = $this->getNow();
-
             if ($item->getIsFromCache()) {
                 $hitKeysToRemove[] = $item->getKey();
             }

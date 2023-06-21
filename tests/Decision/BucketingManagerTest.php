@@ -537,6 +537,46 @@ class BucketingManagerTest extends TestCase
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertFalse($output);
 
+        //Test operator EXISTS when context doesn't exist
+
+        $innerTargetingsExists = [$targetingAllUsers,[
+            "operator" => "EXISTS",
+            "key" => "mixpanel::city",
+            "value" => true,
+            "provider" => "mixpanel"
+        ]];
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $this->assertFalse($output);
+
+        //Test operator EXISTS when context  exists
+
+        $visitor->updateContext("mixpanel::city", false);
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $this->assertTrue($output);
+
+        //Test operator NOT_EXISTS when context  exists
+
+        $innerTargetingsExists = [$targetingAllUsers,[
+            "operator" => "NOT_EXISTS",
+            "key" => "mixpanel::city",
+            "value" => true,
+            "provider" => "mixpanel"
+        ]];
+
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $this->assertFalse($output);
+
+        //Test operator NOT_EXISTS when context doesn't exist
+
+        $innerTargetingsExists = [$targetingAllUsers,[
+            "operator" => "NOT_EXISTS",
+            "key" => "mixpanel::genre",
+            "value" => true,
+            "provider" => "mixpanel"
+        ]];
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $this->assertTrue($output);
+
         //test key = fs_users
         $targetingFsUsers = [
             "key" => "fs_users",

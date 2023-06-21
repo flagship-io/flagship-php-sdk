@@ -359,6 +359,23 @@ class BucketingManager extends DecisionManagerAbstract
             $targetingValue = $innerTargeting["value"];
             $visitorContext = $visitor->getContext();
 
+            if ($operator === "EXISTS") {
+                if (array_key_exists($key, $visitorContext)) {
+                    $isMatching = true;
+                    continue;
+                }
+                $isMatching = false;
+                break;
+            }
+            if ($operator === "NOT_EXISTS") {
+                if (array_key_exists($key, $visitorContext)) {
+                    $isMatching = false;
+                    break;
+                }
+                $isMatching = true;
+                continue ;
+            }
+
             switch ($key) {
                 case "fs_all_users":
                     $isMatching = true;

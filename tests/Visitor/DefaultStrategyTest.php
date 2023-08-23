@@ -11,6 +11,7 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipField;
+use Flagship\Enum\FlagSyncStatus;
 use Flagship\Enum\HitType;
 use Flagship\Flag\Flag;
 use Flagship\Flag\FlagMetadata;
@@ -117,6 +118,7 @@ class DefaultStrategyTest extends TestCase
         $context = $visitor->getContext();
         $this->assertArrayHasKey($ageKey, $context);
         $this->assertEquals($newAge, $context[$ageKey]);
+        $this->assertSame(FlagSyncStatus::CONTEXT_UPDATED, $visitor->getFlagSyncStatus());
 
         //Test bool value
         $isAdminKey = "isAdmin";
@@ -299,6 +301,7 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->authenticate($newVisitorId);
         $this->assertSame($visitorId, $visitor->getAnonymousId());
         $this->assertSame($newVisitorId, $visitor->getVisitorId());
+        $this->assertSame(FlagSyncStatus::AUTHENTICATED, $visitor->getFlagSyncStatus());
 
         //Test authenticate with null visitorId
 
@@ -364,6 +367,7 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy = new DefaultStrategy($visitor);
         $defaultStrategy->unauthenticate();
 
+
         //Test Visitor not authenticate yet
         $config->setLogManager($logManagerStub);
         $visitor->setConfig($config);
@@ -377,6 +381,7 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->unauthenticate();
         $this->assertNull($visitor->getAnonymousId());
         $this->assertSame($anonymous, $visitor->getVisitorId());
+        $this->assertSame(FlagSyncStatus::UNAUTHENTICATED, $visitor->getFlagSyncStatus());
     }
 
     public function testSynchronizeModifications()
@@ -549,6 +554,7 @@ class DefaultStrategyTest extends TestCase
         $modifications = $this->campaignsModifications();
 
         $this->assertJsonStringEqualsJsonString(json_encode($modifications), json_encode($visitor->getFlagsDTO()));
+        $this->assertSame(FlagSyncStatus::FLAGS_FETCHED, $visitor->getFlagSyncStatus());
 
         //Test getModification keyValue is string and DefaultValue is string
         //Return KeyValue

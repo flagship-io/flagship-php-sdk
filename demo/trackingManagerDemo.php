@@ -75,10 +75,10 @@ $APP_POLLING_PORT = getenv("APP_POLLING_PORT");
 Flagship::start(
     $ENV_ID,
     $API_KEY,
-    DecisionApiConfig::decisionApi("http://$APP_POLLING_HOST:$APP_POLLING_PORT/bucketing")
-        ->setCacheStrategy(CacheStrategy::NO_BATCHING)
+    DecisionApiConfig::bucketing("http://$APP_POLLING_HOST:$APP_POLLING_PORT/bucketing")
+        ->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE)
         ->setTimeout(5000)
-        ->setHitCacheImplementation(new HitCacheRedis($REDIS_HOST, $REDIS_PORT, 0))
+//        ->setHitCacheImplementation(new HitCacheRedis($REDIS_HOST, $REDIS_PORT, 0))
         ->setLogLevel(LogLevel::ALL)
 );
 

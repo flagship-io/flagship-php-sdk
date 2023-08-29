@@ -284,12 +284,14 @@ class DefaultStrategy extends VisitorStrategyAbstract
     {
         $now          = $this->getNow();
         $visitorCache = $visitor->visitorCache;
-        if (!isset(
-            $visitorCache,
-            $visitorCache[self::DATA],
-            $visitorCache[self::DATA][self::CAMPAIGNS]
-        ) ||
-            !is_array($visitorCache[self::DATA][self::CAMPAIGNS])) {
+        if (
+            !isset(
+                $visitorCache,
+                $visitorCache[self::DATA],
+                $visitorCache[self::DATA][self::CAMPAIGNS]
+            ) ||
+            !is_array($visitorCache[self::DATA][self::CAMPAIGNS])
+        ) {
             return [];
         }
 
@@ -328,16 +330,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         return $campaigns;
     }//end fetchVisitorCampaigns()
-
-
-    /**
-     * @return float
-     */
-    public function getNow()
-    {
-        return round(microtime(true) * 1000);
-    }//end getNow()
-
 
     /**
      * @param  string $functionName
@@ -525,7 +517,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
 
-        if (gettype($defaultValue) != self::TYPE_NULL
+        if (
+            gettype($defaultValue) != self::TYPE_NULL
             && gettype($flag->getValue()) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)
         ) {
             $this->logInfoSprintf(

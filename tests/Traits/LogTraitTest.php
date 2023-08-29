@@ -220,8 +220,8 @@ class LogTraitTest extends TestCase
         $expectedValue = [
             FlagshipConstant::LOG_FORMAT_MESSAGE => $message,
             FlagshipConstant::LOG_FORMAT_URL => $url,
-            FlagshipConstant::LOG_FORMAT_BODY => $requestBody,
-            FlagshipConstant::LOG_FORMAT_HEADERS => $headers,
+            FlagshipConstant::LOG_FORMAT_REQUEST_BODY => $requestBody,
+            FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS => $headers,
             FlagshipConstant::LOG_FORMAT_DURATION => $duration
         ];
 

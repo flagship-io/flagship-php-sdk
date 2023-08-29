@@ -118,10 +118,20 @@ trait LogTrait
      * @param array $requestBody
      * @param array $headers
      * @param string $duration
+     * @param string $responseHeader
+     * @param string $responseBody
      * @return array
      */
-    protected function getLogFormat($message, $url, $requestBody, $headers, $duration)
-    {
+    protected function getLogFormat(
+        $message,
+        $url,
+        $requestBody,
+        $headers,
+        $duration,
+        $responseHeader = null,
+        $responseBody = null,
+        $responseStatus = null
+    ) {
         $format = [];
         if ($message) {
             $format[FlagshipConstant::LOG_FORMAT_MESSAGE] = $message;
@@ -129,14 +139,23 @@ trait LogTrait
         if ($url) {
             $format[FlagshipConstant::LOG_FORMAT_URL] = $url;
         }
-        if ($requestBody) {
-            $format[FlagshipConstant::LOG_FORMAT_BODY] = $requestBody;
+        if ($requestBody !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_REQUEST_BODY] = $requestBody;
         }
-        if ($headers) {
-            $format[FlagshipConstant::LOG_FORMAT_HEADERS] = $headers;
+        if ($headers !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS] = $headers;
         }
         if ($duration) {
             $format[FlagshipConstant::LOG_FORMAT_DURATION] = $duration;
+        }
+        if ($responseHeader !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS] =  $responseHeader;
+        }
+        if ($responseBody !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_RESPONSE_BODY] =  $responseBody;
+        }
+        if ($responseStatus !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_RESPONSE_STATUS] =  $responseStatus;
         }
         return  $format;
     }

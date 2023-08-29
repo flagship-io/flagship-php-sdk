@@ -38,13 +38,14 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setVisitorId($this->getVisitor()->getVisitorId())
             ->setAnonymousId($this->getVisitor()->getAnonymousId());
 
-        $trackingManger = $this->getTrackingManager();
-        if (!$trackingManger) {
+        $trackingManager = $this->getTrackingManager();
+        if (!$trackingManager) {
             return;
         }
 
-        $trackingManger->addHit($consentHit);
-    }
+        $trackingManager->addHit($consentHit);
+    } //end setConsent()
+
 
     /**
      * @inheritDoc
@@ -92,7 +93,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function clearContext()
     {
         $this->getVisitor()->context = [];
-    }//end clearContext()
+    } //end clearContext()
 
 
     /**
@@ -178,7 +179,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return null;
-    }//end getObjetModification()
+    } //end getObjetModification()
 
 
     /**
@@ -227,7 +228,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $modification->getValue();
-    }//end getModification()
+    } //end getModification()
 
 
     /**
@@ -245,7 +246,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             FlagshipField::FIELD_IS_REFERENCE       => $modification->getIsReference(),
             FlagshipField::FIELD_VALUE              => $modification->getValue(),
         ];
-    }//end parseToCampaign()
+    } //end parseToCampaign()
 
 
     /**
@@ -275,7 +276,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $this->parseToCampaign($modification);
-    }//end getModificationInfo()
+    } //end getModificationInfo()
 
 
     /**
@@ -331,7 +332,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $campaigns;
-    }//end fetchVisitorCampaigns()
+    } //end fetchVisitorCampaigns()
 
     /**
      * @param  string $functionName
@@ -389,7 +390,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 $flagsDTO,
             ]
         );
-    }//end synchronizeFlags()
+    } //end synchronizeFlags()
 
 
     /**
@@ -398,7 +399,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function synchronizeModifications()
     {
         $this->synchronizeFlags(__FUNCTION__);
-    }//end synchronizeModifications()
+    } //end synchronizeModifications()
 
 
     /**
@@ -407,7 +408,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function fetchFlags()
     {
         $this->synchronizeFlags(__FUNCTION__);
-    }//end fetchFlags()
+    } //end fetchFlags()
 
 
     /**
@@ -431,7 +432,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
         $this->activateFlag($modification);
-    }//end activateModification()
+    } //end activateModification()
 
 
     /**
@@ -460,7 +461,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $trackingManager->addHit($hit);
-    }//end sendHit()
+    } //end sendHit()
 
 
     /**
@@ -469,7 +470,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function getModifications()
     {
         return $this->getVisitor()->getModifications();
-    }//end getModifications()
+    } //end getModifications()
 
     /**
      * @param FlagDTO $flag
@@ -538,7 +539,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $this->activateFlag($flag, $defaultValue);
-    }//end userExposed()
+    } //end userExposed()
 
 
     /**
@@ -602,7 +603,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         );
 
         return $flag->getValue();
-    }//end getFlagValue()
+    } //end getFlagValue()
 
 
     /**
@@ -624,5 +625,5 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $metadata;
-    }//end getFlagMetadata()
+    } //end getFlagMetadata()
 }//end class

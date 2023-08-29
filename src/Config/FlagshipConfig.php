@@ -137,7 +137,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * Specify the SDK running mode.
      *
      * @param int $decisionMode decision mode value e.g DecisionMode::DECISION_API
-     * @see \Flagship\Enum\DecisionMode Enum Decision mode
+     * @see DecisionMode Enum Decision mode
      * @return $this
      */
     protected function setDecisionMode($decisionMode)
@@ -159,14 +159,15 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * Specify timeout for api request.
      *
-     * @param int $timeout : Milliseconds for connect and read timeouts. Default is 2000ms.
+     * @param int $timeout Milliseconds for connect and read timeouts. Default is 2000ms.
      * @return $this
      */
     public function setTimeout($timeout)
     {
         if (is_numeric($timeout) && $timeout > 0) {
-            $this->logError($this, FlagshipConstant::TIMEOUT_TYPE_ERROR);
             $this->timeout = $timeout / 1000;
+        } else {
+            $this->logError($this, FlagshipConstant::TIMEOUT_TYPE_ERROR);
         }
         return $this;
     }
@@ -201,7 +202,7 @@ abstract class FlagshipConfig implements JsonSerializable
 
     /**
      * Set the maximum log level to display
-     * @see \Flagship\Enum\LogLevel Loglevel enum list
+     * @see LogLevel Loglevel enum list
      * @param int $logLevel
      * @return $this
      */

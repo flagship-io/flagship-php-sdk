@@ -168,8 +168,6 @@ class BucketingManagerTest extends TestCase
         $bucketingManager->getCampaignModifications($visitor);
     }
 
-
-
     public function testGetVariation()
     {
         $bucketingUrl  = "http:127.0.0.1:3000";
@@ -538,6 +536,46 @@ class BucketingManagerTest extends TestCase
         ]];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertFalse($output);
+
+        //Test operator EXISTS when context doesn't exist
+
+        $innerTargetingsExists = [$targetingAllUsers,[
+            "operator" => "EXISTS",
+            "key" => "mixpanel::city",
+            "value" => true,
+            "provider" => "mixpanel"
+        ]];
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $this->assertFalse($output);
+
+        //Test operator EXISTS when context  exists
+
+        $visitor->updateContext("mixpanel::city", false);
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $this->assertTrue($output);
+
+        //Test operator NOT_EXISTS when context  exists
+
+        $innerTargetingsExists = [$targetingAllUsers,[
+            "operator" => "NOT_EXISTS",
+            "key" => "mixpanel::city",
+            "value" => true,
+            "provider" => "mixpanel"
+        ]];
+
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $this->assertFalse($output);
+
+        //Test operator NOT_EXISTS when context doesn't exist
+
+        $innerTargetingsExists = [$targetingAllUsers,[
+            "operator" => "NOT_EXISTS",
+            "key" => "mixpanel::genre",
+            "value" => true,
+            "provider" => "mixpanel"
+        ]];
+        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $this->assertTrue($output);
 
         //test key = fs_users
         $targetingFsUsers = [
@@ -920,5 +958,167 @@ class BucketingManagerTest extends TestCase
         $targetingValue = "ab";
         $output = $testOperatorMethod->invoke($bucketingManager, 'ANY', $contextValue, $targetingValue);
         $this->assertFalse($output);
+    }
+
+    public function testGetThirdPartySegment()
+    {
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ['post', 'get']
+        );
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
+        $bucketingUrl = "127.0.0.1:3000";
+        $murmurhash = new MurmurHash();
+        $config = new BucketingConfig($bucketingUrl);
+        $config->setEnvId("env_id")
+            ->setFetchThirdPartyData(true)
+            ->setLogManager($logManagerStub);
+
+        $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $visitorId = "visitor_1";
+        $visitorContext = [
+            "age" => 20
+        ];
+
+        $container = new Container();
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config);
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $segments = [
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment' => 'gender',
+                'value' => '',
+                'expiration' => 1689771307,
+                'partner' => 'facebook',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment' => 'generation',
+                'value' => '',
+                'expiration' => 1689771307,
+                'partner' => 'facebook',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment' => 'city',
+                'value' => 'london',
+                'expiration' => 1689771117,
+                'partner' => 'mixpanel',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment' => 'device',
+                'value' => 'firefox',
+                'expiration' => 1689771117,
+                'partner' => 'mixpanel',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment' => 'gender',
+                'value' => 'female',
+                'expiration' => 1689771007,
+                'partner' => 'segmentio',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment' => 'generation',
+                'value' => 'gen-z',
+                'expiration' => 1689771007,
+                'partner' => 'segmentio',
+            ],
+        ];
+
+        $segmentUrl = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $config->getEnvId(), $visitorId);
+        $campaigns = ["campaigns" => []];
+
+        $matcher = $this->exactly(2);
+        $httpClientMock->expects($matcher)
+            ->method("get")->withConsecutive([$bucketingUrl, []], [$segmentUrl, []])
+            ->willReturnOnConsecutiveCalls(new HttpResponse(200, $campaigns, []), new HttpResponse(200, $segments, []));
+
+        $logManagerStub->expects($this->exactly(1))->method("error");
+        $bucketingManager->getCampaigns($visitor);
+        $context = $visitor->getContext();
+
+        foreach ($segments as $item) {
+            $key = $item[BucketingManager::PARTNER] . "::" . $item[BucketingManager::SEGMENT];
+            $this->assertArrayHasKey($key, $context);
+            $this->assertSame($item[BucketingManager::VALUE], $context[$key]);
+        }
+    }
+
+    public function testGetThirdPartySegmentException()
+    {
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ['post', 'get']
+        );
+
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
+
+        $bucketingUrl = "127.0.0.1:3000";
+        $murmurhash = new MurmurHash();
+        $config = new BucketingConfig($bucketingUrl);
+        $config->setEnvId("env_id")
+            ->setFetchThirdPartyData(true);
+
+        $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $visitorId = "visitor_1";
+        $visitorContext = [
+            "age" => 20
+        ];
+        $container = new Container();
+        $configManager = new ConfigManager();
+        $configManager->setConfig($config);
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $segmentUrl = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $config->getEnvId(), $visitorId);
+        $campaigns = ["campaigns" => []];
+
+        $matcher = $this->exactly(2);
+        $httpClientMock->expects($matcher)
+            ->method("get")->withConsecutive([$bucketingUrl, []], [$segmentUrl, []])
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(200, $campaigns, []),
+                $this->throwException(new Exception("error"))
+            );
+
+        $config->setLogManager($logManagerStub);
+
+        $logManagerStub->expects($this->exactly(2))->method("error");
+
+        $bucketingManager->getCampaigns($visitor);
     }
 }

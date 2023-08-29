@@ -31,9 +31,12 @@ class FlagshipConstant
     const BUCKETING_API_URL = "https://cdn.flagship.io/%s/bucketing.json";
     const BUCKETING_API_CONTEXT_URL = "https://decision.flagship.io/v2/%s/events";
     const HIT_CONSENT_URL = "https://ariane.abtasty.com";
+    const THIRD_PARTY_SEGMENT_URL = 'https://api-data-connector.flagship.io/accounts/%s/segments/%s';
     const URL_CAMPAIGNS = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
     const HIT_EVENT_URL = 'https://events.flagship.io';
+
+    Const BUCKETING = "BUCKETING";
 
     const EXPOSE_ALL_KEYS = "exposeAllKeys";
     const SEND_CONTEXT_EVENT = "sendContextEvent";
@@ -41,7 +44,9 @@ class FlagshipConstant
     /**
      * SDK version
      */
-    const SDK_VERSION = "3.1.0";
+    const SDK_VERSION = "3.1.2";
+
+    const GET_FLAG = 'GET_FLAG';
 
     //Message Error
     const INITIALIZATION_PARAM_ERROR = "Params 'envId' and 'apiKey' must not be null or empty.";
@@ -145,7 +150,9 @@ class FlagshipConstant
     const HIT_ADDED_IN_QUEUE = "The HIT has been added into the pool queue : '%s'";
     const ACTIVATE_HIT_ADDED_IN_QUEUE = "The ACTIVATE hit has been added into the pool queue : '%s'";
     const HIT_SENT_SUCCESS = "%s has been sent : %s";
-    const TRACKING_MANAGER_ERROR = '%s Unexpected Error occurred %s';
+
+    const FETCH_THIRD_PARTY_SUCCESS = "%s has been fetched : %s";
+    const UNEXPECTED_ERROR_OCCURRED = '%s Unexpected Error occurred %s';
     const BATCH_HIT = 'BATCH_HIT';
     const PROCESS_CACHE = 'CACHE';
     const SEND_BATCH = 'HIT BATCH';
@@ -175,7 +182,10 @@ class FlagshipConstant
     const GET_FLAG_VALUE = 'Visitor %s, Flag for key %s returns value %s';
     const LOG_FORMAT_MESSAGE = "message";
     const LOG_FORMAT_URL = "url";
-    const LOG_FORMAT_BODY = 'body';
-    const LOG_FORMAT_HEADERS = 'headers';
-    const LOG_FORMAT_DURATION = 'duration';
+    const LOG_FORMAT_REQUEST_BODY = 'REQUEST_BODY';
+    const LOG_FORMAT_REQUEST_HEADERS = 'REQUEST_HEADERS';
+    const LOG_FORMAT_RESPONSE_BODY = 'RESPONSE_BODY';
+    const LOG_FORMAT_RESPONSE_HEADERS = 'RESPONSE_HEADERS';
+    const LOG_FORMAT_RESPONSE_STATUS = 'RESPONSE_STATUS';
+    const LOG_FORMAT_DURATION = 'DURATION';
 }

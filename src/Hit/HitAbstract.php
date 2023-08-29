@@ -5,6 +5,7 @@ namespace Flagship\Hit;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Traits\BuildApiTrait;
+use Flagship\Traits\Helper;
 use Flagship\Traits\LogTrait;
 use ReflectionClass;
 use ReflectionException;
@@ -20,6 +21,7 @@ abstract class HitAbstract
 {
     use LogTrait;
     use BuildApiTrait;
+    use Helper;
 
     /**
      * @var string
@@ -98,7 +100,7 @@ abstract class HitAbstract
     {
         $this->type = $type;
         $this->ds = FlagshipConstant::SDK_APP;
-        $this->createdAt =  round(microtime(true) * 1000);
+        $this->createdAt =  $this->getNow();
         $this->isFromCache = false;
     }
 
@@ -384,13 +386,25 @@ abstract class HitAbstract
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
             FlagshipConstant::T_API_ITEM => $this->getType(),
-            FlagshipConstant::USER_IP_API_ITEM => $this->getUserIP(),
-            FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $this->getScreenResolution(),
-            FlagshipConstant::USER_LANGUAGE => $this->getLocale(),
-            FlagshipConstant::SESSION_NUMBER => $this->getSessionNumber(),
             FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => round(microtime(true) * 1000) - $this->createdAt,
+            FlagshipConstant::QT_API_ITEM => $this->getNow() - $this->createdAt,
         ];
+
+        if ($this->getUserIP() !== null) {
+            $data[FlagshipConstant::USER_IP_API_ITEM] = $this->getUserIP();
+        }
+
+        if ($this->getScreenResolution() !== null) {
+            $data[FlagshipConstant::SCREEN_RESOLUTION_API_ITEM] = $this->getScreenResolution();
+        }
+
+        if ($this->getLocale() !== null) {
+            $data[FlagshipConstant::USER_LANGUAGE] = $this->getLocale();
+        }
+
+        if ($this->getSessionNumber() !== null) {
+            $data[FlagshipConstant::SESSION_NUMBER] = $this->getSessionNumber();
+        }
 
         if ($this->visitorId && $this->anonymousId) {
             $data[FlagshipConstant::VISITOR_ID_API_ITEM] = $this->anonymousId;

@@ -66,12 +66,34 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     public $visitorCache;
 
+    /**
+     * @var string
+     */
+    private $flagSyncStatus;
+
 
     public function __construct()
     {
         $this->visitorCache = [];
-    }//end __construct()
+    }
 
+    /**
+     * @return string
+     */
+    public function getFlagSyncStatus()
+    {
+        return $this->flagSyncStatus;
+    }
+
+    /**
+     * @param string $flagSyncStatus
+     * @return VisitorAbstract
+     */
+    public function setFlagSyncStatus($flagSyncStatus)
+    {
+        $this->flagSyncStatus = $flagSyncStatus;
+        return $this;
+    }
 
     /**
      * @return ConfigManager

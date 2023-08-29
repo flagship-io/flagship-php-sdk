@@ -71,7 +71,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::TRACKING_MANAGER_ERROR,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [FlagshipConstant::SEND_HIT,
                     $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now)]
             );
@@ -113,7 +113,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::TRACKING_MANAGER_ERROR,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [FlagshipConstant::SEND_ACTIVATE,
                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now)]
             );

@@ -2,8 +2,7 @@
 
 namespace Flagship\Api;
 
-require_once __DIR__ . "/Round.php";
-require_once __DIR__ . "/../Assets/Round.php";
+require_once __DIR__ . "/../Traits/Round.php";
 
 use Exception;
 use Flagship\Config\DecisionApiConfig;
@@ -45,9 +44,6 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $activateKey = "activate-key";
         $strategy->hydrateActivatePoolQueue($activateKey, $activate);
         $this->assertSame([$activateKey => $activate], $strategy->getActivatePoolQueue());
-
-        //Test getNow method
-        $this->assertEquals(0, $strategy->getNow());
 
         //Test getActivateHeaders
         $activateHeaders = [
@@ -229,7 +225,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["flushHits","logDebugSprintf","cacheHit"]
+            ["flushHits","logDebugSprintf","cacheHit", "getNow"]
         );
 
         $strategy->activateFlag($activate);
@@ -368,9 +364,9 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $config->setOnVisitorExposed(function (
             ExposedVisitor $exposedUser,
-            ExposedFlag    $exposedFlag
+            ExposedFlag $exposedFlag
         )
- use (
+            use (
             $visitorId,
             $context,
             &$check1,
@@ -527,7 +523,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["flushHits","logErrorSprintf","cacheHit"]
+            ["flushHits","logErrorSprintf","cacheHit", "getNow"]
         );
 
         $strategy->activateFlag($activate);
@@ -562,7 +558,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->with(
                 $config,
                 FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::TRACKING_MANAGER_ERROR,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [FlagshipConstant::SEND_ACTIVATE, $logMessage ]
             );
 
@@ -597,7 +593,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["flushHits","logDebugSprintf","cacheHit","flushAllHits"]
+            ["flushHits","logDebugSprintf","cacheHit","flushAllHits", "getNow"]
         );
 
         $strategy->addHit($page);
@@ -693,7 +689,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["flushHits","logErrorSprintf","cacheHit","flushAllHits"]
+            ["flushHits","logErrorSprintf","cacheHit","flushAllHits", "getNow"]
         );
 
         $strategy->addHit($page);
@@ -734,7 +730,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->with(
                 $config,
                 FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::TRACKING_MANAGER_ERROR,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [FlagshipConstant::SEND_BATCH, $logMessage ]
             );
 
@@ -752,13 +748,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $url = FlagshipConstant::HIT_EVENT_URL;
 
-        \Flagship\Assets\Round::$returnValue = FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
+        \Flagship\Traits\Round::$returnValue = FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS ;
         $page = new Page("https://myurl.com");
         $page->setConfig($config)->setVisitorId($visitorId);
 
-        \Flagship\Assets\Round::$returnValue = 0;
+        \Flagship\Traits\Round::$returnValue = 0;
+        ;
         $screen = new Screen("home");
         $screen->setConfig($config)->setVisitorId($visitorId);
+
+
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
@@ -769,6 +768,8 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             true,
             ["flushHits","logErrorSprintf","cacheHit", "flushAllHits"]
         );
+
+        \Flagship\Traits\Round::$returnValue = FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS ;
 
         $strategy->addHit($page);
         $strategy->addHit($screen);
@@ -801,7 +802,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->method("flushAllHits");
 
         $this->assertCount(2, $strategy->getHitsPoolQueue());
-        Round::$returnValue = FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
+
         $strategy->sendBatch();
     }
 
@@ -984,7 +985,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["logDebugSprintf"]
+            ["logDebugSprintf", "getNow"]
         );
 
         $visitorId = "visitorId";

@@ -14,6 +14,11 @@ class BucketingConfig extends FlagshipConfig
     private $bucketingUrl;
 
     /**
+     * @var bool
+     */
+    protected $fetchThirdPartyData;
+
+    /**
      * @param string $bucketingUrl
      * @param string $envId
      * @param string $apiKey
@@ -40,6 +45,26 @@ class BucketingConfig extends FlagshipConfig
     public function setBucketingUrl($bucketingUrl)
     {
         $this->bucketingUrl = $bucketingUrl;
+        return $this;
+    }
+
+    /**
+     * If true is set, the visitor's segment will be fetched from [universal data connector](https://developers.abtasty.com/docs/data/universal-data-connector) each time fetchFlags is called and append those segments in the visitor context
+     * @return bool
+     */
+    public function getFetchThirdPartyData()
+    {
+        return $this->fetchThirdPartyData;
+    }
+
+    /**
+     * If you set true, it will fetch the visitor's segment from [universal data connector](https://developers.abtasty.com/docs/data/universal-data-connector) each time fetchFlags is called and append those segments in the visitor context
+     * @param bool $fetchThirdPartyData
+     * @return BucketingConfig
+     */
+    public function setFetchThirdPartyData($fetchThirdPartyData)
+    {
+        $this->fetchThirdPartyData = $fetchThirdPartyData;
         return $this;
     }
 

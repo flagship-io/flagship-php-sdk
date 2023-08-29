@@ -6,6 +6,7 @@ use Flagship\Enum\DecisionMode;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Enum\FlagSyncStatus;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\Event;
@@ -71,7 +72,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $this->getVisitor()->context[$key] = $value;
-    } //end updateContext()
+        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
+    }
 
 
     /**
@@ -82,7 +84,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         foreach ($context as $itemKey => $item) {
             $this->updateContext($itemKey, $item);
         }
-    } //end updateContextCollection()
+    }
 
 
     /**
@@ -108,7 +110,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ),
             [FlagshipConstant::TAG => $functionName]
         );
-    } //end logDeactivate()
+    }
 
 
     /**
@@ -133,8 +135,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $this->getVisitor()->setAnonymousId($this->getVisitor()->getVisitorId());
         $this->getVisitor()->setVisitorId($visitorId);
-    } //end authenticate()
-
+        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::AUTHENTICATED);
+    }
 
     /**
      * @return void
@@ -158,7 +160,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $this->getVisitor()->setVisitorId($anonymousId);
         $this->getVisitor()->setAnonymousId(null);
-    } //end unauthenticate()
+        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::UNAUTHENTICATED);
+    }
 
 
     /**
@@ -331,16 +334,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         return $campaigns;
     } //end fetchVisitorCampaigns()
 
-
-    /**
-     * @return float
-     */
-    public function getNow()
-    {
-        return round(microtime(true) * 1000);
-    } //end getNow()
-
-
     /**
      * @param  string $functionName
      * @return void
@@ -383,6 +376,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $this->getVisitor()->campaigns = $campaigns;
         $flagsDTO = $decisionManager->getModifications($campaigns);
         $this->getVisitor()->setFlagsDTO($flagsDTO);
+
+        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::FLAGS_FETCHED);
 
         $this->logDebugSprintf(
             $this->getConfig(),

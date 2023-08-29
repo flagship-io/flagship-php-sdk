@@ -113,15 +113,55 @@ trait LogTrait
     }
 
     /**
+     * @param FlagshipConfig $config
+     * @param string $tag
+     * @param string $message
+     * @param array $args
+     * @return void
+     */
+    protected function logWarningSprintf(FlagshipConfig $config, $tag, $message, $args = [])
+    {
+        if ($config->getLogLevel() < LogLevel::WARNING || is_null($config->getLogManager())) {
+            return;
+        }
+        $customMessage = vsprintf($message, $this->formatArgs($args));
+        $this->logWarning($config, $customMessage, [FlagshipConstant::TAG => $tag]);
+    }
+
+    /**
+     * @param FlagshipConfig $config
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    protected function logWarning($config, $message, $context = [])
+    {
+        if (!$config || $config->getLogLevel() < LogLevel::WARNING || is_null($config->getLogManager())) {
+            return;
+        }
+        $config->getLogManager()->warning($message, $context);
+    }
+
+    /**
      * @param string $message
      * @param string $url
      * @param array $requestBody
      * @param array $headers
      * @param string $duration
+     * @param string $responseHeader
+     * @param string $responseBody
      * @return array
      */
-    protected function getLogFormat($message, $url, $requestBody, $headers, $duration)
-    {
+    protected function getLogFormat(
+        $message,
+        $url,
+        $requestBody,
+        $headers,
+        $duration,
+        $responseHeader = null,
+        $responseBody = null,
+        $responseStatus = null
+    ) {
         $format = [];
         if ($message) {
             $format[FlagshipConstant::LOG_FORMAT_MESSAGE] = $message;
@@ -129,14 +169,23 @@ trait LogTrait
         if ($url) {
             $format[FlagshipConstant::LOG_FORMAT_URL] = $url;
         }
-        if ($requestBody) {
-            $format[FlagshipConstant::LOG_FORMAT_BODY] = $requestBody;
+        if ($requestBody !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_REQUEST_BODY] = $requestBody;
         }
-        if ($headers) {
-            $format[FlagshipConstant::LOG_FORMAT_HEADERS] = $headers;
+        if ($headers !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS] = $headers;
         }
         if ($duration) {
             $format[FlagshipConstant::LOG_FORMAT_DURATION] = $duration;
+        }
+        if ($responseHeader !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS] =  $responseHeader;
+        }
+        if ($responseBody !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_RESPONSE_BODY] =  $responseBody;
+        }
+        if ($responseStatus !== null) {
+            $format[FlagshipConstant::LOG_FORMAT_RESPONSE_STATUS] =  $responseStatus;
         }
         return  $format;
     }

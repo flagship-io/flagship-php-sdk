@@ -14,6 +14,7 @@ use Flagship\Hit\HitBatch;
 use Flagship\Model\ExposedFlag;
 use Flagship\Model\ExposedVisitor;
 use Flagship\Traits\Guid;
+use Flagship\Traits\Helper;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClientInterface;
 
@@ -21,6 +22,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 {
     use Guid;
     use LogTrait;
+    use Helper;
 
     /**
      * @var HitAbstract[]
@@ -94,13 +96,6 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->activatePoolQueue[$key] = $hit;
     }
 
-    /**
-     * @return float
-     */
-    public function getNow()
-    {
-        return round(microtime(true) * 1000);
-    }
 
     /**
      * @return array
@@ -135,7 +130,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         $this->addHitInPoolQueue($hit);
 
-        if (($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
+        if (
+            ($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
             $hit->getLabel() === FlagshipConstant::SDK_LANGUAGE . ":false"
         ) {
             $this->notConsent($hit->getVisitorId());
@@ -286,7 +282,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::TRACKING_MANAGER_ERROR,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [FlagshipConstant::SEND_ACTIVATE,
                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now)]
             );
@@ -302,7 +298,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $hitKeys = [];
         $keysToFlush = [];
         foreach ($this->hitsPoolQueue as $item) {
-            if (($item instanceof Event && $item->getAction() === FlagshipConstant::FS_CONSENT) ||
+            if (
+                ($item instanceof Event && $item->getAction() === FlagshipConstant::FS_CONSENT) ||
                 ($visitorId !== $item->getVisitorId() && $visitorId !== $item->getAnonymousId())
             ) {
                 continue;
@@ -350,7 +347,6 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         foreach ($this->hitsPoolQueue as $item) {
             $now = $this->getNow();
-
             if ($item->getIsFromCache()) {
                 $hitKeysToRemove[] = $item->getKey();
             }
@@ -397,7 +393,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::TRACKING_MANAGER_ERROR,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [FlagshipConstant::SEND_BATCH,
                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now)]
             );

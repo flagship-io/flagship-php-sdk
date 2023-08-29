@@ -165,8 +165,9 @@ abstract class FlagshipConfig implements JsonSerializable
     public function setTimeout($timeout)
     {
         if (is_numeric($timeout) && $timeout > 0) {
-            $this->logError($this, FlagshipConstant::TIMEOUT_TYPE_ERROR);
             $this->timeout = $timeout / 1000;
+        } else {
+            $this->logError($this, FlagshipConstant::TIMEOUT_TYPE_ERROR);
         }
         return $this;
     }

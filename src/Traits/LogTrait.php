@@ -113,6 +113,36 @@ trait LogTrait
     }
 
     /**
+     * @param FlagshipConfig $config
+     * @param string $tag
+     * @param string $message
+     * @param array $args
+     * @return void
+     */
+    protected function logWarningSprintf(FlagshipConfig $config, $tag, $message, $args = [])
+    {
+        if ($config->getLogLevel() < LogLevel::WARNING || is_null($config->getLogManager())) {
+            return;
+        }
+        $customMessage = vsprintf($message, $this->formatArgs($args));
+        $this->logWarning($config, $customMessage, [FlagshipConstant::TAG => $tag]);
+    }
+
+    /**
+     * @param FlagshipConfig $config
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    protected function logWarning($config, $message, $context = [])
+    {
+        if (!$config || $config->getLogLevel() < LogLevel::WARNING || is_null($config->getLogManager())) {
+            return;
+        }
+        $config->getLogManager()->warning($message, $context);
+    }
+
+    /**
      * @param string $message
      * @param string $url
      * @param array $requestBody

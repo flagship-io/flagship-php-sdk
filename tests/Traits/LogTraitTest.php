@@ -140,8 +140,70 @@ class LogTraitTest extends TestCase
         $config->setLogLevel(LogLevel::INFO);
         $logError->invokeArgs($logTraitMock, [$config, $tag, $message, []]);
     }
+    public function testWarning()
+    {
+        $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
+        $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
 
+        $message = "hello";
+        $context = ['exception' => 'hello Exception'];
 
+        $logManagerMock->expects($this->exactly(3))->method('warning')
+            ->with(
+                $message,
+                $context
+            );
+
+        $config = new DecisionApiConfig();
+        $config->setLogManager($logManagerMock);
+
+        $logWarning = Utils::getMethod($logTraitMock, "logWarning");
+        $logWarning->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config->setLogLevel(LogLevel::DEBUG);
+        $logWarning->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config->setLogLevel(LogLevel::WARNING);
+        $logWarning->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $logWarning->invokeArgs($logTraitMock, [null, $message, $context]);
+
+        $config->setLogLevel(LogLevel::CRITICAL);
+        $logWarning->invokeArgs($logTraitMock, [$config, $message, $context]);
+
+        $config = new DecisionApiConfig();
+        $config->setLogLevel(LogLevel::WARNING);
+        $logWarning->invokeArgs($logTraitMock, [$config, $message, $context]);
+    }
+
+    public function testWarningSprintf()
+    {
+        $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
+        $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
+
+        $message = "hello";
+        $tag = __FUNCTION__;
+        $context = [FlagshipConstant::TAG => $tag];
+
+        $logManagerMock->expects($this->exactly(2))->method('warning')
+            ->with(
+                $message,
+                $context
+            );
+
+        $config = new DecisionApiConfig();
+        $config->setLogManager($logManagerMock);
+
+        $logWarning = Utils::getMethod($logTraitMock, "logWarningSprintf");
+
+        $logWarning->invokeArgs($logTraitMock, [$config, $tag, $message, []]);
+
+        $config->setLogLevel(LogLevel::CRITICAL);
+        $logWarning->invokeArgs($logTraitMock, [$config, $tag, $message, []]);
+
+        $config->setLogLevel(LogLevel::WARNING);
+        $logWarning->invokeArgs($logTraitMock, [$config, $tag, $message, []]);
+    }
     public function testLogDebug()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');

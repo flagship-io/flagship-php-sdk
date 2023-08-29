@@ -8,6 +8,7 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FlagSyncStatus;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Event;
 use Flagship\Hit\Page;
@@ -77,6 +78,7 @@ class VisitorDelegateTest extends TestCase
 
         $visitorDelegate = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext);
 
+        $this->assertSame(FlagSyncStatus::CREATED, $visitorDelegate->getFlagSyncStatus());
         //Test default visitorId
         $this->assertEquals($visitorId, $visitorDelegate->getVisitorId());
 
@@ -87,7 +89,6 @@ class VisitorDelegateTest extends TestCase
         $this->assertSame($configManager, $visitorDelegate->getConfigManager());
 
         //Test new visitorId
-
 
         $visitorDelegate->setVisitorId($newVisitorId);
         $this->assertEquals($newVisitorId, $visitorDelegate->getVisitorId());
@@ -176,6 +177,15 @@ class VisitorDelegateTest extends TestCase
     }
     public function testMethods()
     {
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error']
+        );
         $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
@@ -198,7 +208,8 @@ class VisitorDelegateTest extends TestCase
                 'setContext', 'updateContext', 'updateContextCollection', "cacheVisitor",
                 'clearContext', 'authenticate', 'unauthenticate', 'getModification',
                 'getModificationInfo', 'synchronizeModifications', 'setConsent',
-                'activateModification', 'sendHit', 'fetchFlags', 'visitorExposed', 'getFlagValue', 'getFlagMetadata','lookupVisitor'
+                'activateModification', 'sendHit', 'fetchFlags', 'visitorExposed', 'getFlagValue',
+                'getFlagMetadata','lookupVisitor'
             ])->disableOriginalConstructor()
             ->getMock();
 
@@ -208,14 +219,12 @@ class VisitorDelegateTest extends TestCase
 
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
 
-
-
         $defaultContext = [
             FlagshipContext::OS_NAME => PHP_OS,
         ];
 
         //test SetContext
-        $defaultStrategy->expects($this->exactly(5))
+        $defaultStrategy->expects($this->exactly(3))
             ->method('updateContextCollection')
             ->withConsecutive(
                 [$visitorContext],
@@ -343,6 +352,22 @@ class VisitorDelegateTest extends TestCase
         //Test getFlag null
         $flag = $visitor->getFlag('key2', $defaultValue);
         $this->assertInstanceOf("Flagship\Flag\Flag", $flag);
+
+        //Test  flag warning
+        $config->setLogManager($logManagerStub);
+        $logManagerStub->expects($this->exactly(4))->method('warning');
+        $visitor->setFlagSyncStatus(FlagSyncStatus::CREATED);
+        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
+        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFlagSyncStatus(FlagSyncStatus::AUTHENTICATED);
+        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFlagSyncStatus(FlagSyncStatus::UNAUTHENTICATED);
+        $visitor->getFlag('key1', $defaultValue);
+
+        $visitor->setFlagSyncStatus(FlagSyncStatus::FLAGS_FETCHED);
+        $visitor->getFlag('key1', $defaultValue);
+
     }
 
     public function testJson()

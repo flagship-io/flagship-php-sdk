@@ -13,8 +13,21 @@ class FlagMetadataTest extends TestCase
         $variationId = "variationId";
         $isReferenceId = true;
         $campaignType = "campaignType";
+        $campaignName = "campaignName";
+        $variationName = "variationName";
+        $variationGroupName = "variationGroupName";
         $slug = "slug";
-        $metadata = new FlagMetadata($campaignId, $variationGroupId, $variationId, $isReferenceId, $campaignType, $slug);
+        $metadata = new FlagMetadata(
+            $campaignId,
+            $variationGroupId,
+            $variationId,
+            $isReferenceId,
+            $campaignType,
+            $slug,
+            $campaignName,
+            $variationGroupName,
+            $variationName
+        );
 
         $this->assertSame($metadata->getCampaignId(), $campaignId);
         $this->assertSame($metadata->getVariationGroupId(), $variationGroupId);
@@ -22,6 +35,9 @@ class FlagMetadataTest extends TestCase
         $this->assertSame($metadata->isReference(), $isReferenceId);
         $this->assertSame($metadata->getCampaignType(), $campaignType);
         $this->assertSame($metadata->getSlug(), $slug);
+        $this->assertSame($metadata->getVariationGroupName(), $variationGroupName);
+        $this->assertSame($metadata->getCampaignName(), $campaignName);
+        $this->assertSame($metadata->getVariationName(), $variationName);
 
         $metadataJson = json_encode([
             "campaignId" => $campaignId,

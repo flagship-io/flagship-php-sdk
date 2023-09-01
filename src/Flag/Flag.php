@@ -40,8 +40,7 @@ class Flag implements FlagInterface
         $this->visitorDelegate = $visitorDelegate;
 
         $this->defaultValue = $defaultValue;
-    }//end __construct()
-
+    }
 
     /**
      * @param  $key
@@ -56,8 +55,7 @@ class Flag implements FlagInterface
         }
 
         return null;
-    }//end findFlagDTO()
-
+    }
 
     /**
      * @inheritDoc
@@ -66,8 +64,7 @@ class Flag implements FlagInterface
     {
         $flagDTO = $this->findFlagDTO($this->key);
         return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $flagDTO, $visitorExposed);
-    }//end getValue()
-
+    }
 
     /**
      * @inheritDoc
@@ -76,8 +73,7 @@ class Flag implements FlagInterface
     {
         $flagDTO = $this->findFlagDTO($this->key);
         return $flagDTO && $flagDTO->getCampaignId() && $flagDTO->getVariationId() && $flagDTO->getVariationGroupId();
-    }//end exists()
-
+    }
 
     /**
      * @inheritDoc
@@ -85,8 +81,7 @@ class Flag implements FlagInterface
     public function userExposed()
     {
         $this->visitorExposed();
-    }//end userExposed()
-
+    }
 
     /**
      * @inheritDoc
@@ -100,7 +95,10 @@ class Flag implements FlagInterface
             $flagDTO ? $flagDTO->getVariationId() : '',
             $flagDTO ? $flagDTO->getIsReference() : false,
             $flagDTO ? $flagDTO->getCampaignType() : '',
-            $flagDTO ? $flagDTO->getSlug() : null
+            $flagDTO ? $flagDTO->getSlug() : null,
+            $flagDTO ? $flagDTO->getCampaignName() : null,
+            $flagDTO ? $flagDTO->getVariationGroupName() : null,
+            $flagDTO ? $flagDTO->getVariationName() : null
         );
 
         if (!$flagDTO) {
@@ -112,8 +110,7 @@ class Flag implements FlagInterface
             $metadata,
             !$flagDTO->getValue() || $this->hasSameType($flagDTO->getValue(), $this->defaultValue)
         );
-    }//end getMetadata()
-
+    }
 
     /**
      * @inheritDoc
@@ -143,4 +140,4 @@ class Flag implements FlagInterface
             $flagDTO
         );
     }
-}//end class
+}

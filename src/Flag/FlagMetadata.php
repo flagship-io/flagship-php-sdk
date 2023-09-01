@@ -10,14 +10,30 @@ class FlagMetadata implements JsonSerializable, FlagMetadataInterface
      * @var string
      */
     private $campaignId;
+
+    /**
+     * @var string
+     */
+    private $campaignName;
     /**
      * @var string
      */
     private $variationGroupId;
+
+    /**
+     * @var string
+     */
+    private $variationGroupName;
+
     /**
      * @var string
      */
     private $variationId;
+
+    /**
+     * @var string
+     */
+    private $variationName;
     /**
      * @var bool
      */
@@ -39,14 +55,26 @@ class FlagMetadata implements JsonSerializable, FlagMetadataInterface
      * @param bool $isReference
      * @param string $campaignType
      */
-    public function __construct($campaignId, $variationGroupId, $variationId, $isReference, $campaignType, $slug)
-    {
+    public function __construct(
+        $campaignId,
+        $variationGroupId,
+        $variationId,
+        $isReference,
+        $campaignType,
+        $slug,
+        $campaignName,
+        $variationGroupName,
+        $variationName
+    ) {
         $this->campaignId = $campaignId;
         $this->variationGroupId = $variationGroupId;
         $this->variationId = $variationId;
         $this->isReference = $isReference;
         $this->campaignType = $campaignType;
         $this->slug = $slug;
+        $this->variationGroupName = $variationGroupName;
+        $this->campaignName = $campaignName;
+        $this->variationName = $variationName;
     }
 
     /**
@@ -91,9 +119,43 @@ class FlagMetadata implements JsonSerializable, FlagMetadataInterface
         return $this->campaignType;
     }
 
+    /**
+     * @return string
+     */
+    public function getCampaignName()
+    {
+        return $this->campaignName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVariationGroupName()
+    {
+        return $this->variationGroupName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVariationName()
+    {
+        return $this->variationName;
+    }
+
     public static function getEmpty()
     {
-        return new FlagMetadata("", "", "", false, "", null);
+        return new FlagMetadata(
+            "",
+            "",
+            "",
+            false,
+            "",
+            null,
+            "",
+            "",
+            ""
+        );
     }
 
     /**

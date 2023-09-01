@@ -2,11 +2,13 @@
   "campaigns": [
     {
       "id": "c1ndsu87m030114t8uu0",
+      "name": "campaign1",
       "type": "toggle",
       "slug": null,
       "variationGroups": [
         {
           "id": "c1ndsu87m030114t8uv0",
+          "name": "variationGroups1",
           "targeting": {
             "targetingGroups": [
               {
@@ -38,6 +40,7 @@
           "variations": [
             {
               "id": "c1ndsu87m030114t8uvg",
+              "name": "variation1",
               "modifications": {
                 "type": "FLAG",
                 "value": {
@@ -53,6 +56,7 @@
         },
         {
           "id": "c1ndta129mp0114nbtn0",
+          "name": "variationGroups2",
           "targeting": {
             "targetingGroups": [
               {
@@ -75,6 +79,7 @@
           "variations": [
             {
               "id": "c1ndta129mp0114nbtng",
+              "name": "variation1",
               "modifications": {
                 "type": "FLAG",
                 "value": {
@@ -92,11 +97,13 @@
     },
     {
       "id": "c20j8bk3fk9hdphqtd1g",
+      "name": "campaign2",
       "type": "ab",
       "slug": "campaign_1",
       "variationGroups": [
         {
           "id": "c20j8bk3fk9hdphqtd2g",
+          "name": "variationGroups-1",
           "targeting": {
             "targetingGroups": [
               {
@@ -113,6 +120,7 @@
           "variations": [
             {
               "id": "c20j8bk3fk9hdphqtd30",
+              "name": "variation-1",
               "modifications": {
                 "type": "HTML",
                 "value": {
@@ -124,6 +132,7 @@
             },
             {
               "id": "c20j8bk3fk9hdphqtd3g",
+              "name": "variation-2",
               "modifications": {
                 "type": "HTML",
                 "value": {
@@ -134,6 +143,7 @@
             },
             {
               "id": "c20j9lgbcahhf2mvhbf0",
+              "name": "variation-3",
               "modifications": {
                 "type": "HTML",
                 "value": {

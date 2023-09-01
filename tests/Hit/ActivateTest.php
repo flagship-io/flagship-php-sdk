@@ -12,13 +12,26 @@ class ActivateTest extends TestCase
     public function testTestConstruct()
     {
         $variationId = "varId";
+        $variationName = "variationName";
         $variationGroupId = "varGrId";
+        $variationGroupName = "variationGroupName";
         $envId = "envId";
         $visitorId = "visitorId";
         $flagKey = "key";
         $flagValue = "value";
+        $campaignName = "campaignName";
         $visitorContext = ["key" => "value"];
-        $flagMetadata = new FlagMetadata("campaignId", $variationGroupId, $variationId, false, "ab", null);
+        $flagMetadata = new FlagMetadata(
+            "campaignId",
+            $variationGroupId,
+            $variationId,
+            false,
+            "ab",
+            null,
+            $campaignName,
+            $variationGroupName,
+            $variationName
+        );
 
         $config = new DecisionApiConfig($envId);
 

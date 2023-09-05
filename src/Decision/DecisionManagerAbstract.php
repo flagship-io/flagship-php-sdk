@@ -6,6 +6,7 @@ use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Model\FlagDTO;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\Helper;
 use Flagship\Traits\ValidatorTrait;
@@ -35,6 +36,11 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @var FlagshipConfig
      */
     protected $config;
+
+    /**
+     * @var TroubleshootingData
+     */
+    protected $troubleshootingData;
 
     /**
      * ApiManager constructor.
@@ -241,5 +247,10 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     {
         $campaigns = $this->getCampaigns($visitor);
         return $this->getModifications($campaigns);
+    }
+
+    public function getTroubleshootingData()
+    {
+        return $this->troubleshootingData;
     }
 }

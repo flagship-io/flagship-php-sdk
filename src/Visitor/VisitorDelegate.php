@@ -16,7 +16,7 @@ use Flagship\Utils\ContainerInterface;
 
 class VisitorDelegate extends VisitorAbstract
 {
-    use Guid;
+
 
 
     /**

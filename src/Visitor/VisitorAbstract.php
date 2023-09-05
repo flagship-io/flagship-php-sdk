@@ -7,6 +7,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Flagship;
 use Flagship\Model\FlagDTO;
+use Flagship\Traits\Guid;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
@@ -15,6 +16,7 @@ use JsonSerializable;
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, VisitorFlagInterface
 {
     use ValidatorTrait;
+    use Guid;
 
     /**
      * @var FlagshipConfig
@@ -71,11 +73,66 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     private $flagSyncStatus;
 
+    /**
+     * @var numeric
+     */
+    protected $traffic;
+
+    /**
+     * @var string
+     */
+    protected $instanceId;
+
+    protected static $sdkStatus;
+
+    /**
+     * @return mixed
+     */
+    public function getSdkStatus()
+    {
+        return self::$sdkStatus;
+    }
+
+    /**
+     * @param mixed $sdkStatus
+     */
+    public static function setSdkStatus($sdkStatus)
+    {
+        self::$sdkStatus = $sdkStatus;
+    }
 
     public function __construct()
     {
         $this->visitorCache = [];
+        $this->instanceId = $this->newGuid();
     }
+
+    /**
+     * @return string
+     */
+    public function getInstanceId()
+    {
+        return $this->instanceId;
+    }
+
+    /**
+     * @return float|int|string
+     */
+    public function getTraffic()
+    {
+        return $this->traffic;
+    }
+
+    /**
+     * @param float|int|string $traffic
+     * @return VisitorAbstract
+     */
+    public function setTraffic($traffic)
+    {
+        $this->traffic = $traffic;
+        return $this;
+    }
+
 
     /**
      * @return string

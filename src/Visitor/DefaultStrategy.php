@@ -7,10 +7,13 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagSyncStatus;
+use Flagship\Enum\LogLevel;
+use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Model\FlagDTO;
 
 /**
@@ -338,7 +341,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      * @param  string $functionName
      * @return void
      */
-    private function synchronizeFlags($functionName)
+    private function globalFetchFlags($functionName)
     {
         $decisionManager = $this->getDecisionManager($functionName);
         if (!$decisionManager) {
@@ -374,7 +377,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $this->getVisitor()->campaigns = $campaigns;
-        $flagsDTO = $decisionManager->getModifications($campaigns);
+            $flagsDTO = $decisionManager->getModifications($campaigns);
         $this->getVisitor()->setFlagsDTO($flagsDTO);
 
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::FLAGS_FETCHED);
@@ -390,7 +393,41 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 $flagsDTO,
             ]
         );
-    } //end synchronizeFlags()
+
+        if ($this->getDecisionManager()->getTroubleshootingData()) {
+            $assignmentHistory = [];
+            foreach ($flagsDTO as $item) {
+                $assignmentHistory[$item->getVariationGroupId()] = $item->getVariationId();
+            }
+            $visitor = $this->getVisitor();
+            $troubleshootingData = $this->getDecisionManager()->getTroubleshootingData();
+            $uniqueId = $visitor->getVisitorId() . $troubleshootingData->getEndDate()->getTimestamp();
+            $hash = $this->getMurmurHas()->murmurHash3Int32($uniqueId);
+            $traffic = $hash % 100;
+            $visitor->setTraffic($traffic);
+
+            $troubleshootingHit = new Troubleshooting();
+            $troubleshootingHit->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS_ERROR)
+            ->setLogLevel("INFO")
+            ->setVisitorId($visitor->getVisitorId())
+            ->setAnonymousId($visitor->getAnonymousId())
+            ->setVisitorInstanceId($visitor->getInstanceId())
+            ->setTraffic($traffic)
+            ->setConfig($this->getConfig())
+            ->setVisitorAssignmentHistory($assignmentHistory)
+            ->setVisitorContext($visitor->getContext())
+            ->setSdkStatus($visitor->getSdkStatus())
+            ->setVisitorCampaigns($campaigns)
+            ->setVisitorConsent($visitor->hasConsented())
+            ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
+            ->setHttpResponseTime(($this->getNow() - $now))
+            ->setSdkConfigMode($this->getConfig()->getDecisionMode())
+            ->setSdkConfigTimeout($this->getConfig()->getTimeout())
+            ->setSdkConfigTrackingManagerConfigStrategy($this->getConfig()->getCacheStrategy());
+
+            $this->sendTroubleshootingHit($troubleshootingHit);
+        }
+    }
 
 
     /**
@@ -398,7 +435,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function synchronizeModifications()
     {
-        $this->synchronizeFlags(__FUNCTION__);
+        $this->globalFetchFlags(__FUNCTION__);
     } //end synchronizeModifications()
 
 
@@ -407,7 +444,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function fetchFlags()
     {
-        $this->synchronizeFlags(__FUNCTION__);
+        $this->globalFetchFlags(__FUNCTION__);
     } //end fetchFlags()
 
 
@@ -625,5 +662,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $metadata;
-    } //end getFlagMetadata()
-}//end class
+    }
+
+    public function sendTroubleshootingHit(Troubleshooting $hit)
+    {
+        $this->getTrackingManager()->addTroubleshootingHit($hit);
+    }
+}

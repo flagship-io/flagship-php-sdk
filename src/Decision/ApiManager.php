@@ -2,9 +2,11 @@
 
 namespace Flagship\Decision;
 
+use DateTime;
 use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Visitor\VisitorAbstract;
 
 /**
@@ -43,6 +45,21 @@ class ApiManager extends DecisionManagerAbstract
             $hasPanicMode = !empty($body["panic"]);
 
             $this->setIsPanicMode($hasPanicMode);
+            $this->troubleshootingData = null;
+            if (
+                isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING])
+            ) {
+                $troubleshooting = $body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS]
+                [FlagshipField::TROUBLESHOOTING];
+                $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
+                $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
+                $troubleshootingData = new TroubleshootingData();
+                $troubleshootingData->setStartDate($startDate)
+                    ->setEndDate($endDate)
+                    ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
+                    ->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
+                $this->troubleshootingData = $troubleshootingData;
+            }
 
             if (isset($body[FlagshipField::FIELD_CAMPAIGNS])) {
                 return $body[FlagshipField::FIELD_CAMPAIGNS];

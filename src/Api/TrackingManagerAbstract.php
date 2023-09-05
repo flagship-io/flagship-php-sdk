@@ -79,8 +79,6 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
         return $this->strategy;
     }
 
-
-
     /**
      * @return BatchingCachingStrategyAbstract
      */
@@ -106,9 +104,9 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     protected function checkLookupHitData(array $item)
     {
         if (
-            isset($item[HitCacheFields::VERSION]) && $item[HitCacheFields::VERSION] == 1 &&
-            isset($item[HitCacheFields::DATA]) && isset($item[HitCacheFields::DATA][HitCacheFields::TYPE]) &&
-            isset($item[HitCacheFields::DATA][HitCacheFields::CONTENT])
+            isset($item[HitCacheFields::DATA][HitCacheFields::CONTENT]) &&
+            isset($item[HitCacheFields::DATA][HitCacheFields::TYPE]) &&
+            isset($item[HitCacheFields::VERSION]) && $item[HitCacheFields::VERSION] == 1
         ) {
             return true;
         }

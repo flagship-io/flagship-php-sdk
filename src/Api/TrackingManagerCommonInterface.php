@@ -4,6 +4,7 @@ namespace Flagship\Api;
 
 use Flagship\Hit\Activate;
 use Flagship\Hit\HitAbstract;
+use Flagship\Hit\Troubleshooting;
 
 interface TrackingManagerCommonInterface
 {
@@ -18,4 +19,9 @@ interface TrackingManagerCommonInterface
      * @return void
      */
     public function activateFlag(Activate $hit);
+
+    /**
+     * @return void
+     */
+    public function addTroubleshootingHit(Troubleshooting $hit);
 }

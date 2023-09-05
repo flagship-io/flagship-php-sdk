@@ -12,6 +12,7 @@ use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Traits\Helper;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
+use Flagship\Utils\MurmurHash;
 
 /**
  *
@@ -45,6 +46,11 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
      */
     protected $visitor;
 
+    /**
+     * @var MurmurHash
+     */
+    protected $murmurHas;
+
 
     /**
      * @param VisitorAbstract $visitor
@@ -52,7 +58,26 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     public function __construct(VisitorAbstract $visitor)
     {
         $this->visitor = $visitor;
+    }
+
+    /**
+     * @return MurmurHash
+     */
+    public function getMurmurHas()
+    {
+        return $this->murmurHas;
+    }
+
+    /**
+     * @param MurmurHash $murmurHas
+     * @return VisitorStrategyAbstract
+     */
+    public function setMurmurHas($murmurHas)
+    {
+        $this->murmurHas = $murmurHas;
+        return $this;
     }//end __construct()
+
 
 
     /**

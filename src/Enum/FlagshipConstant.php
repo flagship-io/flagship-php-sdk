@@ -36,6 +36,13 @@ class FlagshipConstant
     const URL_ACTIVATE_MODIFICATION = 'activate';
     const HIT_EVENT_URL = 'https://events.flagship.io';
 
+    const TROUBLESHOOTING_HIT_URL = 'https://events.flagship.io/troubleshooting';
+    const TROUBLESHOOTING_SENT_SUCCESS = 'Troubleshooting hit has been sent : %s';
+    const TROUBLESHOOTING_HIT_ADDED_IN_QUEUE = 'The TROUBLESHOOTING HIT has been added in the pool queue : %s';
+    const ADD_TROUBLESHOOTING_HIT = 'ADD TROUBLESHOOTING HIT';
+
+    const SEND_TROUBLESHOOTING = 'SEND TROUBLESHOOTING';
+
     Const BUCKETING = "BUCKETING";
 
     const EXPOSE_ALL_KEYS = "exposeAllKeys";

@@ -37,4 +37,12 @@ class FlagshipField
     const FIELD_LOG_LEVEL = "logLevel";
     const FIELD_BUCKETING_DIRECTORY = "bucketingDirectory";
     const FIELD_BUCKETING_URL = "bucketingUrl";
+    const EXTRAS= "extras";
+    const ACCOUNT_SETTINGS = "accountSettings";
+    const TROUBLESHOOTING = "troubleshooting";
+
+    const START_DATE= "startDate";
+    const END_DATE = "endDate";
+    const TIMEZONE = "timezone";
+    const TRAFFIC = "traffic";
 }

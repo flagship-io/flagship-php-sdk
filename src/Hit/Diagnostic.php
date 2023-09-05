@@ -89,20 +89,6 @@ class Diagnostic extends HitAbstract
      */
     private $sdkConfigTimeout;
 
-    /**
-     * @var string
-     */
-    private $sdkConfigPollingInterval;
-
-    /**
-     * @var string
-     */
-    private $sdkConfigFetchNow;
-
-    /**
-     * @var string
-     */
-    private $sdkConfigEnableClientCache;
 
     /**
      * @var string
@@ -255,9 +241,55 @@ class Diagnostic extends HitAbstract
      */
     private $hitContent;
 
+    /**
+     * @var string
+     */
+    private $visitorInstanceId;
+
+    /**
+     * @var numeric
+     */
+    private $traffic;
+
     public static function getClassName()
     {
         return __CLASS__;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVisitorInstanceId()
+    {
+        return $this->visitorInstanceId;
+    }
+
+    /**
+     * @param string $visitorInstanceId
+     * @return Diagnostic
+     */
+    public function setVisitorInstanceId($visitorInstanceId)
+    {
+        $this->visitorInstanceId = $visitorInstanceId;
+        return $this;
+    }
+
+    /**
+     * @return float|int|string
+     */
+    public function getTraffic()
+    {
+        return $this->traffic;
+    }
+
+    /**
+     * @param float|int|string $traffic
+     * @return Diagnostic
+     */
+    public function setTraffic($traffic)
+    {
+        $this->traffic = $traffic;
+        return $this;
     }
 
     /**
@@ -566,59 +598,6 @@ class Diagnostic extends HitAbstract
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSdkConfigPollingInterval()
-    {
-        return $this->sdkConfigPollingInterval;
-    }
-
-    /**
-     * @param string $sdkConfigPollingInterval
-     * @return Diagnostic
-     */
-    public function setSdkConfigPollingInterval($sdkConfigPollingInterval)
-    {
-        $this->sdkConfigPollingInterval = $sdkConfigPollingInterval;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSdkConfigFetchNow()
-    {
-        return $this->sdkConfigFetchNow;
-    }
-
-    /**
-     * @param string $sdkConfigFetchNow
-     * @return Diagnostic
-     */
-    public function setSdkConfigFetchNow($sdkConfigFetchNow)
-    {
-        $this->sdkConfigFetchNow = $sdkConfigFetchNow;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSdkConfigEnableClientCache()
-    {
-        return $this->sdkConfigEnableClientCache;
-    }
-
-    /**
-     * @param string $sdkConfigEnableClientCache
-     * @return Diagnostic
-     */
-    public function setSdkConfigEnableClientCache($sdkConfigEnableClientCache)
-    {
-        $this->sdkConfigEnableClientCache = $sdkConfigEnableClientCache;
-        return $this;
-    }
 
     /**
      * @return string
@@ -1166,5 +1145,6 @@ class Diagnostic extends HitAbstract
     public function getErrorMessage()
     {
         // TODO: Implement getErrorMessage() method.
+        return  "";
     }
 }

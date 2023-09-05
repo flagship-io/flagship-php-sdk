@@ -26,4 +26,6 @@ interface DecisionManagerInterface
      * @return FlagDTO[]
      */
     public function getModifications($campaigns);
+
+    public function getTroubleshootingData();
 }

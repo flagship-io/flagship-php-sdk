@@ -2,11 +2,15 @@
 
 namespace Flagship\Decision;
 
+use DateTime;
 use Exception;
 use Flagship\Config\BucketingConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Segment;
+use Flagship\Hit\Troubleshooting;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Utils\MurmurHash;
 use Flagship\Visitor\VisitorAbstract;
@@ -130,10 +134,10 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function getBucketingFile()
     {
-
+        $now = $this->getNow();
+        $url = $this->getConfig()->getBucketingUrl();
         try {
             $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
-            $url = $this->getConfig()->getBucketingUrl();
             if (!$url) {
                 throw  new Exception(self::INVALID_BUCKETING_FILE_URL);
             }
@@ -143,6 +147,17 @@ class BucketingManager extends DecisionManagerAbstract
             $this->logError($this->getConfig(), $exception->getMessage(), [
                 FlagshipConstant::TAG => __FUNCTION__
             ]);
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR)
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+                ->setTraffic(0)
+                ->setLogLevel("ERROR")
+                ->setConfig($this->getConfig())
+                ->setHttpRequestMethod("GET")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now);
+            $this->getTrackingManager()->addTroubleshootingHit($troubleshooting);
         }
         return null;
     }
@@ -156,6 +171,18 @@ class BucketingManager extends DecisionManagerAbstract
 
         if (!$bucketingCampaigns) {
             return [];
+        }
+        $this->troubleshootingData = null;
+        if (isset($bucketingCampaigns[FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING])) {
+            $troubleshooting = $bucketingCampaigns[FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING];
+            $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
+            $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
+            $troubleshootingData = new TroubleshootingData();
+            $troubleshootingData->setStartDate($startDate)
+                ->setEndDate($endDate)
+                ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
+                ->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
+            $this->troubleshootingData = $troubleshootingData;
         }
 
         if (isset($bucketingCampaigns[FlagshipField::FIELD_PANIC])) {

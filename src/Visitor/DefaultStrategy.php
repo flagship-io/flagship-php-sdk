@@ -47,7 +47,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $trackingManager->addHit($consentHit);
-    } //end setConsent()
+    }
 
 
     /**
@@ -96,7 +96,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function clearContext()
     {
         $this->getVisitor()->context = [];
-    } //end clearContext()
+    }
 
 
     /**
@@ -139,6 +139,17 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $this->getVisitor()->setAnonymousId($this->getVisitor()->getVisitorId());
         $this->getVisitor()->setVisitorId($visitorId);
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::AUTHENTICATED);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_AUTHENTICATE)
+            ->setLogLevel("INFO")
+            ->setVisitorId($this->getVisitor()->getVisitorId())
+            ->setAnonymousId($this->getVisitor()->getAnonymousId())
+            ->setVisitorContext($this->getVisitor()->getContext())
+            ->setTraffic($this->getVisitor()->getTraffic())
+            ->setConfig($this->getConfig());
+
+        $this->sendTroubleshootingHit($troubleshooting);
     }
 
     /**
@@ -164,6 +175,17 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $this->getVisitor()->setVisitorId($anonymousId);
         $this->getVisitor()->setAnonymousId(null);
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::UNAUTHENTICATED);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_UNAUTHENTICATE)
+            ->setLogLevel("INFO")
+            ->setVisitorId($this->getVisitor()->getVisitorId())
+            ->setAnonymousId($this->getVisitor()->getAnonymousId())
+            ->setVisitorContext($this->getVisitor()->getContext())
+            ->setTraffic($this->getVisitor()->getTraffic())
+            ->setConfig($this->getConfig());
+
+        $this->sendTroubleshootingHit($troubleshooting);
     }
 
 
@@ -182,8 +204,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return null;
-    } //end getObjetModification()
-
+    }
 
     /**
      * @param  string  $key
@@ -231,7 +252,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $modification->getValue();
-    } //end getModification()
+    }
 
 
     /**
@@ -249,7 +270,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             FlagshipField::FIELD_IS_REFERENCE       => $modification->getIsReference(),
             FlagshipField::FIELD_VALUE              => $modification->getValue(),
         ];
-    } //end parseToCampaign()
+    }
 
 
     /**
@@ -279,7 +300,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $this->parseToCampaign($modification);
-    } //end getModificationInfo()
+    }
 
 
     /**
@@ -335,7 +356,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         return $campaigns;
-    } //end fetchVisitorCampaigns()
+    }
 
     /**
      * @param  string $functionName
@@ -358,6 +379,9 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $now = $this->getNow();
 
         $campaigns = $decisionManager->getCampaigns($this->getVisitor());
+
+        $troubleshootingData = $this->getDecisionManager()->getTroubleshootingData();
+        $this->getTrackingManager()->setTroubleshootingData($troubleshootingData);
 
         $this->logDebugSprintf(
             $this->getConfig(),
@@ -394,21 +418,21 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ]
         );
 
-        if ($this->getDecisionManager()->getTroubleshootingData()) {
+
+        if ($troubleshootingData) {
             $assignmentHistory = [];
             foreach ($flagsDTO as $item) {
                 $assignmentHistory[$item->getVariationGroupId()] = $item->getVariationId();
             }
             $visitor = $this->getVisitor();
-            $troubleshootingData = $this->getDecisionManager()->getTroubleshootingData();
             $uniqueId = $visitor->getVisitorId() . $troubleshootingData->getEndDate()->getTimestamp();
-            $hash = $this->getMurmurHas()->murmurHash3Int32($uniqueId);
+            $hash = $this->getMurmurHash()->murmurHash3Int32($uniqueId);
             $traffic = $hash % 100;
             $visitor->setTraffic($traffic);
 
             $troubleshootingHit = new Troubleshooting();
             $troubleshootingHit->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS_ERROR)
-            ->setLogLevel("INFO")
+            ->setLogLevel(LogLevel::INFO)
             ->setVisitorId($visitor->getVisitorId())
             ->setAnonymousId($visitor->getAnonymousId())
             ->setVisitorInstanceId($visitor->getInstanceId())
@@ -436,7 +460,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function synchronizeModifications()
     {
         $this->globalFetchFlags(__FUNCTION__);
-    } //end synchronizeModifications()
+    }
 
 
     /**
@@ -445,7 +469,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function fetchFlags()
     {
         $this->globalFetchFlags(__FUNCTION__);
-    } //end fetchFlags()
+    }
 
 
     /**
@@ -469,7 +493,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
         $this->activateFlag($modification);
-    } //end activateModification()
+    }
 
 
     /**
@@ -483,9 +507,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
             return;
         }
 
-        $hit->setConfig($this->getVisitor()->getConfig())
-            ->setVisitorId($this->getVisitor()->getVisitorId())
-            ->setAnonymousId($this->getVisitor()->getAnonymousId())
+        $visitor = $this->getVisitor();
+        $hit->setConfig($visitor->getConfig())
+            ->setVisitorId($visitor->getVisitorId())
+            ->setAnonymousId($visitor->getAnonymousId())
             ->setDs(FlagshipConstant::SDK_APP);
 
         if ($hit->isReady() === false) {
@@ -498,7 +523,18 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $trackingManager->addHit($hit);
-    } //end sendHit()
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setLogLevel("INFO")
+            ->setTraffic($visitor->getTraffic())
+            ->setVisitorId($visitor->getVisitorId())
+            ->setVisitorInstanceId($visitor->getInstanceId())
+            ->setAnonymousId($visitor->getAnonymousId())
+            ->setConfig($this->getConfig())
+            ->setHitContent($hit->toApiKeys());
+        $this->sendTroubleshootingHit($troubleshooting);
+    }
 
 
     /**
@@ -507,7 +543,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     public function getModifications()
     {
         return $this->getVisitor()->getModifications();
-    } //end getModifications()
+    }
 
     /**
      * @param FlagDTO $flag
@@ -525,17 +561,29 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $flag->getSlug()
         );
 
+        $visitor = $this->getVisitor();
         $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
         $activateHit->setConfig($this->getConfig())
-            ->setVisitorId($this->visitor->getVisitorId())
-            ->setAnonymousId($this->visitor->getAnonymousId())
+            ->setVisitorId($visitor->getVisitorId())
+            ->setAnonymousId($visitor->getAnonymousId())
             ->setFlagKey($flag->getKey())
             ->setFlagValue($flag->getValue())
             ->setFlagDefaultValue($defaultValue)
-            ->setVisitorContext($this->getVisitor()->getContext())
+            ->setVisitorContext($visitor->getContext())
             ->setFlagMetadata($flagMetadata);
 
         $this->getTrackingManager()->activateFlag($activateHit);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_ACTIVATE)
+            ->setLogLevel("INFO")
+            ->setTraffic($this->getVisitor()->getTraffic())
+            ->setVisitorId($visitor->getVisitorId())
+            ->setAnonymousId($visitor->getAnonymousId())
+            ->setVisitorInstanceId($visitor->getInstanceId())
+            ->setConfig($this->getConfig())
+            ->setHitContent($activateHit->toApiKeys());
+        $this->sendTroubleshootingHit($troubleshooting);
     }
 
     /**
@@ -556,6 +604,20 @@ class DefaultStrategy extends VisitorStrategyAbstract
                     $key,
                 ]
             );
+
+            $visitor = $this->getVisitor();
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_EXPOSED_FLAG_NOT_FOUND)
+                ->setLogLevel("WARNING")
+                ->setVisitorId($visitor->getVisitorId())
+                ->setAnonymousId($visitor->getAnonymousId())
+                ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setTraffic($visitor->getTraffic())
+                ->setConfig($this->getConfig())
+                ->setVisitorContext($visitor->getContext())
+                ->setFlagKey($key)
+                ->setFlagDefault($defaultValue);
+            $this->sendTroubleshootingHit($troubleshooting);
             return;
         }
 
@@ -572,11 +634,25 @@ class DefaultStrategy extends VisitorStrategyAbstract
                     $key,
                 ]
             );
+
+            $visitor = $this->getVisitor();
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_EXPOSED_TYPE_WARNING)
+                ->setLogLevel("WARNING")
+                ->setVisitorId($visitor->getVisitorId())
+                ->setAnonymousId($visitor->getAnonymousId())
+                ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setTraffic($visitor->getTraffic())
+                ->setConfig($this->getConfig())
+                ->setVisitorContext($visitor->getContext())
+                ->setFlagKey($key)
+                ->setFlagDefault($defaultValue);
+            $this->sendTroubleshootingHit($troubleshooting);
             return;
         }
 
         $this->activateFlag($flag, $defaultValue);
-    } //end userExposed()
+    }
 
 
     /**
@@ -588,6 +664,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
      */
     public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
     {
+        $visitor = $this->getVisitor();
         if (!$flag) {
             $this->logInfoSprintf(
                 $this->getConfig(),
@@ -599,6 +676,21 @@ class DefaultStrategy extends VisitorStrategyAbstract
                     $defaultValue,
                 ]
             );
+
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::GET_FLAG_VALUE_FLAG_NOT_FOUND)
+                ->setLogLevel("WARNING")
+                ->setVisitorId($visitor->getVisitorId())
+                ->setAnonymousId($visitor->getAnonymousId())
+                ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setTraffic($visitor->getTraffic())
+                ->setConfig($this->getConfig())
+                ->setVisitorContext($visitor->getContext())
+                ->setFlagKey($key)
+                ->setFlagDefault($defaultValue)
+                ->setVisitorExposed($userExposed);
+
+            $this->sendTroubleshootingHit($troubleshooting);
             return $defaultValue;
         }
 
@@ -606,7 +698,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
             if ($userExposed) {
                 $this->visitorExposed($key, $defaultValue, $flag);
             }
-
             return $defaultValue;
         }
 
@@ -621,6 +712,21 @@ class DefaultStrategy extends VisitorStrategyAbstract
                     $defaultValue,
                 ]
             );
+
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::GET_FLAG_VALUE_TYPE_WARNING)
+                ->setLogLevel("WARNING")
+                ->setVisitorId($visitor->getVisitorId())
+                ->setAnonymousId($visitor->getAnonymousId())
+                ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setTraffic($visitor->getTraffic())
+                ->setConfig($this->getConfig())
+                ->setVisitorContext($visitor->getContext())
+                ->setFlagKey($key)
+                ->setFlagDefault($defaultValue)
+                ->setVisitorExposed($userExposed);
+
+            $this->sendTroubleshootingHit($troubleshooting);
             return $defaultValue;
         }
 
@@ -640,7 +746,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         );
 
         return $flag->getValue();
-    } //end getFlagValue()
+    }
 
 
     /**
@@ -658,14 +764,28 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 sprintf(FlagshipConstant::GET_METADATA_CAST_ERROR, $key),
                 [FlagshipConstant::TAG => $functionName]
             );
+            $visitor = $this->getVisitor();
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::GET_FLAG_METADATA_TYPE_WARNING)
+                ->setLogLevel("WARNING")
+                ->setVisitorId($visitor->getVisitorId())
+                ->setAnonymousId($visitor->getAnonymousId())
+                ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setTraffic($visitor->getTraffic())
+                ->setConfig($this->getConfig())
+                ->setVisitorContext($visitor->getContext())
+                ->setFlagKey($key)
+                ->setFlagMetadataCampaignId($metadata->getCampaignId())
+                ->setFlagMetadataCampaignSlug($metadata->getSlug())
+                ->setFlagMetadataCampaignType($metadata->getCampaignType())
+                ->setFlagMetadataVariationGroupId($metadata->getVariationGroupId())
+                ->setFlagMetadataVariationId($metadata->getVariationId())
+                ->setFlagMetadataCampaignIsReference($metadata->isReference());
+
+            $this->sendTroubleshootingHit($troubleshooting);
             return FlagMetadata::getEmpty();
         }
 
         return $metadata;
-    }
-
-    public function sendTroubleshootingHit(Troubleshooting $hit)
-    {
-        $this->getTrackingManager()->addTroubleshootingHit($hit);
     }
 }

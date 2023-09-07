@@ -2,6 +2,11 @@
 
 namespace Flagship\Hit;
 
+use DateTime;
+use DateTimeZone;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\LogLevel;
+
 class Diagnostic extends HitAbstract
 {
     /**
@@ -10,7 +15,7 @@ class Diagnostic extends HitAbstract
     private $version;
 
     /**
-     * @var string
+     * @var int
      */
     private $logLevel;
 
@@ -251,9 +256,41 @@ class Diagnostic extends HitAbstract
      */
     private $traffic;
 
+    private $flagshipInstanceId;
+
     public static function getClassName()
     {
         return __CLASS__;
+    }
+
+    public function __construct($type)
+    {
+        parent::__construct($type);
+        $this->setVersion("1");
+        $date = new DateTime();
+        $this->setTimestamp($date->format('c'))
+            ->setTimeZone($date->getTimezone()->getName())
+            ->setStackType("SDK")
+            ->setStackName(FlagshipConstant::SDK_LANGUAGE)
+            ->setStackVersion(FlagshipConstant::SDK_VERSION);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFlagshipInstanceId()
+    {
+        return $this->flagshipInstanceId;
+    }
+
+    /**
+     * @param mixed $flagshipInstanceId
+     * @return Diagnostic
+     */
+    public function setFlagshipInstanceId($flagshipInstanceId)
+    {
+        $this->flagshipInstanceId = $flagshipInstanceId;
+        return $this;
     }
 
     /**
@@ -311,7 +348,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getLogLevel()
     {
@@ -319,7 +356,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $logLevel
+     * @param int $logLevel
      * @return Diagnostic
      */
     public function setLogLevel($logLevel)
@@ -1137,6 +1174,29 @@ class Diagnostic extends HitAbstract
     {
         $this->hitContent = $hitContent;
         return $this;
+    }
+
+    public function toApiKeys()
+    {
+        $customVariable = [
+            'version' => $this->getVersion(),
+            'logLevel' => LogLevel::getLog($this->getLogLevel()),
+            'envId' => $this->getConfig()->getEnvId(),
+            "timestamp" => $this->getTimestamp(),
+            'timeZone' => $this->getTimeZone(),
+            'label' => $this->getLabel(),
+            'stack.type' => $this->getStackType(),
+            'stack.name' => $this->getStackName(),
+            'stack.version' => $this->getStackVersion()
+        ];
+
+        return [
+            FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId,
+            FlagshipConstant::DS_API_ITEM => $this->getDs(),
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
+            FlagshipConstant::T_API_ITEM => $this->getType(),
+            'cv' => $customVariable
+        ];
     }
 
     /**

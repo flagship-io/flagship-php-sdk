@@ -45,4 +45,36 @@ class LogLevel
      * ALL = 9: All logs will be logged.
      */
     const ALL = 9;
+
+    public static function getLog($loglevelInt)
+    {
+        $loglevel = "";
+        switch ($loglevelInt) {
+            case self::EMERGENCY:
+                $loglevel = "EMERGENCY";
+                break;
+            case self::ALERT:
+                $loglevel = "ALERT";
+                break;
+            case self::CRITICAL:
+                $loglevel = "CRITICAL";
+                break;
+            case self::ERROR:
+                $loglevel = "ERROR";
+                break;
+            case self::WARNING:
+                $loglevel = "WARNING";
+                break;
+            case self::NOTICE:
+                $loglevel = "NOTICE";
+                break;
+            case self::INFO:
+                $loglevel = "INFO";
+                break;
+            case self::DEBUG:
+                $loglevel = "DEBUG";
+                break;
+        }
+        return $loglevel;
+    }
 }

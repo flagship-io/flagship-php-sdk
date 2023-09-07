@@ -131,6 +131,8 @@ class Flagship
 
             $configManager->setConfig($config);
 
+            $decisionManager->setTrackingManager($trackingManager);
+
             $flagship->setConfigManager($configManager);
 
             if (empty($envId) || empty($apiKey)) {

@@ -15,6 +15,7 @@ use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Segment;
 use Flagship\Hit\Transaction;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClientInterface;
 
@@ -77,6 +78,24 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     public function getStrategy()
     {
         return $this->strategy;
+    }
+
+    /**
+     * @return TroubleshootingData
+     */
+    public function getTroubleshootingData()
+    {
+        return $this->getTroubleshootingData();
+    }
+
+    /**
+     * @param TroubleshootingData $troubleshootingData
+     * @return TrackingManagerAbstract
+     */
+    public function setTroubleshootingData(TroubleshootingData $troubleshootingData)
+    {
+        $this->strategy->setTroubleshootingData($troubleshootingData);
+        return $this;
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Flagship\Api;
 use Flagship\Hit\Activate;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\Troubleshooting;
+use Flagship\Model\TroubleshootingData;
 
 interface TrackingManagerCommonInterface
 {
@@ -24,4 +25,13 @@ interface TrackingManagerCommonInterface
      * @return void
      */
     public function addTroubleshootingHit(Troubleshooting $hit);
+
+    public function getTroubleshootingData();
+
+    /**
+     * @param TroubleshootingData $troubleshootingData
+     * @return BatchingCachingStrategyAbstract
+     */
+    public function setTroubleshootingData(TroubleshootingData $troubleshootingData);
+
 }

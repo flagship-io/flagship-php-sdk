@@ -563,7 +563,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $this->config,
             FlagshipConstant::ADD_TROUBLESHOOTING_HIT,
             FlagshipConstant::TROUBLESHOOTING_HIT_ADDED_IN_QUEUE,
-            [$hit]
+            [$hit->toApiKeys()]
         );
     }
 

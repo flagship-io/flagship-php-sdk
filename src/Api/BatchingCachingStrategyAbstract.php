@@ -595,7 +595,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     }
     public function sendTroubleshootingQueue()
     {
-        if ($this->isTroubleshootingActivated() || count($this->troubleshootingQueue) === 0) {
+        if (!$this->isTroubleshootingActivated() || count($this->troubleshootingQueue) === 0) {
             return;
         }
         foreach ($this->troubleshootingQueue as $key => $item) {

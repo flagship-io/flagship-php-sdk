@@ -4,8 +4,12 @@ namespace Flagship\Hit;
 
 use DateTime;
 use DateTimeZone;
+use Flagship\Enum\CacheStrategy;
+use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FlagshipStatus;
 use Flagship\Enum\LogLevel;
+use Flagship\Model\FlagDTO;
 
 class Diagnostic extends HitAbstract
 {
@@ -65,38 +69,38 @@ class Diagnostic extends HitAbstract
     private $stackOriginVersion;
 
     /**
-     * @var string
+     * @var int
      */
     private $sdkStatus;
 
     /**
-     * @var string
+     * @var numeric
      */
     private $sdkConfigMode;
 
     /**
-     * @var string
+     * @var bool
      */
     private $sdkConfigCustomLogManager;
 
     /**
-     * @var string
+     * @var bool
      */
     private $sdkConfigCustomCacheManager;
 
     /**
-     * @var string
+     * @var bool
      */
     private $sdkConfigStatusListener;
 
     /**
-     * @var string
+     * @var numeric
      */
     private $sdkConfigTimeout;
 
 
     /**
-     * @var string
+     * @var int
      */
     private $sdkConfigTrackingManagerConfigStrategy;
 
@@ -136,7 +140,7 @@ class Diagnostic extends HitAbstract
     private $httpResponseHeaders;
 
     /**
-     * @var string
+     * @var int
      */
     private $httpResponseCode;
 
@@ -146,7 +150,7 @@ class Diagnostic extends HitAbstract
     private $httpResponseBody;
 
     /**
-     * @var string
+     * @var int
      */
     private $httpResponseTime;
 
@@ -166,7 +170,7 @@ class Diagnostic extends HitAbstract
     private $visitorAssignmentHistory;
 
     /**
-     * @var array
+     * @var FlagDTO[]
      */
     private $visitorFlags;
 
@@ -276,7 +280,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFlagshipInstanceId()
     {
@@ -284,7 +288,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param mixed $flagshipInstanceId
+     * @param string $flagshipInstanceId
      * @return Diagnostic
      */
     public function setFlagshipInstanceId($flagshipInstanceId)
@@ -528,7 +532,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getSdkStatus()
     {
@@ -536,7 +540,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkStatus
+     * @param int $sdkStatus
      * @return Diagnostic
      */
     public function setSdkStatus($sdkStatus)
@@ -546,7 +550,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return numeric
      */
     public function getSdkConfigMode()
     {
@@ -554,7 +558,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkConfigMode
+     * @param numeric $sdkConfigMode
      * @return Diagnostic
      */
     public function setSdkConfigMode($sdkConfigMode)
@@ -564,7 +568,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getSdkConfigCustomLogManager()
     {
@@ -572,7 +576,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkConfigCustomLogManager
+     * @param bool $sdkConfigCustomLogManager
      * @return Diagnostic
      */
     public function setSdkConfigCustomLogManager($sdkConfigCustomLogManager)
@@ -582,7 +586,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getSdkConfigCustomCacheManager()
     {
@@ -590,7 +594,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkConfigCustomCacheManager
+     * @param bool $sdkConfigCustomCacheManager
      * @return Diagnostic
      */
     public function setSdkConfigCustomCacheManager($sdkConfigCustomCacheManager)
@@ -600,7 +604,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getSdkConfigStatusListener()
     {
@@ -608,7 +612,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkConfigStatusListener
+     * @param bool $sdkConfigStatusListener
      * @return Diagnostic
      */
     public function setSdkConfigStatusListener($sdkConfigStatusListener)
@@ -618,7 +622,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return numeric
      */
     public function getSdkConfigTimeout()
     {
@@ -626,7 +630,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkConfigTimeout
+     * @param numeric $sdkConfigTimeout
      * @return Diagnostic
      */
     public function setSdkConfigTimeout($sdkConfigTimeout)
@@ -637,7 +641,7 @@ class Diagnostic extends HitAbstract
 
 
     /**
-     * @return string
+     * @return int
      */
     public function getSdkConfigTrackingManagerConfigStrategy()
     {
@@ -645,7 +649,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkConfigTrackingManagerConfigStrategy
+     * @param int $sdkConfigTrackingManagerConfigStrategy
      * @return Diagnostic
      */
     public function setSdkConfigTrackingManagerConfigStrategy($sdkConfigTrackingManagerConfigStrategy)
@@ -781,7 +785,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getHttpResponseCode()
     {
@@ -789,7 +793,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $httpResponseCode
+     * @param int $httpResponseCode
      * @return Diagnostic
      */
     public function setHttpResponseCode($httpResponseCode)
@@ -817,7 +821,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getHttpResponseTime()
     {
@@ -825,7 +829,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $httpResponseTime
+     * @param int $httpResponseTime
      * @return Diagnostic
      */
     public function setHttpResponseTime($httpResponseTime)
@@ -889,7 +893,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return array
+     * @return FlagDTO[]
      */
     public function getVisitorFlags()
     {
@@ -897,7 +901,7 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param array $visitorFlags
+     * @param FlagDTO[] $visitorFlags
      * @return Diagnostic
      */
     public function setVisitorFlags($visitorFlags)
@@ -1180,7 +1184,7 @@ class Diagnostic extends HitAbstract
     {
         $customVariable = [
             'version' => $this->getVersion(),
-            'logLevel' => LogLevel::getLog($this->getLogLevel()),
+            'logLevel' => LogLevel::getLogName($this->getLogLevel()),
             'envId' => $this->getConfig()->getEnvId(),
             "timestamp" => $this->getTimestamp(),
             'timeZone' => $this->getTimeZone(),
@@ -1189,6 +1193,169 @@ class Diagnostic extends HitAbstract
             'stack.name' => $this->getStackName(),
             'stack.version' => $this->getStackVersion()
         ];
+
+        if ($this->getFlagshipInstanceId() !== null) {
+            $customVariable["flagshipInstanceId"] = $this->getFlagshipInstanceId();
+        }
+        if ($this->getStackOriginName() !== null) {
+            $customVariable["stack.origin.name"] = $this->getStackOriginName();
+        }
+        if ($this->getStackOriginVersion() !== null) {
+            $customVariable["stack.origin.version"] = $this->getStackOriginVersion();
+        }
+        if ($this->getSdkStatus() !== null) {
+            $customVariable["sdk.status"] = FlagshipStatus::getStatusName($this->getSdkStatus());
+        }
+        if ($this->getSdkConfigMode() !== null) {
+            $customVariable["sdk.config.mode"] = DecisionMode::getDecisionModeName($this->getSdkConfigMode());
+        }
+        if ($this->getSdkConfigCustomLogManager() !== null) {
+            $customVariable["sdk.config.customLogManager"] = json_encode($this->getSdkConfigCustomLogManager());
+        }
+        if ($this->getSdkConfigCustomCacheManager() !== null) {
+            $customVariable["sdk.config.customCacheManager"] = json_encode($this->getSdkConfigCustomCacheManager());
+        }
+        if ($this->getSdkConfigStatusListener() !== null) {
+            $customVariable["sdk.config.custom.StatusListener"] = json_encode($this->getSdkConfigStatusListener());
+        }
+        if ($this->getSdkConfigTimeout() !== null) {
+            $customVariable["sdk.config.timeout"] = (string) $this->getSdkConfigTimeout();
+        }
+
+        if ($this->getSdkConfigTrackingManagerConfigStrategy() !== null) {
+            $customVariable["sdk.config.trackingManager.config.strategy"] =
+                CacheStrategy::getCacheStrategyName($this->getSdkConfigTrackingManagerConfigStrategy());
+        }
+
+        if ($this->getHttpRequestUrl() !== null) {
+            $customVariable["http.request.url"] = $this->getHttpRequestUrl();
+        }
+
+        if ($this->getHttpRequestMethod() !== null) {
+            $customVariable["http.request.method"] = $this->getHttpRequestMethod();
+        }
+
+        if ($this->getHttpRequestHeaders() !== null) {
+            $customVariable["http.request.headers"] = json_encode($this->getHttpRequestHeaders());
+        }
+
+        if ($this->getHttpRequestBody() !== null) {
+            $customVariable["http.request.body"] = json_encode($this->getHttpRequestBody());
+        }
+
+        if ($this->getHttpResponseUrl() !== null) {
+            $customVariable["http.response.url"] = $this->getHttpResponseUrl();
+        }
+
+        if ($this->getHttpResponseMethod() !== null) {
+            $customVariable["http.response.method"] = $this->getHttpResponseMethod();
+        }
+
+        if ($this->getHttpResponseHeaders() !== null) {
+            $customVariable["http.response.headers"] = json_encode($this->getHttpResponseHeaders());
+        }
+
+        if ($this->getHttpResponseCode() !== null) {
+            $customVariable["http.response.code"] = (string) $this->getHttpResponseCode();
+        }
+
+        if ($this->getHttpResponseBody() !== null) {
+            $customVariable["http.response.body"] = json_encode($this->getHttpResponseBody());
+        }
+
+        if ($this->getHttpResponseTime() !== null) {
+            $customVariable["http.response.time"] = (string) $this->getHttpResponseTime();
+        }
+
+        if ($this->getVisitorId() !== null) {
+            $customVariable["visitor.visitorId"] = $this->getVisitorId();
+        }
+
+        if ($this->getAnonymousId() !== null) {
+            $customVariable["visitor.anonymousId"] = $this->getAnonymousId();
+        }
+
+        if ($this->getVisitorInstanceId() !== null) {
+            $customVariable["visitor.instanceId"] = $this->getVisitorInstanceId();
+        }
+
+        if (is_array($this->getVisitorContext())) {
+            $context = $this->getVisitorContext();
+            foreach ($context as $index => $item) {
+                $customVariable["visitor.context.$index"] = is_string($item) ?  $item : json_encode($item);
+            }
+        }
+
+        if ($this->isVisitorConsent() !== null) {
+            $customVariable["visitor.consent"] = json_encode($this->isVisitorConsent());
+        }
+
+        if ($this->getVisitorAssignmentHistory() !== null) {
+            $visitorAssignmentHistory = $this->getVisitorAssignmentHistory();
+            foreach ($visitorAssignmentHistory as $key => $item) {
+                $customVariable["visitor.assignments.$key"] = $item;
+            }
+        }
+
+        if ($this->getVisitorFlags() !== null) {
+            foreach ($this->getVisitorFlags() as $visitorFlag) {
+                $key = $visitorFlag->getKey();
+                $customVariableKey = "visitor.flags.[$key]";
+                $customVariableKeyMetadata = "visitor.flags.[$key].metadata";
+                $customVariable["$customVariableKey.key"] = $visitorFlag->getKey();
+                $customVariable["$customVariableKey.value"] = is_string($visitorFlag->getValue()) ?
+                    $visitorFlag->getValue() :
+                    json_encode($visitorFlag->getValue());
+                $customVariable["$customVariableKeyMetadata.variationId"] = $visitorFlag->getVariationId();
+                $customVariable["$customVariableKeyMetadata.variationGroupId"] = $visitorFlag->getVariationGroupId();
+                $customVariable["$customVariableKeyMetadata.campaignId"] = $visitorFlag->getCampaignId();
+                $customVariable["$customVariableKeyMetadata.campaignType"] = $visitorFlag->getCampaignType();
+                $customVariable["$customVariableKeyMetadata.slug"] = $visitorFlag->getSlug() ?: "";
+                $customVariable["$customVariableKeyMetadata.isReference"] = json_encode($visitorFlag->getIsReference());
+            }
+        }
+
+        if ($this->isVisitorIsAuthenticated() !== null) {
+            $customVariable["visitor.isAuthenticated"] = json_encode($this->isVisitorIsAuthenticated());
+        }
+        if ($this->getVisitorCampaigns() !== null) {
+            $customVariable["visitor.campaigns"] = json_encode($this->getVisitorCampaigns());
+        }
+        if ($this->getFlagKey() !== null) {
+            $customVariable["flag.key"] = $this->getFlagKey();
+        }
+        if ($this->getFlagValue() !== null) {
+            $customVariable["flag.value"] = is_string($this->getFlagValue()) ? $this->getFlagValue() :
+            json_encode($this->getFlagValue());
+        }
+        if ($this->getFlagDefault() !== null) {
+            $customVariable["flag.default"] = is_string($this->getFlagValue()) ? $this->getFlagValue() :
+                json_encode($this->getFlagDefault());
+        }
+        if ($this->isVisitorExposed() !== null) {
+            $customVariable["flag.visitorExposed"] = $this->isVisitorExposed();
+        }
+        if ($this->getFlagMetadataCampaignId() !== null) {
+            $customVariable["flag.metadata.campaignId"] = $this->getFlagMetadataCampaignId();
+        }
+        if ($this->getFlagMetadataVariationGroupId() !== null) {
+            $customVariable["flag.metadata.variationGroupId"] = $this->getFlagMetadataVariationGroupId();
+        }
+        if ($this->getFlagMetadataVariationId() !== null) {
+            $customVariable["flag.metadata.variationId"] = $this->getFlagMetadataVariationId();
+        }
+        if ($this->getFlagMetadataCampaignSlug() !== null) {
+            $customVariable["flag.metadata.campaignSlug"] = $this->getFlagMetadataCampaignSlug();
+        }
+        if ($this->getFlagMetadataCampaignType() !== null) {
+            $customVariable["flag.metadata.campaignType"] = $this->getFlagMetadataCampaignType();
+        }
+        if ($this->isFlagMetadataCampaignIsReference() !== null) {
+            $customVariable["flag.metadata.isReference"] = json_encode($this->isFlagMetadataCampaignIsReference());
+        }
+        if ($this->getHitContent() !== null) {
+            $customVariable["hit.content"] = $this->getHitContent();
+        }
 
         return [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId,

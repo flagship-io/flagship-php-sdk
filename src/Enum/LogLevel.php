@@ -46,35 +46,18 @@ class LogLevel
      */
     const ALL = 9;
 
-    public static function getLog($loglevelInt)
+    private static $logLevelName = ["NONE", "EMERGENCY", "ALERT", "CRITICAL", "ERROR",
+        "WARNING", "NOTICE", "INFO", "DEBUG", "ALL"];
+
+    /**
+     * @param int $loglevel
+     * @return string
+     */
+    public static function getLogName($loglevel)
     {
-        $loglevel = "";
-        switch ($loglevelInt) {
-            case self::EMERGENCY:
-                $loglevel = "EMERGENCY";
-                break;
-            case self::ALERT:
-                $loglevel = "ALERT";
-                break;
-            case self::CRITICAL:
-                $loglevel = "CRITICAL";
-                break;
-            case self::ERROR:
-                $loglevel = "ERROR";
-                break;
-            case self::WARNING:
-                $loglevel = "WARNING";
-                break;
-            case self::NOTICE:
-                $loglevel = "NOTICE";
-                break;
-            case self::INFO:
-                $loglevel = "INFO";
-                break;
-            case self::DEBUG:
-                $loglevel = "DEBUG";
-                break;
+        if (!is_int($loglevel) || $loglevel < 0 || $loglevel > 9) {
+            return "";
         }
-        return $loglevel;
+        return self::$logLevelName[$loglevel];
     }
 }

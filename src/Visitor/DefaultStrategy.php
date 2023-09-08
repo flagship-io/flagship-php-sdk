@@ -142,7 +142,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_AUTHENTICATE)
-            ->setLogLevel("INFO")
+            ->setLogLevel(LogLevel::INFO)
             ->setVisitorId($this->getVisitor()->getVisitorId())
             ->setAnonymousId($this->getVisitor()->getAnonymousId())
             ->setVisitorContext($this->getVisitor()->getContext())
@@ -178,7 +178,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_UNAUTHENTICATE)
-            ->setLogLevel("INFO")
+            ->setLogLevel(LogLevel::INFO)
             ->setVisitorId($this->getVisitor()->getVisitorId())
             ->setAnonymousId($this->getVisitor()->getAnonymousId())
             ->setVisitorContext($this->getVisitor()->getContext())
@@ -401,7 +401,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
         }
 
         $this->getVisitor()->campaigns = $campaigns;
-            $flagsDTO = $decisionManager->getModifications($campaigns);
+        $flagsDTO = $decisionManager->getModifications($campaigns);
         $this->getVisitor()->setFlagsDTO($flagsDTO);
 
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::FLAGS_FETCHED);
@@ -431,17 +431,18 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $visitor->setTraffic($traffic);
 
             $troubleshootingHit = new Troubleshooting();
-            $troubleshootingHit->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS_ERROR)
-            ->setLogLevel(LogLevel::INFO)
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
-            ->setVisitorInstanceId($visitor->getInstanceId())
+            $troubleshootingHit->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS)
+                ->setLogLevel(LogLevel::INFO)
+                ->setVisitorId($visitor->getVisitorId())
+                ->setAnonymousId($visitor->getAnonymousId())
+                ->setVisitorInstanceId($visitor->getInstanceId())
             ->setTraffic($traffic)
             ->setConfig($this->getConfig())
             ->setVisitorAssignmentHistory($assignmentHistory)
             ->setVisitorContext($visitor->getContext())
             ->setSdkStatus($visitor->getSdkStatus())
             ->setVisitorCampaigns($campaigns)
+                ->setVisitorFlags($flagsDTO)
             ->setVisitorConsent($visitor->hasConsented())
             ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
             ->setHttpResponseTime(($this->getNow() - $now))
@@ -526,7 +527,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setLogLevel("INFO")
+            ->setLogLevel(LogLevel::INFO)
             ->setTraffic($visitor->getTraffic())
             ->setVisitorId($visitor->getVisitorId())
             ->setVisitorInstanceId($visitor->getInstanceId())
@@ -576,7 +577,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_ACTIVATE)
-            ->setLogLevel("INFO")
+            ->setLogLevel(LogLevel::INFO)
             ->setTraffic($this->getVisitor()->getTraffic())
             ->setVisitorId($visitor->getVisitorId())
             ->setAnonymousId($visitor->getAnonymousId())
@@ -608,7 +609,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $visitor = $this->getVisitor();
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_EXPOSED_FLAG_NOT_FOUND)
-                ->setLogLevel("WARNING")
+                ->setLogLevel(LogLevel::WARNING)
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
@@ -638,7 +639,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $visitor = $this->getVisitor();
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_EXPOSED_TYPE_WARNING)
-                ->setLogLevel("WARNING")
+                ->setLogLevel(LogLevel::WARNING)
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
@@ -679,7 +680,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::GET_FLAG_VALUE_FLAG_NOT_FOUND)
-                ->setLogLevel("WARNING")
+                ->setLogLevel(LogLevel::WARNING)
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
@@ -715,7 +716,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::GET_FLAG_VALUE_TYPE_WARNING)
-                ->setLogLevel("WARNING")
+                ->setLogLevel(LogLevel::WARNING)
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
@@ -767,7 +768,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $visitor = $this->getVisitor();
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::GET_FLAG_METADATA_TYPE_WARNING)
-                ->setLogLevel("WARNING")
+                ->setLogLevel(LogLevel::WARNING)
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())

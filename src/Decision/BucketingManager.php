@@ -7,6 +7,7 @@ use Exception;
 use Flagship\Config\BucketingConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Segment;
 use Flagship\Hit\Troubleshooting;
@@ -142,6 +143,20 @@ class BucketingManager extends DecisionManagerAbstract
                 throw  new Exception(self::INVALID_BUCKETING_FILE_URL);
             }
             $response = $this->httpClient->get($url);
+
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE)
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+                ->setTraffic(0)
+                ->setLogLevel(LogLevel::INFO)
+                ->setConfig($this->getConfig())
+                ->setHttpRequestMethod("GET")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($response->getBody())
+                ->setHttpResponseHeaders($response->getHeaders())
+                ->setHttpResponseCode($response->getStatusCode())
+                ->setHttpResponseTime($this->getNow() - $now);
+            $this->getTrackingManager()->addTroubleshootingHit($troubleshooting);
             return $response->getBody();
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [

@@ -29,7 +29,7 @@ class FlagDTO implements JsonSerializable
      */
     private $variationId;
     /**
-     * @var string
+     * @var bool
      */
     private $isReference;
     /**
@@ -120,7 +120,7 @@ class FlagDTO implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getIsReference()
     {
@@ -128,7 +128,7 @@ class FlagDTO implements JsonSerializable
     }
 
     /**
-     * @param  string $isReference
+     * @param  bool $isReference
      * @return FlagDTO
      */
     public function setIsReference($isReference)

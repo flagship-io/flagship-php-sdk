@@ -12,6 +12,7 @@ use Flagship\Enum\FlagshipStatus;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
+use Flagship\Visitor\VisitorAbstract;
 use Flagship\Visitor\VisitorBuilder;
 
 /**
@@ -267,7 +268,7 @@ class Flagship
         if ($this->config && $this->config->getStatusChangedCallback() && $this->status !== $status) {
             call_user_func($this->config->getStatusChangedCallback(), $status);
         }
-
+        VisitorAbstract::setSdkStatus($status);
         $this->status = $status;
         return $this;
     }

@@ -17,6 +17,7 @@ use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
 use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Model\ExposedFlag;
 use Flagship\Model\ExposedVisitor;
 use Flagship\Traits\LogTrait;
@@ -366,7 +367,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ExposedVisitor $exposedUser,
             ExposedFlag $exposedFlag
         )
-            use (
+ use (
             $visitorId,
             $context,
             &$check1,
@@ -568,7 +569,6 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $this->assertCount(2, $strategy->getActivatePoolQueue());
     }
-
 
     public function testSendBatch()
     {
@@ -1079,5 +1079,143 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->method("cacheHit")->with($data)->willThrowException($exception);
 
         $strategy->cacheHit([$activate]);
+    }
+
+    public function testTroubleshootingHit()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["isTroubleshootingActivated"]
+        );
+
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId);
+
+        $strategy->expects($this->exactly(2))
+            ->method("isTroubleshootingActivated")
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $strategy->addTroubleshootingHit($troubleshooting);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+
+        $this->assertCount(1, $troubleshootingQueue);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId);
+
+        $strategy->addTroubleshootingHit($troubleshooting);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+
+        $this->assertCount(1, $troubleshootingQueue);
+    }
+
+    public function testSendTroubleshootingQueue()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["isTroubleshootingActivated"]
+        );
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId);
+
+        $troubleshooting2 = new Troubleshooting();
+        $troubleshooting2->setConfig($config)->setVisitorId($visitorId);
+
+        $strategy->expects($this->exactly(3))
+            ->method("isTroubleshootingActivated")
+            ->willReturn(true);
+
+        $match = $this->exactly(2);
+
+        $httpClientMock->expects($match)
+            ->method('post')
+            ->with($this->callback(function ($url) use ($match) {
+                $troubleshootingUrl = FlagshipConstant::TROUBLESHOOTING_HIT_URL;
+                var_dump($match->getInvocationCount());
+                var_dump($url);
+                // TO DO add more asserts
+                return $url === $troubleshootingUrl;
+            }));
+
+        $strategy->addTroubleshootingHit($troubleshooting);
+        $strategy->addTroubleshootingHit($troubleshooting2);
+
+        $strategy->sendTroubleshootingQueue();
+    }
+
+    public function testSendTroubleshootingQueueFailed()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["isTroubleshootingActivated", "logErrorSprintf"]
+        );
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId);
+
+        $strategy->expects($this->exactly(2))
+            ->method("isTroubleshootingActivated")
+            ->willReturn(true);
+
+        $strategy->expects($this->exactly(1))->method("logErrorSprintf");
+
+        $exception = new Exception("Error");
+        $httpClientMock->expects($this->exactly(1))
+            ->method('post')->willThrowException($exception);
+
+        $strategy->addTroubleshootingHit($troubleshooting);
+
+        $strategy->sendTroubleshootingQueue();
     }
 }

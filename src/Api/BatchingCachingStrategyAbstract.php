@@ -83,10 +83,18 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param TroubleshootingData $troubleshootingData
      * @return BatchingCachingStrategyAbstract
      */
-    public function setTroubleshootingData(TroubleshootingData $troubleshootingData)
+    public function setTroubleshootingData($troubleshootingData)
     {
         $this->troubleshootingData = $troubleshootingData;
         return $this;
+    }
+
+    /**
+     * @return Troubleshooting[]
+     */
+    public function getTroubleshootingQueue()
+    {
+        return $this->troubleshootingQueue;
     }
 
     /**
@@ -554,10 +562,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         if (!$this->isTroubleshootingActivated()) {
             return;
         }
-        if (!$hit->getKey()) {
-            $hitKey = $this->generateHitKey($hit->getVisitorId());
-            $hit->setKey($hitKey);
-        }
+        $hitKey = $this->generateHitKey($hit->getVisitorId());
+        $hit->setKey($hitKey);
         $this->troubleshootingQueue[$hit->getKey()] = $hit;
         $this->logDebugSprintf(
             $this->config,

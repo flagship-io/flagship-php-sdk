@@ -6,6 +6,7 @@ use Exception;
 use Flagship\Config\BucketingConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -28,10 +29,14 @@ class BucketingManagerTest extends TestCase
             false
         );
 
+        $trackingManagerMock = $this->getMockForAbstractClass("Flagship\Api\TrackingManagerInterface");
+
+
         $bucketingUrl = "127.0.0.1:3000";
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
         $visitorContext = [
             "age" => 20
@@ -41,6 +46,17 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config);
 
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $matcher = $this->exactly(7);
+        $trackingManagerMock->expects($matcher)
+            ->method('addTroubleshootingHit')
+            ->with($this->callback(function ($param) use ($matcher) {
+                $invocationCount = $matcher->getInvocationCount();
+                if ($invocationCount <= 6) {
+                    return $param->getLabel() === TroubleshootingLabel::SDK_BUCKETING_FILE;
+                }
+                return $param->getLabel() === TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR;
+            }));
 
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $httpClientMock->expects($this->exactly(6))
@@ -72,27 +88,27 @@ class BucketingManagerTest extends TestCase
 
         //Test campaign[FIELD_VARIATION_GROUPS]
 
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
-        $this->assertCount(0, $campaigns);
+         $this->assertCount(0, $campaigns);
 
-        //
+         //
 
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
-        $this->assertCount(0, $campaigns);
+         $this->assertCount(0, $campaigns);
 
-        //
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         //
+         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
-        $this->assertCount(6, $campaigns);
+         $this->assertCount(6, $campaigns);
 
-        //test invalid bucketing file url
+         //test invalid bucketing file url
 
-        $config->setBucketingUrl("");
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $config->setBucketingUrl("");
+         $campaigns = $bucketingManager->getCampaignModifications($visitor);
 
-        $this->assertCount(0, $campaigns);
+         $this->assertCount(0, $campaigns);
     }
 
     public function testSendContext()
@@ -117,6 +133,8 @@ class BucketingManagerTest extends TestCase
             '',
             false
         );
+
+        $trackingManagerMock = $this->getMockForAbstractClass("Flagship\Api\TrackingManagerInterface");
 
         $containerMock = $this->getMockBuilder(
             'Flagship\Utils\Container'
@@ -148,6 +166,8 @@ class BucketingManagerTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+
+        $bucketingManager->setTrackingManager($trackingManagerMock);
 
         $configManager = new ConfigManager();
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
@@ -982,6 +1002,8 @@ class BucketingManagerTest extends TestCase
             ['error']
         );
 
+        $trackingManagerMock = $this->getMockForAbstractClass("Flagship\Api\TrackingManagerInterface");
+
         $bucketingUrl = "127.0.0.1:3000";
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
@@ -990,6 +1012,8 @@ class BucketingManagerTest extends TestCase
             ->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+
+        $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
         $visitorContext = [
             "age" => 20
@@ -1087,6 +1111,8 @@ class BucketingManagerTest extends TestCase
             ['error']
         );
 
+        $trackingManagerMock = $this->getMockForAbstractClass("Flagship\Api\TrackingManagerInterface");
+
         $bucketingUrl = "127.0.0.1:3000";
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
@@ -1094,6 +1120,8 @@ class BucketingManagerTest extends TestCase
             ->setFetchThirdPartyData(true);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setTrackingManager($trackingManagerMock);
+
         $visitorId = "visitor_1";
         $visitorContext = [
             "age" => 20

@@ -40,9 +40,12 @@ class NoConsentStrategyTest extends TestCase
 
         $trackerManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
-            ['sendConsentHit'],
+            [],
             '',
-            false
+            false,
+            false,
+            true,
+            ["setTroubleshootingData"]
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -73,7 +76,8 @@ class NoConsentStrategyTest extends TestCase
 
         $configManager = (new ConfigManager())->setConfig($config);
         $decisionManager = new ApiManager($httpClientMock, $config);
-        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
+        $configManager->setDecisionManager($decisionManager)
+            ->setTrackingManager($trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 

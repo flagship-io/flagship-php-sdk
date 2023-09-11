@@ -488,11 +488,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
             );
             return;
         }
-
-        $trackingManager = $this->getTrackingManager(__FUNCTION__);
-        if ($trackingManager === null) {
-            return;
-        }
         $this->activateFlag($modification);
     }
 

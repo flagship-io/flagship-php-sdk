@@ -33,8 +33,9 @@ class TrackingManager extends TrackingManagerAbstract
      */
     public function sendBatch()
     {
-        $this->getStrategy()->sendBatch();
-        $this->getStrategy()->sendTroubleshootingQueue();
+        $strategy = $this->getStrategy();
+        $strategy->sendBatch();
+        $strategy->sendTroubleshootingQueue();
     }
 
     public function addTroubleshootingHit(Troubleshooting $hit)

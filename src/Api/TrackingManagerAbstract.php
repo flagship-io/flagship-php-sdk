@@ -92,7 +92,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
      * @param TroubleshootingData $troubleshootingData
      * @return TrackingManagerAbstract
      */
-    public function setTroubleshootingData(TroubleshootingData $troubleshootingData)
+    public function setTroubleshootingData($troubleshootingData)
     {
         $this->strategy->setTroubleshootingData($troubleshootingData);
         return $this;

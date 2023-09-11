@@ -32,6 +32,6 @@ interface TrackingManagerCommonInterface
      * @param TroubleshootingData $troubleshootingData
      * @return BatchingCachingStrategyAbstract
      */
-    public function setTroubleshootingData(TroubleshootingData $troubleshootingData);
+    public function setTroubleshootingData($troubleshootingData);
 
 }

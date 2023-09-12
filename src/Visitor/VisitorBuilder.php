@@ -37,11 +37,16 @@ class VisitorBuilder
     private $dependencyIContainer;
 
     /**
+     * @var string
+     */
+    private $flagshipInstance;
+
+    /**
      * @param string $visitorId : visitor unique identifier.
      * @param ConfigManager $configManager
      * @param ContainerInterface $dependencyIContainer
      */
-    private function __construct($visitorId, $configManager, $dependencyIContainer)
+    private function __construct($visitorId, $configManager, $dependencyIContainer, $flagshipInstance = null)
     {
         $this->visitorId = $visitorId;
         $this->configManager = $configManager;
@@ -49,6 +54,7 @@ class VisitorBuilder
         $this->isAuthenticated =  false;
         $this->context = [];
         $this->hasConsented = true;
+        $this->flagshipInstance = $flagshipInstance;
     }
 
     /**
@@ -57,9 +63,9 @@ class VisitorBuilder
      * @param $container
      * @return VisitorBuilder
      */
-    public static function builder($visitorId, $configManager, $container)
+    public static function builder($visitorId, $configManager, $container, $flagshipInstance = null)
     {
-        return new VisitorBuilder($visitorId, $configManager, $container);
+        return new VisitorBuilder($visitorId, $configManager, $container, $flagshipInstance);
     }
 
     /**

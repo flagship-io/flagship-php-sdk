@@ -9,6 +9,7 @@ use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Traits\Guid;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -21,6 +22,7 @@ use Flagship\Visitor\VisitorBuilder;
 class Flagship
 {
     use LogTrait;
+    use Guid;
 
     /**
      * @var Flagship
@@ -46,6 +48,11 @@ class Flagship
      * @var int
      */
     private $status = FlagshipStatus::NOT_INITIALIZED;
+
+    /**
+     * @var string
+     */
+    private $flagshipInstanceId;
 
     /**
      * Flagship constructor.
@@ -90,6 +97,7 @@ class Flagship
     {
         try {
             $flagship = self::getInstance();
+            $flagship->flagshipInstanceId = $flagship->newGuid();
             $container = $flagship->getContainer();
 
             if (!$config) {
@@ -118,6 +126,7 @@ class Flagship
             } else {
                 $decisionManager = $container->get('Flagship\Decision\ApiManager', [$httpClient, $config]);
             }
+            $decisionManager->setFlagshipInstanceId($flagship->flagshipInstanceId);
 
             //Will trigger setStatus method of Flagship if decisionManager want update status
             $decisionManager->setStatusChangedCallback([$flagship,'setStatus']);

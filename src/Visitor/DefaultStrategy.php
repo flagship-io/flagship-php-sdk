@@ -145,8 +145,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setLogLevel(LogLevel::INFO)
             ->setVisitorId($this->getVisitor()->getVisitorId())
             ->setAnonymousId($this->getVisitor()->getAnonymousId())
+            ->setVisitorInstanceId($this->getVisitor()->getInstanceId())
             ->setVisitorContext($this->getVisitor()->getContext())
             ->setTraffic($this->getVisitor()->getTraffic())
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
             ->setConfig($this->getConfig());
 
         $this->sendTroubleshootingHit($troubleshooting);
@@ -182,6 +184,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setVisitorId($this->getVisitor()->getVisitorId())
             ->setAnonymousId($this->getVisitor()->getAnonymousId())
             ->setVisitorContext($this->getVisitor()->getContext())
+            ->setVisitorInstanceId($this->getVisitor()->getInstanceId())
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
             ->setTraffic($this->getVisitor()->getTraffic())
             ->setConfig($this->getConfig());
 
@@ -436,19 +440,20 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
-            ->setTraffic($traffic)
-            ->setConfig($this->getConfig())
-            ->setVisitorAssignmentHistory($assignmentHistory)
-            ->setVisitorContext($visitor->getContext())
-            ->setSdkStatus($visitor->getSdkStatus())
-            ->setVisitorCampaigns($campaigns)
+                ->setTraffic($traffic)
+                ->setConfig($this->getConfig())
+                ->setVisitorAssignmentHistory($assignmentHistory)
+                ->setVisitorContext($visitor->getContext())
+                ->setSdkStatus($visitor->getSdkStatus())
+                ->setVisitorCampaigns($campaigns)
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
                 ->setVisitorFlags($flagsDTO)
-            ->setVisitorConsent($visitor->hasConsented())
-            ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
-            ->setHttpResponseTime(($this->getNow() - $now))
-            ->setSdkConfigMode($this->getConfig()->getDecisionMode())
-            ->setSdkConfigTimeout($this->getConfig()->getTimeout())
-            ->setSdkConfigTrackingManagerConfigStrategy($this->getConfig()->getCacheStrategy());
+                ->setVisitorConsent($visitor->hasConsented())
+                ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
+                ->setHttpResponseTime(($this->getNow() - $now))
+                ->setSdkConfigMode($this->getConfig()->getDecisionMode())
+                ->setSdkConfigTimeout($this->getConfig()->getTimeout())
+                ->setSdkConfigTrackingManagerConfigStrategy($this->getConfig()->getCacheStrategy());
 
             $this->sendTroubleshootingHit($troubleshootingHit);
         }
@@ -526,6 +531,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setTraffic($visitor->getTraffic())
             ->setVisitorId($visitor->getVisitorId())
             ->setVisitorInstanceId($visitor->getInstanceId())
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
             ->setAnonymousId($visitor->getAnonymousId())
             ->setConfig($this->getConfig())
             ->setHitContent($hit->toApiKeys());
@@ -577,6 +583,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setVisitorId($visitor->getVisitorId())
             ->setAnonymousId($visitor->getAnonymousId())
             ->setVisitorInstanceId($visitor->getInstanceId())
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
             ->setConfig($this->getConfig())
             ->setHitContent($activateHit->toApiKeys());
         $this->sendTroubleshootingHit($troubleshooting);
@@ -608,6 +615,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
                 ->setTraffic($visitor->getTraffic())
                 ->setConfig($this->getConfig())
                 ->setVisitorContext($visitor->getContext())
@@ -638,6 +646,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
                 ->setTraffic($visitor->getTraffic())
                 ->setConfig($this->getConfig())
                 ->setVisitorContext($visitor->getContext())
@@ -679,6 +688,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
                 ->setTraffic($visitor->getTraffic())
                 ->setConfig($this->getConfig())
                 ->setVisitorContext($visitor->getContext())
@@ -715,6 +725,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
                 ->setTraffic($visitor->getTraffic())
                 ->setConfig($this->getConfig())
                 ->setVisitorContext($visitor->getContext())
@@ -767,6 +778,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
                 ->setTraffic($visitor->getTraffic())
                 ->setConfig($this->getConfig())
                 ->setVisitorContext($visitor->getContext())

@@ -52,6 +52,8 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
      */
     protected $murmurHash;
 
+    protected $flagshipInstanceId;
+
 
     /**
      * @param VisitorAbstract $visitor
@@ -59,6 +61,24 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     public function __construct(VisitorAbstract $visitor)
     {
         $this->visitor = $visitor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFlagshipInstanceId()
+    {
+        return $this->flagshipInstanceId;
+    }
+
+    /**
+     * @param mixed $flagshipInstanceId
+     * @return VisitorStrategyAbstract
+     */
+    public function setFlagshipInstanceId($flagshipInstanceId)
+    {
+        $this->flagshipInstanceId = $flagshipInstanceId;
+        return $this;
     }
 
     /**

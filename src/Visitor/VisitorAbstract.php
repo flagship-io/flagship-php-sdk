@@ -87,6 +87,10 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
     protected static $sdkStatus;
 
+    protected $flagshipInstanceId;
+
+
+
     /**
      * @return mixed
      */
@@ -94,6 +98,25 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     {
         return self::$sdkStatus;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getFlagshipInstanceId()
+    {
+        return $this->flagshipInstanceId;
+    }
+
+    /**
+     * @param mixed $flagshipInstanceId
+     * @return VisitorAbstract
+     */
+    public function setFlagshipInstanceId($flagshipInstanceId)
+    {
+        $this->flagshipInstanceId = $flagshipInstanceId;
+        return $this;
+    }
+
 
     /**
      * @param mixed $sdkStatus
@@ -324,6 +347,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
             $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\DefaultStrategy', [$this], true);
         }
         $strategy->setMurmurHash(new MurmurHash());
+        $strategy->setFlagshipInstanceId($this->getFlagshipInstanceId());
         return $strategy;
     }
 

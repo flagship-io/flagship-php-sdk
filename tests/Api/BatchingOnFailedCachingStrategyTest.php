@@ -4,6 +4,7 @@ namespace Flagship\Api;
 
 require_once __DIR__ . "/../Traits/Round.php";
 
+use DateTime;
 use Exception;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
@@ -20,6 +21,7 @@ use Flagship\Hit\Screen;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Model\ExposedFlag;
 use Flagship\Model\ExposedVisitor;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\LogTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -367,7 +369,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ExposedVisitor $exposedUser,
             ExposedFlag $exposedFlag
         )
- use (
+            use (
             $visitorId,
             $context,
             &$check1,
@@ -1081,11 +1083,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $strategy->cacheHit([$activate]);
     }
 
-    public function testTroubleshootingHit()
+    public function testAddTroubleshootingHit()
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitorId";
-
 
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
 
@@ -1099,28 +1100,60 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ["isTroubleshootingActivated"]
         );
 
-
-        $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)->setVisitorId($visitorId);
-
-        $strategy->expects($this->exactly(2))
+        $strategy->expects($this->exactly(4))
             ->method("isTroubleshootingActivated")
-            ->willReturnOnConsecutiveCalls(true, false);
+            ->willReturnOnConsecutiveCalls(true, true, true, false);
 
-        $strategy->addTroubleshootingHit($troubleshooting);
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime)
+            ->setTraffic(100);
 
-        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
-
-        $this->assertCount(1, $troubleshootingQueue);
+        $strategy->setTroubleshootingData($troubleshootingData);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)->setVisitorId($visitorId);
+        $troubleshooting->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(100);
 
         $strategy->addTroubleshootingHit($troubleshooting);
 
         $troubleshootingQueue = $strategy->getTroubleshootingQueue();
-
         $this->assertCount(1, $troubleshootingQueue);
+
+        $troubleshooting2 = new Troubleshooting();
+        $troubleshooting2->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(50);
+
+        $strategy->addTroubleshootingHit($troubleshooting2);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+        $this->assertCount(2, $troubleshootingQueue);
+
+        $troubleshootingData->setTraffic(49);
+
+        $troubleshooting3 = new Troubleshooting();
+        $troubleshooting3->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(50);
+
+        $strategy->addTroubleshootingHit($troubleshooting3);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+        $this->assertCount(2, $troubleshootingQueue);
+
+        $troubleshooting4 = new Troubleshooting();
+        $troubleshooting4->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(50);
+
+        $strategy->addTroubleshootingHit($troubleshooting4);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+        $this->assertCount(2, $troubleshootingQueue);
     }
 
     public function testSendTroubleshootingQueue()
@@ -1148,15 +1181,11 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ["isTroubleshootingActivated"]
         );
 
-        $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)->setVisitorId($visitorId);
 
-        $troubleshooting2 = new Troubleshooting();
-        $troubleshooting2->setConfig($config)->setVisitorId($visitorId);
 
-        $strategy->expects($this->exactly(3))
+        $strategy->expects($this->exactly(4))
             ->method("isTroubleshootingActivated")
-            ->willReturn(true);
+            ->willReturn(true, true, true, false);
 
         $match = $this->exactly(2);
 
@@ -1170,9 +1199,26 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
                 return $url === $troubleshootingUrl;
             }));
 
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime)->setTraffic(100);
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId)->setTraffic(100);
+
+        $troubleshooting2 = new Troubleshooting();
+        $troubleshooting2->setConfig($config)->setVisitorId($visitorId)->setTraffic(100);
+
         $strategy->addTroubleshootingHit($troubleshooting);
         $strategy->addTroubleshootingHit($troubleshooting2);
 
+        $strategy->sendTroubleshootingQueue();
+
+        //
         $strategy->sendTroubleshootingQueue();
     }
 
@@ -1201,21 +1247,100 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ["isTroubleshootingActivated", "logErrorSprintf"]
         );
 
-        $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)->setVisitorId($visitorId);
+
 
         $strategy->expects($this->exactly(2))
             ->method("isTroubleshootingActivated")
             ->willReturn(true);
 
-        $strategy->expects($this->exactly(1))->method("logErrorSprintf");
+        $strategy->expects($this->exactly(1))
+            ->method("logErrorSprintf");
 
         $exception = new Exception("Error");
         $httpClientMock->expects($this->exactly(1))
             ->method('post')->willThrowException($exception);
 
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime)->setTraffic(100);
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId)
+            ->setTraffic(100);
+
         $strategy->addTroubleshootingHit($troubleshooting);
 
         $strategy->sendTroubleshootingQueue();
+    }
+
+    public function testIsTroubleshootingActivated()
+    {
+        $config = new DecisionApiConfig();
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["logErrorSprintf", "getNow"]
+        );
+
+        //No troubleshooting data is given
+        $check = $strategy->isTroubleshootingActivated();
+        $this->assertFalse($check);
+
+        //Test troubleshooting data
+
+        $strategy->expects($this->exactly(3))->method("getNow")
+            ->willReturnOnConsecutiveCalls(
+                new DateTime("2023-04-13T09:32:38.049Z"),
+                new DateTime("2023-04-13T10:03:39.049Z"),
+                new DateTime("2023-04-13T09:40:38.049Z")
+            );
+
+        //Test troubleshooting not start
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime);
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $check = $strategy->isTroubleshootingActivated();
+        $this->assertFalse($check);
+
+        //Test troubleshooting is finished
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setEndDate($endDatetime);
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $check = $strategy->isTroubleshootingActivated();
+        $this->assertFalse($check);
+
+        //Test troubleshooting
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime);
+
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $check = $strategy->isTroubleshootingActivated();
+        $this->assertTrue($check);
     }
 }

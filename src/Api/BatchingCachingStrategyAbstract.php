@@ -538,13 +538,14 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return boolean
      */
-    protected function isTroubleshootingActivated()
+    public function isTroubleshootingActivated()
     {
         $troubleshootingData = $this->getTroubleshootingData();
         if (is_null($troubleshootingData)) {
             return false;
         }
-        $now = new DateTime();
+
+        $now = $this->getNow();
 
         $isStarted = $now >= $troubleshootingData->getStartDate();
         if (!$isStarted) {
@@ -562,6 +563,10 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         if (!$this->isTroubleshootingActivated()) {
             return;
         }
+        $troubleshootingData = $this->getTroubleshootingData();
+        if ($troubleshootingData->getTraffic() < $hit->getTraffic()) {
+            return;
+        }
         $hitKey = $this->generateHitKey($hit->getVisitorId());
         $hit->setKey($hitKey);
         $this->troubleshootingQueue[$hit->getKey()] = $hit;
@@ -574,7 +579,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     }
 
 
-    public function sendTroubleshooting(Troubleshooting $hit)
+    protected function sendTroubleshooting(Troubleshooting $hit)
     {
         $now = $this->getNow();
         $requestBody = $hit->toApiKeys();

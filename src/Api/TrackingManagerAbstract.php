@@ -85,7 +85,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
      */
     public function getTroubleshootingData()
     {
-        return $this->getTroubleshootingData();
+        return $this->getStrategy()->getTroubleshootingData();
     }
 
     /**
@@ -94,7 +94,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
      */
     public function setTroubleshootingData($troubleshootingData)
     {
-        $this->strategy->setTroubleshootingData($troubleshootingData);
+        $this->getStrategy()->setTroubleshootingData($troubleshootingData);
         return $this;
     }
 

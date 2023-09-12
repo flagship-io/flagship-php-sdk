@@ -20,11 +20,14 @@ class ApiManagerTest extends TestCase
         $httpClient = new HttpClient();
         $config = new DecisionApiConfig();
         $apiManager = new ApiManager($httpClient, $config);
+        $flagshipInstanceId = "flagshipInstanceId";
+        $apiManager->setFlagshipInstanceId($flagshipInstanceId);
         $this->assertSame($httpClient, $apiManager->getHttpClient());
         $this->assertSame($config, $apiManager->getConfig());
         $this->assertFalse($apiManager->getIsPanicMode());
         $apiManager->setIsPanicMode(true);
         $this->assertTrue($apiManager->getIsPanicMode());
+        $this->assertSame($flagshipInstanceId, $apiManager->getFlagshipInstanceId());
     }
 
     public function testGetCampaignModifications()

@@ -78,6 +78,8 @@ class ApiManager extends DecisionManagerAbstract
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorContext($visitor->getContext())
+                ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
                 ->setTraffic(100)
                 ->setConfig($this->getConfig())
                 ->setHttpRequestBody($postData)

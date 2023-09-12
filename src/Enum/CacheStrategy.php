@@ -18,6 +18,6 @@ class CacheStrategy
         if (!is_int($strategy) || $strategy < 1 || $strategy > 2) {
             return "";
         }
-        return self::$listCacheStrategy[$strategy];
+        return self::$listCacheStrategy[$strategy - 1];
     }
 }

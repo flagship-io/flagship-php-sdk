@@ -14,4 +14,19 @@ class DecisionModeTest extends TestCase
         $this->assertFalse(DecisionMode::isDecisionMode("anything"));
         $this->assertFalse(DecisionMode::isDecisionMode([]));
     }
+
+    public function testGetDecisionModeName()
+    {
+        $decisionMode = DecisionMode::getDecisionModeName(0);
+        $this->assertSame("", $decisionMode);
+
+        $decisionMode = DecisionMode::getDecisionModeName(3);
+        $this->assertSame("", $decisionMode);
+
+        $decisionMode = DecisionMode::getDecisionModeName("test");
+        $this->assertSame("", $decisionMode);
+
+        $decisionMode = DecisionMode::getDecisionModeName(DecisionMode::BUCKETING);
+        $this->assertSame("BUCKETING", $decisionMode);
+    }
 }

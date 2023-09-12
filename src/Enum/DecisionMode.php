@@ -40,6 +40,6 @@ class DecisionMode
         if (!is_int($decisionMode) || $decisionMode < 1 || $decisionMode > 2) {
             return "";
         }
-        return self::$listDecisionMode[$decisionMode];
+        return self::$listDecisionMode[$decisionMode - 1];
     }
 }

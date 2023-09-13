@@ -219,11 +219,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE])) {
-                $variationName = $modification->getCampaignType() === 'ab' ?
-                    $campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE] :
-                    $modification->getVariationGroupName();
-
-                $modification->setVariationName($variationName);
+                $modification->setVariationName($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_REFERENCE])) {

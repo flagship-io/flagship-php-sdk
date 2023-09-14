@@ -11,13 +11,16 @@ class FlagshipField
 {
     const FIELD_MODIFICATIONS = 'modifications';
     const FIELD_CAMPAIGNS = 'campaigns';
+    const FIELD_CAMPAIGNS_NAME = 'name';
     const FIELD_VALUE = 'value';
     const FIELD_REFERENCE = 'reference';
     const FIELD_VARIATION = 'variation';
     const FIELD_CAMPAIGN_TYPE = 'type';
     const FIELD_VARIATION_GROUP_ID = 'variationGroupId';
+    const FIELD_VARIATION_GROUP_NAME = 'variationGroupName';
     const FIELD_SLUG = 'slug';
     const FIELD_ID = 'id';
+    const FIELD_NANE = 'name';
     const FIELD_TYPE = 'id';
     const FIELD_CAMPAIGN_ID = 'campaignId';
     const FIELD_VARIATION_ID = 'variationId';

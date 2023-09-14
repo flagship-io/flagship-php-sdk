@@ -14,8 +14,11 @@ class FlagTest extends TestCase
         $flagDTO = new FlagDTO();
         $flagDTO->setIsReference(true)
             ->setVariationId("variationId")
+            ->setVariationName("variationName")
             ->setVariationGroupId('varGroupId')
+            ->setVariationGroupName("variationGroupName")
             ->setCampaignId("campaignId")
+            ->setCampaignName("campaignName")
             ->setKey($key)->setValue("value")
             ->setSlug("slug")
             ->setCampaignType("ab");
@@ -26,7 +29,10 @@ class FlagTest extends TestCase
             $flagDTO->getVariationId(),
             $flagDTO->getIsReference(),
             $flagDTO->getCampaignType(),
-            $flagDTO->getSlug()
+            $flagDTO->getSlug(),
+            $flagDTO->getCampaignName(),
+            $flagDTO->getVariationGroupName(),
+            $flagDTO->getVariationName()
         );
         $visitorDelegateMock = $this->getMockForAbstractClass(
             'Flagship\Visitor\VisitorAbstract',
@@ -96,7 +102,10 @@ class FlagTest extends TestCase
             "",
             "",
             "",
-            null
+            null,
+            "",
+            "",
+            ""
         );
         $visitorDelegateMock = $this->getMockForAbstractClass(
             'Flagship\Visitor\VisitorAbstract',

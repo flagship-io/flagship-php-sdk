@@ -1245,9 +1245,6 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->method('post')
             ->with($this->callback(function ($url) use ($match) {
                 $troubleshootingUrl = FlagshipConstant::TROUBLESHOOTING_HIT_URL;
-                var_dump($match->getInvocationCount());
-                var_dump($url);
-                // TO DO add more asserts
                 return $url === $troubleshootingUrl;
             }));
 

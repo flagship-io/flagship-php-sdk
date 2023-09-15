@@ -15,7 +15,6 @@ use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagSyncStatus;
 use Flagship\Enum\HitType;
 use Flagship\Enum\TroubleshootingLabel;
-use Flagship\Flag\Flag;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\Event;

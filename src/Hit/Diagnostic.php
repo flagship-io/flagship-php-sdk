@@ -262,11 +262,6 @@ class Diagnostic extends HitAbstract
 
     private $flagshipInstanceId;
 
-    public static function getClassName()
-    {
-        return __CLASS__;
-    }
-
     public function __construct($type)
     {
         parent::__construct($type);
@@ -366,24 +361,6 @@ class Diagnostic extends HitAbstract
     public function setLogLevel($logLevel)
     {
         $this->logLevel = $logLevel;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEnvId()
-    {
-        return $this->envId;
-    }
-
-    /**
-     * @param string $envId
-     * @return Diagnostic
-     */
-    public function setEnvId($envId)
-    {
-        $this->envId = $envId;
         return $this;
     }
 
@@ -949,42 +926,6 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getContextKey()
-    {
-        return $this->contextKey;
-    }
-
-    /**
-     * @param string $contextKey
-     * @return Diagnostic
-     */
-    public function setContextKey($contextKey)
-    {
-        $this->contextKey = $contextKey;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getContextValue()
-    {
-        return $this->contextValue;
-    }
-
-    /**
-     * @param mixed $contextValue
-     * @return Diagnostic
-     */
-    public function setContextValue($contextValue)
-    {
-        $this->contextValue = $contextValue;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getFlagKey()
     {
         return $this->flagKey;
@@ -1330,11 +1271,11 @@ class Diagnostic extends HitAbstract
             json_encode($this->getFlagValue());
         }
         if ($this->getFlagDefault() !== null) {
-            $customVariable["flag.default"] = is_string($this->getFlagValue()) ? $this->getFlagValue() :
+            $customVariable["flag.default"] = is_string($this->getFlagDefault()) ? $this->getFlagDefault() :
                 json_encode($this->getFlagDefault());
         }
         if ($this->isVisitorExposed() !== null) {
-            $customVariable["flag.visitorExposed"] = $this->isVisitorExposed();
+            $customVariable["flag.visitorExposed"] = json_encode($this->isVisitorExposed());
         }
         if ($this->getFlagMetadataCampaignId() !== null) {
             $customVariable["flag.metadata.campaignId"] = $this->getFlagMetadataCampaignId();
@@ -1355,7 +1296,7 @@ class Diagnostic extends HitAbstract
             $customVariable["flag.metadata.isReference"] = json_encode($this->isFlagMetadataCampaignIsReference());
         }
         if ($this->getHitContent() !== null) {
-            $customVariable["hit.content"] = $this->getHitContent();
+            $customVariable["hit.content"] = json_encode($this->getHitContent());
         }
 
         return [

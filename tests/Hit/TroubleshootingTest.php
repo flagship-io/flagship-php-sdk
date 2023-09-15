@@ -64,12 +64,32 @@ class TroubleshootingTest extends TestCase
             ->setCampaignId("campaignId")
             ->setCampaignType("ab")
             ->setCampaignName("campaignName")
+            ->setVariationId("varId")
             ->setVariationName("variationName")
             ->setVariationGroupId("varGroupId")
+            ->setIsReference(false)
+            ->setSlug("slug")
+            ->setVariationGroupName("varGroupName");
+
+        $flagDto2 = new FlagDTO();
+        $flagDto2->setKey("key2")
+            ->setValue([])
+            ->setCampaignId("campaignId")
+            ->setCampaignType("ab")
+            ->setCampaignName("campaignName")
+            ->setVariationId("varId")
+            ->setVariationName("variationName")
+            ->setVariationGroupId("varGroupId")
+            ->setIsReference(false)
             ->setVariationGroupName("varGroupName");
         $visitorFlag = [
-            $flagDto
+            $flagDto,
+            $flagDto2
         ];
+
+        $activateHit = new Activate("varGroupId", "varId");
+        $activateHit->setConfig($config)
+        ->setVisitorId($visitorId);
 
         $troubleshooting->setVisitorId($visitorId)
             ->setAnonymousId($anonymousId)
@@ -101,6 +121,19 @@ class TroubleshootingTest extends TestCase
             ->setVisitorContext($visitorContext)
             ->setVisitorAssignmentHistory($visitorAssignmentHistory)
             ->setVisitorFlags($visitorFlag)
+            ->setVisitorIsAuthenticated(true)
+            ->setVisitorCampaigns([])
+            ->setFlagKey($flagDto->getKey())
+            ->setFlagValue($flagDto->getValue())
+            ->setFlagMetadataCampaignIsReference($flagDto->getIsReference())
+            ->setFlagMetadataVariationId($flagDto->getVariationId())
+            ->setFlagMetadataVariationGroupId($flagDto->getVariationGroupId())
+            ->setFlagMetadataCampaignId($flagDto->getCampaignId())
+            ->setFlagMetadataCampaignType($flagDto->getCampaignType())
+            ->setFlagDefault("default")
+            ->setFlagMetadataCampaignSlug($flagDto->getSlug())
+            ->setVisitorExposed(true)
+            ->setHitContent($activateHit->toApiKeys())
         ;
 
         $customVariable = [
@@ -139,7 +172,36 @@ class TroubleshootingTest extends TestCase
             'visitor.context.key2' => 'value2',
             'visitor.consent' => 'true',
             'visitor.assignments.key1' => 'value1',
-            'visitor.assignments.key2' => 'value2'
+            'visitor.assignments.key2' => 'value2',
+            'visitor.flags.[key].key' => $flagDto->getKey(),
+            'visitor.flags.[key].value' => $flagDto->getValue(),
+            'visitor.flags.[key].metadata.variationId' => $flagDto->getVariationId(),
+            'visitor.flags.[key].metadata.variationGroupId' => $flagDto->getVariationGroupId(),
+            'visitor.flags.[key].metadata.campaignId' => $flagDto->getCampaignId(),
+            'visitor.flags.[key].metadata.campaignType' => $flagDto->getCampaignType(),
+            'visitor.flags.[key].metadata.slug' => $flagDto->getSlug(),
+            'visitor.flags.[key].metadata.isReference' => json_encode($flagDto->getIsReference()),
+            'visitor.flags.[key2].key' => $flagDto2->getKey(),
+            'visitor.flags.[key2].value' => json_encode($flagDto2->getValue()),
+            'visitor.flags.[key2].metadata.variationId' => $flagDto2->getVariationId(),
+            'visitor.flags.[key2].metadata.variationGroupId' => $flagDto2->getVariationGroupId(),
+            'visitor.flags.[key2].metadata.campaignId' => $flagDto2->getCampaignId(),
+            'visitor.flags.[key2].metadata.campaignType' => $flagDto2->getCampaignType(),
+            'visitor.flags.[key2].metadata.slug' => '',
+            'visitor.flags.[key2].metadata.isReference' => json_encode($flagDto2->getIsReference()),
+            'visitor.isAuthenticated' => 'true',
+            'visitor.campaigns' => '[]',
+            'flag.key' => $flagDto->getKey(),
+            'flag.value' => $flagDto->getValue(),
+            'flag.default' => "default",
+            'flag.visitorExposed' => "true",
+            'flag.metadata.campaignId' => $flagDto->getCampaignId(),
+            'flag.metadata.variationGroupId' => $flagDto->getVariationGroupId(),
+            'flag.metadata.variationId' => $flagDto->getVariationId(),
+            'flag.metadata.campaignSlug' => $flagDto->getSlug(),
+            'flag.metadata.campaignType' => $flagDto->getCampaignType(),
+            'flag.metadata.isReference' => json_encode($flagDto->getIsReference()),
+            'hit.content' => json_encode($activateHit->toApiKeys())
         ];
 
         $expectedApiKey = [
@@ -154,5 +216,85 @@ class TroubleshootingTest extends TestCase
         unset($apiKey['cv']['timestamp']);
 
         $this->assertSame($expectedApiKey, $apiKey);
+
+
+        $flagDto = new FlagDTO();
+        $flagDto->setKey("key")
+            ->setValue([])
+            ->setCampaignId("campaignId")
+            ->setCampaignType("ab")
+            ->setCampaignName("campaignName")
+            ->setVariationId("varId")
+            ->setVariationName("variationName")
+            ->setVariationGroupId("varGroupId")
+            ->setIsReference(false)
+            ->setSlug("slug")
+            ->setVariationGroupName("varGroupName");
+
+        $troubleshooting = new Troubleshooting();
+
+        $troubleshooting->setVisitorId($visitorId)
+            ->setAnonymousId($anonymousId)
+            ->setConfig($config)
+            ->setLogLevel(LogLevel::INFO)
+            ->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS)
+            ->setFlagshipInstanceId($flagshipInstanceId)
+            ->setVisitorInstanceId($visitorInstanceId)
+            ->setFlagKey($flagDto->getKey())
+            ->setFlagValue($flagDto->getValue())
+            ->setFlagMetadataCampaignIsReference($flagDto->getIsReference())
+            ->setFlagMetadataVariationId($flagDto->getVariationId())
+            ->setFlagMetadataVariationGroupId($flagDto->getVariationGroupId())
+            ->setFlagMetadataCampaignId($flagDto->getCampaignId())
+            ->setFlagMetadataCampaignType($flagDto->getCampaignType())
+            ->setFlagDefault([])
+            ->setFlagMetadataCampaignSlug($flagDto->getSlug())
+            ->setVisitorExposed(true)
+        ;
+
+        $customVariable = [
+            'version' => FlagshipConstant::TROUBLESHOOTING_VERSION,
+            'logLevel' => LogLevel::getLogName(LogLevel::INFO),
+            'envId' => $config->getEnvId(),
+            'timeZone' => (new DateTime())->getTimezone()->getName(),
+            'label' => TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS,
+            'stack.type' => FlagshipConstant::SDK,
+            'stack.name' => FlagshipConstant::SDK_LANGUAGE,
+            'stack.version' => FlagshipConstant::SDK_VERSION,
+            'visitor.visitorId' => $visitorId,
+            'visitor.anonymousId' => $anonymousId,
+            'visitor.instanceId' => $visitorInstanceId,
+            'flagshipInstanceId' => $flagshipInstanceId,
+            'flag.key' => $flagDto->getKey(),
+            'flag.value' => json_encode($flagDto->getValue()),
+            'flag.default' => json_encode([]),
+            'flag.visitorExposed' => "true",
+            'flag.metadata.campaignId' => $flagDto->getCampaignId(),
+            'flag.metadata.variationGroupId' => $flagDto->getVariationGroupId(),
+            'flag.metadata.variationId' => $flagDto->getVariationId(),
+            'flag.metadata.campaignSlug' => $flagDto->getSlug(),
+            'flag.metadata.campaignType' => $flagDto->getCampaignType(),
+            'flag.metadata.isReference' => json_encode($flagDto->getIsReference())
+        ];
+
+        $expectedApiKey = [
+            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
+            FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
+            FlagshipConstant::T_API_ITEM => HitType::TROUBLESHOOTING,
+            'cv' => $customVariable
+        ];
+
+        $apiKey = $troubleshooting->toApiKeys();
+
+        unset($apiKey['cv']['timestamp']);
+
+        $this->assertSame($expectedApiKey, $apiKey);
+
+        $traffic  = 50;
+        $troubleshooting->setTraffic($traffic);
+        $this->assertSame($troubleshooting->getTraffic(), $traffic);
+
+        $this->assertSame($troubleshooting->getErrorMessage(), "");
     }
 }

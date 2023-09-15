@@ -270,11 +270,11 @@ class Diagnostic extends HitAbstract
     public function __construct($type)
     {
         parent::__construct($type);
-        $this->setVersion("1");
-        $date = new DateTime();
+        $this->setVersion(FlagshipConstant::TROUBLESHOOTING_VERSION);
+        $date = $this->getCurrentDateTime();
         $this->setTimestamp($date->format('c'))
             ->setTimeZone($date->getTimezone()->getName())
-            ->setStackType("SDK")
+            ->setStackType(FlagshipConstant::SDK)
             ->setStackName(FlagshipConstant::SDK_LANGUAGE)
             ->setStackVersion(FlagshipConstant::SDK_VERSION);
     }
@@ -1193,6 +1193,17 @@ class Diagnostic extends HitAbstract
             'stack.name' => $this->getStackName(),
             'stack.version' => $this->getStackVersion()
         ];
+        if ($this->getVisitorId() !== null) {
+            $customVariable["visitor.visitorId"] = $this->getVisitorId();
+        }
+
+        if ($this->getAnonymousId() !== null) {
+            $customVariable["visitor.anonymousId"] = $this->getAnonymousId();
+        }
+
+        if ($this->getVisitorInstanceId() !== null) {
+            $customVariable["visitor.instanceId"] = $this->getVisitorInstanceId();
+        }
 
         if ($this->getFlagshipInstanceId() !== null) {
             $customVariable["flagshipInstanceId"] = $this->getFlagshipInstanceId();
@@ -1267,17 +1278,7 @@ class Diagnostic extends HitAbstract
             $customVariable["http.response.time"] = (string) $this->getHttpResponseTime();
         }
 
-        if ($this->getVisitorId() !== null) {
-            $customVariable["visitor.visitorId"] = $this->getVisitorId();
-        }
 
-        if ($this->getAnonymousId() !== null) {
-            $customVariable["visitor.anonymousId"] = $this->getAnonymousId();
-        }
-
-        if ($this->getVisitorInstanceId() !== null) {
-            $customVariable["visitor.instanceId"] = $this->getVisitorInstanceId();
-        }
 
         if (is_array($this->getVisitorContext())) {
             $context = $this->getVisitorContext();

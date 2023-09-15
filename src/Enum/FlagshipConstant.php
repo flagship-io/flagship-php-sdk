@@ -23,6 +23,10 @@ class FlagshipConstant
      */
     const SDK_LANGUAGE = "PHP";
 
+    const SDK = "SDK";
+
+    const TROUBLESHOOTING_VERSION = "1";
+
     /**
      * Decision api base url
      */
@@ -52,7 +56,6 @@ class FlagshipConstant
      * SDK version
      */
     const SDK_VERSION = "3.1.2";
-    const SDK_NAME = "PHP";
 
     const GET_FLAG = 'GET_FLAG';
 

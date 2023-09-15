@@ -16,7 +16,6 @@ class ExposedFlag implements ExposedFlagInterface
      */
     private $value;
 
-
     /**
      * @var FlagMetadataInterface
      */

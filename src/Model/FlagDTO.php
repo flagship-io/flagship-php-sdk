@@ -20,14 +20,30 @@ class FlagDTO implements JsonSerializable
      * @var string
      */
     private $campaignId;
+
+    /**
+     * @var string
+     */
+    private $campaignName;
     /**
      * @var string
      */
     private $variationGroupId;
+
+    /**
+     * @var string
+     */
+    private $variationGroupName;
+
     /**
      * @var string
      */
     private $variationId;
+
+    /**
+     * @var string
+     */
+    private $variationName;
     /**
      * @var bool
      */
@@ -188,6 +204,60 @@ class FlagDTO implements JsonSerializable
     public function setSlug($slug)
     {
         $this->slug = $slug;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCampaignName()
+    {
+        return $this->campaignName;
+    }
+
+    /**
+     * @param string $campaignName
+     * @return FlagDTO
+     */
+    public function setCampaignName($campaignName)
+    {
+        $this->campaignName = $campaignName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVariationGroupName()
+    {
+        return $this->variationGroupName;
+    }
+
+    /**
+     * @param string $variationGroupName
+     * @return FlagDTO
+     */
+    public function setVariationGroupName($variationGroupName)
+    {
+        $this->variationGroupName = $variationGroupName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVariationName()
+    {
+        return $this->variationName;
+    }
+
+    /**
+     * @param string $variationName
+     * @return FlagDTO
+     */
+    public function setVariationName($variationName)
+    {
+        $this->variationName = $variationName;
         return $this;
     }
 

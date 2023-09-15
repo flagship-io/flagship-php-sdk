@@ -233,7 +233,8 @@ class BucketingManager extends DecisionManagerAbstract
                 $campaign[FlagshipField::FIELD_ID],
                 $visitor,
                 $campaign[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                isset($campaign[FlagshipField::FIELD_SLUG]) ? $campaign[FlagshipField::FIELD_SLUG] : null
+                isset($campaign[FlagshipField::FIELD_SLUG]) ? $campaign[FlagshipField::FIELD_SLUG] : null,
+                isset($campaign[FlagshipField::FIELD_NANE]) ? $campaign[FlagshipField::FIELD_NANE] : null
             );
             $visitorCampaigns = array_merge($visitorCampaigns, $currentCampaigns);
         }
@@ -248,8 +249,14 @@ class BucketingManager extends DecisionManagerAbstract
      * @param string $slug
      * @return array
      */
-    private function getVisitorCampaigns($variationGroups, $campaignId, VisitorAbstract $visitor, $campaignType, $slug)
-    {
+    private function getVisitorCampaigns(
+        $variationGroups,
+        $campaignId,
+        VisitorAbstract $visitor,
+        $campaignType,
+        $slug,
+        $campaignName
+    ) {
         $visitorCampaigns = [];
         foreach ($variationGroups as $variationGroup) {
             $check = $this->isMatchTargeting($variationGroup, $visitor);
@@ -260,8 +267,11 @@ class BucketingManager extends DecisionManagerAbstract
                 );
                 $visitorCampaigns[] = [
                     FlagshipField::FIELD_ID => $campaignId,
+                    FlagshipField::FIELD_NANE => $campaignName,
                     FlagshipField::FIELD_SLUG => $slug,
                     FlagshipField::FIELD_VARIATION_GROUP_ID => $variationGroup[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_VARIATION_GROUP_NAME => isset($variationGroup[FlagshipField::FIELD_NANE]) ?
+                        $variationGroup[FlagshipField::FIELD_NANE] : null,
                     FlagshipField::FIELD_VARIATION => $variations,
                     FlagshipField::FIELD_CAMPAIGN_TYPE => $campaignType
                 ];
@@ -334,7 +344,9 @@ class BucketingManager extends DecisionManagerAbstract
                 $visitorVariation = [
                     FlagshipField::FIELD_ID => $newVariation[FlagshipField::FIELD_ID],
                     FlagshipField::FIELD_MODIFICATIONS => $newVariation[FlagshipField::FIELD_MODIFICATIONS],
-                    FlagshipField::FIELD_REFERENCE => !empty($newVariation[FlagshipField::FIELD_REFERENCE])
+                    FlagshipField::FIELD_REFERENCE => !empty($newVariation[FlagshipField::FIELD_REFERENCE]),
+                    FlagshipField::FIELD_NANE => isset($newVariation[FlagshipField::FIELD_NANE]) ?
+                        $newVariation[FlagshipField::FIELD_NANE] : null
                 ];
                 break;
             }
@@ -343,7 +355,9 @@ class BucketingManager extends DecisionManagerAbstract
                 $visitorVariation = [
                     FlagshipField::FIELD_ID => $variation[FlagshipField::FIELD_ID],
                     FlagshipField::FIELD_MODIFICATIONS => $variation[FlagshipField::FIELD_MODIFICATIONS],
-                    FlagshipField::FIELD_REFERENCE => !empty($variation[FlagshipField::FIELD_REFERENCE])
+                    FlagshipField::FIELD_REFERENCE => !empty($variation[FlagshipField::FIELD_REFERENCE]),
+                    FlagshipField::FIELD_NANE => isset($variation[FlagshipField::FIELD_NANE]) ?
+                        $variation[FlagshipField::FIELD_NANE] : null
                 ];
                 break;
             }

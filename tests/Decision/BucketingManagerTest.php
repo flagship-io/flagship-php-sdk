@@ -258,6 +258,7 @@ class BucketingManagerTest extends TestCase
         $variations = [
             [
                 "id" => "c20j8bk3fk9hdphqtd30",
+                "name" => "variation1",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [
@@ -269,6 +270,7 @@ class BucketingManagerTest extends TestCase
             ],
             [
                 "id" => "c20j8bk3fk9hdphqtd3g",
+                "name" => "variation2",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [
@@ -279,6 +281,7 @@ class BucketingManagerTest extends TestCase
             ],
             [
                 "id" => "c20j9lgbcahhf2mvhbf0",
+                "name" => "variation3",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [
@@ -290,7 +293,8 @@ class BucketingManagerTest extends TestCase
         ];
         $variationGroups = [
             FlagshipField::FIELD_ID => "9273BKSDJtoto",
-            FlagshipField::FIELD_VARIATIONS => $variations
+            FlagshipField::FIELD_VARIATIONS => $variations,
+            FlagshipField::FIELD_NANE => "varGroupName"
         ];
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
         $this->assertSame($variations[0]['id'], $variation['id']);
@@ -308,6 +312,7 @@ class BucketingManagerTest extends TestCase
         $realloCvariations = [
             [
                 "id" => "c20j8bk3fk9hdphqtd30",
+                "name"=>"variation1",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [
@@ -319,6 +324,7 @@ class BucketingManagerTest extends TestCase
             ],
             [
                 "id" => "c20j8bk3fk9hdphqtd3g",
+                "name"=>"variation2",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [
@@ -329,6 +335,7 @@ class BucketingManagerTest extends TestCase
             ],
             [
                 "id" => "c20j9lgbcahhf2mvhbf0",
+                "name"=>"variation2",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [

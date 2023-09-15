@@ -305,15 +305,28 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 
         $variationGroupId1 = "variationGroupId";
+        $variationGroupName1  = "variationGroupName";
         $variationId1 = "variationId";
+        $variationName1 = "variationName";
         $campaignId1 = "campaignId";
+        $campaignName1 = "campaignName";
         $flagKey1 = "key1";
         $flagValue1 = "value1";
         $flagDefaultValue1 = "defaultValue1";
 
         $activate = new Activate($variationGroupId1, $variationId1);
 
-        $flagMetadata1 = new FlagMetadata($campaignId1, $variationGroupId1, $variationId1, false, "ab", null);
+        $flagMetadata1 = new FlagMetadata(
+            $campaignId1,
+            $variationGroupId1,
+            $variationId1,
+            false,
+            "ab",
+            null,
+            $campaignName1,
+            $variationGroupName1,
+            $variationName1
+        );
 
         $activate->setConfig($config)
             ->setVisitorId($visitorId)
@@ -324,13 +337,26 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->setFlagMetadata($flagMetadata1);
 
         $variationGroupId2 = "variationGroupId2";
+        $variationGroupName2 = "variationGroupName2";
         $variationId2 = "variationId2";
+        $variationName2 = "variationName2";
         $campaignId2 = "campaignId2";
+        $campaignName2 = "campaignName2";
         $flagKey2 = "key2";
         $flagValue2 = "value2";
         $flagDefaultValue2 = "defaultValue2";
 
-        $flagMetadata2 = new FlagMetadata($campaignId2, $variationGroupId2, $variationId2, false, "ab", null);
+        $flagMetadata2 = new FlagMetadata(
+            $campaignId2,
+            $variationGroupId2,
+            $variationId2,
+            false,
+            "ab",
+            null,
+            $campaignName2,
+            $variationGroupName2,
+            $variationName2
+        );
 
         $activate2 = new Activate($variationGroupId2, $variationId2);
         $activate2->setConfig($config)
@@ -431,10 +457,23 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $campaignId1 = "campaignId";
         $flagKey1 = "key1";
         $flagValue1 = "value1";
+        $variationGroupName1  = "variationGroupName1";
+        $variationName1 = "variationName1";
+        $campaignName1 = "campaignName1";
 
         $activate = new Activate($variationGroupId1, $variationId1);
 
-        $flagMetadata1 = new FlagMetadata($campaignId1, $variationGroupId1, $variationId1, false, "ab", null);
+        $flagMetadata1 = new FlagMetadata(
+            $campaignId1,
+            $variationGroupId1,
+            $variationId1,
+            false,
+            "ab",
+            null,
+            $campaignName1,
+            $variationGroupName1,
+            $variationName1
+        );
 
         $activate->setConfig($config)
             ->setVisitorId($visitorId)
@@ -448,8 +487,21 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $campaignId2 = "campaignId2";
         $flagKey2 = "key2";
         $flagValue2 = "value2";
+        $variationGroupName2  = "variationGroupName1";
+        $variationName2 = "variationName1";
+        $campaignName2 = "campaignName1";
 
-        $flagMetadata2 = new FlagMetadata($campaignId2, $variationGroupId2, $variationId2, false, "ab", null);
+        $flagMetadata2 = new FlagMetadata(
+            $campaignId2,
+            $variationGroupId2,
+            $variationId2,
+            false,
+            "ab",
+            null,
+            $campaignName2,
+            $variationGroupName2,
+            $variationName2
+        );
 
         $activate2 = new Activate($variationGroupId2, $variationId2);
         $activate2->setConfig($config)

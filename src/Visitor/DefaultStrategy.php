@@ -560,11 +560,15 @@ class DefaultStrategy extends VisitorStrategyAbstract
             $flag->getVariationId(),
             $flag->getIsReference(),
             $flag->getCampaignType(),
-            $flag->getSlug()
+            $flag->getSlug(),
+            $flag->getCampaignName(),
+            $flag->getVariationGroupName(),
+            $flag->getVariationName()
         );
 
         $visitor = $this->getVisitor();
         $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
+
         $activateHit->setConfig($this->getConfig())
             ->setVisitorId($visitor->getVisitorId())
             ->setAnonymousId($visitor->getAnonymousId())

@@ -246,8 +246,20 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
                 $modification->setCampaignId($campaign[FlagshipField::FIELD_ID]);
             }
 
+            if (isset($campaign[FlagshipField::FIELD_CAMPAIGNS_NAME])) {
+                $modification->setCampaignName($campaign[FlagshipField::FIELD_CAMPAIGNS_NAME]);
+            }
+
+            if (isset($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE])) {
+                $modification->setCampaignType($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]);
+            }
+
             if (isset($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID])) {
                 $modification->setVariationGroupId($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]);
+            }
+
+            if (isset($campaign[FlagshipField::FIELD_VARIATION_GROUP_NAME])) {
+                $modification->setVariationGroupName($campaign[FlagshipField::FIELD_VARIATION_GROUP_NAME]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_ID])) {
@@ -257,15 +269,15 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
                 );
             }
 
+            if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE])) {
+                $modification->setVariationName($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE]);
+            }
+
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_REFERENCE])) {
                 $modification->setIsReference(
                     $campaign[FlagshipField::FIELD_VARIATION]
                     [FlagshipField::FIELD_REFERENCE]
                 );
-            }
-
-            if (isset($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE])) {
-                $modification->setCampaignType($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_SLUG])) {

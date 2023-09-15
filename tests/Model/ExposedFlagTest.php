@@ -18,7 +18,10 @@ class ExposedFlagTest extends TestCase
             "varId",
             true,
             "ab",
-            null
+            null,
+            "campaignName",
+            "variationGroupName",
+            "variationName"
         );
         $exposedFlag = new ExposedFlag($key, $flagValue, $flagDefaultValue, $flagMetadata);
         $this->assertSame($key, $exposedFlag->getKey());

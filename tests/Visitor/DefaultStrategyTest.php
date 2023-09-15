@@ -1291,7 +1291,10 @@ class DefaultStrategyTest extends TestCase
             $flagDTO->getVariationId(),
             $flagDTO->getIsReference(),
             $flagDTO->getCampaignType(),
-            $flagDTO->getSlug()
+            $flagDTO->getSlug(),
+            $flagDTO->getCampaignName(),
+            $flagDTO->getVariationGroupName(),
+            $flagDTO->getVariationName()
         );
 
         $activate = new Activate($flagDTO->getVariationGroupId(), $flagDTO->getVariationId());
@@ -1385,7 +1388,10 @@ class DefaultStrategyTest extends TestCase
             $flagDTO->getVariationId(),
             $flagDTO->getIsReference(),
             $flagDTO->getCampaignType(),
-            $flagDTO->getSlug()
+            $flagDTO->getSlug(),
+            $flagDTO->getCampaignName(),
+            $flagDTO->getVariationGroupName(),
+            $flagDTO->getVariationName()
         );
 
         $activate = new Activate($flagDTO->getVariationGroupId(), $flagDTO->getVariationId());
@@ -1492,7 +1498,17 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $key = "key";
-        $metadata = new FlagMetadata("campaignID", "varGroupID", "varID", true, "ab", "slug");
+        $metadata = new FlagMetadata(
+            "campaignID",
+            "varGroupID",
+            "varID",
+            true,
+            "ab",
+            "slug",
+            "campaignName",
+            "varGrpName",
+            "varName"
+        );
 
         $functionName = "flag.metadata";
 

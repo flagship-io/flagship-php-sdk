@@ -440,6 +440,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorInstanceId($visitor->getInstanceId())
+                ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
                 ->setTraffic($traffic)
                 ->setConfig($this->getConfig())
                 ->setVisitorAssignmentHistory($assignmentHistory)
@@ -530,8 +531,8 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setLogLevel(LogLevel::INFO)
             ->setTraffic($visitor->getTraffic())
             ->setVisitorId($visitor->getVisitorId())
+            ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
             ->setVisitorInstanceId($visitor->getInstanceId())
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
             ->setAnonymousId($visitor->getAnonymousId())
             ->setConfig($this->getConfig())
             ->setHitContent($hit->toApiKeys());

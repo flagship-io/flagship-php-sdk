@@ -314,6 +314,11 @@ class Flagship
     public static function newVisitor($visitorId = null)
     {
         $instance = self::getInstance();
-        return VisitorBuilder::builder($visitorId, $instance->getConfigManager(), $instance->getContainer());
+        return VisitorBuilder::builder(
+            $visitorId,
+            $instance->getConfigManager(),
+            $instance->getContainer(),
+            $instance->flagshipInstanceId
+        );
     }
 }

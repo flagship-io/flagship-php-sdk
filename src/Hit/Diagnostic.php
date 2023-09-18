@@ -26,11 +26,6 @@ class Diagnostic extends HitAbstract
     /**
      * @var string
      */
-    private $envId;
-
-    /**
-     * @var string
-     */
     private $timestamp;
 
     /**
@@ -183,16 +178,6 @@ class Diagnostic extends HitAbstract
      * @var boolean
      */
     private $visitorIsAuthenticated;
-
-    /**
-     * @var string
-     */
-    private $contextKey;
-
-    /**
-     * @var mixed
-     */
-    private $contextValue;
 
     /**
      * @var string

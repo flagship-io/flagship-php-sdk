@@ -547,11 +547,11 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         $now = $this->getNow();
 
-        $isStarted = $now >= $troubleshootingData->getStartDate();
+        $isStarted = $now >= ($troubleshootingData->getStartDate()->getTimestamp()) * 1000;
         if (!$isStarted) {
             return false;
         }
-        $isFinished = $now > $troubleshootingData->getEndDate();
+        $isFinished = $now > ($troubleshootingData->getEndDate()->getTimestamp()) * 1000;
         if ($isFinished) {
             return  false;
         }

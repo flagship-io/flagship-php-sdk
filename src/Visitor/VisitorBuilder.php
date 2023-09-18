@@ -121,6 +121,8 @@ class VisitorBuilder
             $this->hasConsented,
         ], true);
 
+        $visitorDelegate->setFlagshipInstanceId($this->flagshipInstance);
+
         return $this->dependencyIContainer->get('Flagship\Visitor\Visitor', [$visitorDelegate], true);
     }
 }

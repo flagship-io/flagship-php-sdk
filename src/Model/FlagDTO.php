@@ -271,8 +271,11 @@ class FlagDTO implements JsonSerializable
         return [
             FlagshipField::FIELD_KEY => $this->getKey(),
             FlagshipField::FIELD_CAMPAIGN_ID => $this->getCampaignId(),
+            FlagshipField::FIELD_CAMPAIGN_NAME => $this->getCampaignName(),
             FlagshipField::FIELD_VARIATION_GROUP_ID => $this->getVariationGroupId(),
+            FlagshipField::FIELD_VARIATION_GROUP_NAME => $this->getVariationGroupName(),
             FlagshipField::FIELD_VARIATION_ID => $this->getVariationId(),
+            FlagshipField::FIELD_VARIATION_NAME => $this->getVariationName(),
             FlagshipField::FIELD_IS_REFERENCE => $this->getIsReference(),
             FlagshipField::FIELD_VALUE => $this->getValue(),
             FlagshipField::FIELD_SLUG => $this->getSlug()

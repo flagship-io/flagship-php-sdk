@@ -1353,15 +1353,15 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $check = $strategy->isTroubleshootingActivated();
         $this->assertFalse($check);
 
-        //Test troubleshooting data
+//        //Test troubleshooting data
 
         $strategy->expects($this->exactly(3))->method("getNow")
             ->willReturnOnConsecutiveCalls(
-                (new DateTime("2023-04-13T09:32:38.049Z"))->getTimestamp(),
-                (new DateTime("2023-04-13T10:03:39.049Z"))->getTimestamp(),
-                (new DateTime("2023-04-13T09:40:38.049Z"))->getTimestamp()
+                (new DateTime("2023-04-13T09:32:38.049Z"))->getTimestamp() * 1000,
+                (new DateTime("2023-04-13T10:03:39.049Z"))->getTimestamp() * 1000,
+                (new DateTime("2023-04-13T09:40:38.049Z"))->getTimestamp() * 1000
             );
-
+//
         //Test troubleshooting not start
         $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
         $troubleshootingData = new TroubleshootingData();

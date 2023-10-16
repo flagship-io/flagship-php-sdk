@@ -91,13 +91,15 @@ class TroubleshootingTest extends TestCase
         $activateHit->setConfig($config)
         ->setVisitorId($visitorId);
 
+
+
         $troubleshooting->setVisitorId($visitorId)
             ->setAnonymousId($anonymousId)
             ->setConfig($config)
             ->setLogLevel(LogLevel::INFO)
             ->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS)
             ->setFlagshipInstanceId($flagshipInstanceId)
-            ->setVisitorInstanceId($visitorInstanceId)
+            ->setVisitorSessionId($visitorInstanceId)
             ->setStackOriginName($stackOriginName)
             ->setStackOriginVersion($stackOriginVersion)
             ->setSdkStatus($sdkStatus)
@@ -127,8 +129,11 @@ class TroubleshootingTest extends TestCase
             ->setFlagValue($flagDto->getValue())
             ->setFlagMetadataCampaignIsReference($flagDto->getIsReference())
             ->setFlagMetadataVariationId($flagDto->getVariationId())
+            ->setFlagMetadataVariationName($flagDto->getVariationName())
             ->setFlagMetadataVariationGroupId($flagDto->getVariationGroupId())
+            ->setFlagMetadataVariationGroupName($flagDto->getVariationGroupName())
             ->setFlagMetadataCampaignId($flagDto->getCampaignId())
+            ->setFlagMetadataCampaignName($flagDto->getCampaignName())
             ->setFlagMetadataCampaignType($flagDto->getCampaignType())
             ->setFlagDefault("default")
             ->setFlagMetadataCampaignSlug($flagDto->getSlug())
@@ -147,7 +152,7 @@ class TroubleshootingTest extends TestCase
             'stack.version' => FlagshipConstant::SDK_VERSION,
             'visitor.visitorId' => $visitorId,
             'visitor.anonymousId' => $anonymousId,
-            'visitor.instanceId' => $visitorInstanceId,
+            'visitor.sessionId' => $visitorInstanceId,
             'flagshipInstanceId' => $flagshipInstanceId,
             'stack.origin.name' => $stackOriginName,
             'stack.origin.version' => $stackOriginVersion,
@@ -176,16 +181,22 @@ class TroubleshootingTest extends TestCase
             'visitor.flags.[key].key' => $flagDto->getKey(),
             'visitor.flags.[key].value' => $flagDto->getValue(),
             'visitor.flags.[key].metadata.variationId' => $flagDto->getVariationId(),
+            'visitor.flags.[key].metadata.variationName' => $flagDto->getVariationName(),
             'visitor.flags.[key].metadata.variationGroupId' => $flagDto->getVariationGroupId(),
+            'visitor.flags.[key].metadata.variationGroupName' => $flagDto->getVariationGroupName(),
             'visitor.flags.[key].metadata.campaignId' => $flagDto->getCampaignId(),
+            'visitor.flags.[key].metadata.campaignName' => $flagDto->getCampaignName(),
             'visitor.flags.[key].metadata.campaignType' => $flagDto->getCampaignType(),
             'visitor.flags.[key].metadata.slug' => $flagDto->getSlug(),
             'visitor.flags.[key].metadata.isReference' => json_encode($flagDto->getIsReference()),
             'visitor.flags.[key2].key' => $flagDto2->getKey(),
             'visitor.flags.[key2].value' => json_encode($flagDto2->getValue()),
             'visitor.flags.[key2].metadata.variationId' => $flagDto2->getVariationId(),
+            'visitor.flags.[key2].metadata.variationName' => $flagDto2->getVariationName(),
             'visitor.flags.[key2].metadata.variationGroupId' => $flagDto2->getVariationGroupId(),
+            'visitor.flags.[key2].metadata.variationGroupName' => $flagDto2->getVariationGroupName(),
             'visitor.flags.[key2].metadata.campaignId' => $flagDto2->getCampaignId(),
+            'visitor.flags.[key2].metadata.campaignName' => $flagDto2->getCampaignName(),
             'visitor.flags.[key2].metadata.campaignType' => $flagDto2->getCampaignType(),
             'visitor.flags.[key2].metadata.slug' => '',
             'visitor.flags.[key2].metadata.isReference' => json_encode($flagDto2->getIsReference()),
@@ -196,13 +207,19 @@ class TroubleshootingTest extends TestCase
             'flag.default' => "default",
             'flag.visitorExposed' => "true",
             'flag.metadata.campaignId' => $flagDto->getCampaignId(),
+            'flag.metadata.campaignName' => $flagDto->getCampaignName(),
             'flag.metadata.variationGroupId' => $flagDto->getVariationGroupId(),
+            'flag.metadata.variationGroupName' => $flagDto->getVariationGroupName(),
             'flag.metadata.variationId' => $flagDto->getVariationId(),
+            'flag.metadata.variationName' => $flagDto->getVariationName(),
             'flag.metadata.campaignSlug' => $flagDto->getSlug(),
             'flag.metadata.campaignType' => $flagDto->getCampaignType(),
             'flag.metadata.isReference' => json_encode($flagDto->getIsReference()),
-            'hit.content' => json_encode($activateHit->toApiKeys())
         ];
+
+        foreach ($activateHit->toApiKeys() as $key => $item) {
+            $customVariable["hit." . $key] =  is_string($item) ? $item : json_encode($item);
+        }
 
         $expectedApiKey = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
@@ -214,7 +231,6 @@ class TroubleshootingTest extends TestCase
 
         $apiKey = $troubleshooting->toApiKeys();
         unset($apiKey['cv']['timestamp']);
-
         $this->assertSame($expectedApiKey, $apiKey);
 
 
@@ -239,7 +255,7 @@ class TroubleshootingTest extends TestCase
             ->setLogLevel(LogLevel::INFO)
             ->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS)
             ->setFlagshipInstanceId($flagshipInstanceId)
-            ->setVisitorInstanceId($visitorInstanceId)
+            ->setVisitorSessionId($visitorInstanceId)
             ->setFlagKey($flagDto->getKey())
             ->setFlagValue($flagDto->getValue())
             ->setFlagMetadataCampaignIsReference($flagDto->getIsReference())
@@ -263,7 +279,7 @@ class TroubleshootingTest extends TestCase
             'stack.version' => FlagshipConstant::SDK_VERSION,
             'visitor.visitorId' => $visitorId,
             'visitor.anonymousId' => $anonymousId,
-            'visitor.instanceId' => $visitorInstanceId,
+            'visitor.sessionId' => $visitorInstanceId,
             'flagshipInstanceId' => $flagshipInstanceId,
             'flag.key' => $flagDto->getKey(),
             'flag.value' => json_encode($flagDto->getValue()),

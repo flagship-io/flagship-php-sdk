@@ -45,8 +45,11 @@ class ModificationTest extends TestCase
         $arrayToJson =  [
             FlagshipField::FIELD_KEY => $modification->getKey(),
             FlagshipField::FIELD_CAMPAIGN_ID => $modification->getCampaignId(),
+            FlagshipField::FIELD_CAMPAIGN_NAME => $modification->getCampaignName(),
             FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
+            FlagshipField::FIELD_VARIATION_GROUP_NAME => $modification->getVariationGroupName(),
             FlagshipField::FIELD_VARIATION_ID => $modification->getVariationId(),
+            FlagshipField::FIELD_VARIATION_NAME => $modification->getVariationName(),
             FlagshipField::FIELD_IS_REFERENCE => $modification->getIsReference(),
             FlagshipField::FIELD_VALUE => $modification->getValue(),
             FlagshipField::FIELD_SLUG => $modification->getSlug()

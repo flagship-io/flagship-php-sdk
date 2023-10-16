@@ -48,4 +48,6 @@ class FlagshipField
     const END_DATE = "endDate";
     const TIMEZONE = "timezone";
     const TRAFFIC = "traffic";
+    const FIELD_CAMPAIGN_NAME = "campaignName";
+    const FIELD_VARIATION_NAME = "variationName";
 }

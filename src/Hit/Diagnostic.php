@@ -207,12 +207,27 @@ class Diagnostic extends HitAbstract
     /**
      * @var string
      */
+    private $flagMetadataCampaignName;
+
+    /**
+     * @var string
+     */
     private $flagMetadataVariationGroupId;
 
     /**
      * @var string
      */
+    private $flagMetadataVariationGroupName;
+
+    /**
+     * @var string
+     */
     private $flagMetadataVariationId;
+
+    /**
+     * @var string
+     */
+    private $flagMetadataVariationName;
 
     /**
      * @var string
@@ -238,7 +253,7 @@ class Diagnostic extends HitAbstract
     /**
      * @var string
      */
-    private $visitorInstanceId;
+    private $visitorSessionId;
 
     /**
      * @var numeric
@@ -280,18 +295,18 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getVisitorInstanceId()
+    public function getVisitorSessionId()
     {
-        return $this->visitorInstanceId;
+        return $this->visitorSessionId;
     }
 
     /**
-     * @param string $visitorInstanceId
+     * @param string $visitorSessionId
      * @return Diagnostic
      */
-    public function setVisitorInstanceId($visitorInstanceId)
+    public function setVisitorSessionId($visitorSessionId)
     {
-        $this->visitorInstanceId = $visitorInstanceId;
+        $this->visitorSessionId = $visitorSessionId;
         return $this;
     }
 
@@ -1089,6 +1104,61 @@ class Diagnostic extends HitAbstract
     }
 
     /**
+     * @return string
+     */
+    public function getFlagMetadataCampaignName()
+    {
+        return $this->flagMetadataCampaignName;
+    }
+
+    /**
+     * @param string $flagMetadataCampaignName
+     * @return Diagnostic
+     */
+    public function setFlagMetadataCampaignName($flagMetadataCampaignName)
+    {
+        $this->flagMetadataCampaignName = $flagMetadataCampaignName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFlagMetadataVariationGroupName()
+    {
+        return $this->flagMetadataVariationGroupName;
+    }
+
+    /**
+     * @param string $flagMetadataVariationGroupName
+     * @return Diagnostic
+     */
+    public function setFlagMetadataVariationGroupName($flagMetadataVariationGroupName)
+    {
+        $this->flagMetadataVariationGroupName = $flagMetadataVariationGroupName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFlagMetadataVariationName()
+    {
+        return $this->flagMetadataVariationName;
+    }
+
+    /**
+     * @param string $flagMetadataVariationName
+     * @return Diagnostic
+     */
+    public function setFlagMetadataVariationName($flagMetadataVariationName)
+    {
+        $this->flagMetadataVariationName = $flagMetadataVariationName;
+        return $this;
+    }
+
+
+    /**
      * @return mixed
      */
     public function getHitContent()
@@ -1127,8 +1197,8 @@ class Diagnostic extends HitAbstract
             $customVariable["visitor.anonymousId"] = $this->getAnonymousId();
         }
 
-        if ($this->getVisitorInstanceId() !== null) {
-            $customVariable["visitor.instanceId"] = $this->getVisitorInstanceId();
+        if ($this->getVisitorSessionId() !== null) {
+            $customVariable["visitor.sessionId"] = $this->getVisitorSessionId();
         }
 
         if ($this->getFlagshipInstanceId() !== null) {
@@ -1204,8 +1274,6 @@ class Diagnostic extends HitAbstract
             $customVariable["http.response.time"] = (string) $this->getHttpResponseTime();
         }
 
-
-
         if (is_array($this->getVisitorContext())) {
             $context = $this->getVisitorContext();
             foreach ($context as $index => $item) {
@@ -1234,8 +1302,12 @@ class Diagnostic extends HitAbstract
                     $visitorFlag->getValue() :
                     json_encode($visitorFlag->getValue());
                 $customVariable["$customVariableKeyMetadata.variationId"] = $visitorFlag->getVariationId();
+                $customVariable["$customVariableKeyMetadata.variationName"] = $visitorFlag->getVariationName();
                 $customVariable["$customVariableKeyMetadata.variationGroupId"] = $visitorFlag->getVariationGroupId();
+                $customVariable["$customVariableKeyMetadata.variationGroupName"] =
+                    $visitorFlag->getVariationGroupName();
                 $customVariable["$customVariableKeyMetadata.campaignId"] = $visitorFlag->getCampaignId();
+                $customVariable["$customVariableKeyMetadata.campaignName"] = $visitorFlag->getCampaignName();
                 $customVariable["$customVariableKeyMetadata.campaignType"] = $visitorFlag->getCampaignType();
                 $customVariable["$customVariableKeyMetadata.slug"] = $visitorFlag->getSlug() ?: "";
                 $customVariable["$customVariableKeyMetadata.isReference"] = json_encode($visitorFlag->getIsReference());
@@ -1265,11 +1337,20 @@ class Diagnostic extends HitAbstract
         if ($this->getFlagMetadataCampaignId() !== null) {
             $customVariable["flag.metadata.campaignId"] = $this->getFlagMetadataCampaignId();
         }
+        if ($this->getFlagMetadataCampaignName() !== null) {
+            $customVariable["flag.metadata.campaignName"] = $this->getFlagMetadataCampaignName();
+        }
         if ($this->getFlagMetadataVariationGroupId() !== null) {
             $customVariable["flag.metadata.variationGroupId"] = $this->getFlagMetadataVariationGroupId();
         }
+        if ($this->getFlagMetadataVariationGroupName() !== null) {
+            $customVariable["flag.metadata.variationGroupName"] = $this->getFlagMetadataVariationGroupName();
+        }
         if ($this->getFlagMetadataVariationId() !== null) {
             $customVariable["flag.metadata.variationId"] = $this->getFlagMetadataVariationId();
+        }
+        if ($this->getFlagMetadataVariationName() !== null) {
+            $customVariable["flag.metadata.variationName"] = $this->getFlagMetadataVariationName();
         }
         if ($this->getFlagMetadataCampaignSlug() !== null) {
             $customVariable["flag.metadata.campaignSlug"] = $this->getFlagMetadataCampaignSlug();
@@ -1281,7 +1362,9 @@ class Diagnostic extends HitAbstract
             $customVariable["flag.metadata.isReference"] = json_encode($this->isFlagMetadataCampaignIsReference());
         }
         if ($this->getHitContent() !== null) {
-            $customVariable["hit.content"] = json_encode($this->getHitContent());
+            foreach ($this->getHitContent() as $key => $item) {
+                $customVariable["hit." . $key] =  is_string($item) ? $item : json_encode($item);
+            }
         }
 
         return [

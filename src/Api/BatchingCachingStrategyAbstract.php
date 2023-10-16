@@ -6,6 +6,7 @@ use DateTime;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
+use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\Event;
@@ -56,19 +57,23 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      */
     protected $config;
 
+    protected $flagshipInstanceId;
+
     /**
      * @param FlagshipConfig $config
      * @param HttpClientInterface $httpClient
      */
     public function __construct(
         FlagshipConfig $config,
-        HttpClientInterface $httpClient
+        HttpClientInterface $httpClient,
+        $flagshipInstanceId = null
     ) {
         $this->httpClient = $httpClient;
         $this->config = $config;
         $this->hitsPoolQueue = [];
         $this->activatePoolQueue = [];
         $this->troubleshootingQueue = [];
+        $this->flagshipInstanceId = $flagshipInstanceId;
     }
 
     /**
@@ -316,6 +321,22 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
         } catch (\Exception $exception) {
             $this->cacheHit($this->activatePoolQueue);
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)
+                ->setLogLevel("ERROR")
+                ->setVisitorId($this->flagshipInstanceId)
+                ->setFlagshipInstanceId($this->flagshipInstanceId)
+                ->setTraffic(100)
+                ->setConfig($this->config)
+                ->setHttpRequestBody($requestBody)
+                ->setHttpRequestHeaders($headers)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+            ;
+            $this->addTroubleshootingHit($troubleshooting);
+            $this->sendTroubleshootingQueue();
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
@@ -427,6 +448,22 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
         } catch (\Exception $exception) {
             $this->cacheHit($this->hitsPoolQueue);
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_BATCH_HIT_ROUTE_RESPONSE_ERROR)
+                ->setLogLevel("ERROR")
+                ->setVisitorId($this->flagshipInstanceId)
+                ->setFlagshipInstanceId($this->flagshipInstanceId)
+                ->setTraffic(100)
+                ->setConfig($this->config)
+                ->setHttpRequestBody($requestBody)
+                ->setHttpRequestHeaders($header)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+            ;
+            $this->addTroubleshootingHit($troubleshooting);
+            $this->sendTroubleshootingQueue();
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
@@ -541,6 +578,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     public function isTroubleshootingActivated()
     {
         $troubleshootingData = $this->getTroubleshootingData();
+
         if (is_null($troubleshootingData)) {
             return false;
         }
@@ -609,7 +647,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         if (!$this->isTroubleshootingActivated() || count($this->troubleshootingQueue) === 0) {
             return;
         }
-        foreach ($this->troubleshootingQueue as $key => $item) {
+        foreach ($this->troubleshootingQueue as $item) {
             $this->sendTroubleshooting($item);
         }
     }

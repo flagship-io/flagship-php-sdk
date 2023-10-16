@@ -42,14 +42,18 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
      */
     protected $strategy;
 
+    protected $flagshipInstanceId;
+
     /**
      * ApiManager constructor.
      *
      * @param FlagshipConfig $config
      * @param HttpClientInterface $httpClient
+     * @param null $flagshipInstanceId
      */
-    public function __construct(FlagshipConfig $config, HttpClientInterface $httpClient)
+    public function __construct(FlagshipConfig $config, HttpClientInterface $httpClient, $flagshipInstanceId = null)
     {
+        $this->flagshipInstanceId = $flagshipInstanceId;
         $this->httpClient = $httpClient;
         $this->config = $config;
         $this->strategy = $this->initStrategy();
@@ -107,13 +111,15 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
             case CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE:
                 $strategy = new NoBatchingContinuousCachingStrategy(
                     $this->config,
-                    $this->httpClient
+                    $this->httpClient,
+                    $this->flagshipInstanceId
                 );
                 break;
             default:
                 $strategy = new BatchingOnFailedCachingStrategy(
                     $this->config,
-                    $this->httpClient
+                    $this->httpClient,
+                    $this->flagshipInstanceId
                 );
                 break;
         }

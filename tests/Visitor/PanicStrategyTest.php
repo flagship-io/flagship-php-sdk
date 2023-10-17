@@ -50,6 +50,7 @@ class PanicStrategyTest extends TestCase
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $config->setLogManager($logManagerStub);
 
         $logMessageBuild = function ($functionName) {

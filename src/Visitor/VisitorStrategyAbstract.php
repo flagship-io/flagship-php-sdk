@@ -2,12 +2,14 @@
 
 namespace Flagship\Visitor;
 
+use DateTime;
 use Exception;
 use Flagship\Api\TrackingManagerAbstract;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Traits\Helper;
@@ -341,5 +343,27 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     public function sendTroubleshootingHit(Troubleshooting $hit)
     {
         $this->getTrackingManager()->addTroubleshootingHit($hit);
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getCurrentDateTime()
+    {
+        return new DateTime();
+    }
+
+    public function sendAnalyticsHit(Analytic $hit)
+    {
+        if ($this->getConfig()->disableDeveloperUsageTracking()) {
+            return;
+        }
+        $uniqueId = $hit->getVisitorId() . $this->getCurrentDateTime()->format("Y-m-d");
+        $hash = $this->getMurmurHash()->murmurHash3Int32($uniqueId);
+        $traffic = $hash % 100;
+        if ($traffic >= FlagshipConstant::ANALYTIC_HIT_ALLOCATION) {
+            return;
+        }
+        $this->getTrackingManager()->sendAnalyticsHit($hit);
     }
 }

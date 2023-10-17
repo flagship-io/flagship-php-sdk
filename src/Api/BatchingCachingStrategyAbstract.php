@@ -9,6 +9,7 @@ use Flagship\Enum\HitCacheFields;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
@@ -649,6 +650,32 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         }
         foreach ($this->troubleshootingQueue as $item) {
             $this->sendTroubleshooting($item);
+        }
+    }
+
+    public function sendAnalyticsHit(Analytic $hit)
+    {
+        $now = $this->getNow();
+        $requestBody = $hit->toApiKeys();
+        $url = FlagshipConstant::ANALYTICS_HIT_URL;
+        try {
+            $this->httpClient->setTimeout($this->config->getTimeout());
+
+            $this->httpClient->post($url, [], $requestBody);
+            $this->logDebugSprintf(
+                $this->config,
+                FlagshipConstant::SEND_ANALYTICS,
+                FlagshipConstant::ANALYTICS_HIT_SENT_SUCCESS,
+                [$this->getLogFormat(null, $url, $requestBody, [], $this->getNow() - $now)]
+            );
+        } catch (\Exception $exception) {
+            $this->logErrorSprintf(
+                $this->config,
+                FlagshipConstant::SEND_ANALYTICS,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
+                [FlagshipConstant::SEND_ANALYTICS,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, [], $this->getNow() - $now)]
+            );
         }
     }
 }

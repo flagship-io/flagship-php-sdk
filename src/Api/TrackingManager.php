@@ -3,6 +3,7 @@
 namespace Flagship\Api;
 
 use Flagship\Hit\Activate;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\Troubleshooting;
 
@@ -38,8 +39,19 @@ class TrackingManager extends TrackingManagerAbstract
         $strategy->sendTroubleshootingQueue();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function addTroubleshootingHit(Troubleshooting $hit)
     {
         $this->getStrategy()->addTroubleshootingHit($hit);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sendAnalyticsHit(Analytic $hit)
+    {
+        $this->getStrategy()->sendAnalyticsHit($hit);
     }
 }

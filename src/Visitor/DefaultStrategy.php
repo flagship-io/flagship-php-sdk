@@ -2,6 +2,7 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Config\BucketingConfig;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
@@ -10,7 +11,9 @@ use Flagship\Enum\FlagSyncStatus;
 use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Flag\FlagMetadata;
+use Flagship\Flagship;
 use Flagship\Hit\Activate;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\Troubleshooting;
@@ -422,13 +425,20 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ]
         );
 
+        $visitor = $this->getVisitor();
+        $config = $this->getConfig();
+        $bucketingUrl = null;
+        $fetchThirdPartyData = null;
+        if ($config instanceof BucketingConfig) {
+            $bucketingUrl = $config->getBucketingUrl();
+            $fetchThirdPartyData = $config->getFetchThirdPartyData();
+        }
 
         if ($troubleshootingData) {
             $assignmentHistory = [];
             foreach ($flagsDTO as $item) {
                 $assignmentHistory[$item->getVariationGroupId()] = $item->getVariationId();
             }
-            $visitor = $this->getVisitor();
             $uniqueId = $visitor->getVisitorId() . $troubleshootingData->getEndDate()->getTimestamp();
             $hash = $this->getMurmurHash()->murmurHash3Int32($uniqueId);
             $traffic = $hash % 100;
@@ -442,7 +452,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorSessionId($visitor->getInstanceId())
                 ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
                 ->setTraffic($traffic)
-                ->setConfig($this->getConfig())
+                ->setConfig($config)
                 ->setVisitorAssignmentHistory($assignmentHistory)
                 ->setVisitorContext($visitor->getContext())
                 ->setSdkStatus($visitor->getSdkStatus())
@@ -452,12 +462,35 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setVisitorConsent($visitor->hasConsented())
                 ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
                 ->setHttpResponseTime(($this->getNow() - $now))
-                ->setSdkConfigMode($this->getConfig()->getDecisionMode())
-                ->setSdkConfigTimeout($this->getConfig()->getTimeout())
-                ->setSdkConfigTrackingManagerConfigStrategy($this->getConfig()->getCacheStrategy());
+                ->setSdkConfigMode($config->getDecisionMode())
+                ->setSdkConfigTimeout($config->getTimeout())
+                ->setSdkConfigBucketingUrl($bucketingUrl)
+                ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
+                ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
+                ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
+                ->setSdkConfigUsingCustomHitCache(!!$config->getVisitorCacheImplementation())
+                ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy());
 
             $this->sendTroubleshootingHit($troubleshootingHit);
         }
+
+        $analytic = new Analytic();
+        $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)
+            ->setLogLevel(LogLevel::INFO)
+            ->setVisitorId($visitor->getVisitorId())
+            ->setSdkConfigMode($config->getDecisionMode())
+            ->setSdkConfigTimeout($config->getTimeout())
+            ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
+            ->setSdkConfigBucketingUrl($bucketingUrl)
+            ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
+            ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
+            ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
+            ->setSdkConfigUsingCustomHitCache(!!$config->getVisitorCacheImplementation())
+            ->setConfig($config)
+            ->setSdkStatus($visitor->getSdkStatus())
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+            ;
+        $this->sendAnalyticsHit($analytic);
     }
 
 

@@ -11,4 +11,10 @@ class Analytic extends Diagnostic
     {
         parent::__construct(HitType::USAGE);
     }
+
+    public function toApiKeys()
+    {
+        $this->setVisitorId(null);
+        return parent::toApiKeys();
+    }
 }

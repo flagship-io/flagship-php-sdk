@@ -102,6 +102,31 @@ class Diagnostic extends HitAbstract
     /**
      * @var string
      */
+    private $sdkConfigBucketingUrl;
+
+    /**
+     * @var string
+     */
+    private $sdkConfigFetchThirdPartyData;
+
+    /**
+     * @var boolean
+     */
+    private $sdkConfigUsingCustomHitCache;
+
+    /**
+     * @var boolean
+     */
+    private $sdkConfigUsingCustomVisitorCache;
+
+    /**
+     * @var boolean
+     */
+    private $sdkConfigUsingOnVisitorExposed;
+
+    /**
+     * @var string
+     */
     private $httpRequestUrl;
 
     /**
@@ -261,6 +286,8 @@ class Diagnostic extends HitAbstract
     private $traffic;
 
     private $flagshipInstanceId;
+
+
 
     public function __construct($type)
     {
@@ -599,6 +626,42 @@ class Diagnostic extends HitAbstract
     }
 
     /**
+     * @return string
+     */
+    public function getSdkConfigBucketingUrl()
+    {
+        return $this->sdkConfigBucketingUrl;
+    }
+
+    /**
+     * @param string $sdkConfigBucketingUrl
+     * @return Diagnostic
+     */
+    public function setSdkConfigBucketingUrl($sdkConfigBucketingUrl)
+    {
+        $this->sdkConfigBucketingUrl = $sdkConfigBucketingUrl;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSdkConfigFetchThirdPartyData()
+    {
+        return $this->sdkConfigFetchThirdPartyData;
+    }
+
+    /**
+     * @param string $sdkConfigFetchThirdPartyData
+     * @return Diagnostic
+     */
+    public function setSdkConfigFetchThirdPartyData($sdkConfigFetchThirdPartyData)
+    {
+        $this->sdkConfigFetchThirdPartyData = $sdkConfigFetchThirdPartyData;
+        return $this;
+    }
+
+    /**
      * @return numeric
      */
     public function getSdkConfigTimeout()
@@ -632,6 +695,60 @@ class Diagnostic extends HitAbstract
     public function setSdkConfigTrackingManagerConfigStrategy($sdkConfigTrackingManagerConfigStrategy)
     {
         $this->sdkConfigTrackingManagerConfigStrategy = $sdkConfigTrackingManagerConfigStrategy;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSdkConfigUsingCustomHitCache()
+    {
+        return $this->sdkConfigUsingCustomHitCache;
+    }
+
+    /**
+     * @param bool $sdkConfigUsingCustomHitCache
+     * @return Diagnostic
+     */
+    public function setSdkConfigUsingCustomHitCache($sdkConfigUsingCustomHitCache)
+    {
+        $this->sdkConfigUsingCustomHitCache = $sdkConfigUsingCustomHitCache;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSdkConfigUsingCustomVisitorCache()
+    {
+        return $this->sdkConfigUsingCustomVisitorCache;
+    }
+
+    /**
+     * @param bool $sdkConfigUsingCustomVisitorCache
+     * @return Diagnostic
+     */
+    public function setSdkConfigUsingCustomVisitorCache($sdkConfigUsingCustomVisitorCache)
+    {
+        $this->sdkConfigUsingCustomVisitorCache = $sdkConfigUsingCustomVisitorCache;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSdkConfigUsingOnVisitorExposed()
+    {
+        return $this->sdkConfigUsingOnVisitorExposed;
+    }
+
+    /**
+     * @param bool $sdkConfigUsingOnVisitorExposed
+     * @return Diagnostic
+     */
+    public function setSdkConfigUsingOnVisitorExposed($sdkConfigUsingOnVisitorExposed)
+    {
+        $this->sdkConfigUsingOnVisitorExposed = $sdkConfigUsingOnVisitorExposed;
         return $this;
     }
 
@@ -1232,6 +1349,27 @@ class Diagnostic extends HitAbstract
         if ($this->getSdkConfigTrackingManagerConfigStrategy() !== null) {
             $customVariable["sdk.config.trackingManager.config.strategy"] =
                 CacheStrategy::getCacheStrategyName($this->getSdkConfigTrackingManagerConfigStrategy());
+        }
+
+        if ($this->getSdkConfigBucketingUrl() !== null) {
+            $customVariable["sdk.config.bucketingUrl"] = $this->getSdkConfigBucketingUrl();
+        }
+
+        if ($this->getSdkConfigFetchThirdPartyData() !== null) {
+            $customVariable["sdk.config.fetchThirdPartyData"] = $this->getSdkConfigFetchThirdPartyData();
+        }
+
+        if ($this->isSdkConfigUsingOnVisitorExposed() !== null) {
+            $customVariable["sdk.config.onVisitorExposed"] = json_encode($this->isSdkConfigUsingOnVisitorExposed());
+        }
+
+        if ($this->isSdkConfigUsingCustomHitCache() !== null) {
+            $customVariable["sdk.config.usingCustomHitCache"] = json_encode($this->isSdkConfigUsingCustomHitCache());
+        }
+
+        if ($this->isSdkConfigUsingCustomVisitorCache() !== null) {
+            $customVariable["sdk.config.usingCustomVisitorCache"] =
+                json_encode($this->isSdkConfigUsingCustomVisitorCache());
         }
 
         if ($this->getHttpRequestUrl() !== null) {

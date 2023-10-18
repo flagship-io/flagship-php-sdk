@@ -1347,7 +1347,7 @@ class Diagnostic extends HitAbstract
         }
 
         if ($this->getSdkConfigTrackingManagerConfigStrategy() !== null) {
-            $customVariable["sdk.config.trackingManager.config.strategy"] =
+            $customVariable["sdk.config.trackingManager.strategy"] =
                 CacheStrategy::getCacheStrategyName($this->getSdkConfigTrackingManagerConfigStrategy());
         }
 
@@ -1356,7 +1356,7 @@ class Diagnostic extends HitAbstract
         }
 
         if ($this->getSdkConfigFetchThirdPartyData() !== null) {
-            $customVariable["sdk.config.fetchThirdPartyData"] = $this->getSdkConfigFetchThirdPartyData();
+            $customVariable["sdk.config.fetchThirdPartyData"] = json_encode($this->getSdkConfigFetchThirdPartyData());
         }
 
         if ($this->isSdkConfigUsingOnVisitorExposed() !== null) {

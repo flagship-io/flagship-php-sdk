@@ -468,7 +468,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
                 ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
                 ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
                 ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
-                ->setSdkConfigUsingCustomHitCache(!!$config->getVisitorCacheImplementation())
+                ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
                 ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy());
 
             $this->sendTroubleshootingHit($troubleshootingHit);
@@ -485,11 +485,10 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
             ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
             ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
-            ->setSdkConfigUsingCustomHitCache(!!$config->getVisitorCacheImplementation())
+            ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
             ->setConfig($config)
             ->setSdkStatus($visitor->getSdkStatus())
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-            ;
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId());
         $this->sendAnalyticsHit($analytic);
     }
 

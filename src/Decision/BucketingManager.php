@@ -38,6 +38,11 @@ class BucketingManager extends DecisionManagerAbstract
     protected $config;
 
     /**
+     * @var Troubleshooting
+     */
+    protected $troubleshootingHit;
+
+    /**
      * @return BucketingConfig
      */
     public function getConfig()
@@ -156,7 +161,7 @@ class BucketingManager extends DecisionManagerAbstract
                 ->setHttpResponseHeaders($response->getHeaders())
                 ->setHttpResponseCode($response->getStatusCode())
                 ->setHttpResponseTime($this->getNow() - $now);
-            $this->getTrackingManager()->addTroubleshootingHit($troubleshooting);
+            $this->troubleshootingHit = $troubleshooting;
             return $response->getBody();
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [
@@ -172,7 +177,7 @@ class BucketingManager extends DecisionManagerAbstract
                 ->setHttpRequestUrl($url)
                 ->setHttpResponseBody($exception->getMessage())
                 ->setHttpResponseTime($this->getNow() - $now);
-            $this->getTrackingManager()->addTroubleshootingHit($troubleshooting);
+            $this->troubleshootingHit = $troubleshooting;
         }
         return null;
     }
@@ -195,9 +200,12 @@ class BucketingManager extends DecisionManagerAbstract
             $troubleshootingData = new TroubleshootingData();
             $troubleshootingData->setStartDate($startDate)
                 ->setEndDate($endDate)
-                ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
+                // TO DO
+//                ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
                 ->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
             $this->troubleshootingData = $troubleshootingData;
+            $this->getTrackingManager()->setTroubleshootingData($troubleshootingData);
+            $this->getTrackingManager()->addTroubleshootingHit($this->troubleshootingHit);
         }
 
         if (isset($bucketingCampaigns[FlagshipField::FIELD_PANIC])) {

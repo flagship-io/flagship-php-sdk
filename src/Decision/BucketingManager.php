@@ -195,14 +195,23 @@ class BucketingManager extends DecisionManagerAbstract
         $this->troubleshootingData = null;
         if (isset($bucketingCampaigns[FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING])) {
             $troubleshooting = $bucketingCampaigns[FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING];
-            $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
-            $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
+
             $troubleshootingData = new TroubleshootingData();
-            $troubleshootingData->setStartDate($startDate)
-                ->setEndDate($endDate)
-                // TO DO
-//                ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
-                ->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
+
+            if (isset($troubleshooting[FlagshipField::START_DATE])) {
+                $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
+                $troubleshootingData->setStartDate($startDate);
+            }
+            if (isset($troubleshooting[FlagshipField::END_DATE])) {
+                $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
+                $troubleshootingData->setEndDate($endDate);
+            }
+            if (isset($troubleshooting[FlagshipField::TRAFFIC])) {
+                $troubleshootingData->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
+            }
+            if (isset($troubleshooting[FlagshipField::TIMEZONE])) {
+                $troubleshootingData->setTimezone($troubleshooting[FlagshipField::TIMEZONE]);
+            }
             $this->troubleshootingData = $troubleshootingData;
             $this->getTrackingManager()->setTroubleshootingData($troubleshootingData);
             $this->getTrackingManager()->addTroubleshootingHit($this->troubleshootingHit);

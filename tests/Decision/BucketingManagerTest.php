@@ -42,17 +42,6 @@ class BucketingManagerTest extends TestCase
 
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        $matcher = $this->exactly(7);
-        $trackingManagerMock->expects($matcher)
-            ->method('addTroubleshootingHit')
-            ->with($this->callback(function ($param) use ($matcher) {
-                $invocationCount = $matcher->getInvocationCount();
-                if ($invocationCount <= 6) {
-                    return $param->getLabel() === TroubleshootingLabel::SDK_BUCKETING_FILE;
-                }
-                return $param->getLabel() === TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR;
-            }));
-
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $httpClientMock->expects($this->exactly(6))
             ->method('get')
@@ -138,6 +127,13 @@ class BucketingManagerTest extends TestCase
         $bucketingContent["accountSettings"] = [
             "troubleshooting" => $troubleshooting
         ];
+
+        $matcher = $this->exactly(1);
+        $trackingManagerMock->expects($matcher)
+            ->method('addTroubleshootingHit')
+            ->with($this->callback(function ($param) use ($matcher) {
+                return $param->getLabel() === TroubleshootingLabel::SDK_BUCKETING_FILE;
+            }));
 
         $httpClientMock->expects($this->exactly(1))
             ->method('get')

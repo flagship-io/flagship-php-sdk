@@ -10,6 +10,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      FS_API_KEY: "${{ secrets.FS_CI_CAMPAIGNS_API_KEY }}"
+      FS_ENV_ID:  "${{ secrets.FS_CI_CAMPAIGNS_ENV_ID }}"
 
     strategy:
       matrix:
@@ -50,3 +53,9 @@ jobs:
 
     - run: composer require phpunit/phpunit --dev -W
     - run: composer require psr/log:^1 -W
+
+    - name: Run test suite
+      run: composer run-script test
+
+    - name: Run functional test
+      run: php tests/TestFunctional.php

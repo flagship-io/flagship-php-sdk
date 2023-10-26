@@ -1360,7 +1360,8 @@ class Diagnostic extends HitAbstract
         }
 
         if ($this->isSdkConfigUsingOnVisitorExposed() !== null) {
-            $customVariable["sdk.config.onVisitorExposed"] = json_encode($this->isSdkConfigUsingOnVisitorExposed());
+            $customVariable["sdk.config.usingOnVisitorExposed"] =
+                json_encode($this->isSdkConfigUsingOnVisitorExposed());
         }
 
         if ($this->isSdkConfigUsingCustomHitCache() !== null) {

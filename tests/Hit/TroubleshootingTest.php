@@ -170,7 +170,7 @@ class TroubleshootingTest extends TestCase
             'sdk.config.trackingManager.strategy' => CacheStrategy::getCacheStrategyName($cacheStrategy),
             'sdk.config.bucketingUrl' => $sdkConfigBucketingUrl,
             'sdk.config.fetchThirdPartyData' => 'true',
-            'sdk.config.onVisitorExposed' => 'true',
+            'sdk.config.usingOnVisitorExposed' => 'true',
             'sdk.config.usingCustomHitCache' => 'true',
             'sdk.config.usingCustomVisitorCache' => 'true',
             'http.request.url' => $httpRequestUrl,

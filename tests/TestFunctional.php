@@ -23,11 +23,11 @@ $defaultValue = 'default-value';
 $flag = $visitor->getFlag('ci_flag_1', $defaultValue);
 $flagValue = $flag->getValue(false);
 
-TestCase::assertSame('flag-1-value-2', $flagValue);
+TestCase::assertSame($defaultValue, $flagValue);
 TestCase::assertSame('Test-campaign ab', $flag->getMetadata()->getCampaignName());
 
 //Test 2
-$visitor = Flagship::newVisitor("visitor-6")
+$visitor = Flagship::newVisitor("visitor-2")
     ->withContext(['ci-test' => true, 'test-ab' => true])
     ->build();
 
@@ -36,7 +36,7 @@ $visitor->fetchFlags();
 $flag = $visitor->getFlag('ci_flag_1', $defaultValue);
 $flagValue = $flag->getValue(false);
 
-TestCase::assertSame($defaultValue, $flagValue);
+TestCase::assertSame("flag-1-value-1", $flagValue);
 TestCase::assertSame('Test-campaign ab', $flag->getMetadata()->getCampaignName());
 
 //Test 3

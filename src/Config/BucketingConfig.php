@@ -49,7 +49,9 @@ class BucketingConfig extends FlagshipConfig
     }
 
     /**
-     * If true is set, the visitor's segment will be fetched from [universal data connector](https://developers.abtasty.com/docs/data/universal-data-connector) each time fetchFlags is called and append those segments in the visitor context
+     * If true is set, the visitor's segment will be fetched from
+     * [universal data connector](https://developers.abtasty.com/docs/data/universal-data-connector)
+     * each time fetchFlags is called and append those segments in the visitor context
      * @return bool
      */
     public function getFetchThirdPartyData()
@@ -58,7 +60,9 @@ class BucketingConfig extends FlagshipConfig
     }
 
     /**
-     * If you set true, it will fetch the visitor's segment from [universal data connector](https://developers.abtasty.com/docs/data/universal-data-connector) each time fetchFlags is called and append those segments in the visitor context
+     * If you set true, it will fetch the visitor's segment from
+     * [universal data connector](https://developers.abtasty.com/docs/data/universal-data-connector)
+     * each time fetchFlags is called and append those segments in the visitor context
      * @param bool $fetchThirdPartyData
      * @return BucketingConfig
      */

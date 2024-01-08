@@ -13,6 +13,7 @@ use Flagship\Enum\HitCacheFields;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
@@ -1392,5 +1393,87 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $check = $strategy->isTroubleshootingActivated();
         $this->assertTrue($check);
+    }
+
+    public function testSendAnalyticsHit()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["isTroubleshootingActivated"]
+        );
+
+
+        $match = $this->exactly(1);
+
+        $httpClientMock->expects($match)
+            ->method('post')
+            ->with($this->callback(function ($url) use ($match) {
+                $troubleshootingUrl = FlagshipConstant::ANALYTICS_HIT_URL;
+                return $url === $troubleshootingUrl;
+            }), $this->callback(function ($hit) use ($match) {
+                return true;
+            }));
+
+        $analytic = new Analytic();
+        $analytic->setConfig($config);
+
+        $strategy->sendAnalyticsHit($analytic);
+    }
+
+    public function testSendAnalyticsHitFailed()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["logErrorSprintf"]
+        );
+
+
+        $match = $this->exactly(1);
+
+        $exception = new Exception("Error");
+        $httpClientMock->expects($match)
+            ->method('post')
+            ->willThrowException($exception);
+
+        $analytic = new Analytic();
+        $analytic->setConfig($config);
+
+        $strategy->sendAnalyticsHit($analytic);
     }
 }

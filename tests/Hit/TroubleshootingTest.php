@@ -91,7 +91,7 @@ class TroubleshootingTest extends TestCase
         $activateHit->setConfig($config)
         ->setVisitorId($visitorId);
 
-
+        $sdkConfigBucketingUrl = 'http://localhost';
 
         $troubleshooting->setVisitorId($visitorId)
             ->setAnonymousId($anonymousId)
@@ -107,6 +107,11 @@ class TroubleshootingTest extends TestCase
             ->setSdkConfigCustomLogManager(true)
             ->setSdkConfigCustomCacheManager(true)
             ->setSdkConfigStatusListener(false)
+            ->setSdkConfigBucketingUrl($sdkConfigBucketingUrl)
+            ->setSdkConfigUsingCustomHitCache(true)
+            ->setSdkConfigUsingOnVisitorExposed(true)
+            ->setSdkConfigUsingCustomVisitorCache(true)
+            ->setSdkConfigFetchThirdPartyData(true)
             ->setSdkConfigTimeout($config->getTimeout())
             ->setSdkConfigTrackingManagerConfigStrategy($cacheStrategy)
             ->setHttpRequestUrl($httpRequestUrl)
@@ -162,7 +167,12 @@ class TroubleshootingTest extends TestCase
             'sdk.config.customCacheManager' => 'true',
             'sdk.config.custom.StatusListener' => 'false',
             'sdk.config.timeout' => (string) $config->getTimeout(),
-            'sdk.config.trackingManager.config.strategy' => CacheStrategy::getCacheStrategyName($cacheStrategy),
+            'sdk.config.trackingManager.strategy' => CacheStrategy::getCacheStrategyName($cacheStrategy),
+            'sdk.config.bucketingUrl' => $sdkConfigBucketingUrl,
+            'sdk.config.fetchThirdPartyData' => 'true',
+            'sdk.config.usingOnVisitorExposed' => 'true',
+            'sdk.config.usingCustomHitCache' => 'true',
+            'sdk.config.usingCustomVisitorCache' => 'true',
             'http.request.url' => $httpRequestUrl,
             'http.request.method' => $httpRequestMethod,
             'http.request.headers' => json_encode($httpRequestHeaders),

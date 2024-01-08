@@ -389,6 +389,7 @@ class DefaultStrategyTest extends TestCase
     public function testSynchronizeModifications()
     {
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -542,6 +543,7 @@ class DefaultStrategyTest extends TestCase
     public function testFetchFlags()
     {
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -752,6 +754,7 @@ class DefaultStrategyTest extends TestCase
     {
         $modifications = $this->campaignsModifications();
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -838,6 +841,7 @@ class DefaultStrategyTest extends TestCase
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
 
         $apiManagerStub->method('getCampaigns')->willReturn([]);
         $apiManagerStub->method('getModifications')->willReturn($modifications);
@@ -911,6 +915,7 @@ class DefaultStrategyTest extends TestCase
         $modifications = $this->modifications();
         $modifications = $this->campaignsModifications();
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -1015,6 +1020,7 @@ class DefaultStrategyTest extends TestCase
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $config->setLogManager($logManagerStub);
 
         $modifications = $this->campaignsModifications();

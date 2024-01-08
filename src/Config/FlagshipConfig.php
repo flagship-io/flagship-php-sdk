@@ -73,6 +73,11 @@ abstract class FlagshipConfig implements JsonSerializable
     protected $onVisitorExposed;
 
     /**
+     * @var boolean
+     */
+    protected $disableDeveloperUsageTracking;
+
+    /**
      * Create a new FlagshipConfig configuration.
      *
      * @param string $envId  Environment id provided by Flagship.
@@ -83,6 +88,7 @@ abstract class FlagshipConfig implements JsonSerializable
         $this->envId = $envId;
         $this->apiKey = $apiKey;
         $this->cacheStrategy = CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE;
+        $this->setDisableDeveloperUsageTracking(false);
     }
 
     /**
@@ -331,7 +337,23 @@ abstract class FlagshipConfig implements JsonSerializable
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function disableDeveloperUsageTracking()
+    {
+        return $this->disableDeveloperUsageTracking;
+    }
 
+    /**
+     * @param bool $disableDeveloperUsageTracking
+     * @return FlagshipConfig
+     */
+    public function setDisableDeveloperUsageTracking($disableDeveloperUsageTracking)
+    {
+        $this->disableDeveloperUsageTracking = $disableDeveloperUsageTracking;
+        return $this;
+    }
 
     /**
      * @inheritDoc

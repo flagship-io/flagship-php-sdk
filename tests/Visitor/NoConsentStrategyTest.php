@@ -49,6 +49,7 @@ class NoConsentStrategyTest extends TestCase
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $config->setLogManager($logManagerStub);
 
         $visitorId = "visitorId";

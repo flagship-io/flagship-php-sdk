@@ -722,10 +722,21 @@ class DefaultStrategyTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
-        $defaultStrategy = new DefaultStrategy($visitor);
-        $defaultStrategy->setMurmurHash(new MurmurHash());
+        $defaultStrategyMock = $this->getMockForAbstractClass(
+            "Flagship\Visitor\DefaultStrategy",
+            [$visitor],
+            "",
+            true,
+            false,
+            true,
+            ["sendAnalyticsHit"]
+        );
 
-        $defaultStrategy->fetchFlags();
+        $defaultStrategyMock->expects($this->once())->method("sendAnalyticsHit");
+
+        $defaultStrategyMock->setMurmurHash(new MurmurHash());
+
+        $defaultStrategyMock->fetchFlags();
     }
 
 

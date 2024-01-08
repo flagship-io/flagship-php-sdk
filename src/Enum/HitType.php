@@ -47,4 +47,8 @@ class HitType
     const CONSENT = "CONSENT";
 
     const SEGMENT = "SEGMENT";
+
+    const TROUBLESHOOTING = "TROUBLESHOOTING";
+
+    const USAGE = "USAGE";
 }

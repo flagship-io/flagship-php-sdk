@@ -9,9 +9,11 @@ use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Traits\Guid;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
+use Flagship\Visitor\VisitorAbstract;
 use Flagship\Visitor\VisitorBuilder;
 
 /**
@@ -20,6 +22,7 @@ use Flagship\Visitor\VisitorBuilder;
 class Flagship
 {
     use LogTrait;
+    use Guid;
 
     /**
      * @var Flagship
@@ -45,6 +48,11 @@ class Flagship
      * @var int
      */
     private $status = FlagshipStatus::NOT_INITIALIZED;
+
+    /**
+     * @var string
+     */
+    private $flagshipInstanceId;
 
     /**
      * Flagship constructor.
@@ -89,6 +97,7 @@ class Flagship
     {
         try {
             $flagship = self::getInstance();
+            $flagship->flagshipInstanceId = $flagship->newGuid();
             $container = $flagship->getContainer();
 
             if (!$config) {
@@ -117,6 +126,7 @@ class Flagship
             } else {
                 $decisionManager = $container->get('Flagship\Decision\ApiManager', [$httpClient, $config]);
             }
+            $decisionManager->setFlagshipInstanceId($flagship->flagshipInstanceId);
 
             //Will trigger setStatus method of Flagship if decisionManager want update status
             $decisionManager->setStatusChangedCallback([$flagship,'setStatus']);
@@ -125,11 +135,16 @@ class Flagship
 
             $configManager->setDecisionManager($decisionManager);
 
-            $trackingManager = $container->get('Flagship\Api\TrackingManager', [$config,$httpClient]);
+            $trackingManager = $container->get(
+                'Flagship\Api\TrackingManager',
+                [$config,$httpClient, $flagship->flagshipInstanceId]
+            );
 
             $configManager->setTrackingManager($trackingManager);
 
             $configManager->setConfig($config);
+
+            $decisionManager->setTrackingManager($trackingManager);
 
             $flagship->setConfigManager($configManager);
 
@@ -265,7 +280,7 @@ class Flagship
         if ($this->config && $this->config->getStatusChangedCallback() && $this->status !== $status) {
             call_user_func($this->config->getStatusChangedCallback(), $status);
         }
-
+        VisitorAbstract::setSdkStatus($status);
         $this->status = $status;
         return $this;
     }
@@ -302,6 +317,11 @@ class Flagship
     public static function newVisitor($visitorId = null)
     {
         $instance = self::getInstance();
-        return VisitorBuilder::builder($visitorId, $instance->getConfigManager(), $instance->getContainer());
+        return VisitorBuilder::builder(
+            $visitorId,
+            $instance->getConfigManager(),
+            $instance->getContainer(),
+            $instance->flagshipInstanceId
+        );
     }
 }

@@ -41,12 +41,16 @@ class PanicStrategyTest extends TestCase
 
         $trackerManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
-            ['sendConsentHit'],
+            [],
             '',
-            false
+            false,
+            false,
+            true,
+            ["setTroubleshootingData"]
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $config->setLogManager($logManagerStub);
 
         $logMessageBuild = function ($functionName) {

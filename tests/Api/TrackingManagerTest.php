@@ -8,12 +8,15 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
 use Flagship\Hit\Activate;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Segment;
 use Flagship\Hit\Transaction;
+use Flagship\Hit\Troubleshooting;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\Utils;
@@ -30,6 +33,7 @@ class TrackingManagerTest extends TestCase
         $config = new DecisionApiConfig();
         $httpClient = new HttpClient();
         $trackingManager = new TrackingManager($config, $httpClient);
+
         $this->assertSame($httpClient, $trackingManager->getHttpClient());
         $this->assertSame($config, $trackingManager->getConfig());
     }
@@ -63,7 +67,16 @@ class TrackingManagerTest extends TestCase
             true,
             true,
             true,
-            ["addHit", "activateFlag", "sendBatch"]
+            [
+                "addHit",
+                "activateFlag",
+                "sendBatch",
+                "sendTroubleshootingQueue",
+                "addTroubleshootingHit",
+                "setTroubleshootingData",
+                "getTroubleshootingData",
+                "sendAnalyticsHit"
+            ]
         );
 
         $trackingManager = $this->getMockForAbstractClass(
@@ -76,7 +89,7 @@ class TrackingManagerTest extends TestCase
             ["getStrategy", "lookupHits"]
         );
 
-        $trackingManager->expects($this->exactly(3))
+        $trackingManager->expects($this->exactly(7))
             ->method("getStrategy")
             ->willReturn($BatchingCachingStrategyMock);
 
@@ -84,11 +97,25 @@ class TrackingManagerTest extends TestCase
             ->method("addHit");
 
         $BatchingCachingStrategyMock->expects($this->once())
+            ->method("setTroubleshootingData");
+
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("getTroubleshootingData");
+
+        $BatchingCachingStrategyMock->expects($this->once())
             ->method("activateFlag");
+
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("addTroubleshootingHit");
 
         $BatchingCachingStrategyMock->expects($this->once())
             ->method("sendBatch");
 
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("sendTroubleshootingQueue");
+
+        $BatchingCachingStrategyMock->expects($this->once())
+            ->method("sendAnalyticsHit");
 
         $page = new Page("http://localhost");
         $page->setConfig($config);
@@ -98,7 +125,19 @@ class TrackingManagerTest extends TestCase
         $activate->setConfig($config);
         $trackingManager->activateFlag($activate);
 
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setTraffic(100);
+        $trackingManager->addTroubleshootingHit($troubleshooting);
+
+        $troubleshootingData = new TroubleshootingData();
+        $trackingManager->setTroubleshootingData($troubleshootingData);
+
+        $trackingManager->getTroubleshootingData();
+
         $trackingManager->sendBatch();
+
+        $analytic = new Analytic();
+        $trackingManager->sendAnalyticsHit($analytic);
     }
 
     public function testLookupHits()

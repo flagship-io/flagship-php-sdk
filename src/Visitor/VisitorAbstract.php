@@ -6,15 +6,19 @@ use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Flagship;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Model\FlagDTO;
+use Flagship\Traits\Guid;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
+use Flagship\Utils\MurmurHash;
 use JsonSerializable;
 
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, VisitorFlagInterface
 {
     use ValidatorTrait;
+    use Guid;
 
     /**
      * @var FlagshipConfig
@@ -71,11 +75,89 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     private $flagSyncStatus;
 
+    /**
+     * @var numeric
+     */
+    protected $traffic;
+
+    /**
+     * @var string
+     */
+    protected $instanceId;
+
+    protected static $sdkStatus;
+
+    protected $flagshipInstanceId;
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getSdkStatus()
+    {
+        return self::$sdkStatus;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFlagshipInstanceId()
+    {
+        return $this->flagshipInstanceId;
+    }
+
+    /**
+     * @param mixed $flagshipInstanceId
+     * @return VisitorAbstract
+     */
+    public function setFlagshipInstanceId($flagshipInstanceId)
+    {
+        $this->flagshipInstanceId = $flagshipInstanceId;
+        return $this;
+    }
+
+
+    /**
+     * @param mixed $sdkStatus
+     */
+    public static function setSdkStatus($sdkStatus)
+    {
+        self::$sdkStatus = $sdkStatus;
+    }
 
     public function __construct()
     {
         $this->visitorCache = [];
+        $this->instanceId = $this->newGuid();
     }
+
+    /**
+     * @return string
+     */
+    public function getInstanceId()
+    {
+        return $this->instanceId;
+    }
+
+    /**
+     * @return float|int|string
+     */
+    public function getTraffic()
+    {
+        return $this->traffic;
+    }
+
+    /**
+     * @param float|int|string $traffic
+     * @return VisitorAbstract
+     */
+    public function setTraffic($traffic)
+    {
+        $this->traffic = $traffic;
+        return $this;
+    }
+
 
     /**
      * @return string
@@ -101,7 +183,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getConfigManager()
     {
         return $this->configManager;
-    }//end getConfigManager()
+    }
 
 
     /**
@@ -113,7 +195,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     {
         $this->flagsDTO = $modifications;
         return $this;
-    }//end setModifications()
+    }
 
 
     /**
@@ -123,7 +205,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getModifications()
     {
         return $this->flagsDTO;
-    }//end getModifications()
+    }
 
 
     /**
@@ -134,7 +216,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     {
         $this->flagsDTO = $flagsDTO;
         return $this;
-    }//end setFlagsDTO()
+    }
 
 
     /**
@@ -143,7 +225,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getFlagsDTO()
     {
         return $this->flagsDTO;
-    }//end getFlagsDTO()
+    }
 
 
     /**
@@ -154,7 +236,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     {
         $this->configManager = $configManager;
         return $this;
-    }//end setConfigManager()
+    }
 
 
     /**
@@ -163,7 +245,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getVisitorId()
     {
         return $this->visitorId;
-    }//end getVisitorId()
+    }
 
 
     /**
@@ -183,7 +265,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         }
 
         return $this;
-    }//end setVisitorId()
+    }
 
 
     /**
@@ -192,7 +274,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getAnonymousId()
     {
         return $this->anonymousId;
-    }//end getAnonymousId()
+    }
 
 
     /**
@@ -203,7 +285,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     {
         $this->anonymousId = $anonymousId;
         return $this;
-    }//end setAnonymousId()
+    }
 
 
     /**
@@ -212,7 +294,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getContext()
     {
         return $this->context;
-    }//end getContext()
+    }
 
 
     /**
@@ -227,7 +309,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         $this->context = [];
         $this->updateContextCollection($context);
         return $this;
-    }//end setContext()
+    }
 
 
     /**
@@ -236,7 +318,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getConfig()
     {
         return $this->config;
-    }//end getConfig()
+    }
 
 
     /**
@@ -247,7 +329,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     {
         $this->config = $config;
         return $this;
-    }//end setConfig()
+    }
 
 
     /**
@@ -264,9 +346,10 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         } else {
             $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\DefaultStrategy', [$this], true);
         }
-
+        $strategy->setMurmurHash(new MurmurHash());
+        $strategy->setFlagshipInstanceId($this->getFlagshipInstanceId());
         return $strategy;
-    }//end getStrategy()
+    }
 
 
     /**
@@ -277,7 +360,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function hasConsented()
     {
         return $this->hasConsented;
-    }//end hasConsented()
+    }
 
 
     /**
@@ -290,7 +373,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     {
         $this->hasConsented = $hasConsented;
         $this->getStrategy()->setConsent($hasConsented);
-    }//end setConsent()
+    }
 
 
     /**
@@ -299,7 +382,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getDependencyIContainer()
     {
         return $this->dependencyIContainer;
-    }//end getDependencyIContainer()
+    }
 
 
     /**
@@ -309,7 +392,12 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function setDependencyIContainer(ContainerInterface $dependencyIContainer)
     {
         $this->dependencyIContainer = $dependencyIContainer;
-    }//end setDependencyIContainer()
+    }
+
+    public function sendTroubleshootingHit(Troubleshooting $hit)
+    {
+        $this->getStrategy()->sendTroubleshootingHit($hit);
+    }
 
 
     /**
@@ -324,5 +412,5 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
             'context'    => $this->getContext(),
             'hasConsent' => $this->hasConsented(),
         ];
-    }//end jsonSerialize()
-}//end class
+    }
+}

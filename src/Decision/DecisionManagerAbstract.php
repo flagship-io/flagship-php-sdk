@@ -2,10 +2,12 @@
 
 namespace Flagship\Decision;
 
+use Flagship\Api\TrackingManagerInterface;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagshipStatus;
 use Flagship\Model\FlagDTO;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\Helper;
 use Flagship\Traits\ValidatorTrait;
@@ -37,6 +39,20 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     protected $config;
 
     /**
+     * @var TroubleshootingData
+     */
+    protected $troubleshootingData;
+
+    /**
+     * @var TrackingManagerInterface
+     */
+    protected $trackingManager;
+    /**
+     * @var string
+     */
+    protected $flagshipInstanceId;
+
+    /**
      * ApiManager constructor.
      *
      * @param HttpClientInterface $httpClient
@@ -48,6 +64,41 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
         $this->setConfig($config);
     }
 
+    /**
+     * @return TrackingManagerInterface
+     */
+    public function getTrackingManager()
+    {
+        return $this->trackingManager;
+    }
+
+    /**
+     * @param TrackingManagerInterface $trackingManager
+     * @return DecisionManagerAbstract
+     */
+    public function setTrackingManager($trackingManager)
+    {
+        $this->trackingManager = $trackingManager;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFlagshipInstanceId()
+    {
+        return $this->flagshipInstanceId;
+    }
+
+    /**
+     * @param string $flagshipInstanceId
+     * @return DecisionManagerAbstract
+     */
+    public function setFlagshipInstanceId($flagshipInstanceId)
+    {
+        $this->flagshipInstanceId = $flagshipInstanceId;
+        return $this;
+    }
     /**
      * @return HttpClientInterface
      */
@@ -253,5 +304,10 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     {
         $campaigns = $this->getCampaigns($visitor);
         return $this->getModifications($campaigns);
+    }
+
+    public function getTroubleshootingData()
+    {
+        return $this->troubleshootingData;
     }
 }

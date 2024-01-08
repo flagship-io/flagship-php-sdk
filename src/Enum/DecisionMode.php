@@ -28,4 +28,18 @@ class DecisionMode
                 return false;
         }
     }
+
+    private static $listDecisionMode = ["DECISION_API", "BUCKETING"];
+
+    /**
+     * @param int $decisionMode
+     * @return string
+     */
+    public static function getDecisionModeName($decisionMode)
+    {
+        if (!is_int($decisionMode) || $decisionMode < 1 || $decisionMode > 2) {
+            return "";
+        }
+        return self::$listDecisionMode[$decisionMode - 1];
+    }
 }

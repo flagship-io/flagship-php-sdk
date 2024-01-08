@@ -23,6 +23,10 @@ class FlagshipConstant
      */
     const SDK_LANGUAGE = "PHP";
 
+    const SDK = "SDK";
+
+    const TROUBLESHOOTING_VERSION = "1";
+
     /**
      * Decision api base url
      */
@@ -35,6 +39,16 @@ class FlagshipConstant
     const URL_CAMPAIGNS = 'campaigns';
     const URL_ACTIVATE_MODIFICATION = 'activate';
     const HIT_EVENT_URL = 'https://events.flagship.io';
+
+    const TROUBLESHOOTING_HIT_URL = 'https://events.flagship.io/troubleshooting';
+    const ANALYTICS_HIT_URL = 'https://events.flagship.io/analytics';
+    const TROUBLESHOOTING_SENT_SUCCESS = 'Troubleshooting hit has been sent : %s';
+    const ANALYTICS_HIT_SENT_SUCCESS = 'Analytics hit has been sent : %s';
+    const TROUBLESHOOTING_HIT_ADDED_IN_QUEUE = 'The TROUBLESHOOTING HIT has been added in the pool queue : %s';
+    const ADD_TROUBLESHOOTING_HIT = 'ADD TROUBLESHOOTING HIT';
+
+    const SEND_TROUBLESHOOTING = 'SEND TROUBLESHOOTING';
+    const SEND_ANALYTICS = 'SEND ANALYTICS';
 
     Const BUCKETING = "BUCKETING";
 
@@ -188,4 +202,6 @@ class FlagshipConstant
     const LOG_FORMAT_RESPONSE_HEADERS = 'RESPONSE_HEADERS';
     const LOG_FORMAT_RESPONSE_STATUS = 'RESPONSE_STATUS';
     const LOG_FORMAT_DURATION = 'DURATION';
+
+    const ANALYTIC_HIT_ALLOCATION = 20;
 }

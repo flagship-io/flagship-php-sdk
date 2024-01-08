@@ -2,16 +2,20 @@
 
 namespace Flagship\Visitor;
 
+use DateTime;
 use Exception;
 use Flagship\Api\TrackingManagerAbstract;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Hit\Analytic;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Traits\Helper;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ConfigManager;
+use Flagship\Utils\MurmurHash;
 
 /**
  *
@@ -45,6 +49,13 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
      */
     protected $visitor;
 
+    /**
+     * @var MurmurHash
+     */
+    protected $murmurHash;
+
+    protected $flagshipInstanceId;
+
 
     /**
      * @param VisitorAbstract $visitor
@@ -52,8 +63,43 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     public function __construct(VisitorAbstract $visitor)
     {
         $this->visitor = $visitor;
-    }//end __construct()
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getFlagshipInstanceId()
+    {
+        return $this->flagshipInstanceId;
+    }
+
+    /**
+     * @param mixed $flagshipInstanceId
+     * @return VisitorStrategyAbstract
+     */
+    public function setFlagshipInstanceId($flagshipInstanceId)
+    {
+        $this->flagshipInstanceId = $flagshipInstanceId;
+        return $this;
+    }
+
+    /**
+     * @return MurmurHash
+     */
+    public function getMurmurHash()
+    {
+        return $this->murmurHash;
+    }
+
+    /**
+     * @param MurmurHash $murmurHash
+     * @return VisitorStrategyAbstract
+     */
+    public function setMurmurHash($murmurHash)
+    {
+        $this->murmurHash = $murmurHash;
+        return $this;
+    }
 
     /**
      * @return VisitorAbstract
@@ -61,8 +107,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getVisitor()
     {
         return $this->visitor;
-    }//end getVisitor()
-
+    }
 
     /**
      * @return ConfigManager
@@ -70,7 +115,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getConfigManager()
     {
         return $this->getVisitor()->getConfigManager();
-    }//end getConfigManager()
+    }
 
 
     /**
@@ -79,7 +124,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     protected function getConfig()
     {
         return $this->getVisitor()->getConfig();
-    }//end getConfig()
+    }
 
 
     /**
@@ -99,7 +144,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         return $trackingManager;
-    }//end getTrackingManager()
+    }
 
 
     /**
@@ -118,7 +163,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         return $decisionManager;
-    }//end getDecisionManager()
+    }
 
 
     /**
@@ -151,18 +196,20 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         foreach ($campaigns as $item) {
-            if (!isset(
-                $item[self::CAMPAIGN_ID],
-                $item[self::CAMPAIGN_TYPE],
-                $item[self::VARIATION_GROUP_ID],
-                $item[self::VARIATION_ID]
-            )) {
+            if (
+                !isset(
+                    $item[self::CAMPAIGN_ID],
+                    $item[self::CAMPAIGN_TYPE],
+                    $item[self::VARIATION_GROUP_ID],
+                    $item[self::VARIATION_ID]
+                )
+            ) {
                 return false;
             }
         }
 
         return true;
-    }//end checkLookupVisitorDataV1()
+    }
 
 
     /**
@@ -177,7 +224,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
 
         return false;
-    }//end checkLookupVisitorData()
+    }
 
 
     /**
@@ -205,7 +252,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
-    }//end lookupVisitor()
+    }
 
 
     /**
@@ -242,11 +289,13 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
                 ];
             }
 
-            if (isset(
-                $visitor->visitorCache,
-                $visitor->visitorCache[self::DATA],
-                $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY]
-            )) {
+            if (
+                isset(
+                    $visitor->visitorCache,
+                    $visitor->visitorCache[self::DATA],
+                    $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY]
+                )
+            ) {
                 $assignmentsHistory = array_merge(
                     $visitor->visitorCache[self::DATA][self::ASSIGNMENTS_HISTORY],
                     $assignmentsHistory
@@ -271,7 +320,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }//end try
-    }//end cacheVisitor()
+    }
 
 
     /**
@@ -289,5 +338,32 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         } catch (Exception $exception) {
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
         }
-    }//end flushVisitor()
-}//end class
+    }
+
+    public function sendTroubleshootingHit(Troubleshooting $hit)
+    {
+        $this->getTrackingManager()->addTroubleshootingHit($hit);
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getCurrentDateTime()
+    {
+        return new DateTime();
+    }
+
+    public function sendAnalyticsHit(Analytic $hit)
+    {
+        if ($this->getConfig()->disableDeveloperUsageTracking()) {
+            return;
+        }
+        $uniqueId = $hit->getVisitorId() . $this->getCurrentDateTime()->format("Y-m-d");
+        $hash = $this->getMurmurHash()->murmurHash3Int32($uniqueId);
+        $traffic = $hash % 100;
+        if ($traffic >= FlagshipConstant::ANALYTIC_HIT_ALLOCATION) {
+            return;
+        }
+        $this->getTrackingManager()->sendAnalyticsHit($hit);
+    }
+}

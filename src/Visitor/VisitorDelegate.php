@@ -16,9 +16,6 @@ use Flagship\Utils\ContainerInterface;
 
 class VisitorDelegate extends VisitorAbstract
 {
-    use Guid;
-
-
     /**
      * Create a new VisitorDelegate.
      *
@@ -35,9 +32,11 @@ class VisitorDelegate extends VisitorAbstract
         $visitorId,
         $isAuthenticated = false,
         array $context = [],
-        $hasConsented = false
+        $hasConsented = false,
+        $flagshipInstanceId = null
     ) {
         parent::__construct();
+        $this->setFlagshipInstanceId($flagshipInstanceId);
         $this->setDependencyIContainer($dependencyIContainer);
         $this->setConfig($configManager->getConfig());
         $this->setVisitorId($visitorId ?: $this->newGuid());

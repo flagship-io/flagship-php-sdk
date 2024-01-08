@@ -45,4 +45,19 @@ class LogLevel
      * ALL = 9: All logs will be logged.
      */
     const ALL = 9;
+
+    private static $logLevelName = ["NONE", "EMERGENCY", "ALERT", "CRITICAL", "ERROR",
+        "WARNING", "NOTICE", "INFO", "DEBUG", "ALL"];
+
+    /**
+     * @param int $loglevel
+     * @return string
+     */
+    public static function getLogName($loglevel)
+    {
+        if (!is_int($loglevel) || $loglevel < 0 || $loglevel > 9) {
+            return "";
+        }
+        return self::$logLevelName[$loglevel];
+    }
 }

@@ -4,6 +4,7 @@ namespace Flagship\Visitor;
 
 require_once __dir__ . '/../Assets/Round.php';
 
+use DateTime;
 use Flagship\Config\BucketingConfig;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
@@ -13,7 +14,7 @@ use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagSyncStatus;
 use Flagship\Enum\HitType;
-use Flagship\Flag\Flag;
+use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\Event;
@@ -26,6 +27,7 @@ use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
+use Flagship\Utils\MurmurHash;
 use PHPUnit\Framework\TestCase;
 
 
@@ -387,11 +389,22 @@ class DefaultStrategyTest extends TestCase
     public function testSynchronizeModifications()
     {
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
             '',
             false
+        );
+
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData"]
         );
 
         $decisionManager = new ApiManager($httpClientMock, $config);
@@ -401,7 +414,7 @@ class DefaultStrategyTest extends TestCase
 
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($decisionManager);
+        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackingManagerMock);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -530,6 +543,7 @@ class DefaultStrategyTest extends TestCase
     public function testFetchFlags()
     {
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -537,13 +551,24 @@ class DefaultStrategyTest extends TestCase
             false
         );
 
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData"]
+        );
+
         $decisionManager = new ApiManager($httpClientMock, $config);
 
         $httpClientMock->expects($this->once())->method("post")->willReturn(new HttpResponse(200, $this->campaigns()));
-
+        $trackingManagerMock->expects($this->once())->method("setTroubleshootingData")->with(null);
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($decisionManager);
+        $configManager->setDecisionManager($decisionManager)
+        ->setTrackingManager($trackingManagerMock);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -635,6 +660,73 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame($defaultValue, $modificationValue);
     }
 
+    public function testFetchFlagsTroubleshootingData()
+    {
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData", "addTroubleshootingHit"]
+        );
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $httpResponseBody = $this->campaigns();
+        $troubleshootingData = [
+            "startDate" => "2023-04-13T09:33:38.049Z",
+            "endDate" => "2023-04-13T10:03:38.049Z",
+            "timezone" => "Europe/Paris",
+            "traffic" => 40
+        ];
+
+        $httpResponseBody["extras"] = [
+            "accountSettings" => [
+                "@type" => "type.googleapis.com/flagship.protobuf.AccountSettings",
+                "enabledXPC" => false,
+                "enabled1V1T" => false,
+                "troubleshooting" => $troubleshootingData
+            ]];
+
+        $httpClientMock->expects($this->once())->method("post")->willReturn(new HttpResponse(200, $httpResponseBody));
+
+        $trackingManagerMock->expects($this->once())->method("setTroubleshootingData")
+            ->with($this->callback(function ($param) use ($troubleshootingData) {
+                $startDate = new DateTime($troubleshootingData['startDate']);
+                $endDate = new DateTime($troubleshootingData['endDate']);
+                return $param->getTraffic() === $troubleshootingData['traffic'] &&
+                    $param->getTimezone() === $troubleshootingData['timezone'] &&
+                    $param->getStartDate()->getTimestamp() === $startDate->getTimestamp() &&
+                    $param->getEndDate()->getTimestamp() === $endDate->getTimestamp();
+            }));
+
+        $trackingManagerMock->expects($this->once())
+            ->method("addTroubleshootingHit")->with($this->callback(function ($param) {
+                return $param->getLabel() === TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS ;
+            }));
+
+        $configManager = (new ConfigManager())->setConfig($config);
+        $configManager->setDecisionManager($decisionManager)
+            ->setTrackingManager($trackingManagerMock);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+        $defaultStrategy->setMurmurHash(new MurmurHash());
+
+        $defaultStrategy->fetchFlags();
+    }
+
 
     public function testFetchFlagsWithoutDecisionManager()
     {
@@ -662,6 +754,7 @@ class DefaultStrategyTest extends TestCase
     {
         $modifications = $this->campaignsModifications();
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -736,14 +829,27 @@ class DefaultStrategyTest extends TestCase
             true,
             ['getModifications', 'getConfig', 'getCampaigns']
         );
+
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData", "addTroubleshootingHit"]
+        );
+
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
 
         $apiManagerStub->method('getCampaigns')->willReturn([]);
         $apiManagerStub->method('getModifications')->willReturn($modifications);
         $apiManagerStub->method('getConfig')->willReturn($config);
 
         $configManager = (new ConfigManager())->setConfig($config);
-        $configManager->setDecisionManager($apiManagerStub);
+        $configManager->setDecisionManager($apiManagerStub)
+        ->setTrackingManager($trackingManagerMock);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -809,6 +915,7 @@ class DefaultStrategyTest extends TestCase
         $modifications = $this->modifications();
         $modifications = $this->campaignsModifications();
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -835,10 +942,21 @@ class DefaultStrategyTest extends TestCase
             false
         );
 
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData", "addTroubleshootingHit"]
+        );
+
 
         $config->setLogManager($logManagerStub);
         $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
-        $configManager->setDecisionManager($decisionManager);
+        $configManager->setDecisionManager($decisionManager)
+            ->setTrackingManager($trackingManagerMock);
 
         $paramsExpected = [];
 
@@ -902,6 +1020,7 @@ class DefaultStrategyTest extends TestCase
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
+        $config->setDisableDeveloperUsageTracking(true);
         $config->setLogManager($logManagerStub);
 
         $modifications = $this->campaignsModifications();
@@ -960,57 +1079,6 @@ class DefaultStrategyTest extends TestCase
             [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]];
 
         $defaultStrategy->activateModification($key);
-    }
-
-
-    public function testActivateModificationWithoutTrackerManager()
-    {
-        $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
-            [],
-            "",
-            true,
-            true,
-            true,
-            ['error']
-        );
-
-        $config = new DecisionApiConfig('envId', 'apiKey');
-        $config->setLogManager($logManagerStub);
-
-        $modifications = $this->campaignsModifications();
-
-        $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
-            ['post'],
-            '',
-            false
-        );
-
-        $decisionManager = new ApiManager($httpClientMock, $config);
-
-        $httpClientMock->expects($this->once())->method("post")
-            ->willReturn(new HttpResponse(200, $this->campaigns()));
-
-        $configManager = (new ConfigManager())
-            ->setConfig($config)
-            ->setDecisionManager($decisionManager);
-
-
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
-        $defaultStrategy = new DefaultStrategy($visitor);
-
-        $defaultStrategy->synchronizeModifications();
-
-
-
-        $logManagerStub->expects($this->exactly(1))->method('error')->with(
-            FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-            [FlagshipConstant::TAG => "activateModification"]
-        );
-
-        //Call error
-        $defaultStrategy->activateModification($modifications[0]->getKey());
     }
 
     public function testSendHit()
@@ -1414,11 +1482,21 @@ class DefaultStrategyTest extends TestCase
             ['error','info']
         );
 
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData", "addTroubleshootingHit"]
+        );
+
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
         $configManager = (new ConfigManager())
-            ->setConfig($config);
+            ->setConfig($config)->setTrackingManager($trackingManagerMock);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
@@ -1672,6 +1750,16 @@ class DefaultStrategyTest extends TestCase
             ['error','info']
         );
 
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData", "addTroubleshootingHit"]
+        );
+
         $config->setLogManager($logManagerStub);
 
         $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
@@ -1687,7 +1775,8 @@ class DefaultStrategyTest extends TestCase
 
         $configManager = (new ConfigManager())
             ->setConfig($config)
-            ->setDecisionManager($decisionManager);
+            ->setDecisionManager($decisionManager)
+            ->setTrackingManager($trackingManagerMock);
 
 
         $containerMock = $this->getMockForAbstractClass(
@@ -1919,11 +2008,22 @@ class DefaultStrategyTest extends TestCase
             ['error','info']
         );
 
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData", "addTroubleshootingHit"]
+        );
+
         $config->setLogManager($logManagerStub);
 
         $configManager = (new ConfigManager())
             ->setConfig($config)
-            ->setDecisionManager($decisionManager);
+            ->setDecisionManager($decisionManager)
+            ->setTrackingManager($trackingManagerMock);
 
 
         $containerMock = $this->getMockForAbstractClass(

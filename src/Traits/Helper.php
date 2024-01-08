@@ -2,6 +2,8 @@
 
 namespace Flagship\Traits;
 
+use DateTime;
+
 trait Helper
 {
     /**
@@ -10,5 +12,10 @@ trait Helper
     public function getNow()
     {
         return round(microtime(true) * 1000);
-    }//end getNow()
+    }
+
+    public function getCurrentDateTime()
+    {
+        return new DateTime();
+    }
 }

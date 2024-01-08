@@ -2,17 +2,21 @@
 
 namespace Flagship\Api;
 
+use DateTime;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Model\ExposedFlag;
 use Flagship\Model\ExposedVisitor;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\Guid;
 use Flagship\Traits\Helper;
 use Flagship\Traits\LogTrait;
@@ -35,6 +39,16 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     protected $activatePoolQueue;
 
     /**
+     * @var Troubleshooting[]
+     */
+    protected $troubleshootingQueue;
+
+    /**
+     * @var TroubleshootingData
+     */
+    protected $troubleshootingData;
+
+    /**
      * @var HttpClientInterface
      */
     protected $httpClient;
@@ -44,18 +58,49 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      */
     protected $config;
 
+    protected $flagshipInstanceId;
+
     /**
      * @param FlagshipConfig $config
      * @param HttpClientInterface $httpClient
      */
     public function __construct(
         FlagshipConfig $config,
-        HttpClientInterface $httpClient
+        HttpClientInterface $httpClient,
+        $flagshipInstanceId = null
     ) {
         $this->httpClient = $httpClient;
         $this->config = $config;
         $this->hitsPoolQueue = [];
         $this->activatePoolQueue = [];
+        $this->troubleshootingQueue = [];
+        $this->flagshipInstanceId = $flagshipInstanceId;
+    }
+
+    /**
+     * @return TroubleshootingData
+     */
+    public function getTroubleshootingData()
+    {
+        return $this->troubleshootingData;
+    }
+
+    /**
+     * @param TroubleshootingData $troubleshootingData
+     * @return BatchingCachingStrategyAbstract
+     */
+    public function setTroubleshootingData($troubleshootingData)
+    {
+        $this->troubleshootingData = $troubleshootingData;
+        return $this;
+    }
+
+    /**
+     * @return Troubleshooting[]
+     */
+    public function getTroubleshootingQueue()
+    {
+        return $this->troubleshootingQueue;
     }
 
     /**
@@ -73,8 +118,6 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     {
         return $this->activatePoolQueue;
     }
-
-
 
     /**
      * @param $key
@@ -279,6 +322,22 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
         } catch (\Exception $exception) {
             $this->cacheHit($this->activatePoolQueue);
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)
+                ->setLogLevel("ERROR")
+                ->setVisitorId($this->flagshipInstanceId)
+                ->setFlagshipInstanceId($this->flagshipInstanceId)
+                ->setTraffic(100)
+                ->setConfig($this->config)
+                ->setHttpRequestBody($requestBody)
+                ->setHttpRequestHeaders($headers)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+            ;
+            $this->addTroubleshootingHit($troubleshooting);
+            $this->sendTroubleshootingQueue();
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
@@ -390,6 +449,22 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
         } catch (\Exception $exception) {
             $this->cacheHit($this->hitsPoolQueue);
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_BATCH_HIT_ROUTE_RESPONSE_ERROR)
+                ->setLogLevel("ERROR")
+                ->setVisitorId($this->flagshipInstanceId)
+                ->setFlagshipInstanceId($this->flagshipInstanceId)
+                ->setTraffic(100)
+                ->setConfig($this->config)
+                ->setHttpRequestBody($requestBody)
+                ->setHttpRequestHeaders($header)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+            ;
+            $this->addTroubleshootingHit($troubleshooting);
+            $this->sendTroubleshootingQueue();
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
@@ -494,6 +569,113 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::PROCESS_CACHE,
                 FlagshipConstant::HIT_CACHE_ERROR,
                 ["flushAllHits", $exception->getMessage()]
+            );
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isTroubleshootingActivated()
+    {
+        $troubleshootingData = $this->getTroubleshootingData();
+
+        if (is_null($troubleshootingData)) {
+            return false;
+        }
+
+        $now = $this->getNow();
+
+        $isStarted = $now >= ($troubleshootingData->getStartDate()->getTimestamp()) * 1000;
+        if (!$isStarted) {
+            return false;
+        }
+        $isFinished = $now > ($troubleshootingData->getEndDate()->getTimestamp()) * 1000;
+        if ($isFinished) {
+            return  false;
+        }
+        return true;
+    }
+
+    public function addTroubleshootingHit(Troubleshooting $hit)
+    {
+        if (!$this->isTroubleshootingActivated()) {
+            return;
+        }
+        $troubleshootingData = $this->getTroubleshootingData();
+        if ($troubleshootingData->getTraffic() < $hit->getTraffic()) {
+            return;
+        }
+        $hitKey = $this->generateHitKey($hit->getVisitorId());
+        $hit->setKey($hitKey);
+        $this->troubleshootingQueue[$hit->getKey()] = $hit;
+        $this->logDebugSprintf(
+            $this->config,
+            FlagshipConstant::ADD_TROUBLESHOOTING_HIT,
+            FlagshipConstant::TROUBLESHOOTING_HIT_ADDED_IN_QUEUE,
+            [$hit->toApiKeys()]
+        );
+    }
+
+
+    protected function sendTroubleshooting(Troubleshooting $hit)
+    {
+        $now = $this->getNow();
+        $requestBody = $hit->toApiKeys();
+        $url = FlagshipConstant::TROUBLESHOOTING_HIT_URL;
+        try {
+            $this->httpClient->setTimeout($this->config->getTimeout());
+
+            $this->httpClient->post($url, [], $requestBody);
+            $this->logDebugSprintf(
+                $this->config,
+                FlagshipConstant::SEND_TROUBLESHOOTING,
+                FlagshipConstant::TROUBLESHOOTING_SENT_SUCCESS,
+                [$this->getLogFormat(null, $url, $requestBody, [], $this->getNow() - $now)]
+            );
+        } catch (\Exception $exception) {
+            $this->logErrorSprintf(
+                $this->config,
+                FlagshipConstant::SEND_TROUBLESHOOTING,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
+                [FlagshipConstant::SEND_TROUBLESHOOTING,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, [], $this->getNow() - $now)]
+            );
+        }
+    }
+    public function sendTroubleshootingQueue()
+    {
+        if (!$this->isTroubleshootingActivated() || count($this->troubleshootingQueue) === 0) {
+            return;
+        }
+        foreach ($this->troubleshootingQueue as $item) {
+            $this->sendTroubleshooting($item);
+        }
+        $this->troubleshootingQueue = [];
+    }
+
+    public function sendAnalyticsHit(Analytic $hit)
+    {
+        $now = $this->getNow();
+        $requestBody = $hit->toApiKeys();
+        $url = FlagshipConstant::ANALYTICS_HIT_URL;
+        try {
+            $this->httpClient->setTimeout($this->config->getTimeout());
+
+            $this->httpClient->post($url, [], $requestBody);
+            $this->logDebugSprintf(
+                $this->config,
+                FlagshipConstant::SEND_ANALYTICS,
+                FlagshipConstant::ANALYTICS_HIT_SENT_SUCCESS,
+                [$this->getLogFormat(null, $url, $requestBody, [], $this->getNow() - $now)]
+            );
+        } catch (\Exception $exception) {
+            $this->logErrorSprintf(
+                $this->config,
+                FlagshipConstant::SEND_ANALYTICS,
+                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
+                [FlagshipConstant::SEND_ANALYTICS,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, [], $this->getNow() - $now)]
             );
         }
     }

@@ -4,6 +4,7 @@ namespace Flagship\Api;
 
 require_once __DIR__ . "/../Traits/Round.php";
 
+use DateTime;
 use Exception;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
@@ -12,13 +13,16 @@ use Flagship\Enum\HitCacheFields;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
 use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Model\ExposedFlag;
 use Flagship\Model\ExposedVisitor;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\LogTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -621,7 +625,6 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $this->assertCount(2, $strategy->getActivatePoolQueue());
     }
 
-
     public function testSendBatch()
     {
         $config = new DecisionApiConfig();
@@ -1131,5 +1134,346 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->method("cacheHit")->with($data)->willThrowException($exception);
 
         $strategy->cacheHit([$activate]);
+    }
+
+    public function testAddTroubleshootingHit()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["isTroubleshootingActivated"]
+        );
+
+        $strategy->expects($this->exactly(4))
+            ->method("isTroubleshootingActivated")
+            ->willReturnOnConsecutiveCalls(true, true, true, false);
+
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime)
+            ->setTraffic(100);
+
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(100);
+
+        $strategy->addTroubleshootingHit($troubleshooting);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+        $this->assertCount(1, $troubleshootingQueue);
+
+        $troubleshooting2 = new Troubleshooting();
+        $troubleshooting2->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(50);
+
+        $strategy->addTroubleshootingHit($troubleshooting2);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+        $this->assertCount(2, $troubleshootingQueue);
+
+        $troubleshootingData->setTraffic(49);
+
+        $troubleshooting3 = new Troubleshooting();
+        $troubleshooting3->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(50);
+
+        $strategy->addTroubleshootingHit($troubleshooting3);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+        $this->assertCount(2, $troubleshootingQueue);
+
+        $troubleshooting4 = new Troubleshooting();
+        $troubleshooting4->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(50);
+
+        $strategy->addTroubleshootingHit($troubleshooting4);
+
+        $troubleshootingQueue = $strategy->getTroubleshootingQueue();
+        $this->assertCount(2, $troubleshootingQueue);
+    }
+
+    public function testSendTroubleshootingQueue()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["isTroubleshootingActivated"]
+        );
+
+
+
+        $strategy->expects($this->exactly(4))
+            ->method("isTroubleshootingActivated")
+            ->willReturn(true, true, true, false);
+
+        $match = $this->exactly(2);
+
+        $httpClientMock->expects($match)
+            ->method('post')
+            ->with($this->callback(function ($url) use ($match) {
+                $troubleshootingUrl = FlagshipConstant::TROUBLESHOOTING_HIT_URL;
+                return $url === $troubleshootingUrl;
+            }));
+
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime)->setTraffic(100);
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId)->setTraffic(100);
+
+        $troubleshooting2 = new Troubleshooting();
+        $troubleshooting2->setConfig($config)->setVisitorId($visitorId)->setTraffic(100);
+
+        $strategy->addTroubleshootingHit($troubleshooting);
+        $strategy->addTroubleshootingHit($troubleshooting2);
+
+        $strategy->sendTroubleshootingQueue();
+
+        //
+        $strategy->sendTroubleshootingQueue();
+    }
+
+    public function testSendTroubleshootingQueueFailed()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["isTroubleshootingActivated", "logErrorSprintf"]
+        );
+
+
+
+        $strategy->expects($this->exactly(2))
+            ->method("isTroubleshootingActivated")
+            ->willReturn(true);
+
+        $strategy->expects($this->exactly(1))
+            ->method("logErrorSprintf");
+
+        $exception = new Exception("Error");
+        $httpClientMock->expects($this->exactly(1))
+            ->method('post')->willThrowException($exception);
+
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime)->setTraffic(100);
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId)
+            ->setTraffic(100);
+
+        $strategy->addTroubleshootingHit($troubleshooting);
+
+        $strategy->sendTroubleshootingQueue();
+    }
+
+    public function testIsTroubleshootingActivated()
+    {
+        $config = new DecisionApiConfig();
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["logErrorSprintf", "getNow"]
+        );
+
+        //No troubleshooting data is given
+        $check = $strategy->isTroubleshootingActivated();
+        $this->assertFalse($check);
+
+//        //Test troubleshooting data
+
+        $strategy->expects($this->exactly(3))->method("getNow")
+            ->willReturnOnConsecutiveCalls(
+                (new DateTime("2023-04-13T09:32:38.049Z"))->getTimestamp() * 1000,
+                (new DateTime("2023-04-13T10:03:39.049Z"))->getTimestamp() * 1000,
+                (new DateTime("2023-04-13T09:40:38.049Z"))->getTimestamp() * 1000
+            );
+//
+        //Test troubleshooting not start
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime);
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $check = $strategy->isTroubleshootingActivated();
+        $this->assertFalse($check);
+
+        //Test troubleshooting is finished
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime);
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $check = $strategy->isTroubleshootingActivated();
+        $this->assertFalse($check);
+
+        //Test troubleshooting
+        $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
+        $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDatetime)
+            ->setEndDate($endDatetime);
+
+        $strategy->setTroubleshootingData($troubleshootingData);
+
+        $check = $strategy->isTroubleshootingActivated();
+        $this->assertTrue($check);
+    }
+
+    public function testSendAnalyticsHit()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["isTroubleshootingActivated"]
+        );
+
+
+        $match = $this->exactly(1);
+
+        $httpClientMock->expects($match)
+            ->method('post')
+            ->with($this->callback(function ($url) use ($match) {
+                $troubleshootingUrl = FlagshipConstant::ANALYTICS_HIT_URL;
+                return $url === $troubleshootingUrl;
+            }), $this->callback(function ($hit) use ($match) {
+                return true;
+            }));
+
+        $analytic = new Analytic();
+        $analytic->setConfig($config);
+
+        $strategy->sendAnalyticsHit($analytic);
+    }
+
+    public function testSendAnalyticsHitFailed()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["post"]
+        );
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["logErrorSprintf"]
+        );
+
+
+        $match = $this->exactly(1);
+
+        $exception = new Exception("Error");
+        $httpClientMock->expects($match)
+            ->method('post')
+            ->willThrowException($exception);
+
+        $analytic = new Analytic();
+        $analytic->setConfig($config);
+
+        $strategy->sendAnalyticsHit($analytic);
     }
 }

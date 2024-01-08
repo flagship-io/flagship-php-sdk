@@ -3,7 +3,10 @@
 namespace Flagship\Api;
 
 use Flagship\Hit\Activate;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\HitAbstract;
+use Flagship\Hit\Troubleshooting;
+use Flagship\Model\TroubleshootingData;
 
 interface TrackingManagerCommonInterface
 {
@@ -18,4 +21,23 @@ interface TrackingManagerCommonInterface
      * @return void
      */
     public function activateFlag(Activate $hit);
+
+    /**
+     * @return void
+     */
+    public function addTroubleshootingHit(Troubleshooting $hit);
+
+    /**
+     * @return void
+     */
+    public function sendAnalyticsHit(Analytic $hit);
+
+    public function getTroubleshootingData();
+
+    /**
+     * @param TroubleshootingData $troubleshootingData
+     * @return BatchingCachingStrategyAbstract
+     */
+    public function setTroubleshootingData($troubleshootingData);
+
 }

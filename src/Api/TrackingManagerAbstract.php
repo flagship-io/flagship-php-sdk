@@ -15,6 +15,7 @@ use Flagship\Hit\Page;
 use Flagship\Hit\Screen;
 use Flagship\Hit\Segment;
 use Flagship\Hit\Transaction;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\HttpClientInterface;
 
@@ -41,14 +42,18 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
      */
     protected $strategy;
 
+    protected $flagshipInstanceId;
+
     /**
      * ApiManager constructor.
      *
      * @param FlagshipConfig $config
      * @param HttpClientInterface $httpClient
+     * @param null $flagshipInstanceId
      */
-    public function __construct(FlagshipConfig $config, HttpClientInterface $httpClient)
+    public function __construct(FlagshipConfig $config, HttpClientInterface $httpClient, $flagshipInstanceId = null)
     {
+        $this->flagshipInstanceId = $flagshipInstanceId;
         $this->httpClient = $httpClient;
         $this->config = $config;
         $this->strategy = $this->initStrategy();
@@ -79,7 +84,23 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
         return $this->strategy;
     }
 
+    /**
+     * @return TroubleshootingData
+     */
+    public function getTroubleshootingData()
+    {
+        return $this->getStrategy()->getTroubleshootingData();
+    }
 
+    /**
+     * @param TroubleshootingData $troubleshootingData
+     * @return TrackingManagerAbstract
+     */
+    public function setTroubleshootingData($troubleshootingData)
+    {
+        $this->getStrategy()->setTroubleshootingData($troubleshootingData);
+        return $this;
+    }
 
     /**
      * @return BatchingCachingStrategyAbstract
@@ -90,13 +111,15 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
             case CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE:
                 $strategy = new NoBatchingContinuousCachingStrategy(
                     $this->config,
-                    $this->httpClient
+                    $this->httpClient,
+                    $this->flagshipInstanceId
                 );
                 break;
             default:
                 $strategy = new BatchingOnFailedCachingStrategy(
                     $this->config,
-                    $this->httpClient
+                    $this->httpClient,
+                    $this->flagshipInstanceId
                 );
                 break;
         }
@@ -106,9 +129,9 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     protected function checkLookupHitData(array $item)
     {
         if (
-            isset($item[HitCacheFields::VERSION]) && $item[HitCacheFields::VERSION] == 1 &&
-            isset($item[HitCacheFields::DATA]) && isset($item[HitCacheFields::DATA][HitCacheFields::TYPE]) &&
-            isset($item[HitCacheFields::DATA][HitCacheFields::CONTENT])
+            isset($item[HitCacheFields::DATA][HitCacheFields::CONTENT]) &&
+            isset($item[HitCacheFields::DATA][HitCacheFields::TYPE]) &&
+            isset($item[HitCacheFields::VERSION]) && $item[HitCacheFields::VERSION] == 1
         ) {
             return true;
         }

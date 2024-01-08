@@ -20,11 +20,14 @@ class ApiManagerTest extends TestCase
         $httpClient = new HttpClient();
         $config = new DecisionApiConfig();
         $apiManager = new ApiManager($httpClient, $config);
+        $flagshipInstanceId = "flagshipInstanceId";
+        $apiManager->setFlagshipInstanceId($flagshipInstanceId);
         $this->assertSame($httpClient, $apiManager->getHttpClient());
         $this->assertSame($config, $apiManager->getConfig());
         $this->assertFalse($apiManager->getIsPanicMode());
         $apiManager->setIsPanicMode(true);
         $this->assertTrue($apiManager->getIsPanicMode());
+        $this->assertSame($flagshipInstanceId, $apiManager->getFlagshipInstanceId());
     }
 
     public function testGetCampaignModifications()
@@ -132,7 +135,9 @@ class ApiManagerTest extends TestCase
             "visitor_consent" => $visitor->hasConsented()
         ];
 
-        $url = FlagshipConstant::BASE_API_URL . '/' . $config->getEnvId() . '/' . FlagshipConstant::URL_CAMPAIGNS;
+        $url = FlagshipConstant::BASE_API_URL . '/' . $config->getEnvId() . '/' .
+            FlagshipConstant::URL_CAMPAIGNS . '?' .
+            FlagshipConstant::EXPOSE_ALL_KEYS . '=true&extras[]=accountSettings';
 
         $query = [
             FlagshipConstant::EXPOSE_ALL_KEYS => "true",
@@ -140,10 +145,10 @@ class ApiManagerTest extends TestCase
 
         $httpPost->withConsecutive(
             [
-                $url, [FlagshipConstant::EXPOSE_ALL_KEYS => "true"], $postData
+                $url, [], $postData
             ],
             [
-                $url, [FlagshipConstant::EXPOSE_ALL_KEYS => "true"], [
+                $url, [], [
                 "visitorId" => $visitor->getVisitorId(),
                 "anonymousId" => $visitor->getAnonymousId(),
                 "trigger_hit" => false,
@@ -227,7 +232,6 @@ class ApiManagerTest extends TestCase
             'firstConnect' => true,
             '' => 'hello world' //Test with invalid key
         ];
-
 
         $campaigns = [
             [

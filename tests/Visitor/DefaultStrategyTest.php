@@ -17,6 +17,7 @@ use Flagship\Enum\HitType;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
+use Flagship\Hit\Analytic;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
@@ -662,7 +663,7 @@ class DefaultStrategyTest extends TestCase
 
     public function testFetchFlagsTroubleshootingData()
     {
-        $config = new DecisionApiConfig('envId', 'apiKey');
+        $config = new BucketingConfig('envId', 'apiKey');
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -2087,5 +2088,68 @@ class DefaultStrategyTest extends TestCase
         $visitor->fetchFlags();
 
         $this->assertCount(0, $visitor->getFlagsDTO());
+    }
+
+    public function testSendAnalyticsHit()
+    {
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["sendAnalyticsHit"]
+        );
+
+        $murmurHashMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\MurmurHash',
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["murmurHash3Int32"]
+        );
+
+        $analytic = new Analytic();
+        $analytic->setVisitorId($visitorId);
+
+        $uniqueId = $analytic->getVisitorId() . (new DateTime())->format("Y-m-d");
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        $trackingManagerMock->expects($this->once())->method("sendAnalyticsHit")->with($analytic);
+
+        $murmurHashMock->expects($this->exactly(2))
+            ->method('murmurHash3Int32')->with($uniqueId)
+            ->willReturnOnConsecutiveCalls(100, 50);
+
+        $configManager = (new ConfigManager())->setConfig($config);
+        $configManager->setDecisionManager($decisionManager)
+            ->setTrackingManager($trackingManagerMock);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+        $defaultStrategy->setMurmurHash($murmurHashMock);
+
+        $defaultStrategy->sendAnalyticsHit($analytic);
+
+        $defaultStrategy->sendAnalyticsHit($analytic);
+
+        $config->setDisableDeveloperUsageTracking(true);
+
+        $defaultStrategy->sendAnalyticsHit($analytic);
+
     }
 }

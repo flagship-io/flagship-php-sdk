@@ -2,7 +2,7 @@ name: CI PHP 8
 
 on:
   push:
-    branches: [ main, feature/sdk_v2]
+    branches: [ main]
 
 jobs:
   build:
@@ -49,6 +49,9 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test -- -c phpunit.8.xml
+
+    - name: Run functional test
+      run: php tests/TestFunctional.php
     
     - name: Upload coverage report to codecov
       uses: codecov/codecov-action@v2

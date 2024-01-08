@@ -8,6 +8,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      FS_API_KEY: "${{ secrets.FS_CI_CAMPAIGNS_API_KEY }}"
+      FS_ENV_ID:  "${{ secrets.FS_CI_CAMPAIGNS_ENV_ID }}"
 
     strategy:
       matrix:

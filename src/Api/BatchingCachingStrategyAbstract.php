@@ -651,6 +651,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         foreach ($this->troubleshootingQueue as $item) {
             $this->sendTroubleshooting($item);
         }
+        $this->troubleshootingQueue = [];
     }
 
     public function sendAnalyticsHit(Analytic $hit)

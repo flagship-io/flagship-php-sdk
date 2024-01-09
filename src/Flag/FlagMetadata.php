@@ -175,8 +175,11 @@ class FlagMetadata implements JsonSerializable, FlagMetadataInterface
     {
         return [
             "campaignId" => $this->getCampaignId(),
+            "campaignName" => $this->getCampaignName(),
             "variationGroupId" => $this->getVariationGroupId(),
+            "variationGroupName" => $this->getVariationGroupName(),
             "variationId" => $this->getVariationId(),
+            "variationName" => $this->getVariationName(),
             "isReference" => $this->isReference(),
             "campaignType" => $this->getCampaignType(),
             "slug" => $this->getSlug()

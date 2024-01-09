@@ -41,8 +41,11 @@ class FlagMetadataTest extends TestCase
 
         $metadataJson = json_encode([
             "campaignId" => $campaignId,
+            "campaignName"=> $campaignName,
             "variationGroupId" => $variationGroupId,
+            "variationGroupName"=> $variationGroupName,
             "variationId" => $variationId,
+            "variationName"=> $variationName,
             "isReference" => $isReferenceId,
             "campaignType" => $campaignType,
             "slug" => $slug
@@ -51,8 +54,11 @@ class FlagMetadataTest extends TestCase
 
         $metadataJson = json_encode([
             "campaignId" => "",
+            "campaignName" => "",
             "variationGroupId" => "",
+            "variationGroupName"=>'',
             "variationId" => "",
+            "variationName"=>"",
             "isReference" => false,
             "campaignType" => "",
             "slug" => null

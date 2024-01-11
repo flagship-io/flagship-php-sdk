@@ -43,12 +43,14 @@ class FlagshipConstant
     const TROUBLESHOOTING_HIT_URL = 'https://events.flagship.io/troubleshooting';
     const ANALYTICS_HIT_URL = 'https://events.flagship.io/analytics';
     const TROUBLESHOOTING_SENT_SUCCESS = 'Troubleshooting hit has been sent : %s';
-    const ANALYTICS_HIT_SENT_SUCCESS = 'Analytics hit has been sent : %s';
+    const USAGE_HIT_HAS_BEEN_SENT_S = 'Usage hit has been sent : %s';
     const TROUBLESHOOTING_HIT_ADDED_IN_QUEUE = 'The TROUBLESHOOTING HIT has been added in the pool queue : %s';
+    const USAGE_HIT_ADDED_IN_QUEUE = 'The USAGE HIT has been added in the pool queue : %s';
     const ADD_TROUBLESHOOTING_HIT = 'ADD TROUBLESHOOTING HIT';
+    const ADD_USAGE_HIT = 'ADD USAGE HIT';
 
     const SEND_TROUBLESHOOTING = 'SEND TROUBLESHOOTING';
-    const SEND_ANALYTICS = 'SEND ANALYTICS';
+    const SEND_USAGE_HIT = 'SEND USAGE HIT';
 
     Const BUCKETING = "BUCKETING";
 

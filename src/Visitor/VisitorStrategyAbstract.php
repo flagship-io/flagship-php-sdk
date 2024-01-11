@@ -457,10 +457,12 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
 
     public function sendConsentHitTroubleshooting()
     {
-        if (!$this->getVisitor()->getConsentHitTroubleshooting()) {
+        $consentHitTroubleshooting = $this->getVisitor()->getConsentHitTroubleshooting();
+        if (!$consentHitTroubleshooting) {
             return;
         }
-        $this->sendTroubleshootingHit($this->getVisitor()->getConsentHitTroubleshooting());
+        $consentHitTroubleshooting->setTraffic($this->getVisitor()->getTraffic());
+        $this->sendTroubleshootingHit($consentHitTroubleshooting);
         $this->getVisitor()->setConsentHitTroubleshooting(null);
     }
 }

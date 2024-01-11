@@ -60,7 +60,7 @@ class FlagshipConstant
     /**
      * SDK version
      */
-    const SDK_VERSION = "3.1.2";
+    const SDK_VERSION = "3.2.0";
 
     const GET_FLAG = 'GET_FLAG';
 

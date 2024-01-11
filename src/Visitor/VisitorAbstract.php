@@ -89,6 +89,29 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
     protected $flagshipInstanceId;
 
+    /**
+     * @var Troubleshooting
+     */
+    protected $ConsentHitTroubleshooting;
+
+    /**
+     * @return Troubleshooting|null
+     */
+    public function getConsentHitTroubleshooting()
+    {
+        return $this->ConsentHitTroubleshooting;
+    }
+
+    /**
+     * @param Troubleshooting|null $ConsentHitTroubleshooting
+     * @return VisitorAbstract
+     */
+    public function setConsentHitTroubleshooting($ConsentHitTroubleshooting)
+    {
+        $this->ConsentHitTroubleshooting = $ConsentHitTroubleshooting;
+        return $this;
+    }
+
 
 
     /**

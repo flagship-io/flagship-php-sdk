@@ -5,12 +5,17 @@ namespace Flagship\Visitor;
 use DateTime;
 use Exception;
 use Flagship\Api\TrackingManagerAbstract;
+use Flagship\Config\BucketingConfig;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\DecisionManagerAbstract;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
-use Flagship\Hit\Analytic;
+use Flagship\Enum\LogLevel;
+use Flagship\Enum\TroubleshootingLabel;
+use Flagship\Hit\UsageHit;
 use Flagship\Hit\Troubleshooting;
+use Flagship\Model\FlagDTO;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Traits\Helper;
 use Flagship\Traits\ValidatorTrait;
@@ -353,17 +358,109 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         return new DateTime();
     }
 
-    public function sendAnalyticsHit(Analytic $hit)
+    public function sendSdkConfigAnalyticHit()
     {
         if ($this->getConfig()->disableDeveloperUsageTracking()) {
             return;
         }
-        $uniqueId = $hit->getVisitorId() . $this->getCurrentDateTime()->format("Y-m-d");
+        $uniqueId = $this->getVisitor()->getVisitorId() . $this->getCurrentDateTime()->format("Y-m-d");
         $hash = $this->getMurmurHash()->murmurHash3Int32($uniqueId);
         $traffic = $hash % 100;
         if ($traffic >= FlagshipConstant::ANALYTIC_HIT_ALLOCATION) {
             return;
         }
-        $this->getTrackingManager()->sendAnalyticsHit($hit);
+        $visitor = $this->getVisitor();
+        $config = $this->getConfig();
+        $bucketingUrl = null;
+        $fetchThirdPartyData = null;
+        if ($config instanceof BucketingConfig) {
+            $bucketingUrl = $config->getBucketingUrl();
+            $fetchThirdPartyData = $config->getFetchThirdPartyData();
+        }
+        $analytic = new UsageHit();
+        $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)
+            ->setLogLevel(LogLevel::INFO)
+            ->setVisitorId($this->getFlagshipInstanceId())
+            ->setSdkConfigMode($config->getDecisionMode())
+            ->setSdkConfigTimeout($config->getTimeout())
+            ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
+            ->setSdkConfigBucketingUrl($bucketingUrl)
+            ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
+            ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
+            ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
+            ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
+            ->setConfig($config)
+            ->setSdkStatus($visitor->getSdkStatus())
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId());
+        $this->getTrackingManager()->addUsageHit($analytic);
+    }
+
+    /**
+     * /**
+     * @param TroubleshootingData $troubleshootingData
+     * @param FlagDTO[] $flagsDTO
+     * @param array $campaigns
+     * @param numeric $now
+     * @return void
+     * /
+     * @return void
+     */
+    public function sendFetchFlagsTroubleshooting($troubleshootingData, $flagsDTO, $campaigns, $now)
+    {
+        $visitor = $this->getVisitor();
+        $config = $this->getConfig();
+        $bucketingUrl = null;
+        $fetchThirdPartyData = null;
+        if ($config instanceof BucketingConfig) {
+            $bucketingUrl = $config->getBucketingUrl();
+            $fetchThirdPartyData = $config->getFetchThirdPartyData();
+        }
+
+        $assignmentHistory = [];
+        foreach ($flagsDTO as $item) {
+            $assignmentHistory[$item->getVariationGroupId()] = $item->getVariationId();
+        }
+        $uniqueId = $visitor->getVisitorId() . $troubleshootingData->getEndDate()->getTimestamp();
+        $hash = $this->getMurmurHash()->murmurHash3Int32($uniqueId);
+        $traffic = $hash % 100;
+        $visitor->setTraffic($traffic);
+
+        $troubleshootingHit = new Troubleshooting();
+        $troubleshootingHit->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS)
+            ->setLogLevel(LogLevel::INFO)
+            ->setVisitorId($visitor->getVisitorId())
+            ->setAnonymousId($visitor->getAnonymousId())
+            ->setVisitorSessionId($visitor->getInstanceId())
+            ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
+            ->setTraffic($traffic)
+            ->setConfig($config)
+            ->setVisitorAssignmentHistory($assignmentHistory)
+            ->setVisitorContext($visitor->getContext())
+            ->setSdkStatus($visitor->getSdkStatus())
+            ->setVisitorCampaigns($campaigns)
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+            ->setVisitorFlags($flagsDTO)
+            ->setVisitorConsent($visitor->hasConsented())
+            ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
+            ->setHttpResponseTime(($this->getNow() - $now))
+            ->setSdkConfigMode($config->getDecisionMode())
+            ->setSdkConfigTimeout($config->getTimeout())
+            ->setSdkConfigBucketingUrl($bucketingUrl)
+            ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
+            ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
+            ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
+            ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
+            ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy());
+
+        $this->sendTroubleshootingHit($troubleshootingHit);
+    }
+
+    public function sendConsentHitTroubleshooting()
+    {
+        if (!$this->getVisitor()->getConsentHitTroubleshooting()) {
+            return;
+        }
+        $this->sendTroubleshootingHit($this->getVisitor()->getConsentHitTroubleshooting());
+        $this->getVisitor()->setConsentHitTroubleshooting(null);
     }
 }

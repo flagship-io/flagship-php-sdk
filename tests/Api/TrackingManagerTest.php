@@ -8,7 +8,7 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
 use Flagship\Hit\Activate;
-use Flagship\Hit\Analytic;
+use Flagship\Hit\UsageHit;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
@@ -75,7 +75,7 @@ class TrackingManagerTest extends TestCase
                 "addTroubleshootingHit",
                 "setTroubleshootingData",
                 "getTroubleshootingData",
-                "sendAnalyticsHit"
+                "addUsageHit"
             ]
         );
 
@@ -115,7 +115,7 @@ class TrackingManagerTest extends TestCase
             ->method("sendTroubleshootingQueue");
 
         $BatchingCachingStrategyMock->expects($this->once())
-            ->method("sendAnalyticsHit");
+            ->method("addUsageHit");
 
         $page = new Page("http://localhost");
         $page->setConfig($config);
@@ -136,8 +136,8 @@ class TrackingManagerTest extends TestCase
 
         $trackingManager->sendBatch();
 
-        $analytic = new Analytic();
-        $trackingManager->sendAnalyticsHit($analytic);
+        $analytic = new UsageHit();
+        $trackingManager->addUsageHit($analytic);
     }
 
     public function testLookupHits()

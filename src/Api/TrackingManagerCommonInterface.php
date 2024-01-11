@@ -3,7 +3,7 @@
 namespace Flagship\Api;
 
 use Flagship\Hit\Activate;
-use Flagship\Hit\Analytic;
+use Flagship\Hit\UsageHit;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Model\TroubleshootingData;
@@ -30,7 +30,7 @@ interface TrackingManagerCommonInterface
     /**
      * @return void
      */
-    public function sendAnalyticsHit(Analytic $hit);
+    public function addUsageHit(UsageHit $hit);
 
     public function getTroubleshootingData();
 

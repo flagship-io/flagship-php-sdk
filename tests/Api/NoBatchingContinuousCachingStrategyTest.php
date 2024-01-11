@@ -8,9 +8,11 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
+use Flagship\Hit\UsageHit;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\Page;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Traits\LogTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -431,5 +433,55 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $this->assertCount(0, $strategy->getHitsPoolQueue());
         $this->assertCount(0, $strategy->getActivatePoolQueue());
+    }
+
+    public function testAddTroubleshootingHit()
+    {
+        $config = new DecisionApiConfig();
+
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\NoBatchingContinuousCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            false,
+            true,
+            ["sendTroubleshooting"]
+        );
+
+        $troubleshooting = new Troubleshooting();
+        $troubleshooting->setConfig($config);
+
+        $strategy->expects($this->once())->method('sendTroubleshooting')->with($troubleshooting);
+
+        $strategy->addTroubleshootingHit($troubleshooting);
+    }
+
+    public function testAddUsageHit()
+    {
+        $config = new DecisionApiConfig();
+
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\NoBatchingContinuousCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            false,
+            true,
+            ["sendUsageHit"]
+        );
+
+        $usageHit = new UsageHit();
+        $usageHit->setConfig($config);
+
+        $strategy->expects($this->once())->method('sendUsageHit')->with($usageHit);
+
+        $strategy->addUsageHit($usageHit);
     }
 }

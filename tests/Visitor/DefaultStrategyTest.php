@@ -14,10 +14,11 @@ use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FlagSyncStatus;
 use Flagship\Enum\HitType;
+use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
-use Flagship\Hit\Analytic;
+use Flagship\Hit\UsageHit;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
@@ -699,9 +700,9 @@ class DefaultStrategyTest extends TestCase
                 "troubleshooting" => $troubleshootingData
             ]];
 
-        $httpClientMock->expects($this->once())->method("post")->willReturn(new HttpResponse(200, $httpResponseBody));
+        $httpClientMock->expects($this->exactly(2))->method("post")->willReturn(new HttpResponse(200, $httpResponseBody));
 
-        $trackingManagerMock->expects($this->once())->method("setTroubleshootingData")
+        $trackingManagerMock->expects($this->exactly(2))->method("setTroubleshootingData")
             ->with($this->callback(function ($param) use ($troubleshootingData) {
                 $startDate = new DateTime($troubleshootingData['startDate']);
                 $endDate = new DateTime($troubleshootingData['endDate']);
@@ -711,10 +712,25 @@ class DefaultStrategyTest extends TestCase
                     $param->getEndDate()->getTimestamp() === $endDate->getTimestamp();
             }));
 
-        $trackingManagerMock->expects($this->once())
-            ->method("addTroubleshootingHit")->with($this->callback(function ($param) {
-                return $param->getLabel() === TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS ;
+        $matcher = $this->exactly(4);
+        $trackingManagerMock->expects($matcher)
+            ->method("addTroubleshootingHit")->with($this->callback(function ($param) use($matcher) {
+                switch ($matcher->getInvocationCount()){
+                    case 1:
+                    case 3:
+                    {
+                        return $param->getLabel() === TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS;
+                    }
+                    case 2:
+                    case 4:
+                    {
+                        return $param->getLabel() === TroubleshootingLabel::VISITOR_SEND_HIT;
+                    }
+                }
+                return  false;
             }));
+
+
 
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($decisionManager)
@@ -729,14 +745,20 @@ class DefaultStrategyTest extends TestCase
             true,
             false,
             true,
-            ["sendAnalyticsHit"]
+            ["sendSdkConfigAnalyticHit"]
         );
 
-        $defaultStrategyMock->expects($this->once())->method("sendAnalyticsHit");
+        $defaultStrategyMock->expects($this->exactly(2))->method("sendSdkConfigAnalyticHit");
 
         $defaultStrategyMock->setMurmurHash(new MurmurHash());
 
         $defaultStrategyMock->fetchFlags();
+
+        $defaultStrategyMock->fetchFlags();
+
+        //Test send consent Troubleshooting
+
+        $defaultStrategyMock->setConsent(true);
     }
 
 
@@ -2103,7 +2125,8 @@ class DefaultStrategyTest extends TestCase
 
     public function testSendAnalyticsHit()
     {
-        $config = new DecisionApiConfig('envId', 'apiKey');
+        $bucketingUrl = "https://terst.com";
+        $config = new BucketingConfig($bucketingUrl,'envId', 'apiKey');
         $visitorId = "visitorId";
 
         $httpClientMock = $this->getMockForAbstractClass(
@@ -2120,7 +2143,7 @@ class DefaultStrategyTest extends TestCase
             false,
             false,
             true,
-            ["sendAnalyticsHit"]
+            ["addUsageHit"]
         );
 
         $murmurHashMock = $this->getMockForAbstractClass(
@@ -2133,34 +2156,49 @@ class DefaultStrategyTest extends TestCase
             ["murmurHash3Int32"]
         );
 
-        $analytic = new Analytic();
-        $analytic->setVisitorId($visitorId);
-
-        $uniqueId = $analytic->getVisitorId() . (new DateTime())->format("Y-m-d");
+        $flagshipInstanceId = "flagshipInstanceId";
         $decisionManager = new ApiManager($httpClientMock, $config);
-
-        $trackingManagerMock->expects($this->once())->method("sendAnalyticsHit")->with($analytic);
-
-        $murmurHashMock->expects($this->exactly(2))
-            ->method('murmurHash3Int32')->with($uniqueId)
-            ->willReturnOnConsecutiveCalls(100, 50);
-
         $configManager = (new ConfigManager())->setConfig($config);
         $configManager->setDecisionManager($decisionManager)
             ->setTrackingManager($trackingManagerMock);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
+        $analytic = new UsageHit();
+        $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)
+            ->setLogLevel(LogLevel::INFO)
+            ->setVisitorId($flagshipInstanceId)
+            ->setSdkConfigMode($config->getDecisionMode())
+            ->setSdkConfigTimeout($config->getTimeout())
+            ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
+            ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
+            ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
+            ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
+            ->setSdkConfigBucketingUrl($bucketingUrl)
+            ->setConfig($config)
+            ->setSdkStatus($visitor->getSdkStatus())
+            ->setFlagshipInstanceId($flagshipInstanceId);
+
+        $uniqueId = $visitor->getVisitorId() . (new DateTime())->format("Y-m-d");
+
+
+        $trackingManagerMock->expects($this->once())->method("addUsageHit")->with($analytic);
+
+        $murmurHashMock->expects($this->exactly(2))
+            ->method('murmurHash3Int32')->with($uniqueId)
+            ->willReturnOnConsecutiveCalls(100, 50);
+
         $defaultStrategy = new DefaultStrategy($visitor);
+        $defaultStrategy->setFlagshipInstanceId($flagshipInstanceId);
         $defaultStrategy->setMurmurHash($murmurHashMock);
 
-        $defaultStrategy->sendAnalyticsHit($analytic);
+        $defaultStrategy->sendSdkConfigAnalyticHit();
 
-        $defaultStrategy->sendAnalyticsHit($analytic);
+        $defaultStrategy->sendSdkConfigAnalyticHit();
 
         $config->setDisableDeveloperUsageTracking(true);
 
-        $defaultStrategy->sendAnalyticsHit($analytic);
+        $defaultStrategy->sendSdkConfigAnalyticHit();
 
     }
 }

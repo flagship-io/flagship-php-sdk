@@ -13,7 +13,7 @@ use Flagship\Enum\HitCacheFields;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
-use Flagship\Hit\Analytic;
+use Flagship\Hit\UsageHit;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
@@ -1395,7 +1395,94 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $this->assertTrue($check);
     }
 
-    public function testSendAnalyticsHit()
+    public function testAddUsageHit()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $strategy = new BatchingOnFailedCachingStrategy($config, $httpClientMock);
+
+        $usageHit = new UsageHit();
+        $usageHit->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(100);
+
+        $strategy->addUsageHit($usageHit);
+
+        $usageHitQueue = $strategy->getUsageHitQueue();
+
+        $this->assertCount(1, $usageHitQueue);
+
+        $usageHit2 = new UsageHit();
+        $usageHit2->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(50);
+
+        $strategy->addUsageHit($usageHit2);
+
+        $usageHitQueue = $strategy->getUsageHitQueue();
+        $this->assertCount(2, $usageHitQueue);
+
+    }
+
+    public function testSendUsageHitQueue()
+    {
+        $config = new DecisionApiConfig();
+        $visitorId = "visitorId";
+
+        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+
+        $strategy = $this->getMockForAbstractClass(
+            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            [$config, $httpClientMock],
+            "",
+            true,
+            true,
+            true,
+            ["sendUsageHit"]
+        );
+
+
+        $usageHit = new UsageHit();
+        $usageHit->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(100);
+
+        $strategy->addUsageHit($usageHit);
+
+
+
+        $usageHit2 = new UsageHit();
+        $usageHit2->setConfig($config)
+            ->setVisitorId($visitorId)
+            ->setTraffic(50);
+
+        $strategy->addUsageHit($usageHit2);
+
+        $matcher = $this->exactly(2);
+        $strategy->expects($matcher)->method('sendUsageHit')->with($this->callback(function ($hit) use($matcher, $usageHit, $usageHit2){
+            switch ($matcher->getInvocationCount()){
+                case 1:{
+                    return $hit===$usageHit;
+                }
+                case 2:{
+                    return $hit === $usageHit2;
+                }
+            }
+            return  false;
+        }));
+
+        $strategy->sendUsageHitQueue();
+        $usageHitQueue = $strategy->getUsageHitQueue();
+        $this->assertCount(0,$usageHitQueue);
+
+        $strategy->sendUsageHitQueue();
+    }
+
+
+    public function testSendUsageHit()
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitorId";
@@ -1432,13 +1519,13 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
                 return true;
             }));
 
-        $analytic = new Analytic();
+        $analytic = new UsageHit();
         $analytic->setConfig($config);
 
-        $strategy->sendAnalyticsHit($analytic);
+        $strategy->sendUsageHit($analytic);
     }
 
-    public function testSendAnalyticsHitFailed()
+    public function testSendUsageHitFailed()
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitorId";
@@ -1471,9 +1558,9 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->method('post')
             ->willThrowException($exception);
 
-        $analytic = new Analytic();
+        $analytic = new UsageHit();
         $analytic->setConfig($config);
 
-        $strategy->sendAnalyticsHit($analytic);
+        $strategy->sendUsageHit($analytic);
     }
 }

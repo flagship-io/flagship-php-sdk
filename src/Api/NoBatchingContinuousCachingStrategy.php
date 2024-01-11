@@ -5,8 +5,10 @@ namespace Flagship\Api;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
+use Flagship\Hit\UsageHit;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
+use Flagship\Hit\Troubleshooting;
 
 class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstract
 {
@@ -133,5 +135,15 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
         }
         $this->flushHits($mergedQueue);
         $this->cacheHitKeys = [];
+    }
+
+    public function addTroubleshootingHit(Troubleshooting $hit)
+    {
+         $this->sendTroubleshooting($hit);
+    }
+
+    public function addUsageHit(UsageHit $hit)
+    {
+        $this->sendUsageHit($hit);
     }
 }

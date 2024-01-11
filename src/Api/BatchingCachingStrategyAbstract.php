@@ -9,7 +9,7 @@ use Flagship\Enum\HitCacheFields;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
-use Flagship\Hit\Analytic;
+use Flagship\Hit\UsageHit;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\HitBatch;
@@ -44,9 +44,16 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     protected $troubleshootingQueue;
 
     /**
+     * @var UsageHit[]
+     */
+    protected $usageHitQueue;
+
+    /**
      * @var TroubleshootingData
      */
     protected $troubleshootingData;
+
+
 
     /**
      * @var HttpClientInterface
@@ -63,6 +70,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @param FlagshipConfig $config
      * @param HttpClientInterface $httpClient
+     * @param null $flagshipInstanceId
      */
     public function __construct(
         FlagshipConfig $config,
@@ -74,7 +82,16 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->hitsPoolQueue = [];
         $this->activatePoolQueue = [];
         $this->troubleshootingQueue = [];
+        $this->usageHitQueue = [];
         $this->flagshipInstanceId = $flagshipInstanceId;
+    }
+
+    /**
+     * @return UsageHit []
+     */
+    public function getUsageHitQueue()
+    {
+        return $this->usageHitQueue;
     }
 
     /**
@@ -654,29 +671,51 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->troubleshootingQueue = [];
     }
 
-    public function sendAnalyticsHit(Analytic $hit)
+    public function addUsageHit(UsageHit $hit)
+    {
+        $hitKey = $this->generateHitKey($hit->getVisitorId());
+        $hit->setKey($hitKey);
+        $this->usageHitQueue[$hit->getKey()] = $hit;
+        $this->logDebugSprintf(
+            $this->config,
+            FlagshipConstant::ADD_USAGE_HIT,
+            FlagshipConstant::USAGE_HIT_ADDED_IN_QUEUE,
+            [$hit->toApiKeys()]
+        );
+    }
+    public function sendUsageHit(UsageHit $hit)
     {
         $now = $this->getNow();
         $requestBody = $hit->toApiKeys();
         $url = FlagshipConstant::ANALYTICS_HIT_URL;
         try {
             $this->httpClient->setTimeout($this->config->getTimeout());
-
             $this->httpClient->post($url, [], $requestBody);
             $this->logDebugSprintf(
                 $this->config,
-                FlagshipConstant::SEND_ANALYTICS,
-                FlagshipConstant::ANALYTICS_HIT_SENT_SUCCESS,
+                FlagshipConstant::SEND_USAGE_HIT,
+                FlagshipConstant::USAGE_HIT_HAS_BEEN_SENT_S,
                 [$this->getLogFormat(null, $url, $requestBody, [], $this->getNow() - $now)]
             );
         } catch (\Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,
-                FlagshipConstant::SEND_ANALYTICS,
+                FlagshipConstant::SEND_USAGE_HIT,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_ANALYTICS,
+                [FlagshipConstant::SEND_USAGE_HIT,
                     $this->getLogFormat($exception->getMessage(), $url, $requestBody, [], $this->getNow() - $now)]
             );
         }
+    }
+
+    public function sendUsageHitQueue()
+    {
+        if ( count($this->usageHitQueue) === 0) {
+            return;
+        }
+        foreach ($this->usageHitQueue as $item) {
+            $this->sendUsageHit($item);
+        }
+        $this->usageHitQueue = [];
     }
 }

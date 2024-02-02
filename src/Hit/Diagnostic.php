@@ -74,6 +74,11 @@ class Diagnostic extends HitAbstract
     private $sdkConfigMode;
 
     /**
+     * @var numeric
+     */
+    private $sdkConfigLogLeve;
+
+    /**
      * @var bool
      */
     private $sdkConfigCustomLogManager;
@@ -286,7 +291,6 @@ class Diagnostic extends HitAbstract
     private $traffic;
 
     private $flagshipInstanceId;
-
 
 
     public function __construct($type)
@@ -1293,6 +1297,26 @@ class Diagnostic extends HitAbstract
         return $this;
     }
 
+    /**
+     * @return float|int|string
+     */
+    public function getSdkConfigLogLeve()
+    {
+        return $this->sdkConfigLogLeve;
+    }
+
+    /**
+     * @param float|int|string $sdkConfigLogLeve
+     * @return Diagnostic
+     */
+    public function setSdkConfigLogLeve($sdkConfigLogLeve)
+    {
+        $this->sdkConfigLogLeve = $sdkConfigLogLeve;
+        return $this;
+    }
+
+
+
     public function toApiKeys()
     {
         $customVariable = [
@@ -1329,6 +1353,9 @@ class Diagnostic extends HitAbstract
         }
         if ($this->getSdkStatus() !== null) {
             $customVariable["sdk.status"] = FlagshipStatus::getStatusName($this->getSdkStatus());
+        }
+        if ($this->getSdkConfigLogLeve() !== null) {
+            $customVariable["sdk.config.logLevel"] = LogLevel::getLogName($this->getSdkConfigLogLeve());
         }
         if ($this->getSdkConfigMode() !== null) {
             $customVariable["sdk.config.mode"] = DecisionMode::getDecisionModeName($this->getSdkConfigMode());

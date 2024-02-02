@@ -104,6 +104,7 @@ class TroubleshootingTest extends TestCase
             ->setStackOriginVersion($stackOriginVersion)
             ->setSdkStatus($sdkStatus)
             ->setSdkConfigMode($sdkConfigMode)
+            ->setSdkConfigLogLeve($config->getLogLevel())
             ->setSdkConfigCustomLogManager(true)
             ->setSdkConfigCustomCacheManager(true)
             ->setSdkConfigStatusListener(false)
@@ -162,6 +163,7 @@ class TroubleshootingTest extends TestCase
             'stack.origin.name' => $stackOriginName,
             'stack.origin.version' => $stackOriginVersion,
             'sdk.status' => FlagshipStatus::getStatusName($sdkStatus),
+            'sdk.config.logLevel' => LogLevel::getLogName($config->getLogLevel()),
             'sdk.config.mode' => DecisionMode::getDecisionModeName($sdkConfigMode),
             'sdk.config.customLogManager' => 'true',
             'sdk.config.customCacheManager' => 'true',

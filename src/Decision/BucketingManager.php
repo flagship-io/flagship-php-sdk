@@ -171,7 +171,7 @@ class BucketingManager extends DecisionManagerAbstract
             $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR)
                 ->setFlagshipInstanceId($this->getFlagshipInstanceId())
                 ->setTraffic(0)
-                ->setLogLevel("ERROR")
+                ->setLogLevel(LogLevel::ERROR)
                 ->setConfig($this->getConfig())
                 ->setHttpRequestMethod("GET")
                 ->setHttpRequestUrl($url)

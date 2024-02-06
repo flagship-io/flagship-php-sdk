@@ -3,6 +3,8 @@
 namespace Flagship\Api;
 
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\LogLevel;
+use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\UsageHit;
@@ -77,6 +79,22 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 [FlagshipConstant::SEND_HIT,
                     $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now)]
             );
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_HIT_ROUTE_ERROR)
+                ->setLogLevel(LogLevel::ERROR)
+                ->setVisitorId($this->flagshipInstanceId)
+                ->setFlagshipInstanceId($this->flagshipInstanceId)
+                ->setTraffic(100)
+                ->setConfig($this->config)
+                ->setHttpRequestBody($requestBody)
+                ->setHttpRequestHeaders($header)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+            ;
+            $this->addTroubleshootingHit($troubleshooting);
+            $this->sendTroubleshootingQueue();
         }
     }
 
@@ -119,6 +137,23 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 [FlagshipConstant::SEND_ACTIVATE,
                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now)]
             );
+
+            $troubleshooting = new Troubleshooting();
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)
+                ->setLogLevel(LogLevel::ERROR)
+                ->setVisitorId($this->flagshipInstanceId)
+                ->setFlagshipInstanceId($this->flagshipInstanceId)
+                ->setTraffic(100)
+                ->setConfig($this->config)
+                ->setHttpRequestBody($requestBody)
+                ->setHttpRequestHeaders($headers)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+            ;
+            $this->addTroubleshootingHit($troubleshooting);
+            $this->sendTroubleshootingQueue();
         }
     }
 

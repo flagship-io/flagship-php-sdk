@@ -1443,7 +1443,7 @@ class Diagnostic extends HitAbstract
         if (is_array($this->getVisitorContext())) {
             $context = $this->getVisitorContext();
             foreach ($context as $index => $item) {
-                $customVariable["visitor.context.$index"] = is_string($item) ?  $item : json_encode($item);
+                $customVariable["visitor.context.[$index]"] = is_string($item) ?  $item : json_encode($item);
             }
         }
 

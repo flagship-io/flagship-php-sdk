@@ -66,7 +66,7 @@ class NoConsentStrategy extends DefaultStrategy
      */
     private function log($functionName)
     {
-        $this->logError(
+        $this->logInfo(
             $this->getVisitor()->getConfig(),
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_CONSENT_ERROR,

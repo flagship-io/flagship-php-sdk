@@ -104,6 +104,7 @@ class TroubleshootingTest extends TestCase
             ->setStackOriginVersion($stackOriginVersion)
             ->setSdkStatus($sdkStatus)
             ->setSdkConfigMode($sdkConfigMode)
+            ->setSdkConfigLogLeve($config->getLogLevel())
             ->setSdkConfigCustomLogManager(true)
             ->setSdkConfigCustomCacheManager(true)
             ->setSdkConfigStatusListener(false)
@@ -162,6 +163,7 @@ class TroubleshootingTest extends TestCase
             'stack.origin.name' => $stackOriginName,
             'stack.origin.version' => $stackOriginVersion,
             'sdk.status' => FlagshipStatus::getStatusName($sdkStatus),
+            'sdk.config.logLevel' => LogLevel::getLogName($config->getLogLevel()),
             'sdk.config.mode' => DecisionMode::getDecisionModeName($sdkConfigMode),
             'sdk.config.customLogManager' => 'true',
             'sdk.config.customCacheManager' => 'true',
@@ -183,8 +185,8 @@ class TroubleshootingTest extends TestCase
             'http.response.code' => (string)$httpResponseCode,
             "http.response.body" => json_encode($httpResponseBody),
             'http.response.time' => (string)$httpResponseTime,
-            'visitor.context.key1' => 'value1',
-            'visitor.context.key2' => 'value2',
+            'visitor.context.[key1]' => 'value1',
+            'visitor.context.[key2]' => 'value2',
             'visitor.consent' => 'true',
             'visitor.assignments.key1' => 'value1',
             'visitor.assignments.key2' => 'value2',

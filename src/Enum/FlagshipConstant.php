@@ -60,7 +60,7 @@ class FlagshipConstant
     /**
      * SDK version
      */
-    const SDK_VERSION = "3.2.0";
+    const SDK_VERSION = "3.2.1";
 
     const GET_FLAG = 'GET_FLAG';
 
@@ -205,5 +205,5 @@ class FlagshipConstant
     const LOG_FORMAT_RESPONSE_STATUS = 'RESPONSE_STATUS';
     const LOG_FORMAT_DURATION = 'DURATION';
 
-    const ANALYTIC_HIT_ALLOCATION = 20;
+    const ANALYTIC_HIT_ALLOCATION = 1;
 }

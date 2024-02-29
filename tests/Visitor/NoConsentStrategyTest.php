@@ -35,7 +35,7 @@ class NoConsentStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['info']
         );
 
         $trackerManager = $this->getMockForAbstractClass(
@@ -82,7 +82,7 @@ class NoConsentStrategyTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $logManagerStub->expects($this->exactly(4))->method('error')
+        $logManagerStub->expects($this->exactly(4))->method('info')
             ->withConsecutive(
                 $logMessageBuild('activateModification'),
                 $logMessageBuild('activateModification'),

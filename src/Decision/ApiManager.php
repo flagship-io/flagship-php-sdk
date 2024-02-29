@@ -6,6 +6,7 @@ use DateTime;
 use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
+use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Model\TroubleshootingData;
@@ -74,7 +75,7 @@ class ApiManager extends DecisionManagerAbstract
 
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::GET_CAMPAIGNS_ROUTE_RESPONSE_ERROR)
-                ->setLogLevel("ERROR")
+                ->setLogLevel(LogLevel::ERROR)
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
                 ->setVisitorContext($visitor->getContext())

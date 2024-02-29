@@ -215,19 +215,24 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
 
-        $httpClientMock->expects($this->exactly(2))
+        $httpClientMock->expects($this->exactly(3))
             ->method('get')
             ->willReturn(
                 new HttpResponse(204, json_decode('{"campaigns":[{}]}', true))
             );
 
-        $trackerManager->expects($this->exactly(2))->method("addHit");
+        $trackerManager->expects($this->exactly(3))->method("addHit");
 
         $bucketingManager->getCampaignModifications($visitor);
 
         //Test empty context
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, [], true);
         $bucketingManager->getCampaignModifications($visitor);
+
+        //Test visitor has not consented
+        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, false);
+        $bucketingManager->getCampaignModifications($visitor);
+
     }
 
     public function testGetVariation()

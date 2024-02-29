@@ -36,7 +36,7 @@ class PanicStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['info']
         );
 
         $trackerManager = $this->getMockForAbstractClass(
@@ -88,7 +88,7 @@ class PanicStrategyTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
-        $logManagerStub->expects($this->exactly(11))->method('error')
+        $logManagerStub->expects($this->exactly(11))->method('info')
             ->withConsecutive(
                 $logMessageBuild('updateContext'),
                 $logMessageBuild('updateContextCollection'),

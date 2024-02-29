@@ -365,10 +365,12 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         }
         $uniqueId = $this->getVisitor()->getVisitorId() . $this->getCurrentDateTime()->format("Y-m-d");
         $hash = $this->getMurmurHash()->murmurHash3Int32($uniqueId);
-        $traffic = $hash % 100;
-        if ($traffic >= FlagshipConstant::ANALYTIC_HIT_ALLOCATION) {
+        $traffic = $hash % 1000;
+
+        if ($traffic > FlagshipConstant::ANALYTIC_HIT_ALLOCATION) {
             return;
         }
+
         $visitor = $this->getVisitor();
         $config = $this->getConfig();
         $bucketingUrl = null;
@@ -382,6 +384,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             ->setLogLevel(LogLevel::INFO)
             ->setVisitorId($this->getFlagshipInstanceId())
             ->setSdkConfigMode($config->getDecisionMode())
+            ->setSdkConfigLogLeve($config->getLogLevel())
             ->setSdkConfigTimeout($config->getTimeout())
             ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
             ->setSdkConfigBucketingUrl($bucketingUrl)
@@ -444,6 +447,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
             ->setHttpResponseTime(($this->getNow() - $now))
             ->setSdkConfigMode($config->getDecisionMode())
+            ->setSdkConfigLogLeve($config->getLogLevel())
             ->setSdkConfigTimeout($config->getTimeout())
             ->setSdkConfigBucketingUrl($bucketingUrl)
             ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)

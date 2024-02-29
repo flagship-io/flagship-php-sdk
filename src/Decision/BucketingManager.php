@@ -77,7 +77,7 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function sendContext(VisitorAbstract $visitor)
     {
-        if (count($visitor->getContext()) <= self::NB_MIN_CONTEXT_KEYS) {
+        if (count($visitor->getContext()) <= self::NB_MIN_CONTEXT_KEYS || !$visitor->hasConsented()) {
             return;
         }
 
@@ -171,7 +171,7 @@ class BucketingManager extends DecisionManagerAbstract
             $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR)
                 ->setFlagshipInstanceId($this->getFlagshipInstanceId())
                 ->setTraffic(0)
-                ->setLogLevel("ERROR")
+                ->setLogLevel(LogLevel::ERROR)
                 ->setConfig($this->getConfig())
                 ->setHttpRequestMethod("GET")
                 ->setHttpRequestUrl($url)
@@ -276,8 +276,7 @@ class BucketingManager extends DecisionManagerAbstract
     ) {
         $visitorCampaigns = [];
         foreach ($variationGroups as $variationGroup) {
-            $check = $this->isMatchTargeting($variationGroup, $visitor);
-            if ($check) {
+            if ($this->isMatchTargeting($variationGroup, $visitor)) {
                 $variations = $this->getVariation(
                     $variationGroup,
                     $visitor
@@ -409,8 +408,7 @@ class BucketingManager extends DecisionManagerAbstract
 
             $innerTargetings = $targetingGroup[FlagshipField::FIELD_TARGETINGS];
 
-            $check = $this->checkAndTargeting($innerTargetings, $visitor);
-            if ($check) {
+            if ($this->checkAndTargeting($innerTargetings, $visitor)) {
                 return true;
             }
         }

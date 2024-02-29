@@ -142,7 +142,7 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["cacheHit","flushHits","logErrorSprintf"]
+            ["cacheHit","flushHits","logErrorSprintf", "addTroubleshootingHit", "sendTroubleshootingQueue"]
         );
 
         $strategy->expects($this->never())->method("flushHits");
@@ -151,6 +151,7 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
         $page->setConfig($config)->setVisitorId($visitorId);
 
         $strategy->expects($this->once())->method("cacheHit")->with([$page]);
+
 
         $requestBody = $page->toApiKeys();
 
@@ -185,6 +186,9 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
                     [FlagshipConstant::SEND_HIT, $logMessage ]
                 ]
             );
+
+        $strategy->expects($this->once())->method("addTroubleshootingHit");
+        $strategy->expects($this->once())->method("sendTroubleshootingQueue");
 
         $this->assertCount(0, $strategy->getHitsPoolQueue());
         $this->assertCount(0, $strategy->getActivatePoolQueue());
@@ -381,7 +385,7 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
             true,
             true,
             true,
-            ["cacheHit","flushHits","logErrorSprintf"]
+            ["cacheHit","flushHits","logErrorSprintf", "addTroubleshootingHit", "sendTroubleshootingQueue"]
         );
 
         $strategy->expects($this->never())->method("flushHits");
@@ -425,6 +429,8 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
                     [FlagshipConstant::SEND_ACTIVATE, $logMessage ]
                 ]
             );
+        $strategy->expects($this->once())->method("addTroubleshootingHit");
+        $strategy->expects($this->once())->method("sendTroubleshootingQueue");
 
         $this->assertCount(0, $strategy->getHitsPoolQueue());
         $this->assertCount(0, $strategy->getActivatePoolQueue());

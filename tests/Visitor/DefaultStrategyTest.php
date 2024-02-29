@@ -714,8 +714,8 @@ class DefaultStrategyTest extends TestCase
 
         $matcher = $this->exactly(4);
         $trackingManagerMock->expects($matcher)
-            ->method("addTroubleshootingHit")->with($this->callback(function ($param) use($matcher) {
-                switch ($matcher->getInvocationCount()){
+            ->method("addTroubleshootingHit")->with($this->callback(function ($param) use ($matcher) {
+                switch ($matcher->getInvocationCount()) {
                     case 1:
                     case 3:
                     {
@@ -2126,7 +2126,7 @@ class DefaultStrategyTest extends TestCase
     public function testSendAnalyticsHit()
     {
         $bucketingUrl = "https://terst.com";
-        $config = new BucketingConfig($bucketingUrl,'envId', 'apiKey');
+        $config = new BucketingConfig($bucketingUrl, 'envId', 'apiKey');
         $visitorId = "visitorId";
 
         $httpClientMock = $this->getMockForAbstractClass(
@@ -2162,12 +2162,20 @@ class DefaultStrategyTest extends TestCase
         $configManager->setDecisionManager($decisionManager)
             ->setTrackingManager($trackingManagerMock);
 
-        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
+        $visitor = new VisitorDelegate(
+            new Container(),
+            $configManager,
+            "b8808e0a-d268-4d53-bf17-d88bbaac9638",
+            false,
+            [],
+            true
+        );
 
         $analytic = new UsageHit();
         $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)
             ->setLogLevel(LogLevel::INFO)
             ->setVisitorId($flagshipInstanceId)
+            ->setSdkConfigLogLeve($config->getLogLevel())
             ->setSdkConfigMode($config->getDecisionMode())
             ->setSdkConfigTimeout($config->getTimeout())
             ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
@@ -2179,14 +2187,13 @@ class DefaultStrategyTest extends TestCase
             ->setSdkStatus($visitor->getSdkStatus())
             ->setFlagshipInstanceId($flagshipInstanceId);
 
-        $uniqueId = $visitor->getVisitorId() . (new DateTime())->format("Y-m-d");
-
+        $uniqueId = $visitor->getVisitorId() . "2024-01-29";
 
         $trackingManagerMock->expects($this->once())->method("addUsageHit")->with($analytic);
 
         $murmurHashMock->expects($this->exactly(2))
-            ->method('murmurHash3Int32')->with($uniqueId)
-            ->willReturnOnConsecutiveCalls(100, 50);
+            ->method('murmurHash3Int32')
+            ->willReturnOnConsecutiveCalls(10, 0);
 
         $defaultStrategy = new DefaultStrategy($visitor);
         $defaultStrategy->setFlagshipInstanceId($flagshipInstanceId);
@@ -2199,6 +2206,5 @@ class DefaultStrategyTest extends TestCase
         $config->setDisableDeveloperUsageTracking(true);
 
         $defaultStrategy->sendSdkConfigAnalyticHit();
-
     }
 }

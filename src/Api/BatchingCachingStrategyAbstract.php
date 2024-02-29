@@ -6,6 +6,7 @@ use DateTime;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
+use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
@@ -341,7 +342,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $this->cacheHit($this->activatePoolQueue);
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)
-                ->setLogLevel("ERROR")
+                ->setLogLevel(LogLevel::ERROR)
                 ->setVisitorId($this->flagshipInstanceId)
                 ->setFlagshipInstanceId($this->flagshipInstanceId)
                 ->setTraffic(100)
@@ -468,7 +469,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             $this->cacheHit($this->hitsPoolQueue);
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SEND_BATCH_HIT_ROUTE_RESPONSE_ERROR)
-                ->setLogLevel("ERROR")
+                ->setLogLevel(LogLevel::ERROR)
                 ->setVisitorId($this->flagshipInstanceId)
                 ->setFlagshipInstanceId($this->flagshipInstanceId)
                 ->setTraffic(100)

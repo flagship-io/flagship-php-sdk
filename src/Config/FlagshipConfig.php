@@ -50,7 +50,7 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @var callable
      */
-    private $statusChangedCallback;
+    private $onSdkStatusChanged;
 
     /**
      * @var IVisitorCacheImplementation
@@ -245,24 +245,24 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @return callable
      */
-    public function getStatusChangedCallback()
+    public function getOnSdkStatusChanged()
     {
-        return $this->statusChangedCallback;
+        return $this->onSdkStatusChanged;
     }
 
     /**
      * Define a callable in order to get callback when the SDK status has changed.
-     * @param callable $statusChangedCallback callback
+     * @param callable $onSdkStatusChanged callback
      * @return $this
      */
-    public function setStatusChangedCallback($statusChangedCallback)
+    public function setOnSdkStatusChanged($onSdkStatusChanged)
     {
-        if (is_callable($statusChangedCallback)) {
-            $this->statusChangedCallback = $statusChangedCallback;
+        if (is_callable($onSdkStatusChanged)) {
+            $this->onSdkStatusChanged = $onSdkStatusChanged;
         } else {
             $this->logError(
                 $this,
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($statusChangedCallback)),
+                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($onSdkStatusChanged)),
                 [
                     FlagshipConstant::TAG => __FUNCTION__
                 ]

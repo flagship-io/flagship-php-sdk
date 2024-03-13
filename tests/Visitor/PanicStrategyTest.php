@@ -163,20 +163,20 @@ class PanicStrategyTest extends TestCase
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
                 FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                VisitorStrategyAbstract::ACTIVATED => false,
-                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+                StrategyAbstract::ACTIVATED => false,
+                StrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
         }
 
         $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitor->getVisitorId(),
-                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
-                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
-                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
-                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitor->getVisitorId(),
+                StrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => $campaigns,
+                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
             ]
         ];
 

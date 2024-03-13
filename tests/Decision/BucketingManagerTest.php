@@ -16,7 +16,7 @@ use Flagship\Utils\MurmurHash;
 use Flagship\Utils\Utils;
 use Flagship\Visitor\DefaultStrategy;
 use Flagship\Visitor\VisitorDelegate;
-use Flagship\Visitor\VisitorStrategyAbstract;
+use Flagship\Visitor\StrategyAbstract;
 use PHPUnit\Framework\TestCase;
 
 class BucketingManagerTest extends TestCase
@@ -354,9 +354,9 @@ class BucketingManagerTest extends TestCase
         ];
         $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
             ]
         ];
 
@@ -399,9 +399,9 @@ class BucketingManagerTest extends TestCase
         ];
         $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
             ]
         ];
 

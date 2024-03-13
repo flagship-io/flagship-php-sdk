@@ -1607,54 +1607,54 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $visitorCache1 = [
-            VisitorStrategyAbstract::VERSION => 1
+            StrategyAbstract::VERSION => 1
         ];
 
         $differentVisitorId = "different visitorID";
         $visitorCache2 = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $differentVisitorId
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $differentVisitorId
             ]
         ];
 
         $visitorCache3 = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitorId
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId
             ]
         ];
 
         $visitorCache4 = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
-                VisitorStrategyAbstract::CAMPAIGNS => "not an array"
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::CAMPAIGNS => "not an array"
             ]
         ];
         $visitorCache5 = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
-                VisitorStrategyAbstract::CAMPAIGNS => [
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::CAMPAIGNS => [
                     "anythings"
                 ]
             ]
         ];
 
         $visitorCache6 = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
-                VisitorStrategyAbstract::CAMPAIGNS => [
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::CAMPAIGNS => [
                     [
                         FlagshipField::FIELD_CAMPAIGN_ID => "c8pimlr7n0ig3a0pt2ig",
                         FlagshipField::FIELD_VARIATION_GROUP_ID => "c8pimlr7n0ig3a0pt2jg",
                         FlagshipField::FIELD_VARIATION_ID => "c8pimlr7n0ig3a0pt2kg",
                         FlagshipField::FIELD_IS_REFERENCE => false,
                         FlagshipField::FIELD_CAMPAIGN_TYPE => "ab",
-                        VisitorStrategyAbstract::ACTIVATED => false,
-                        VisitorStrategyAbstract::FLAGS => [
+                        StrategyAbstract::ACTIVATED => false,
+                        StrategyAbstract::FLAGS => [
                             "Number" => 5,
                             "isBool" => false,
                             "background" => "EE3300",
@@ -1686,7 +1686,7 @@ class DefaultStrategyTest extends TestCase
         $functionName = "lookupVisitor";
 
         $lookupVisitorJson  = function () use ($functionName) {
-            return [VisitorStrategyAbstract::LOOKUP_VISITOR_JSON_OBJECT_ERROR,
+            return [StrategyAbstract::LOOKUP_VISITOR_JSON_OBJECT_ERROR,
                 [FlagshipConstant::TAG => $functionName]];
         };
 
@@ -1694,7 +1694,7 @@ class DefaultStrategyTest extends TestCase
             ->withConsecutive(
                 $lookupVisitorJson(),
                 $lookupVisitorJson(),
-                [sprintf(VisitorStrategyAbstract::VISITOR_ID_MISMATCH_ERROR, $differentVisitorId, $visitorId),
+                [sprintf(StrategyAbstract::VISITOR_ID_MISMATCH_ERROR, $differentVisitorId, $visitorId),
                     [FlagshipConstant::TAG => $functionName]],
                 $lookupVisitorJson()
             );
@@ -1845,20 +1845,20 @@ class DefaultStrategyTest extends TestCase
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
                 FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                VisitorStrategyAbstract::ACTIVATED => false,
-                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+                StrategyAbstract::ACTIVATED => false,
+                StrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
         }
 
         $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
-                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
-                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
-                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
-                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => $campaigns,
+                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
             ]
         ];
 
@@ -1878,21 +1878,21 @@ class DefaultStrategyTest extends TestCase
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
                 FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                VisitorStrategyAbstract::ACTIVATED => false,
-                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+                StrategyAbstract::ACTIVATED => false,
+                StrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
         }
 
 
         $visitorCache2 = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
-                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
-                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
-                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
-                VisitorStrategyAbstract::CAMPAIGNS => $campaigns2,
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY => array_merge($assignmentsHistory, $assignmentsHistory2)
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => $campaigns2,
+                StrategyAbstract::ASSIGNMENTS_HISTORY => array_merge($assignmentsHistory, $assignmentsHistory2)
             ]
         ];
 
@@ -2092,20 +2092,20 @@ class DefaultStrategyTest extends TestCase
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
                 FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                VisitorStrategyAbstract::ACTIVATED => false,
-                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+                StrategyAbstract::ACTIVATED => false,
+                StrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
         }
 
         $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
-                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
-                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
-                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
-                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => $campaigns,
+                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
             ]
         ];
 

@@ -15,7 +15,7 @@ use Flagship\Model\TroubleshootingData;
 use Flagship\Utils\HttpClientInterface;
 use Flagship\Utils\MurmurHash;
 use Flagship\Visitor\VisitorAbstract;
-use Flagship\Visitor\VisitorStrategyAbstract;
+use Flagship\Visitor\StrategyAbstract;
 
 class BucketingManager extends DecisionManagerAbstract
 {
@@ -307,16 +307,16 @@ class BucketingManager extends DecisionManagerAbstract
 
         if (
             !is_array($visitor->visitorCache) ||
-            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]) ||
-            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]
-                [VisitorStrategyAbstract::ASSIGNMENTS_HISTORY]) ||
-            !isset($visitor->visitorCache[VisitorStrategyAbstract::DATA]
-                [VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId])
+            !isset($visitor->visitorCache[StrategyAbstract::DATA]) ||
+            !isset($visitor->visitorCache[StrategyAbstract::DATA]
+                [StrategyAbstract::ASSIGNMENTS_HISTORY]) ||
+            !isset($visitor->visitorCache[StrategyAbstract::DATA]
+                [StrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId])
         ) {
             return null;
         }
-        return $visitor->visitorCache[VisitorStrategyAbstract::DATA]
-        [VisitorStrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId];
+        return $visitor->visitorCache[StrategyAbstract::DATA]
+        [StrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId];
     }
 
     private function findVariationById(array $variations, $key)

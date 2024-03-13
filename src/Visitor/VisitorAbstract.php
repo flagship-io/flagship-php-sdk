@@ -356,7 +356,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
 
     /**
-     * @return VisitorStrategyAbstract
+     * @return StrategyAbstract
      */
     protected function getStrategy()
     {

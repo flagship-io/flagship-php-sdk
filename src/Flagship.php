@@ -308,17 +308,18 @@ class Flagship
     }
 
     /**
-     * Initialize the builder and Return a \Flagship\Visitor\VisitorBuilder
-     * or null if the SDK hasn't started successfully.
+     * Initialize the builder and return a \Flagship\Visitor\VisitorBuilder.
      *
-     * @param string $visitorId : Unique visitor identifier.
+     * @param string|null $visitorId Unique visitor identifier. If null, the SDK will generate one.
+     * @param bool $hasConsented Whether the visitor has given consent.
      * @return VisitorBuilder
      */
-    public static function newVisitor($visitorId = null)
+    public static function newVisitor($visitorId, $hasConsented)
     {
         $instance = self::getInstance();
         return VisitorBuilder::builder(
             $visitorId,
+            $hasConsented,
             $instance->getConfigManager(),
             $instance->getContainer(),
             $instance->flagshipInstanceId

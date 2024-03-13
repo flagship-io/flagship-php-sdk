@@ -59,32 +59,6 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getModification($key, $defaultValue, $activate = false)
-    {
-        $this->log(__FUNCTION__);
-        return $defaultValue;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getModificationInfo($key)
-    {
-        $this->log(__FUNCTION__);
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function activateModification($key)
-    {
-        $this->log(__FUNCTION__);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function sendHit(HitAbstract $hit)
     {
         $this->log(__FUNCTION__);

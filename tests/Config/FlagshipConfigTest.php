@@ -141,17 +141,17 @@ class FlagshipConfigTest extends TestCase
 
         $config->setLogManager($logManagerMock);
 
-        $this->assertNull($config->getStatusChangedCallback());
+        $this->assertNull($config->getOnSdkStatusChanged());
 
-        $config->setStatusChangedCallback([]);
+        $config->setOnSdkStatusChanged([]);
 
-        $this->assertNull($config->getStatusChangedCallback());
+        $this->assertNull($config->getOnSdkStatusChanged());
 
         $callable = function () {
         };
-        $config->setStatusChangedCallback($callable);
+        $config->setOnSdkStatusChanged($callable);
 
-        $this->assertSame($callable, $config->getStatusChangedCallback());
+        $this->assertSame($callable, $config->getOnSdkStatusChanged());
     }
 
     public function testSetOnUserExposure()

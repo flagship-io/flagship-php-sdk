@@ -41,31 +41,40 @@ class VisitorBuilder
      */
     private $flagshipInstance;
 
-    /**
-     * @param string $visitorId : visitor unique identifier.
-     * @param ConfigManager $configManager
-     * @param ContainerInterface $dependencyIContainer
-     */
-    private function __construct($visitorId, $configManager, $dependencyIContainer, $flagshipInstance = null)
+ 
+  
+     /**
+      * @param string|null $visitorId
+      * @param bool $hasConsented
+      * @param ConfigManager $configManager
+      * @param ContainerInterface $dependencyIContainer
+      * @param string|null $flagshipInstance
+      */
+    private function __construct($visitorId, $hasConsented, ConfigManager $configManager,  ContainerInterface $dependencyIContainer,  $flagshipInstance)
     {
         $this->visitorId = $visitorId;
+        $this->hasConsented = $hasConsented;
         $this->configManager = $configManager;
         $this->dependencyIContainer =  $dependencyIContainer;
         $this->isAuthenticated =  false;
         $this->context = [];
-        $this->hasConsented = true;
         $this->flagshipInstance = $flagshipInstance;
     }
 
     /**
-     * @param $visitorId
-     * @param $configManager
-     * @param $container
+     * Create a new visitor builder.
+     *
+     * @param string $visitorId The visitor identifier.
+     * @param bool $hasConsented Set to true when the visitor has consented, false otherwise.
+     * @param ConfigManager $configManager The configuration manager.
+     * @param ContainerInterface $container The dependency injection container.
+
+     * @param string|null $flagshipInstance The Flagship instance identifier.
      * @return VisitorBuilder
      */
-    public static function builder($visitorId, $configManager, $container, $flagshipInstance = null)
+    public static function builder($visitorId, $hasConsented, ConfigManager $configManager, ContainerInterface $container,  $flagshipInstance)
     {
-        return new VisitorBuilder($visitorId, $configManager, $container, $flagshipInstance);
+        return new VisitorBuilder($visitorId, $hasConsented, $configManager, $container,  $flagshipInstance);
     }
 
     /**
@@ -77,20 +86,6 @@ class VisitorBuilder
     public function isAuthenticated($isAuthenticated)
     {
         $this->isAuthenticated = $isAuthenticated;
-        return $this;
-    }
-
-    /**
-     * Specify if the visitor has consented for personal data usage.
-     * When false some features will be deactivated,
-     * cache will be deactivated and cleared.
-     *
-     * @param bool $hasConsented Set to true when the visitor has consented, false otherwise.
-     * @return VisitorBuilder
-     */
-    public function hasConsented($hasConsented)
-    {
-        $this->hasConsented = $hasConsented;
         return $this;
     }
 

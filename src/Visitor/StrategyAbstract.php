@@ -25,7 +25,7 @@ use Flagship\Utils\MurmurHash;
 /**
  *
  */
-abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorFlagInterface
+abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInterface
 {
     use ValidatorTrait;
     use HasSameTypeTrait;
@@ -80,7 +80,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
 
     /**
      * @param mixed $flagshipInstanceId
-     * @return VisitorStrategyAbstract
+     * @return StrategyAbstract
      */
     public function setFlagshipInstanceId($flagshipInstanceId)
     {
@@ -98,7 +98,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
 
     /**
      * @param MurmurHash $murmurHash
-     * @return VisitorStrategyAbstract
+     * @return StrategyAbstract
      */
     public function setMurmurHash($murmurHash)
     {

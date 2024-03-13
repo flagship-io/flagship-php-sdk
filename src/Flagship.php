@@ -277,8 +277,8 @@ class Flagship
      */
     public function setStatus($status)
     {
-        if ($this->config && $this->config->getStatusChangedCallback() && $this->status !== $status) {
-            call_user_func($this->config->getStatusChangedCallback(), $status);
+        if ($this->config && $this->config->getOnSdkStatusChanged() && $this->status !== $status) {
+            call_user_func($this->config->getOnSdkStatusChanged(), $status);
         }
         VisitorAbstract::setSdkStatus($status);
         $this->status = $status;

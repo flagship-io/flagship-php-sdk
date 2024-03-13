@@ -10,7 +10,6 @@ use Flagship\Enum\FlagSyncStatus;
 use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Flag\FlagMetadata;
-use Flagship\Hit\Activate;
 use Flagship\Hit\Event;
 use Flagship\Hit\HitAbstract;
 use Flagship\Hit\Troubleshooting;
@@ -19,7 +18,7 @@ use Flagship\Model\FlagDTO;
 /**
  * DefaultStrategy
  */
-class DefaultStrategy extends VisitorStrategyAbstract
+class DefaultStrategy extends StrategyAbstract
 {
     const TYPE_NULL = 'NULL';
 
@@ -136,8 +135,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
 
     /**
-     * @param  string $visitorId
-     * @return void
+     * @inheritDoc
      */
     public function authenticate($visitorId)
     {
@@ -174,7 +172,7 @@ class DefaultStrategy extends VisitorStrategyAbstract
     }
 
     /**
-     * @return void
+     * @inheritDoc
      */
     public function unauthenticate()
     {
@@ -210,121 +208,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
 
         $this->sendTroubleshootingHit($troubleshooting);
     }
-
-
-    /**
-     * Return the Modification that matches the key, otherwise return null
-     *
-     * @param  $key
-     * @return FlagDTO|null
-     */
-    private function getObjetModification($key)
-    {
-        foreach ($this->getVisitor()->getModifications() as $modification) {
-            if ($modification->getKey() === $key) {
-                return $modification;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param  string  $key
-     * @param  mixed   $defaultValue
-     * @param  boolean $activate
-     * @return boolean|float|integer|string
-     */
-    public function getModification($key, $defaultValue, $activate = false)
-    {
-        if ($this->isKeyValid($key) === false) {
-            $this->logError(
-                $this->getVisitor()->getConfig(),
-                sprintf(FlagshipConstant::GET_MODIFICATION_KEY_ERROR, $key),
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
-            );
-            return $defaultValue;
-        }
-
-        $modification = $this->getObjetModification($key);
-        if (!$modification) {
-            $this->logInfo(
-                $this->getVisitor()->getConfig(),
-                sprintf(FlagshipConstant::GET_MODIFICATION_MISSING_ERROR, $key),
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
-            );
-            return $defaultValue;
-        }
-
-        if (gettype($modification->getValue()) !== gettype($defaultValue)) {
-            $this->logInfo(
-                $this->getVisitor()->getConfig(),
-                sprintf(FlagshipConstant::GET_MODIFICATION_CAST_ERROR, $key),
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION]
-            );
-
-            if (is_null($modification->getValue())) {
-                $this->activateModification($key);
-            }
-
-            return $defaultValue;
-        }
-
-        if ($activate === true) {
-            $this->activateModification($key);
-        }
-
-        return $modification->getValue();
-    }
-
-
-    /**
-     * Build the Campaign of Modification
-     *
-     * @param  FlagDTO $modification Modification containing information
-     * @return array JSON encoded string
-     */
-    private function parseToCampaign(FlagDTO $modification)
-    {
-        return [
-            FlagshipField::FIELD_CAMPAIGN_ID        => $modification->getCampaignId(),
-            FlagshipField::FIELD_VARIATION_GROUP_ID => $modification->getVariationGroupId(),
-            FlagshipField::FIELD_VARIATION_ID       => $modification->getVariationId(),
-            FlagshipField::FIELD_IS_REFERENCE       => $modification->getIsReference(),
-            FlagshipField::FIELD_VALUE              => $modification->getValue(),
-        ];
-    }
-
-
-    /**
-     * @param  string $key
-     * @return array|null
-     */
-    public function getModificationInfo($key)
-    {
-        if (!$this->isKeyValid($key)) {
-            $this->logError(
-                $this->getVisitor()->getConfig(),
-                sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION_INFO]
-            );
-            return null;
-        }
-
-        $modification = $this->getObjetModification($key);
-
-        if (!$modification) {
-            $this->logError(
-                $this->getVisitor()->getConfig(),
-                sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_GET_MODIFICATION_INFO]
-            );
-            return null;
-        }
-
-        return $this->parseToCampaign($modification);
-    }
-
 
     /**
      * @param  VisitorAbstract $visitor
@@ -449,14 +332,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
         $this->sendSdkConfigAnalyticHit();
     }
 
-    /**
-     * @return void
-     */
-    public function synchronizeModifications()
-    {
-        $this->globalFetchFlags(__FUNCTION__);
-    }
-
 
     /**
      * @inheritDoc
@@ -465,26 +340,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
     {
         $this->globalFetchFlags(__FUNCTION__);
     }
-
-
-    /**
-     * @param  string $key
-     * @return void
-     */
-    public function activateModification($key)
-    {
-        $modification = $this->getObjetModification($key);
-        if ($modification === null) {
-            $this->logInfo(
-                $this->getVisitor()->getConfig(),
-                sprintf(FlagshipConstant::GET_MODIFICATION_ERROR, $key),
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_ACTIVE_MODIFICATION]
-            );
-            return;
-        }
-        $this->activateFlag($modification);
-    }
-
 
     /**
      * @inheritDoc
@@ -524,61 +379,6 @@ class DefaultStrategy extends VisitorStrategyAbstract
             ->setAnonymousId($visitor->getAnonymousId())
             ->setConfig($this->getConfig())
             ->setHitContent($hit->toApiKeys());
-        $this->sendTroubleshootingHit($troubleshooting);
-    }
-
-
-    /**
-     * @return array|FlagDTO[]
-     */
-    public function getModifications()
-    {
-        return $this->getVisitor()->getModifications();
-    }
-
-    /**
-     * @param FlagDTO $flag
-     * @param mixed $defaultValue
-     * @return void
-     */
-    protected function activateFlag(FlagDTO $flag, $defaultValue = null)
-    {
-        $flagMetadata = new FlagMetadata(
-            $flag->getCampaignId(),
-            $flag->getVariationGroupId(),
-            $flag->getVariationId(),
-            $flag->getIsReference(),
-            $flag->getCampaignType(),
-            $flag->getSlug(),
-            $flag->getCampaignName(),
-            $flag->getVariationGroupName(),
-            $flag->getVariationName()
-        );
-
-        $visitor = $this->getVisitor();
-        $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
-
-        $activateHit->setConfig($this->getConfig())
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
-            ->setFlagKey($flag->getKey())
-            ->setFlagValue($flag->getValue())
-            ->setFlagDefaultValue($defaultValue)
-            ->setVisitorContext($visitor->getContext())
-            ->setFlagMetadata($flagMetadata);
-
-        $this->getTrackingManager()->activateFlag($activateHit);
-
-        $troubleshooting = new Troubleshooting();
-        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_ACTIVATE)
-            ->setLogLevel(LogLevel::INFO)
-            ->setTraffic($this->getVisitor()->getTraffic())
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
-            ->setVisitorSessionId($visitor->getInstanceId())
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-            ->setConfig($this->getConfig())
-            ->setHitContent($activateHit->toApiKeys());
         $this->sendTroubleshootingHit($troubleshooting);
     }
 

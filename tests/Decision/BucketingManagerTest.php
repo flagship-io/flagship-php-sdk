@@ -56,41 +56,41 @@ class BucketingManagerTest extends TestCase
             );
 
         //Test File not exist
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+        $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test Panic Mode
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+        $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test campaign property
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+        $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test campaign[FIELD_VARIATION_GROUPS]
 
-         $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(0, $campaigns);
 
          //
 
-         $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(0, $campaigns);
 
          //
-         $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(6, $campaigns);
 
          //test invalid bucketing file url
 
          $config->setBucketingUrl("");
-         $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(0, $campaigns);
     }
@@ -142,7 +142,7 @@ class BucketingManagerTest extends TestCase
                 new HttpResponse(204, $bucketingContent)
             );
 
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+        $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
         $troubleshootingData = $bucketingManager->getTroubleshootingData();
         $this->assertSame($troubleshooting['traffic'], $troubleshootingData->getTraffic());
@@ -223,15 +223,15 @@ class BucketingManagerTest extends TestCase
 
         $trackerManager->expects($this->exactly(3))->method("addHit");
 
-        $bucketingManager->getCampaignModifications($visitor);
+        $bucketingManager->getCampaignFlags($visitor);
 
         //Test empty context
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, [], true);
-        $bucketingManager->getCampaignModifications($visitor);
+        $bucketingManager->getCampaignFlags($visitor);
 
         //Test visitor has not consented
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, false);
-        $bucketingManager->getCampaignModifications($visitor);
+        $bucketingManager->getCampaignFlags($visitor);
 
     }
 

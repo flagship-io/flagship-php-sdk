@@ -159,7 +159,7 @@ class ApiManagerTest extends TestCase
         );
 
 
-        $modifications = $manager->getCampaignModifications($visitor);
+        $modifications = $manager->getCampaignFlags($visitor);
 
         //Test duplicate keys are overwritten
         $this->assertCount(count($mergeModification), $modifications);
@@ -181,7 +181,7 @@ class ApiManagerTest extends TestCase
 
         // Test with consent = false
         $visitor->setConsent(false);
-        $manager->getCampaignModifications($visitor);
+        $manager->getCampaignFlags($visitor);
     }
 
     public function testGetCampaignModificationsWithPanicMode()
@@ -213,7 +213,7 @@ class ApiManagerTest extends TestCase
 
         //Test Change Status to FlagshipStatus::READY_PANIC_ON
         $this->expectOutputString((string)FlagshipStatus::READY_PANIC_ON);
-        $modifications = $manager->getCampaignModifications($visitor);
+        $modifications = $manager->getCampaignFlags($visitor);
 
         $this->assertTrue($manager->getIsPanicMode());
 
@@ -285,7 +285,7 @@ class ApiManagerTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $modifications = $manager->getCampaignModifications($visitor);
+        $modifications = $manager->getCampaignFlags($visitor);
 
         $this->assertCount(count($modificationValue) - 1, $modifications);
     }

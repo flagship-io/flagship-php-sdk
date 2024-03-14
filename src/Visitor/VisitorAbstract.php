@@ -208,29 +208,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         return $this->configManager;
     }
 
-
-    /**
-     * @deprecated use setFlagsDTO instead
-     * @param      FlagDTO[] $modifications
-     * @return     VisitorAbstract
-     */
-    public function setModifications($modifications)
-    {
-        $this->flagsDTO = $modifications;
-        return $this;
-    }
-
-
-    /**
-     * @deprecated use getFlagsDTO instead
-     * @return     array
-     */
-    public function getModifications()
-    {
-        return $this->flagsDTO;
-    }
-
-
     /**
      * @param  FlagDTO[] $flagsDTO
      * @return VisitorAbstract
@@ -353,7 +330,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         $this->config = $config;
         return $this;
     }
-
 
     /**
      * @return StrategyAbstract

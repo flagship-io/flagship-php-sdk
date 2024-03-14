@@ -57,10 +57,7 @@ class Visitor implements VisitorInterface, JsonSerializable
 
 
     /**
-     * Set visitor unique identifier
-     *
-     * @param  string $visitorId
-     * @return Visitor
+     * @inheritDoc
      */
     public function setVisitorId($visitorId)
     {
@@ -70,9 +67,7 @@ class Visitor implements VisitorInterface, JsonSerializable
 
 
     /**
-     * Return True if the visitor has consented for private data usage, otherwise return False.
-     *
-     * @return boolean
+     *@inheritDoc
      */
     public function hasConsented()
     {
@@ -81,10 +76,7 @@ class Visitor implements VisitorInterface, JsonSerializable
 
 
     /**
-     * Set if visitor has consented for private data usage.
-     *
-     * @param  boolean $hasConsented True if the visitor has consented false otherwise.
-     * @return $this
+     * @inheritDoc
      */
     public function setConsent($hasConsented)
     {
@@ -103,10 +95,7 @@ class Visitor implements VisitorInterface, JsonSerializable
 
 
     /**
-     * Clear the current context and set a new context value
-     *
-     * @param  array $context collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
-     * @return Visitor
+     * @inheritDoc
      */
     public function setContext($context)
     {

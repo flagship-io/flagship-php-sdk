@@ -101,14 +101,6 @@ class VisitorDelegateTest extends TestCase
 
         //Test Config
         $this->assertSame($config, $visitorDelegate->getConfig());
-
-        $modifications = [
-            new FlagDTO()
-        ];
-
-        $visitorDelegate->setModifications($modifications);
-
-        $this->assertSame($modifications, $visitorDelegate->getModifications());
     }
 
     public function testSetAnonymous()
@@ -206,9 +198,7 @@ class VisitorDelegateTest extends TestCase
         $defaultStrategy = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
             ->setMethods([
                 'setContext', 'updateContext', 'updateContextCollection', "cacheVisitor",
-                'clearContext', 'authenticate', 'unauthenticate', 'getModification',
-                'getModificationInfo', 'synchronizeModifications', 'setConsent',
-                'activateModification', 'sendHit', 'fetchFlags', 'visitorExposed', 'getFlagValue',
+                'clearContext', 'authenticate', 'unauthenticate', 'setConsent', 'sendHit', 'fetchFlags', 'visitorExposed', 'getFlagValue',
                 'getFlagMetadata','lookupVisitor'
             ])->disableOriginalConstructor()
             ->getMock();
@@ -261,39 +251,6 @@ class VisitorDelegateTest extends TestCase
         $defaultStrategy->expects($this->once())->method('unauthenticate');
         $visitor->unauthenticate();
 
-        //Test getModification
-        $key = "age";
-        $defaultValue = 20;
-
-        $defaultStrategy->expects($this->once())
-            ->method('getModification')
-            ->with($key, $defaultValue, false);
-
-        $visitor->getModification($key, $defaultValue, false);
-
-        //Test getModificationInfo
-        $key = "age";
-        $defaultStrategy->expects($this->once())
-            ->method('getModificationInfo')
-            ->with($key);
-
-        $visitor->getModificationInfo($key);
-
-        //Test synchronizedModifications
-        $defaultStrategy->expects($this->once())
-            ->method('synchronizeModifications');
-
-        $defaultStrategy->expects($this->exactly(2))
-            ->method('cacheVisitor');
-
-        $visitor->synchronizeModifications();
-
-        //Test activateModification
-        $key = "age";
-        $defaultStrategy->expects($this->once())
-            ->method('activateModification')->with($key);
-
-        $visitor->activateModification($key);
 
         //Test sendHit
         $hit = new Page("http://localhost");

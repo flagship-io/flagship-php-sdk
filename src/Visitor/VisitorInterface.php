@@ -27,12 +27,14 @@ interface VisitorInterface extends VisitorCoreInterface
      */
     public function getAnonymousId();
 
-    /**
-     * Set if visitor has consented for private data usage.
-     * @param bool $hasConsented True if the visitor has consented false otherwise.
-     * @return void
+      /**
+     * Return True if the visitor has consented for private data usage, otherwise return False.
+     *
+     * @return boolean
      */
-    public function setConsent($hasConsented);
+    public function hasConsented();
+
+
 
     /**
      * Get the current context
@@ -48,19 +50,6 @@ interface VisitorInterface extends VisitorCoreInterface
      * @return FlagInterface
      */
     public function getFlag($key, $defaultValue);
-
-    /**
-     * Authenticate anonymous visitor
-     * @param string $visitorId
-     * @return void
-     */
-    public function authenticate($visitorId);
-
-    /**
-     * This function change authenticated Visitor to anonymous visitor
-     * @return void
-     */
-    public function unauthenticate();
 
     /**
      * Return an array of all flags data fetched for the current visitor.

@@ -49,12 +49,14 @@ class VisitorBuilderTest extends TestCase
             ->will($this->returnCallback($containerGetMethod));
 
         $visitorId = "visitorId";
+        $hasConsented = true;
         $configManager = new ConfigManager();
         $config = new DecisionApiConfig();
+
         $configManager->setConfig($config);
         $configManager->setTrackingManager($trackerManager);
 
-        $visitor = VisitorBuilder::builder($visitorId, $configManager, $containerMock)->build();
+        $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $containerMock, null)->build();
 
         $this->assertEquals($visitorId, $visitor->getVisitorId());
         $this->assertTrue($visitor->hasConsented());
@@ -69,9 +71,8 @@ class VisitorBuilderTest extends TestCase
             FlagshipConstant::FS_USERS => $visitorId,
         ];
 
-        $visitor = VisitorBuilder::builder($visitorId, $configManager, $containerMock)
+        $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $containerMock, null)
             ->isAuthenticated(true)
-            ->hasConsented(true)
             ->withContext($context)->build();
 
         $this->assertSame($context, $visitor->getContext());

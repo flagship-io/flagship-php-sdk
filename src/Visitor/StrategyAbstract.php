@@ -25,7 +25,7 @@ use Flagship\Utils\MurmurHash;
 /**
  *
  */
-abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorFlagInterface
+abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInterface
 {
     use ValidatorTrait;
     use HasSameTypeTrait;
@@ -70,6 +70,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         $this->visitor = $visitor;
     }
 
+
     /**
      * @return mixed
      */
@@ -80,7 +81,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
 
     /**
      * @param mixed $flagshipInstanceId
-     * @return VisitorStrategyAbstract
+     * @return StrategyAbstract
      */
     public function setFlagshipInstanceId($flagshipInstanceId)
     {
@@ -98,7 +99,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
 
     /**
      * @param MurmurHash $murmurHash
-     * @return VisitorStrategyAbstract
+     * @return StrategyAbstract
      */
     public function setMurmurHash($murmurHash)
     {
@@ -130,6 +131,7 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
     {
         return $this->getVisitor()->getConfig();
     }
+
 
 
     /**
@@ -382,7 +384,6 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         $analytic = new UsageHit();
         $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)
             ->setLogLevel(LogLevel::INFO)
-            ->setVisitorId($this->getFlagshipInstanceId())
             ->setSdkConfigMode($config->getDecisionMode())
             ->setSdkConfigLogLeve($config->getLogLevel())
             ->setSdkConfigTimeout($config->getTimeout())
@@ -392,9 +393,10 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
             ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
             ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
-            ->setConfig($config)
             ->setSdkStatus($visitor->getSdkStatus())
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId());
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+            ->setVisitorId($this->getFlagshipInstanceId())
+            ->setConfig($config);
         $this->getTrackingManager()->addUsageHit($analytic);
     }
 
@@ -431,12 +433,9 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
         $troubleshootingHit = new Troubleshooting();
         $troubleshootingHit->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS)
             ->setLogLevel(LogLevel::INFO)
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
             ->setVisitorSessionId($visitor->getInstanceId())
             ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
             ->setTraffic($traffic)
-            ->setConfig($config)
             ->setVisitorAssignmentHistory($assignmentHistory)
             ->setVisitorContext($visitor->getContext())
             ->setSdkStatus($visitor->getSdkStatus())
@@ -454,7 +453,10 @@ abstract class VisitorStrategyAbstract implements VisitorCoreInterface, VisitorF
             ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
             ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
             ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
-            ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy());
+            ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
+            ->setVisitorId($visitor->getVisitorId())
+            ->setAnonymousId($visitor->getAnonymousId())
+            ->setConfig($config);
 
         $this->sendTroubleshootingHit($troubleshootingHit);
     }

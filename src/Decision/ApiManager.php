@@ -20,7 +20,7 @@ use Flagship\Visitor\VisitorAbstract;
 class ApiManager extends DecisionManagerAbstract
 {
     /**
-     * This function will fetch campaigns modifications from the server according to the visitor context and
+     * This function will fetch campaigns flag from the server according to the visitor context and
      * return an associative array of campaigns
      *
      * @param VisitorAbstract $visitor
@@ -98,9 +98,9 @@ class ApiManager extends DecisionManagerAbstract
     /**
      * @inheritDoc
      */
-    public function getCampaignModifications(VisitorAbstract $visitor)
+    public function getCampaignFlags(VisitorAbstract $visitor)
     {
         $campaigns = $this->getCampaigns($visitor);
-        return $this->getModifications($campaigns);
+        return $this->getFlagsData($campaigns);
     }
 }

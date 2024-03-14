@@ -65,10 +65,6 @@ class NoConsentStrategyTest extends TestCase
         };
 
 
-
-        $modificationKey = $modifications[0]->getKey();
-        $modificationValue = $modifications[0]->getValue();
-
         $httpClientMock->expects($this->exactly(2))->method("post")
             ->willReturnOnConsecutiveCalls(
                 new HttpResponse(200, $this->campaigns()),
@@ -82,10 +78,8 @@ class NoConsentStrategyTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $logManagerStub->expects($this->exactly(4))->method('info')
+        $logManagerStub->expects($this->exactly(2))->method('info')
             ->withConsecutive(
-                $logMessageBuild('activateModification'),
-                $logMessageBuild('activateModification'),
                 $logMessageBuild('sendHit'),
                 $logMessageBuild('visitorExposed')
             );
@@ -123,14 +117,6 @@ class NoConsentStrategyTest extends TestCase
         //Test synchronizedModifications
         $noConsentStrategy->fetchFlags();
 
-        //Test getModification
-        $defaultValue = 15;
-        $valueOutput = $noConsentStrategy->getModification($modificationKey, $defaultValue, true);
-
-        $this->assertSame($valueOutput, $modificationValue);
-
-        //Test activateModification
-        $noConsentStrategy->activateModification('key');
 
         //Test sendHit
         $noConsentStrategy->sendHit(new Page('http://localhost'));
@@ -152,20 +138,20 @@ class NoConsentStrategyTest extends TestCase
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
                 FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                VisitorStrategyAbstract::ACTIVATED => false,
-                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+                StrategyAbstract::ACTIVATED => false,
+                StrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
         }
 
         $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitorId,
-                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
-                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
-                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
-                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => $campaigns,
+                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
             ]
         ];
 

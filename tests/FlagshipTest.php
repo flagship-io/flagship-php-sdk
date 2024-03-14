@@ -239,7 +239,7 @@ class FlagshipTest extends TestCase
         $callback = function ($status) {
             echo $status;
         };
-        $config->setStatusChangedCallback($callback);
+        $config->setOnSdkStatusChanged($callback);
         $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
 
@@ -258,7 +258,7 @@ class FlagshipTest extends TestCase
 
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
+        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
 
         //Test Start Flagship failed with empty apiKey
         $envId = "";
@@ -271,7 +271,7 @@ class FlagshipTest extends TestCase
 
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
+        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
     }
 
     public function testStartFailedWithLog()
@@ -308,7 +308,7 @@ class FlagshipTest extends TestCase
 
         $this->assertSame($config, Flagship::getConfig());
         $this->assertFalse(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::NOT_READY, Flagship::getStatus());
+        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
     }
 
     public function testStartFailedThrowException()
@@ -348,7 +348,7 @@ class FlagshipTest extends TestCase
             echo $status;
         };
 
-        $config->setStatusChangedCallback($callback);
+        $config->setOnSdkStatusChanged($callback);
 
         $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
@@ -392,7 +392,7 @@ class FlagshipTest extends TestCase
         Flagship::start($envId, $apiKey, $config);
         $visitorId = "visitorId";
 
-        $visitor1 = Flagship::newVisitor($visitorId);
+        $visitor1 = Flagship::newVisitor($visitorId, true);
         $this->assertInstanceOf("Flagship\Visitor\VisitorBuilder", $visitor1);
     }
 
@@ -405,7 +405,7 @@ class FlagshipTest extends TestCase
             false,
             false,
             true,
-            [ "getStatusChangedCallback"]
+            [ "getOnSdkStatusChanged"]
         );
 
         $count = 0;
@@ -420,7 +420,7 @@ class FlagshipTest extends TestCase
 
         $config->setLogLevel(0);
         $config->expects($this->exactly(4))
-            ->method("getStatusChangedCallback")
+            ->method("getOnSdkStatusChanged")
             ->willReturn($callable);
 
         Flagship::start('envId', 'apiKey', $config);
@@ -510,7 +510,7 @@ class FlagshipTest extends TestCase
 
         Flagship::start($envId, $apiKey, $config);
 
-        $visitor = Flagship::newVisitor('Visitor_1')->build();
+        $visitor = Flagship::newVisitor('Visitor_1', false)->build();
 
         $visitor->fetchFlags();
 

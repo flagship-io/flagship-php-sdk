@@ -51,12 +51,8 @@ class NotReadyStrategyTest extends TestCase
         $visitorId = "visitorId";
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $logManagerStub->expects($this->exactly(9))->method('error')
+        $logManagerStub->expects($this->exactly(5))->method('error')
             ->withConsecutive(
-                $logMessageBuild('synchronizeModifications'),
-                $logMessageBuild('getModification'),
-                $logMessageBuild('getModificationInfo'),
-                $logMessageBuild('activateModification'),
                 $logMessageBuild('sendHit'),
                 $logMessageBuild('fetchFlags'),
                 $logMessageBuild('getFlagValue'),
@@ -97,22 +93,6 @@ class NotReadyStrategyTest extends TestCase
         $notReadyStrategy->clearContext();
 
         $this->assertCount(0, $visitor->getContext());
-
-        //Test synchronizedModifications
-        $notReadyStrategy->synchronizeModifications();
-
-        //Test getModification
-        $defaultValue = "defaultValue";
-        $valueOutput = $notReadyStrategy->getModification('key', $defaultValue);
-
-        $this->assertSame($defaultValue, $valueOutput);
-
-        //Test getModificationInfo
-        $valueOutput = $notReadyStrategy->getModificationInfo('key');
-        $this->assertNull($valueOutput);
-
-        //Test activateModification
-        $notReadyStrategy->activateModification('key');
 
         //Test sendHit
         $notReadyStrategy->sendHit(new Page('http://localhost'));

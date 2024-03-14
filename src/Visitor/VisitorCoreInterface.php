@@ -7,6 +7,12 @@ use Flagship\Hit\HitAbstract;
 interface VisitorCoreInterface
 {
     /**
+     * Set if visitor has consented for private data usage.
+     * @param bool $hasConsented True if the visitor has consented false otherwise.
+     * @return void
+     */
+    public function setConsent($hasConsented);
+    /**
      * Update the visitor context values, matching the given keys, used for targeting.
      *
      * A new context value associated with this key will be created if there is no previous matching value.
@@ -37,10 +43,10 @@ interface VisitorCoreInterface
     /**
      * In DecisionApi Mode this function calls the Flagship Decision API to run
      * campaign assignments according to the current user context
-     * and retrieve applicable modifications. <br/>
+     * and retrieve applicable flags. <br/>
      * In bucketing Mode, it checks bucketing file,
      * validates campaigns targeting the visitor,
-     * assigns a variation and retrieve applicable modifications
+     * assigns a variation and retrieve applicable flags
      * @return void
      */
     public function fetchFlags();
@@ -51,4 +57,17 @@ interface VisitorCoreInterface
      * @return void
      */
     public function sendHit(HitAbstract $hit);
+
+      /**
+     * Authenticate anonymous visitor
+     * @param string $visitorId
+     * @return void
+     */
+    public function authenticate($visitorId);
+
+    /**
+     * This function change authenticated Visitor to anonymous visitor
+     * @return void
+     */
+    public function unauthenticate();
 }

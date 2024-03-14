@@ -22,13 +22,6 @@ interface FlagInterface extends ExposedFlagInterface
     public function exists();
 
     /**
-     * Tells Flagship the user have been exposed and have seen this flag.
-     * @deprecated use visitorExposed instead
-     * @return void
-     */
-    public function userExposed();
-
-    /**
      * Tells Flagship the visitor have been exposed and have seen this flag.
      * @return void
      */

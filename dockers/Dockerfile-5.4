@@ -1,8 +1,6 @@
-FROM php:5.4-cli as php-5-4
+FROM defconjuan/docker-php-5.4 as php-5-4
 COPY . /home/app
 WORKDIR /home/app
-
-RUN ls
 
 RUN apt-get update
 

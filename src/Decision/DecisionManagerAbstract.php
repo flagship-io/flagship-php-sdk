@@ -172,30 +172,30 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     }
 
     /**
-     * @param  FlagDTO[] $modifications
+     * @param  FlagDTO[] $flags
      * @param  $key
      * @return FlagDTO|null
      */
-    protected function checkModificationKeyExist(array $modifications, $key)
+    protected function checkFlagKeyExist(array $flags, $key)
     {
-        foreach ($modifications as $modification) {
-            if ($modification->getKey() === $key) {
-                return $modification;
+        foreach ($flags as $flag) {
+            if ($flag->getKey() === $key) {
+                return $flag;
             }
         }
         return null;
     }
 
     /**
-     * Return an array of Modification from all campaigns
+     * Return an array of flags from all campaigns
      *
      * @param  $campaigns
-     * @return FlagDTO[] Return an array of Modification
+     * @return FlagDTO[] Return an array of flags
      */
-    public function getModifications($campaigns)
+    public function getFlagsData($campaigns)
     {
 
-        $modifications = [];
+        $flags = [];
         foreach ($campaigns as $campaign) {
             if (
                 !isset($campaign[FlagshipField::FIELD_VARIATION])
@@ -206,89 +206,89 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
                 continue;
             }
 
-            $modificationValues = $campaign[FlagshipField::FIELD_VARIATION]
+            $flagsValue = $campaign[FlagshipField::FIELD_VARIATION]
             [FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE];
 
-            $modifications = $this->getModificationValues($modificationValues, $campaign, $modifications);
+            $flags = $this->getFlagsValue($flagsValue, $campaign, $flags);
         }
-        return $modifications;
+        return $flags;
     }
 
     /**
      * Return modification of a campaign
      *
-     * @param  array $modificationValues
+     * @param  array $flagsValue
      * @param  $campaign
-     * @param  array $modifications
+     * @param  array $flagsDTO
      * @return array
      */
-    protected function getModificationValues(array $modificationValues, $campaign, $modifications)
+    protected function getFlagsValue(array $flagsValue, $campaign, $flagsDTO)
     {
-        $localModifications = [];
-        foreach ($modificationValues as $key => $modificationValue) {
+        $localFlags = [];
+        foreach ($flagsValue as $key => $flagValue) {
             if (!$this->isKeyValid($key)) {
                 continue;
             }
 
             //check if the key is already used
-            $modification = $this->checkModificationKeyExist($modifications, $key);
+            $flagDTO = $this->checkFlagKeyExist($flagsDTO, $key);
             $isKeyUsed = true;
 
-            if (is_null($modification)) {
-                $modification = new FlagDTO();
+            if (is_null($flagDTO)) {
+                $flagDTO = new FlagDTO();
                 $isKeyUsed = false;
             }
 
-            $modification->setKey($key);
-            $modification->setValue($modificationValue);
+            $flagDTO->setKey($key);
+            $flagDTO->setValue($flagValue);
 
             if (isset($campaign[FlagshipField::FIELD_ID])) {
-                $modification->setCampaignId($campaign[FlagshipField::FIELD_ID]);
+                $flagDTO->setCampaignId($campaign[FlagshipField::FIELD_ID]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_CAMPAIGNS_NAME])) {
-                $modification->setCampaignName($campaign[FlagshipField::FIELD_CAMPAIGNS_NAME]);
+                $flagDTO->setCampaignName($campaign[FlagshipField::FIELD_CAMPAIGNS_NAME]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE])) {
-                $modification->setCampaignType($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]);
+                $flagDTO->setCampaignType($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID])) {
-                $modification->setVariationGroupId($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]);
+                $flagDTO->setVariationGroupId($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION_GROUP_NAME])) {
-                $modification->setVariationGroupName($campaign[FlagshipField::FIELD_VARIATION_GROUP_NAME]);
+                $flagDTO->setVariationGroupName($campaign[FlagshipField::FIELD_VARIATION_GROUP_NAME]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_ID])) {
-                $modification->setVariationId(
+                $flagDTO->setVariationId(
                     $campaign[FlagshipField::FIELD_VARIATION]
                     [FlagshipField::FIELD_ID]
                 );
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE])) {
-                $modification->setVariationName($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE]);
+                $flagDTO->setVariationName($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_REFERENCE])) {
-                $modification->setIsReference(
+                $flagDTO->setIsReference(
                     $campaign[FlagshipField::FIELD_VARIATION]
                     [FlagshipField::FIELD_REFERENCE]
                 );
             }
 
             if (isset($campaign[FlagshipField::FIELD_SLUG])) {
-                $modification->setSlug($campaign[FlagshipField::FIELD_SLUG]);
+                $flagDTO->setSlug($campaign[FlagshipField::FIELD_SLUG]);
             }
 
             if (!$isKeyUsed) {
-                $localModifications[] = $modification;
+                $localFlags[] = $flagDTO;
             }
         }
-        return array_merge($modifications, $localModifications);
+        return array_merge($flagsDTO, $localFlags);
     }
 
     /**
@@ -300,10 +300,10 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @inheritDoc
      */
-    public function getCampaignModifications(VisitorAbstract $visitor)
+    public function getCampaignFlags(VisitorAbstract $visitor)
     {
         $campaigns = $this->getCampaigns($visitor);
-        return $this->getModifications($campaigns);
+        return $this->getFlagsData($campaigns);
     }
 
     public function getTroubleshootingData()

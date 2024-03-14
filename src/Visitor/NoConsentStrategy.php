@@ -15,14 +15,6 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function activateModification($key)
-    {
-        $this->log(__FUNCTION__);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function sendHit(HitAbstract $hit)
     {
         $this->log(__FUNCTION__);

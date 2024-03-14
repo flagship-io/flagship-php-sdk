@@ -8,12 +8,12 @@ use Flagship\Visitor\VisitorAbstract;
 interface DecisionManagerInterface
 {
     /**
-     * This function fetch campaigns modifications from the server according to the visitor context and
-     * Return an array of Modification from all campaigns
+     * This function fetch campaigns flags from the server according to the visitor context and
+     * Return an array of flags from all campaigns
      * @param VisitorAbstract $visitor
      * @return FlagDTO[]
      */
-    public function getCampaignModifications(VisitorAbstract $visitor);
+    public function getCampaignFlags(VisitorAbstract $visitor);
 
     /**
      * @param VisitorAbstract $visitor
@@ -25,7 +25,7 @@ interface DecisionManagerInterface
      * @param $campaigns
      * @return FlagDTO[]
      */
-    public function getModifications($campaigns);
+    public function getFlagsData($campaigns);
 
     public function getTroubleshootingData();
 }

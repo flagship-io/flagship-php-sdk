@@ -10,14 +10,6 @@ class FlagshipStatus
 {
     /**
      * It is the default initial status. This status remains until the sdk has been initialized successfully.
-     * Flagship SDK has not been started or initialized successfully.
-     * @deprecated in v2, use FlagshipStatus::NOT_INITIALIZED instead of
-     * @var int
-     */
-    const NOT_READY = 0;
-
-    /**
-     * It is the default initial status. This status remains until the sdk has been initialized successfully.
      * @var int
      */
     const NOT_INITIALIZED = 0;

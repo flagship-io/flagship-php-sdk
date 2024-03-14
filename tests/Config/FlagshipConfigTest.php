@@ -133,7 +133,7 @@ class FlagshipConfigTest extends TestCase
             ->with(
                 sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
                 [
-                    FlagshipConstant::TAG => "setStatusChangedCallback"
+                    FlagshipConstant::TAG => "setOnSdkStatusChanged"
                 ]
             );
 

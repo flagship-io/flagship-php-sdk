@@ -65,10 +65,6 @@ class NoConsentStrategyTest extends TestCase
         };
 
 
-
-        $modificationKey = $modifications[0]->getKey();
-        $modificationValue = $modifications[0]->getValue();
-
         $httpClientMock->expects($this->exactly(2))->method("post")
             ->willReturnOnConsecutiveCalls(
                 new HttpResponse(200, $this->campaigns()),
@@ -82,10 +78,8 @@ class NoConsentStrategyTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $logManagerStub->expects($this->exactly(4))->method('info')
+        $logManagerStub->expects($this->exactly(2))->method('info')
             ->withConsecutive(
-                $logMessageBuild('activateModification'),
-                $logMessageBuild('activateModification'),
                 $logMessageBuild('sendHit'),
                 $logMessageBuild('visitorExposed')
             );
@@ -123,14 +117,6 @@ class NoConsentStrategyTest extends TestCase
         //Test synchronizedModifications
         $noConsentStrategy->fetchFlags();
 
-        //Test getModification
-        $defaultValue = 15;
-        $valueOutput = $noConsentStrategy->getModification($modificationKey, $defaultValue, true);
-
-        $this->assertSame($valueOutput, $modificationValue);
-
-        //Test activateModification
-        $noConsentStrategy->activateModification('key');
 
         //Test sendHit
         $noConsentStrategy->sendHit(new Page('http://localhost'));

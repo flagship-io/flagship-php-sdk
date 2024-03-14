@@ -74,9 +74,8 @@ class PanicStrategyTest extends TestCase
 
 
 
-        $httpClientMock->expects($this->exactly(2))->method("post")
+        $httpClientMock->expects($this->exactly(1))->method("post")
             ->willReturnOnConsecutiveCalls(
-                new HttpResponse(200, $this->campaigns()),
                 new HttpResponse(500, [])
             );
 
@@ -88,14 +87,11 @@ class PanicStrategyTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
-        $logManagerStub->expects($this->exactly(11))->method('info')
+        $logManagerStub->expects($this->exactly(8))->method('info')
             ->withConsecutive(
                 $logMessageBuild('updateContext'),
                 $logMessageBuild('updateContextCollection'),
                 $logMessageBuild('clearContext'),
-                $logMessageBuild('getModification'),
-                $logMessageBuild('getModificationInfo'),
-                $logMessageBuild('activateModification'),
                 $logMessageBuild('sendHit'),
                 $logMessageBuildConsent('setConsent'),
                 $logMessageBuild('getFlagValue'),
@@ -115,22 +111,6 @@ class PanicStrategyTest extends TestCase
 
         //Test clearContext
         $panicStrategy->clearContext();
-
-        //Test synchronizedModifications
-        $panicStrategy->synchronizeModifications();
-
-        //Test getModification
-        $defaultValue = "defaultValue";
-        $valueOutput = $panicStrategy->getModification('key', $defaultValue);
-
-        $this->assertSame($valueOutput, $defaultValue);
-
-        //Test getModificationInfo
-        $valueOutput = $panicStrategy->getModificationInfo('key');
-        $this->assertNull($valueOutput);
-
-        //Test activateModification
-        $panicStrategy->activateModification('key');
 
         //Test sendHit
         $panicStrategy->sendHit(new Page('http://localhost'));

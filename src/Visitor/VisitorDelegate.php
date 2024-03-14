@@ -100,7 +100,6 @@ class VisitorDelegate extends VisitorAbstract
         $this->getStrategy()->authenticate($visitorId);
     }
 
-
     /**
      * @inheritDoc
      */
@@ -108,43 +107,6 @@ class VisitorDelegate extends VisitorAbstract
     {
         $this->getStrategy()->unauthenticate();
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getModification($key, $defaultValue, $activate = false)
-    {
-        return $this->getStrategy()->getModification($key, $defaultValue, $activate);
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function getModificationInfo($key)
-    {
-        return $this->getStrategy()->getModificationInfo($key);
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function synchronizeModifications()
-    {
-        $this->getStrategy()->synchronizeModifications();
-        $this->getStrategy()->cacheVisitor();
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function activateModification($key)
-    {
-        $this->getStrategy()->activateModification($key);
-    }
-
 
     /**
      * @inheritDoc

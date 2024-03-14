@@ -69,9 +69,7 @@ class VisitorTest extends TestCase
         $visitorDelegateMock = $this->getMockBuilder('Flagship\Visitor\VisitorDelegate')
             ->setMethods([
                 'getContext', 'setContext', 'updateContext', 'updateContextCollection',
-                'clearContext', 'authenticate', 'unauthenticate','getAnonymousId',
-                'getModification','getModifications','getModificationInfo', 'synchronizeModifications',
-                'activateModification', 'sendHit', 'fetchFlags', 'getFlag', 'getFlagsDTO'
+                'clearContext', 'authenticate', 'unauthenticate','getAnonymousId', 'sendHit', 'fetchFlags', 'getFlag', 'getFlagsDTO'
                 ])
             ->setConstructorArgs([new Container(),$configManager, $visitorId, false, $visitorContext, true])->getMock();
 
@@ -121,44 +119,6 @@ class VisitorTest extends TestCase
         //Test unauthenticate
         $visitorDelegateMock->expects($this->once())->method('unauthenticate');
         $visitor->unauthenticate();
-
-        //Test getModification
-        $key = "age";
-        $defaultValue = 20;
-
-        $visitorDelegateMock->expects($this->once())
-            ->method('getModification')
-            ->with($key, $defaultValue, false);
-
-        $visitor->getModification($key, $defaultValue, false);
-
-        //Test getModificationInfo
-        $key = "age";
-        $visitorDelegateMock->expects($this->once())
-            ->method('getModificationInfo')
-            ->with($key);
-
-        $visitor->getModificationInfo($key);
-
-        //Test getModifications
-        $key = "age";
-        $visitorDelegateMock->expects($this->once())
-            ->method('getModifications');
-
-        $visitor->getModifications();
-
-        //Test synchronizedModifications
-        $visitorDelegateMock->expects($this->once())
-            ->method('synchronizeModifications');
-
-        $visitor->synchronizeModifications();
-
-        //Test activateModification
-        $key = "age";
-        $visitorDelegateMock->expects($this->once())
-            ->method('activateModification')->with($key);
-
-        $visitor->activateModification($key);
 
         //Test sendHit
         $hit = new Page("http://localhost");

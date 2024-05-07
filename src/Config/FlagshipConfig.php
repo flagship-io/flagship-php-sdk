@@ -87,7 +87,7 @@ abstract class FlagshipConfig implements JsonSerializable
     {
         $this->envId = $envId;
         $this->apiKey = $apiKey;
-        $this->cacheStrategy = CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE;
+        $this->cacheStrategy = CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE;
         $this->setDisableDeveloperUsageTracking(false);
     }
 

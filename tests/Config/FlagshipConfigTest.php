@@ -96,10 +96,10 @@ class FlagshipConfigTest extends TestCase
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
         $this->assertNull($config->getVisitorCacheImplementation());
         $this->assertNull($config->getHitCacheImplementation());
-        $this->assertSame(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE, $config->getCacheStrategy());
-
-        $config->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE);
         $this->assertSame(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE, $config->getCacheStrategy());
+
+        $config->setCacheStrategy(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE);
+        $this->assertSame(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE, $config->getCacheStrategy());
 
         $visitorCacheImplementation = $this->getMockForAbstractClass("Flagship\Cache\IVisitorCacheImplementation");
         $config->setVisitorCacheImplementation($visitorCacheImplementation);

@@ -378,7 +378,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         $bucketingUrl = null;
         $fetchThirdPartyData = null;
         if ($config instanceof BucketingConfig) {
-            $bucketingUrl = $config->getBucketingUrl();
+            $bucketingUrl = $config->getSyncAgentUrl();
             $fetchThirdPartyData = $config->getFetchThirdPartyData();
         }
         $analytic = new UsageHit();
@@ -417,7 +417,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         $bucketingUrl = null;
         $fetchThirdPartyData = null;
         if ($config instanceof BucketingConfig) {
-            $bucketingUrl = $config->getBucketingUrl();
+            $bucketingUrl = $config->getSyncAgentUrl();
             $fetchThirdPartyData = $config->getFetchThirdPartyData();
         }
 

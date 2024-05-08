@@ -11,7 +11,7 @@ class BucketingConfig extends FlagshipConfig
     /**
      * @var string
      */
-    private $bucketingUrl;
+    private $syncAgentUrl;
 
     /**
      * @var bool
@@ -19,32 +19,33 @@ class BucketingConfig extends FlagshipConfig
     protected $fetchThirdPartyData;
 
     /**
-     * @param string $bucketingUrl
+     * @param string $syncAgentUrl
      * @param string $envId
      * @param string $apiKey
      */
-    public function __construct($bucketingUrl, $envId = null, $apiKey = null)
+    public function __construct($syncAgentUrl, $envId = null, $apiKey = null)
     {
         parent::__construct($envId, $apiKey);
         $this->setDecisionMode(DecisionMode::BUCKETING);
-        $this->setBucketingUrl($bucketingUrl);
+        $this->setSyncAgentUrl($syncAgentUrl);
     }
 
     /**
      * @return string
      */
-    public function getBucketingUrl()
+    public function getSyncAgentUrl()
     {
-        return $this->bucketingUrl;
+        return $this->syncAgentUrl;
     }
 
     /**
-     * @param string $bucketingUrl
+     * Define the [flagship-sync-agent](https://github.com/flagship-io/flagship-sync-agent) endpoint URL where the SDK will fetch the bucketing file from polling process
+     * @param string $syncAgentUrl
      * @return BucketingConfig
      */
-    public function setBucketingUrl($bucketingUrl)
+    public function setSyncAgentUrl($syncAgentUrl)
     {
-        $this->bucketingUrl = $bucketingUrl;
+        $this->syncAgentUrl = $syncAgentUrl;
         return $this;
     }
 
@@ -80,7 +81,7 @@ class BucketingConfig extends FlagshipConfig
     public function jsonSerialize()
     {
         $parent = parent::jsonSerialize();
-        $parent[FlagshipField::FIELD_BUCKETING_URL] = $this->bucketingUrl;
+        $parent[FlagshipField::FIELD_BUCKETING_URL] = $this->syncAgentUrl;
         return $parent;
     }
 }

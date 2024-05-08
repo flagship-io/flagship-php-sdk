@@ -89,7 +89,7 @@ class BucketingManagerTest extends TestCase
 
          //test invalid bucketing file url
 
-         $config->setBucketingUrl("");
+         $config->setSyncAgentUrl("");
          $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(0, $campaigns);

@@ -141,7 +141,7 @@ class BucketingManager extends DecisionManagerAbstract
     protected function getBucketingFile()
     {
         $now = $this->getNow();
-        $url = $this->getConfig()->getBucketingUrl();
+        $url = $this->getConfig()->getSyncAgentUrl();
         try {
             $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
             if (!$url) {

@@ -294,8 +294,8 @@ class Flagship
     }
 
     /**
-     * Every time your **application** (**script**) is about to **terminate**, you must call this method
-     * to batch and send all hits that are in the pool
+     * This method batches and sends all collected hits.
+     * It should be called when your application (script) is about to terminate or in the event of a crash to ensures that all collected data is sent and not lost.
      * @return void
      */
     public static function close()

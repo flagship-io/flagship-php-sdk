@@ -5,7 +5,7 @@ namespace Flagship\Decision;
 use Flagship\Api\TrackingManagerInterface;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Model\FlagDTO;
 use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\BuildApiTrait;
@@ -121,7 +121,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      */
     public function setIsPanicMode($isPanicMode)
     {
-        $status = $isPanicMode ? FlagshipStatus::READY_PANIC_ON : FlagshipStatus::READY;
+        $status = $isPanicMode ? FSSdkStatus::SDK_PANIC : FSSdkStatus::SDK_INITIALIZED;
         $this->updateFlagshipStatus($status);
 
         $this->isPanicMode = $isPanicMode;

@@ -3,7 +3,7 @@
 namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
@@ -83,7 +83,7 @@ class NotReadyStrategy extends DefaultStrategy
     {
         $this->logError(
             $this->getVisitor()->getConfig(),
-            sprintf(FlagshipConstant::METHOD_DEACTIVATED_ERROR, $functionName, FlagshipStatus::NOT_INITIALIZED),
+            sprintf(FlagshipConstant::METHOD_DEACTIVATED_ERROR, $functionName, FSSdkStatus::getStatusName(FSSdkStatus::SDK_NOT_INITIALIZED)),
             [FlagshipConstant::TAG => $functionName]
         );
     }

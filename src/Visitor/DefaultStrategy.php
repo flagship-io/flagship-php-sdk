@@ -12,7 +12,6 @@ use Flagship\Flag\FlagMetadata;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FSFetchStatus;
-use Flagship\Enum\FlagSyncStatus;
 use Flagship\Enum\FSFetchReasons;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Enum\FlagshipConstant;
@@ -98,7 +97,6 @@ class DefaultStrategy extends StrategyAbstract
         }
 
         $this->getVisitor()->context[$key] = $value;
-        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
     }
 
     protected function fetchStatusUpdateContext()
@@ -187,7 +185,6 @@ class DefaultStrategy extends StrategyAbstract
 
         $this->getVisitor()->setAnonymousId($this->getVisitor()->getVisitorId());
         $this->getVisitor()->setVisitorId($visitorId);
-        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::AUTHENTICATED);
         $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::AUTHENTICATE);
 
         $troubleshooting = new Troubleshooting();
@@ -226,7 +223,6 @@ class DefaultStrategy extends StrategyAbstract
 
         $this->getVisitor()->setVisitorId($anonymousId);
         $this->getVisitor()->setAnonymousId(null);
-        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::UNAUTHENTICATED);
         $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UNAUTHENTICATE);
 
         $troubleshooting = new Troubleshooting();
@@ -397,8 +393,6 @@ class DefaultStrategy extends StrategyAbstract
 
         $flagsDTO = $decisionManager->getFlagsData($campaigns);
         $this->getVisitor()->setFlagsDTO($flagsDTO);
-
-        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::FLAGS_FETCHED);
 
         if ($this->getVisitor()->getFetchStatus()->getStatus() == FSFetchStatus::FETCHING) {
             $this->setFetchStatus(FSFetchStatus::FETCHED, FSFetchReasons::NONE);

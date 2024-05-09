@@ -245,7 +245,7 @@ class Flagship
 
     /**
      * Return current status of Flagship SDK.
-     * @see FlagshipStatus
+     * @see \Flagship\Enum\FSSdkStatus for possible values.
      * @return int
      */
     public static function getStatus()

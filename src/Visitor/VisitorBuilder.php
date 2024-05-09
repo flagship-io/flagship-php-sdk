@@ -109,6 +109,8 @@ class VisitorBuilder
 
     /**
      * Specify a callback function to be called when the status of the fetchFlags method changes.
+     * The callback function should have the following signature: 
+     * function(FetchFlagsStatusInterface $fetchFlagsStatus): void
      * @param callable $onFetchFlagsStatusChanged
      * @return VisitorBuilder
      */

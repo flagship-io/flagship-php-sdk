@@ -3,6 +3,8 @@
 namespace Flagship\Flag;
 
 use Flagship\Model\FlagDTO;
+use Flagship\Enum\FSFlagStatus;
+use Flagship\Enum\FSFetchStatus;
 use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Visitor\VisitorAbstract;
 
@@ -36,7 +38,7 @@ class Flag implements FlagInterface
         VisitorAbstract $visitorDelegate,
         $defaultValue
     ) {
-        $this->key             = $key;
+        $this->key = $key;
         $this->visitorDelegate = $visitorDelegate;
 
         $this->defaultValue = $defaultValue;
@@ -88,7 +90,7 @@ class Flag implements FlagInterface
      */
     public function getMetadata()
     {
-        $flagDTO  = $this->findFlagDTO($this->key);
+        $flagDTO = $this->findFlagDTO($this->key);
         $metadata = new FlagMetadata(
             $flagDTO ? $flagDTO->getCampaignId() : '',
             $flagDTO ? $flagDTO->getVariationGroupId() : '',
@@ -139,5 +141,26 @@ class Flag implements FlagInterface
             $this->defaultValue,
             $flagDTO
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStatus()
+    {
+        $fetchStatus = $this->visitorDelegate->getFetchStatus();
+        if ($fetchStatus->getStatus() === FSFetchStatus::PANIC) {
+            return FSFlagStatus::PANIC;
+        }
+
+        if (!$this->exists()) {
+            return FSFlagStatus::NOT_FOUND;
+        }
+
+        if ($fetchStatus->getStatus() === FSFetchStatus::FETCH_REQUIRED || $fetchStatus->getStatus() === FSFetchStatus::FETCHING) {
+            return FSFlagStatus::FETCH_REQUIRED;
+        }
+
+        return FSFlagStatus::FETCHED;
     }
 }

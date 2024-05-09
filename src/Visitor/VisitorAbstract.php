@@ -2,18 +2,19 @@
 
 namespace Flagship\Visitor;
 
+use JsonSerializable;
+use Flagship\Flagship;
+use Flagship\Traits\Guid;
+use Flagship\Model\FlagDTO;
+use Flagship\Enum\FSSdkStatus;
+use Flagship\Utils\MurmurHash;
+use Flagship\Hit\Troubleshooting;
+use Flagship\Utils\ConfigManager;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
-use Flagship\Flagship;
-use Flagship\Hit\Troubleshooting;
-use Flagship\Model\FlagDTO;
-use Flagship\Traits\Guid;
 use Flagship\Traits\ValidatorTrait;
-use Flagship\Utils\ConfigManager;
 use Flagship\Utils\ContainerInterface;
-use Flagship\Utils\MurmurHash;
-use JsonSerializable;
+use Flagship\Model\FetchFlagsStatusInterface;
 
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, VisitorFlagInterface
 {
@@ -95,6 +96,53 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     protected $ConsentHitTroubleshooting;
 
     /**
+     * @var callable
+     */
+    protected $onFetchFlagsStatusChanged;
+
+    /**
+     * The fetch status of the flags.
+     *
+     * @var FetchFlagsStatusInterface
+     */
+    protected $fetchStatus;
+
+    /**
+     * @return callable
+     */
+    public function getOnFetchFlagsStatusChanged()
+    {
+        return $this->onFetchFlagsStatusChanged;
+    }
+
+    /**
+     * @param callable $onFetchFlagsStatusChanged
+     * @return VisitorAbstract
+     */
+    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged)
+    {
+        $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
+        return $this;
+    }
+
+    public function setFetchStatus(FetchFlagsStatusInterface $fetchStatus)
+    {
+        if ($this->onFetchFlagsStatusChanged !== null) {
+            call_user_func($this->onFetchFlagsStatusChanged, $fetchStatus);
+        }
+        $this->fetchStatus = $fetchStatus;
+        return $this;
+    }
+
+    /**
+     * @return FetchFlagsStatusInterface
+     */
+    public function getFetchStatus()
+    {
+        return $this->fetchStatus;
+    }
+
+    /**
      * @return Troubleshooting|null
      */
     public function getConsentHitTroubleshooting()
@@ -111,8 +159,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         $this->ConsentHitTroubleshooting = $ConsentHitTroubleshooting;
         return $this;
     }
-
-
 
     /**
      * @return mixed
@@ -227,7 +273,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         return $this->flagsDTO;
     }
 
-
     /**
      * @param  ConfigManager $configManager
      * @return VisitorAbstract
@@ -237,7 +282,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         $this->configManager = $configManager;
         return $this;
     }
-
 
     /**
      * @return string
@@ -331,14 +375,16 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         return $this;
     }
 
+    
+
     /**
      * @return StrategyAbstract
      */
     protected function getStrategy()
     {
-        if (Flagship::getStatus() === FlagshipStatus::NOT_INITIALIZED) {
+        if (Flagship::getStatus() === FSSdkStatus::SDK_NOT_INITIALIZED) {
             $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\NotReadyStrategy', [$this], true);
-        } elseif (Flagship::getStatus() === FlagshipStatus::READY_PANIC_ON) {
+        } elseif (Flagship::getStatus() === FSSdkStatus::SDK_PANIC) {
             $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\PanicStrategy', [$this], true);
         } elseif (!$this->hasConsented()) {
             $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\NoConsentStrategy', [$this], true);

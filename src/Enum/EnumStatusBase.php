@@ -12,9 +12,9 @@ abstract class EnumStatusBase
      */
     public static function getStatusName($value)
     {
-        $class = new \ReflectionClass(__CLASS__);
+        $class = new \ReflectionClass(get_called_class());
         $constants = array_flip($class->getConstants());
     
-        return $constants[$value];
+        return isset($constants[$value]) ? $constants[$value] : null;
     }
 }

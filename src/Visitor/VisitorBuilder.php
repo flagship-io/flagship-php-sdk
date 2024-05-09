@@ -41,22 +41,28 @@ class VisitorBuilder
      */
     private $flagshipInstance;
 
- 
-  
-     /**
-      * @param string|null $visitorId
-      * @param bool $hasConsented
-      * @param ConfigManager $configManager
-      * @param ContainerInterface $dependencyIContainer
-      * @param string|null $flagshipInstance
-      */
-    private function __construct($visitorId, $hasConsented, ConfigManager $configManager,  ContainerInterface $dependencyIContainer,  $flagshipInstance)
+
+    /**
+     * @var callable
+     */
+    private $onFetchFlagsStatusChanged;
+
+
+
+    /**
+     * @param string|null $visitorId
+     * @param bool $hasConsented
+     * @param ConfigManager $configManager
+     * @param ContainerInterface $dependencyIContainer
+     * @param string|null $flagshipInstance
+     */
+    private function __construct($visitorId, $hasConsented, ConfigManager $configManager, ContainerInterface $dependencyIContainer, $flagshipInstance)
     {
         $this->visitorId = $visitorId;
         $this->hasConsented = $hasConsented;
         $this->configManager = $configManager;
-        $this->dependencyIContainer =  $dependencyIContainer;
-        $this->isAuthenticated =  false;
+        $this->dependencyIContainer = $dependencyIContainer;
+        $this->isAuthenticated = false;
         $this->context = [];
         $this->flagshipInstance = $flagshipInstance;
     }
@@ -72,9 +78,9 @@ class VisitorBuilder
      * @param string|null $flagshipInstance The Flagship instance identifier.
      * @return VisitorBuilder
      */
-    public static function builder($visitorId, $hasConsented, ConfigManager $configManager, ContainerInterface $container,  $flagshipInstance)
+    public static function builder($visitorId, $hasConsented, ConfigManager $configManager, ContainerInterface $container, $flagshipInstance)
     {
-        return new VisitorBuilder($visitorId, $hasConsented, $configManager, $container,  $flagshipInstance);
+        return new VisitorBuilder($visitorId, $hasConsented, $configManager, $container, $flagshipInstance);
     }
 
     /**
@@ -102,6 +108,17 @@ class VisitorBuilder
     }
 
     /**
+     * Specify a callback function to be called when the status of the fetchFlags method changes.
+     * @param callable $onFetchFlagsStatusChanged
+     * @return VisitorBuilder
+     */
+    public function onFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged)
+    {
+        $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
+        return $this;
+    }
+
+    /**
      * Create a new visitor.
      * @return VisitorInterface
      */
@@ -114,6 +131,8 @@ class VisitorBuilder
             $this->isAuthenticated,
             $this->context,
             $this->hasConsented,
+            $this->flagshipInstance,
+            $this->onFetchFlagsStatusChanged
         ], true);
 
         $visitorDelegate->setFlagshipInstanceId($this->flagshipInstance);

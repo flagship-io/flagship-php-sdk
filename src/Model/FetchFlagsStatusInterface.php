@@ -9,7 +9,7 @@ interface FetchFlagsStatusInterface
 {
     /**
      * The new status of the flags fetch. 
-     * See: FSFetchStatus
+     * @see \Flagship\Enum\FSFetchStatus for possible values.
      *
      * @return int
      */
@@ -17,7 +17,8 @@ interface FetchFlagsStatusInterface
 
     /**
      * The reason for the status change
-     * See: FSFetchReason
+     * @see \Flagship\Enum\FSFetchReason For possible values.
+     * 
      * @return int
      */
     public function getReason();

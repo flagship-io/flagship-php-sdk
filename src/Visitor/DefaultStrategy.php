@@ -101,8 +101,20 @@ class DefaultStrategy extends StrategyAbstract
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
     }
 
-    protected function fetchStatusUpdateContext() {
-        $this->getVisitor()->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UPDATE_CONTEXT));
+    protected function fetchStatusUpdateContext()
+    {
+        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UPDATE_CONTEXT);
+    }
+
+    /**
+
+     * @param int $status
+     * @param int $reason
+     * @return void
+     */
+    protected function setFetchStatus($status, $reason)
+    {
+        $this->getVisitor()->setFetchStatus(new FetchFlagsStatus($status, $reason));
     }
 
     /**
@@ -176,6 +188,7 @@ class DefaultStrategy extends StrategyAbstract
         $this->getVisitor()->setAnonymousId($this->getVisitor()->getVisitorId());
         $this->getVisitor()->setVisitorId($visitorId);
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::AUTHENTICATED);
+        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::AUTHENTICATE);
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_AUTHENTICATE)
@@ -214,6 +227,7 @@ class DefaultStrategy extends StrategyAbstract
         $this->getVisitor()->setVisitorId($anonymousId);
         $this->getVisitor()->setAnonymousId(null);
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::UNAUTHENTICATED);
+        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UNAUTHENTICATE);
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_UNAUTHENTICATE)
@@ -284,31 +298,18 @@ class DefaultStrategy extends StrategyAbstract
         return $campaigns;
     }
 
-    /**
-     * @param  string $functionName
-     * @return void
-     */
-    private function globalFetchFlags($functionName)
+    protected function logFetchFlagsStarted($functionName)
     {
-        $decisionManager = $this->getDecisionManager($functionName);
-        if (!$decisionManager) {
-            return;
-        }
-
         $this->logDebugSprintf(
             $this->getConfig(),
             $functionName,
             FlagshipConstant::FETCH_FLAGS_STARTED,
             [$this->getVisitor()->getVisitorId()]
         );
+    }
 
-        $now = $this->getNow();
-
-        $campaigns = $decisionManager->getCampaigns($this->getVisitor());
-
-        $troubleshootingData = $this->getDecisionManager()->getTroubleshootingData();
-        $this->getTrackingManager()->setTroubleshootingData($troubleshootingData);
-
+    protected function logFetchCampaignsSuccess($functionName, $campaigns, $now)
+    {
         $this->logDebugSprintf(
             $this->getConfig(),
             $functionName,
@@ -321,17 +322,10 @@ class DefaultStrategy extends StrategyAbstract
                 ($this->getNow() - $now),
             ]
         );
+    }
 
-        if (!is_array($campaigns)) {
-            $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
-        }
-
-        $this->getVisitor()->campaigns = $campaigns;
-        $flagsDTO = $decisionManager->getFlagsData($campaigns);
-        $this->getVisitor()->setFlagsDTO($flagsDTO);
-
-        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::FLAGS_FETCHED);
-
+    protected function logFetchFlagsFromCampaigns($functionName, $campaigns, $flagsDTO)
+    {
         $this->logDebugSprintf(
             $this->getConfig(),
             $functionName,
@@ -343,6 +337,12 @@ class DefaultStrategy extends StrategyAbstract
                 $flagsDTO,
             ]
         );
+    }
+
+    protected function sendTroubleshootingAndAnalyticHits($flagsDTO, $campaigns, $now)
+    {
+        $troubleshootingData = $this->getDecisionManager()->getTroubleshootingData();
+        $this->getTrackingManager()->setTroubleshootingData($troubleshootingData);
 
         if ($troubleshootingData) {
             $this->sendFetchFlagsTroubleshooting($troubleshootingData, $flagsDTO, $campaigns, $now);
@@ -353,12 +353,60 @@ class DefaultStrategy extends StrategyAbstract
     }
 
 
+    protected function getCampaignsFromCacheIfNotArray($campaigns)
+    {
+        if (!is_array($campaigns)) {
+            $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
+            if (count($campaigns)) {
+                $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::READ_FROM_CACHE);
+            }
+        }
+
+        return $campaigns;
+    }
+
+
+
     /**
      * @inheritDoc
      */
     public function fetchFlags()
     {
-        $this->globalFetchFlags(__FUNCTION__);
+        $functionName = __FUNCTION__;
+        $decisionManager = $this->getDecisionManager($functionName);
+        if (!$decisionManager) {
+            return;
+        }
+
+        $this->logFetchFlagsStarted($functionName);
+
+        $now = $this->getNow();
+
+        $this->setFetchStatus(FSFetchStatus::FETCHING, FSFetchReasons::NONE);
+
+        $campaigns = $decisionManager->getCampaigns($this->getVisitor());
+
+        if ($this->getDecisionManager()->getIsPanicMode()) {
+            $this->setFetchStatus(FSFetchStatus::PANIC, FSFetchReasons::NONE);
+        }
+
+        $this->logFetchCampaignsSuccess($functionName, $campaigns, $now);
+
+        $campaigns = $this->getCampaignsFromCacheIfNotArray($campaigns);
+        $this->getVisitor()->campaigns = $campaigns;
+
+        $flagsDTO = $decisionManager->getFlagsData($campaigns);
+        $this->getVisitor()->setFlagsDTO($flagsDTO);
+
+        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::FLAGS_FETCHED);
+
+        if ($this->getVisitor()->getFetchStatus()->getStatus() == FSFetchStatus::FETCHING) {
+            $this->setFetchStatus(FSFetchStatus::FETCHED, FSFetchReasons::NONE);
+        }
+
+        $this->logFetchFlagsFromCampaigns($functionName, $campaigns, $flagsDTO);
+
+        $this->sendTroubleshootingAndAnalyticHits($flagsDTO, $campaigns, $now);
     }
 
     /**

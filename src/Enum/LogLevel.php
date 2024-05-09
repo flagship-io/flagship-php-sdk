@@ -2,7 +2,7 @@
 
 namespace Flagship\Enum;
 
-class LogLevel
+class LogLevel extends AbstractStatus
 {
     /**
      * NONE = 0: Logging will be disabled.
@@ -55,9 +55,6 @@ class LogLevel
      */
     public static function getLogName($loglevel)
     {
-        if (!is_int($loglevel) || $loglevel < 0 || $loglevel > 9) {
-            return "";
-        }
-        return self::$logLevelName[$loglevel];
+        self::getConstantName($loglevel);
     }
 }

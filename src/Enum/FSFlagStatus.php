@@ -2,7 +2,7 @@
 
 namespace Flagship\Enum;
 
-class FSFlagStatus
+class FSFlagStatus extends AbstractStatus
 {
     /**
      * The flags have been successfully fetched from the API or re-evaluated in bucketing mode.

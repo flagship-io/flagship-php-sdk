@@ -8,7 +8,7 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Traits\Guid;
 use Flagship\Traits\LogTrait;
 use Flagship\Utils\ConfigManager;
@@ -47,7 +47,7 @@ class Flagship
     /**
      * @var int
      */
-    private $status = FlagshipStatus::NOT_INITIALIZED;
+    private $status;
 
     /**
      * @var string
@@ -59,7 +59,7 @@ class Flagship
      */
     private function __construct()
     {
-        //private singleton constructor
+        $this->status = FSSdkStatus::SDK_NOT_INITIALIZED;
     }
 
     /**
@@ -108,7 +108,7 @@ class Flagship
 
             $flagship->setConfig($config);
 
-            $flagship->setStatus(FlagshipStatus::STARTING);
+
 
             if (!$config->getLogManager()) {
                 $logManager = $container->get('Psr\Log\LoggerInterface');
@@ -129,7 +129,7 @@ class Flagship
             $decisionManager->setFlagshipInstanceId($flagship->flagshipInstanceId);
 
             //Will trigger setStatus method of Flagship if decisionManager want update status
-            $decisionManager->setStatusChangedCallback([$flagship,'setStatus']);
+            $decisionManager->setStatusChangedCallback([$flagship, 'setStatus']);
 
             $configManager = $container->get('Flagship\Utils\ConfigManager');
 
@@ -137,7 +137,7 @@ class Flagship
 
             $trackingManager = $container->get(
                 'Flagship\Api\TrackingManager',
-                [$config,$httpClient, $flagship->flagshipInstanceId]
+                [$config, $httpClient, $flagship->flagshipInstanceId]
             );
 
             $configManager->setTrackingManager($trackingManager);
@@ -154,20 +154,19 @@ class Flagship
                     FlagshipConstant::INITIALIZATION_PARAM_ERROR,
                     [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
                 );
+                $flagship->setStatus(FSSdkStatus::SDK_NOT_INITIALIZED);
+                return;
             }
 
-            if (self::isReady()) {
-                $flagship->logInfo(
-                    $config,
-                    sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
-                    [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
-                );
-                $flagship->setStatus(FlagshipStatus::READY);
-            } else {
-                $flagship->setStatus(FlagshipStatus::NOT_INITIALIZED);
-            }
+            $flagship->setStatus(FSSdkStatus::SDK_INITIALIZED);
+
+            $flagship->logInfo(
+                $config,
+                sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
+                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
+            );
         } catch (Exception $exception) {
-            self::getInstance()->setStatus(FlagshipStatus::NOT_INITIALIZED);
+            self::getInstance()->setStatus(FSSdkStatus::SDK_NOT_INITIALIZED);
 
             self::getInstance()->logError(
                 $config,

@@ -205,21 +205,6 @@ class Flagship
     }
 
     /**
-     * Return true if the SDK is properly initialized, otherwise return false
-     *
-     * @return bool
-     */
-    public static function isReady()
-    {
-        if (!self::$instance || !self::$instance->config) {
-            return false;
-        }
-        $envId = self::$instance->config->getEnvId();
-        $apiKey = self::$instance->config->getApiKey();
-        return !empty($envId) && !empty($apiKey);
-    }
-
-    /**
      * @return ConfigManager
      */
     protected function getConfigManager()
@@ -271,7 +256,7 @@ class Flagship
     /**
      * Set Flagship SDK status
      *
-     * @param int $status FlagshipStatus::READY or FlagshipStatus::NOT_READY
+     * @param int $status FSSdkStatus
      * @return Flagship
      */
     public function setStatus($status)

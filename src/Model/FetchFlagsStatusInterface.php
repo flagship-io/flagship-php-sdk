@@ -17,7 +17,7 @@ interface FetchFlagsStatusInterface
 
     /**
      * The reason for the status change
-     *
+     * See: FSFetchReason
      * @return int
      */
     public function getReason();

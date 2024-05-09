@@ -12,7 +12,7 @@ use Flagship\Flag\FlagMetadata;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FSFetchStatus;
-use Flagship\Enum\FSFetchReasons;
+use Flagship\Enum\FSFetchReason;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Model\FetchFlagsStatus;
@@ -101,7 +101,7 @@ class DefaultStrategy extends StrategyAbstract
 
     protected function fetchStatusUpdateContext()
     {
-        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UPDATE_CONTEXT);
+        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UPDATE_CONTEXT);
     }
 
     /**
@@ -130,6 +130,9 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function updateContextCollection(array $context)
     {
+        if (count($context) == 0) {
+            return;
+        }
         foreach ($context as $itemKey => $item) {
             $this->updateContextKeyValue($itemKey, $item);
         }
@@ -185,7 +188,7 @@ class DefaultStrategy extends StrategyAbstract
 
         $this->getVisitor()->setAnonymousId($this->getVisitor()->getVisitorId());
         $this->getVisitor()->setVisitorId($visitorId);
-        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::AUTHENTICATE);
+        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::AUTHENTICATE);
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_AUTHENTICATE)
@@ -223,7 +226,7 @@ class DefaultStrategy extends StrategyAbstract
 
         $this->getVisitor()->setVisitorId($anonymousId);
         $this->getVisitor()->setAnonymousId(null);
-        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UNAUTHENTICATE);
+        $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UNAUTHENTICATE);
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_UNAUTHENTICATE)
@@ -354,7 +357,7 @@ class DefaultStrategy extends StrategyAbstract
         if (!is_array($campaigns)) {
             $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
             if (count($campaigns)) {
-                $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::READ_FROM_CACHE);
+                $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::READ_FROM_CACHE);
             }
         }
 
@@ -378,12 +381,12 @@ class DefaultStrategy extends StrategyAbstract
 
         $now = $this->getNow();
 
-        $this->setFetchStatus(FSFetchStatus::FETCHING, FSFetchReasons::NONE);
+        $this->setFetchStatus(FSFetchStatus::FETCHING, FSFetchReason::NONE);
 
         $campaigns = $decisionManager->getCampaigns($this->getVisitor());
 
         if ($this->getDecisionManager()->getIsPanicMode()) {
-            $this->setFetchStatus(FSFetchStatus::PANIC, FSFetchReasons::NONE);
+            $this->setFetchStatus(FSFetchStatus::PANIC, FSFetchReason::NONE);
         }
 
         $this->logFetchCampaignsSuccess($functionName, $campaigns, $now);
@@ -395,7 +398,7 @@ class DefaultStrategy extends StrategyAbstract
         $this->getVisitor()->setFlagsDTO($flagsDTO);
 
         if ($this->getVisitor()->getFetchStatus()->getStatus() == FSFetchStatus::FETCHING) {
-            $this->setFetchStatus(FSFetchStatus::FETCHED, FSFetchReasons::NONE);
+            $this->setFetchStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE);
         }
 
         $this->logFetchFlagsFromCampaigns($functionName, $campaigns, $flagsDTO);

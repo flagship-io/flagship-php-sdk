@@ -7,7 +7,7 @@ use Exception;
 use Flagship\Enum\LogLevel;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FSFetchStatus;
-use Flagship\Enum\FSFetchReasons;
+use Flagship\Enum\FSFetchReason;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Model\FetchFlagsStatus;
@@ -73,7 +73,7 @@ class ApiManager extends DecisionManagerAbstract
             }
         } catch (Exception $exception) {
 
-            $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::FETCH_ERROR));
+            $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FETCH_ERROR));
             $this->logError($this->getConfig(), $exception->getMessage(), [
                 FlagshipConstant::TAG => __FUNCTION__
             ]);

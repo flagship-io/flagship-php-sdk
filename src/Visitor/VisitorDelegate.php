@@ -2,7 +2,7 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Enum\FSFetchReasons;
+use Flagship\Enum\FSFetchReason;
 use Flagship\Enum\FSFetchStatus;
 use Flagship\Flag\Flag;
 use Flagship\Model\FlagDTO;
@@ -45,6 +45,7 @@ class VisitorDelegate extends VisitorAbstract
         $this->setDependencyIContainer($dependencyIContainer);
         $this->setConfig($configManager->getConfig());
         $this->setVisitorId($visitorId ?: $this->newGuid());
+
         $this->setContext($context);
         $this->setConfigManager($configManager);
         $this->loadPredefinedContext();
@@ -56,7 +57,8 @@ class VisitorDelegate extends VisitorAbstract
 
         $this->setConsent($hasConsented);
         $this->getStrategy()->lookupVisitor();
-        $this->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::VISITOR_CREATED));
+        $this->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::VISITOR_CREATED));
+
     }
 
     /**
@@ -64,9 +66,7 @@ class VisitorDelegate extends VisitorAbstract
      */
     private function loadPredefinedContext()
     {
-        $defaultContext = [FlagshipContext::OS_NAME => PHP_OS];
-        $this->updateContextCollection($defaultContext);
-
+        $this->context[FlagshipContext::OS_NAME] = PHP_OS;
         $this->context[FlagshipConstant::FS_CLIENT] = FlagshipConstant::SDK_LANGUAGE;
         $this->context[FlagshipConstant::FS_VERSION] = FlagshipConstant::SDK_VERSION;
         $this->context[FlagshipConstant::FS_USERS] = $this->getVisitorId();
@@ -179,24 +179,24 @@ class VisitorDelegate extends VisitorAbstract
     protected function flagSyncStatusMessage($status)
     {
         $message = "";
-        $commonMessage = 'without calling `fetchFlags` method afterwards. As a result, the value of the flag `%s` might be outdated';
+        $commonMessage = 'without calling `fetchFlags` method afterwards. So, the value of the flag `%s` might be outdated';
         switch ($status) {
-            case FSFetchReasons::VISITOR_CREATED:
-                $message = "Visitor `%s` has been created {$commonMessage}`";
+            case FSFetchReason::VISITOR_CREATED:
+                $message = "Visitor `%s` has been created without calling `fetchFlags` method afterwards. So, the value of the flag `%s` is the default value";
                 break;
-            case FSFetchReasons::UPDATE_CONTEXT:
+            case FSFetchReason::UPDATE_CONTEXT:
                 $message = "Visitor context for visitor `%s` has been updated {$commonMessage}";
                 break;
-            case FSFetchReasons::AUTHENTICATE:
+            case FSFetchReason::AUTHENTICATE:
                 $message = "Visitor `%s` has been authenticated {$commonMessage}";
                 break;
-            case FSFetchReasons::UNAUTHENTICATE:
+            case FSFetchReason::UNAUTHENTICATE:
                 $message = "Visitor `%s` has been unauthenticated {$commonMessage}";
                 break;
-            case FSFetchReasons::FETCH_ERROR:
-                $message = "An error occurred while fetching flags for visitor `%s`. As a result, the value of the flag `%s` might be outdated";
+            case FSFetchReason::FETCH_ERROR:
+                $message = "An error occurred while fetching flags for visitor `%s`. So, the value of the flag `%s` might be outdated";
                 break;
-            case FSFetchReasons::READ_FROM_CACHE:
+            case FSFetchReason::READ_FROM_CACHE:
                 $message = "Flags for visitor  `%s` have been fetched from cache";
                 break;
         }

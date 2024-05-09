@@ -2,19 +2,22 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Enum\DecisionMode;
-use Flagship\Enum\EventCategory;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FlagSyncStatus;
-use Flagship\Enum\LogLevel;
-use Flagship\Enum\TroubleshootingLabel;
-use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Event;
-use Flagship\Hit\HitAbstract;
-use Flagship\Hit\Troubleshooting;
-use Flagship\Model\FlagDTO;
 use Flagship\Hit\Activate;
+use Flagship\Enum\LogLevel;
+use Flagship\Model\FlagDTO;
+use Flagship\Hit\HitAbstract;
+use Flagship\Enum\DecisionMode;
+use Flagship\Flag\FlagMetadata;
+use Flagship\Enum\EventCategory;
+use Flagship\Enum\FlagshipField;
+use Flagship\Enum\FSFetchStatus;
+use Flagship\Enum\FlagSyncStatus;
+use Flagship\Enum\FSFetchReasons;
+use Flagship\Hit\Troubleshooting;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Model\FetchFlagsStatus;
+use Flagship\Enum\TroubleshootingLabel;
 
 /**
  * DefaultStrategy
@@ -68,11 +71,12 @@ class DefaultStrategy extends StrategyAbstract
         $visitor->setConsentHitTroubleshooting($troubleshooting);
     }
 
-
     /**
-     * @inheritDoc
+     * @param string $key  context key.
+     * @param numeric|string|bool $value : context value.
+     * @return void
      */
-    public function updateContext($key, $value)
+    protected function updateContextKeyValue($key, $value)
     {
         if (!$this->isKeyValid($key) || !$this->isValueValid($value)) {
             $this->logError(
@@ -97,6 +101,16 @@ class DefaultStrategy extends StrategyAbstract
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function updateContext($key, $value)
+    {
+        $this->updateContextKeyValue($key, $value);
+        $this->getVisitor()->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UPDATE_CONTEXT));
+        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
+    }
+
 
     /**
      * @inheritDoc
@@ -104,8 +118,9 @@ class DefaultStrategy extends StrategyAbstract
     public function updateContextCollection(array $context)
     {
         foreach ($context as $itemKey => $item) {
-            $this->updateContext($itemKey, $item);
+            $this->updateContextKeyValue($itemKey, $item);
         }
+        $this->getVisitor()->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UPDATE_CONTEXT));
     }
 
 
@@ -216,14 +231,14 @@ class DefaultStrategy extends StrategyAbstract
      */
     protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
     {
-        $now          = $this->getNow();
+        $now = $this->getNow();
         $visitorCache = $visitor->visitorCache;
         if (
             !isset(
-                $visitorCache,
-                $visitorCache[self::DATA],
-                $visitorCache[self::DATA][self::CAMPAIGNS]
-            ) ||
+            $visitorCache,
+            $visitorCache[self::DATA],
+            $visitorCache[self::DATA][self::CAMPAIGNS]
+        ) ||
             !is_array($visitorCache[self::DATA][self::CAMPAIGNS])
         ) {
             return [];
@@ -234,14 +249,14 @@ class DefaultStrategy extends StrategyAbstract
         $campaigns = [];
         foreach ($data[self::CAMPAIGNS] as $item) {
             $campaigns[] = [
-                FlagshipField::FIELD_ID                 => $item[FlagshipField::FIELD_CAMPAIGN_ID],
+                FlagshipField::FIELD_ID => $item[FlagshipField::FIELD_CAMPAIGN_ID],
                 FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                FlagshipField::FIELD_VARIATION          => [
-                    FlagshipField::FIELD_ID            => $item[self::CAMPAIGN_ID],
-                    FlagshipField::FIELD_REFERENCE     => $item[FlagshipField::FIELD_IS_REFERENCE],
+                FlagshipField::FIELD_VARIATION => [
+                    FlagshipField::FIELD_ID => $item[self::CAMPAIGN_ID],
+                    FlagshipField::FIELD_REFERENCE => $item[FlagshipField::FIELD_IS_REFERENCE],
                     FlagshipField::FIELD_MODIFICATIONS => [
                         FlagshipField::FIELD_CAMPAIGN_TYPE => $item[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                        FlagshipField::FIELD_VALUE         => $item[self::FLAGS],
+                        FlagshipField::FIELD_VALUE => $item[self::FLAGS],
                     ],
                 ],
             ];
@@ -427,7 +442,7 @@ class DefaultStrategy extends StrategyAbstract
             ->setVisitorId($visitor->getVisitorId())
             ->setAnonymousId($visitor->getAnonymousId())
             ->setConfig($this->getConfig())
-          ;
+        ;
         $this->sendTroubleshootingHit($troubleshooting);
     }
 

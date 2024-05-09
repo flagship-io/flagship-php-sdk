@@ -203,4 +203,20 @@ class Visitor implements VisitorInterface, JsonSerializable
     {
         return $this->visitorDelegate->getFlagsDTO();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFetchStatus()
+    {
+        return $this->visitorDelegate->getFetchStatus();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged)
+    {
+        $this->visitorDelegate->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged);
+    }
 }

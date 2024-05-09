@@ -2,7 +2,7 @@
 
 namespace Flagship\Enum;
 
-class LogLevel extends EnumBase
+class LogLevel 
 {
     /**
      * NONE = 0: Logging will be disabled.
@@ -50,8 +50,11 @@ class LogLevel extends EnumBase
      * @param int $loglevel
      * @return string
      */
-    public static function getLogName($loglevel)
+    public static function getLogName($value)
     {
-        return self::getConstantName($loglevel);
+        $class = new \ReflectionClass(__CLASS__);
+        $constants = array_flip($class->getConstants());
+    
+        return $constants[$value];
     }
 }

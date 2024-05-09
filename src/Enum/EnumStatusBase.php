@@ -2,7 +2,7 @@
 
 namespace Flagship\Enum;
 
-abstract class EnumBase
+abstract class EnumStatusBase
 {
     /**
      * Get the status name for the given value.
@@ -10,7 +10,7 @@ abstract class EnumBase
      * @param mixed $value The value to get the status name for.
      * @return string|null The status name if found, null otherwise.
      */
-    public static function getConstantName($value)
+    public static function getStatusName($value)
     {
         $class = new \ReflectionClass(__CLASS__);
         $constants = array_flip($class->getConstants());

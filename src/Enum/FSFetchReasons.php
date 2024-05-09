@@ -2,7 +2,7 @@
 
 namespace Flagship\Enum;
 
-class FSFetchReasons extends EnumBase
+class FSFetchReasons extends EnumStatusBase
 {
     /**
      * Indicates that there is no specific reason for fetching flags.

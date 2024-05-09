@@ -2,7 +2,7 @@
 
 namespace Flagship\Enum;
 
-class LogLevel extends AbstractStatus
+class LogLevel extends EnumBase
 {
     /**
      * NONE = 0: Logging will be disabled.
@@ -46,15 +46,12 @@ class LogLevel extends AbstractStatus
      */
     const ALL = 9;
 
-    private static $logLevelName = ["NONE", "EMERGENCY", "ALERT", "CRITICAL", "ERROR",
-        "WARNING", "NOTICE", "INFO", "DEBUG", "ALL"];
-
     /**
      * @param int $loglevel
      * @return string
      */
     public static function getLogName($loglevel)
     {
-        self::getConstantName($loglevel);
+        return self::getConstantName($loglevel);
     }
 }

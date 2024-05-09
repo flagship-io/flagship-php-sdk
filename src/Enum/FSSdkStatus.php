@@ -2,7 +2,7 @@
 
 namespace Flagship\Enum;
 
-class FSSdkStatus extends AbstractStatus
+class FSSdkStatus extends EnumBase
 {
     /**
      * It is the default initial status. This status remains until the sdk has been initialized successfully.

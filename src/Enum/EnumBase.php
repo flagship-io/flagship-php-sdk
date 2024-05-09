@@ -2,7 +2,7 @@
 
 namespace Flagship\Enum;
 
-abstract class AbstractStatus
+abstract class EnumBase
 {
     /**
      * Get the status name for the given value.

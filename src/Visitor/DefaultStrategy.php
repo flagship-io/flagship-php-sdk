@@ -101,14 +101,17 @@ class DefaultStrategy extends StrategyAbstract
         $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
     }
 
+    protected function fetchStatusUpdateContext() {
+        $this->getVisitor()->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UPDATE_CONTEXT));
+    }
+
     /**
      * @inheritDoc
      */
     public function updateContext($key, $value)
     {
         $this->updateContextKeyValue($key, $value);
-        $this->getVisitor()->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UPDATE_CONTEXT));
-        $this->getVisitor()->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
+        $this->fetchStatusUpdateContext();
     }
 
 
@@ -120,7 +123,7 @@ class DefaultStrategy extends StrategyAbstract
         foreach ($context as $itemKey => $item) {
             $this->updateContextKeyValue($itemKey, $item);
         }
-        $this->getVisitor()->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::UPDATE_CONTEXT));
+        $this->fetchStatusUpdateContext();
     }
 
 
@@ -130,6 +133,7 @@ class DefaultStrategy extends StrategyAbstract
     public function clearContext()
     {
         $this->getVisitor()->context = [];
+        $this->fetchStatusUpdateContext();
     }
 
 

@@ -10,6 +10,7 @@ use Flagship\Decision\ApiManager;
 use Flagship\Decision\BucketingManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -90,8 +91,7 @@ class FlagshipTest extends TestCase
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
-        $this->assertTrue(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_INITIALIZED, Flagship::getStatus());
 
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
@@ -177,9 +177,7 @@ class FlagshipTest extends TestCase
         $this->assertSame($envId, Flagship::getConfig()->getEnvId());
         $this->assertSame($apiKey, Flagship::getConfig()->getApiKey());
 
-        $this->assertTrue(Flagship::isReady());
-
-        $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_INITIALIZED, Flagship::getStatus());
 
         $this->assertInstanceOf('Flagship\Utils\ConfigManager', $configManager);
         $this->assertInstanceOf('Flagship\Decision\ApiManager', $configManager->getDecisionManager());
@@ -224,8 +222,7 @@ class FlagshipTest extends TestCase
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
-        $this->assertTrue(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_INITIALIZED, Flagship::getStatus());
     }
 
     public function testStartFailed()
@@ -244,8 +241,7 @@ class FlagshipTest extends TestCase
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
-        $this->assertFalse(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_NOT_INITIALIZED, Flagship::getStatus());
 
         //Test Start Flagship failed with empty apiKey
         $envId = "envId";
@@ -257,8 +253,7 @@ class FlagshipTest extends TestCase
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
-        $this->assertFalse(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_NOT_INITIALIZED, Flagship::getStatus());
 
         //Test Start Flagship failed with empty apiKey
         $envId = "";
@@ -270,8 +265,7 @@ class FlagshipTest extends TestCase
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
-        $this->assertFalse(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_NOT_INITIALIZED, Flagship::getStatus());
     }
 
     public function testStartFailedWithLog()
@@ -307,8 +301,7 @@ class FlagshipTest extends TestCase
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
-        $this->assertFalse(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_NOT_INITIALIZED, Flagship::getStatus());
     }
 
     public function testStartFailedThrowException()
@@ -357,10 +350,7 @@ class FlagshipTest extends TestCase
     public function testGetStatus()
     {
         //Test Status default is NO_READY
-        $this->assertSame(FlagshipStatus::NOT_INITIALIZED, Flagship::getStatus());
-
-        //Test DecisionApiConfig is null
-        $this->assertFalse(Flagship::isReady());
+        $this->assertSame(FSSdkStatus::SDK_NOT_INITIALIZED, Flagship::getStatus());
 
         //Test Start Flagship
         $envId = "end_id";
@@ -371,14 +361,7 @@ class FlagshipTest extends TestCase
 
         Flagship::start($envId, $apiKey, $config);
         $this->assertSame($config, Flagship::getConfig());
-        $this->assertTrue(Flagship::isReady());
-        $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
-    }
-
-    public function testIsReady()
-    {
-        //Test Flagship instance is null
-        $this->assertFalse(Flagship::isReady());
+        $this->assertSame(FSSdkStatus::SDK_INITIALIZED, Flagship::getStatus());
     }
 
     public function testNewVisitor()
@@ -411,9 +394,9 @@ class FlagshipTest extends TestCase
         $count = 0;
         $callable = function ($status) use (&$count) {
             if ($count == 0) {
-                $this->assertSame(FlagshipStatus::STARTING, $status);
+                $this->assertSame(FSSdkStatus::SDK_INITIALIZING, $status);
             } else {
-                $this->assertSame(FlagshipStatus::READY, $status);
+                $this->assertSame(FSSdkStatus::SDK_NOT_INITIALIZED, $status);
             }
             $count++;
         };
@@ -513,11 +496,11 @@ class FlagshipTest extends TestCase
 
         $visitor->fetchFlags();
 
-        $this->assertSame(FlagshipStatus::READY_PANIC_ON, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_INITIALIZED, Flagship::getStatus());
 
         $visitor->fetchFlags();
 
-        $this->assertSame(FlagshipStatus::READY, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_INITIALIZED, Flagship::getStatus());
     }
 
     public function testClose()

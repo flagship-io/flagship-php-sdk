@@ -5,7 +5,7 @@ namespace Flagship\Decision;
 use Exception;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -119,7 +119,7 @@ class ApiManagerTest extends TestCase
 
         $statusCallback = function ($status) {
             // test status change
-            $this->assertSame(FlagshipStatus::READY, $status);
+            $this->assertSame(FSSdkStatus::SDK_INITIALIZED, $status);
         };
 
         $manager->setStatusChangedCallback($statusCallback);
@@ -212,7 +212,7 @@ class ApiManagerTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         //Test Change Status to FlagshipStatus::READY_PANIC_ON
-        $this->expectOutputString((string)FlagshipStatus::READY_PANIC_ON);
+        $this->expectOutputString((string)FSSdkStatus::SDK_PANIC);
         $modifications = $manager->getCampaignFlags($visitor);
 
         $this->assertTrue($manager->getIsPanicMode());

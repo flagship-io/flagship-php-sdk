@@ -31,4 +31,12 @@ interface FlagInterface extends ExposedFlagInterface
      * @inheritdoc
      */
     public function getMetadata();
+
+    /**
+     * Returns the status of the flag.
+     * @see \Flagship\Enum\FSFlagStatus for possible values.
+     * @return int
+     */
+    public function getStatus();
+
 }

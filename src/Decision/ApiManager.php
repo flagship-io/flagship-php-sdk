@@ -4,13 +4,16 @@ namespace Flagship\Decision;
 
 use DateTime;
 use Exception;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
-use Flagship\Enum\TroubleshootingLabel;
+use Flagship\Enum\FlagshipField;
+use Flagship\Enum\FSFetchStatus;
+use Flagship\Enum\FSFetchReasons;
 use Flagship\Hit\Troubleshooting;
-use Flagship\Model\TroubleshootingData;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Model\FetchFlagsStatus;
 use Flagship\Visitor\VisitorAbstract;
+use Flagship\Enum\TroubleshootingLabel;
+use Flagship\Model\TroubleshootingData;
 
 /**
  * This class manage all http calls to Decision api
@@ -24,7 +27,7 @@ class ApiManager extends DecisionManagerAbstract
      * return an associative array of campaigns
      *
      * @param VisitorAbstract $visitor
-     * @return array return an associative array of campaigns
+     * @return array|null return an associative array of campaigns
      */
     public function getCampaigns(VisitorAbstract $visitor)
     {
@@ -69,6 +72,8 @@ class ApiManager extends DecisionManagerAbstract
                 return $body[FlagshipField::FIELD_CAMPAIGNS];
             }
         } catch (Exception $exception) {
+
+            $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReasons::FETCH_ERROR));
             $this->logError($this->getConfig(), $exception->getMessage(), [
                 FlagshipConstant::TAG => __FUNCTION__
             ]);
@@ -76,9 +81,6 @@ class ApiManager extends DecisionManagerAbstract
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::GET_CAMPAIGNS_ROUTE_RESPONSE_ERROR)
                 ->setLogLevel(LogLevel::ERROR)
-                ->setVisitorId($visitor->getVisitorId())
-                ->setAnonymousId($visitor->getAnonymousId())
-                ->setVisitorContext($visitor->getContext())
                 ->setVisitorSessionId($visitor->getInstanceId())
                 ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
                 ->setTraffic(100)
@@ -89,6 +91,9 @@ class ApiManager extends DecisionManagerAbstract
                 ->setHttpRequestUrl($url)
                 ->setHttpResponseBody($exception->getMessage())
                 ->setHttpResponseTime($this->getNow() - $now)
+                ->setVisitorId($visitor->getVisitorId())
+                ->setAnonymousId($visitor->getAnonymousId())
+                ->setVisitorContext($visitor->getContext())
             ;
             $visitor->sendTroubleshootingHit($troubleshooting);
         }

@@ -7,11 +7,13 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
-use Flagship\Enum\FlagshipStatus;
-use Flagship\Enum\FlagSyncStatus;
+use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\Event;
 use Flagship\Hit\Page;
+use Flagship\Model\FetchFlagsStatus;
 use Flagship\Model\FlagDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -78,7 +80,8 @@ class VisitorDelegateTest extends TestCase
 
         $visitorDelegate = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext);
 
-        $this->assertSame(FlagSyncStatus::CREATED, $visitorDelegate->getFlagSyncStatus());
+        $this->assertSame(FSFetchStatus::FETCH_REQUIRED, $visitorDelegate->getFetchStatus()->getStatus());
+        $this->assertSame(FSFetchReason::VISITOR_CREATED, $visitorDelegate->getFetchStatus()->getReason());
         //Test default visitorId
         $this->assertEquals($visitorId, $visitorDelegate->getVisitorId());
 
@@ -214,7 +217,7 @@ class VisitorDelegateTest extends TestCase
         ];
 
         //test SetContext
-        $defaultStrategy->expects($this->exactly(3))
+        $defaultStrategy->expects($this->exactly(2))
             ->method('updateContextCollection')
             ->withConsecutive(
                 [$visitorContext],
@@ -313,16 +316,16 @@ class VisitorDelegateTest extends TestCase
         //Test  flag warning
         $config->setLogManager($logManagerStub);
         $logManagerStub->expects($this->exactly(4))->method('warning');
-        $visitor->setFlagSyncStatus(FlagSyncStatus::CREATED);
+        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCH_REQUIRED, FSFetchReason::VISITOR_CREATED));
         $visitor->getFlag('key1', $defaultValue);
-        $visitor->setFlagSyncStatus(FlagSyncStatus::CONTEXT_UPDATED);
-        $visitor->getFlag('key1', $defaultValue);
-        $visitor->setFlagSyncStatus(FlagSyncStatus::AUTHENTICATED);
-        $visitor->getFlag('key1', $defaultValue);
-        $visitor->setFlagSyncStatus(FlagSyncStatus::UNAUTHENTICATED);
-        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UPDATE_CONTEXT));
 
-        $visitor->setFlagSyncStatus(FlagSyncStatus::FLAGS_FETCHED);
+        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCH_REQUIRED, FSFetchReason::AUTHENTICATE));
+        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UNAUTHENTICATE));
+        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCHED, FSFetchReason::NONE));
         $visitor->getFlag('key1', $defaultValue);
 
     }
@@ -356,7 +359,7 @@ class VisitorDelegateTest extends TestCase
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
         $setStatusMethod = Utils::getMethod($instance, 'setStatus');
-        $setStatusMethod->invoke($instance, FlagshipStatus::NOT_INITIALIZED);
+        $setStatusMethod->invoke($instance, FSSdkStatus::SDK_NOT_INITIALIZED);
 
         $decisionManagerMock = $this->getMockBuilder('Flagship\Api\TrackingManager')
             ->setMethods(['addHit'])
@@ -373,17 +376,17 @@ class VisitorDelegateTest extends TestCase
 
         $this->assertInstanceOf('Flagship\Visitor\NotReadyStrategy', $strategy);
 
-        $setStatusMethod->invoke($instance, FlagshipStatus::READY_PANIC_ON);
+        $setStatusMethod->invoke($instance, FSSdkStatus::SDK_PANIC);
         $strategy = $getStrategyMethod->invoke($visitorDelegate);
 
         $this->assertInstanceOf('Flagship\Visitor\PanicStrategy', $strategy);
 
-        $setStatusMethod->invoke($instance, FlagshipStatus::READY);
+        $setStatusMethod->invoke($instance, FSSdkStatus::SDK_INITIALIZED);
         $strategy = $getStrategyMethod->invoke($visitorDelegate);
 
         $this->assertInstanceOf('Flagship\Visitor\NoConsentStrategy', $strategy);
 
-        $setStatusMethod->invoke($instance, FlagshipStatus::READY);
+        $setStatusMethod->invoke($instance, FSSdkStatus::SDK_INITIALIZED);
         $visitorDelegate->setConsent(true);
         $strategy = $getStrategyMethod->invoke($visitorDelegate);
 

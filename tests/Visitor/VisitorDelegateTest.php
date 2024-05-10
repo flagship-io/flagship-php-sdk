@@ -101,9 +101,22 @@ class VisitorDelegateTest extends TestCase
         $visitorDelegate->setConsent(true);
         $this->assertTrue($visitorDelegate->hasConsented());
 
-
         //Test Config
         $this->assertSame($config, $visitorDelegate->getConfig());
+
+        //Test onFetchFlagsStatusChanged
+        $onFetchFlagsStatusChanged = function ($fetchFlagsStatus) {
+            $this->assertSame(FSFetchStatus::FETCHED, $fetchFlagsStatus->getStatus());
+            $this->assertSame(FSFetchReason::NONE, $fetchFlagsStatus->getReason());
+        };
+        $visitorDelegate->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged);
+        $this->assertSame($onFetchFlagsStatusChanged, $visitorDelegate->getOnFetchFlagsStatusChanged());
+
+        //Test getFetchStatus
+        $fetchStatus = new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE);
+        $visitorDelegate->setFetchStatus($fetchStatus);
+        $this->assertInstanceOf('Flagship\Model\FetchFlagsStatus', $visitorDelegate->getFetchStatus());
+        $this->assertSame($fetchStatus, $visitorDelegate->getFetchStatus());
     }
 
     public function testSetAnonymous()
@@ -200,9 +213,20 @@ class VisitorDelegateTest extends TestCase
 
         $defaultStrategy = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')
             ->setMethods([
-                'setContext', 'updateContext', 'updateContextCollection', "cacheVisitor",
-                'clearContext', 'authenticate', 'unauthenticate', 'setConsent', 'sendHit', 'fetchFlags', 'visitorExposed', 'getFlagValue',
-                'getFlagMetadata','lookupVisitor'
+                'setContext',
+                'updateContext',
+                'updateContextCollection',
+                "cacheVisitor",
+                'clearContext',
+                'authenticate',
+                'unauthenticate',
+                'setConsent',
+                'sendHit',
+                'fetchFlags',
+                'visitorExposed',
+                'getFlagValue',
+                'getFlagMetadata',
+                'lookupVisitor'
             ])->disableOriginalConstructor()
             ->getMock();
 
@@ -286,8 +310,8 @@ class VisitorDelegateTest extends TestCase
         $key = 'key';
         $metadata = FlagMetadata::getEmpty();
         $defaultStrategy->expects($this->exactly(1))
-           ->method('getFlagMetadata')
-           ->withConsecutive([$key, $metadata, true]);
+            ->method('getFlagMetadata')
+            ->withConsecutive([$key, $metadata, true]);
 
         $visitor->getFlagMetadata($key, $metadata, true);
 
@@ -298,8 +322,7 @@ class VisitorDelegateTest extends TestCase
             ->setVariationGroupId("varGroupID")
             ->setVariationId('varID')
             ->setIsReference(true)->setValue("value")
-        ->setCampaignType("ab");
-
+            ->setCampaignType("ab");
 
         $flagsDTO = [
             $flagDTO
@@ -315,17 +338,21 @@ class VisitorDelegateTest extends TestCase
 
         //Test  flag warning
         $config->setLogManager($logManagerStub);
-        $logManagerStub->expects($this->exactly(4))->method('warning');
-        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCH_REQUIRED, FSFetchReason::VISITOR_CREATED));
+        $logManagerStub->expects($this->exactly(6))->method('warning');
+        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::VISITOR_CREATED));
         $visitor->getFlag('key1', $defaultValue);
-        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UPDATE_CONTEXT));
+        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UPDATE_CONTEXT));
 
         $visitor->getFlag('key1', $defaultValue);
-        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCH_REQUIRED, FSFetchReason::AUTHENTICATE));
+        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::AUTHENTICATE));
         $visitor->getFlag('key1', $defaultValue);
-        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UNAUTHENTICATE));
+        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UNAUTHENTICATE));
         $visitor->getFlag('key1', $defaultValue);
-        $visitor->setFetchStatus(new FetchFlagsStatus (FSFetchStatus::FETCHED, FSFetchReason::NONE));
+        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FETCH_ERROR));
+        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::READ_FROM_CACHE));
+        $visitor->getFlag('key1', $defaultValue);
+        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
         $visitor->getFlag('key1', $defaultValue);
 
     }
@@ -334,7 +361,8 @@ class VisitorDelegateTest extends TestCase
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
-        $context = ["age" => 20,
+        $context = [
+            "age" => 20,
             "sdk_osName" => PHP_OS,
             "sdk_deviceType" => "server",
             FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,

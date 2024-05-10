@@ -7,7 +7,7 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Enum\HitType;
 use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
@@ -29,7 +29,7 @@ class TroubleshootingTest extends TestCase
         $visitorInstanceId  = "visitorInstanceId";
         $stackOriginName = "stackOriginName";
         $stackOriginVersion = "1";
-        $sdkStatus = FlagshipStatus::READY;
+        $sdkStatus = FSSdkStatus::SDK_INITIALIZED;
         $sdkConfigMode = DecisionMode::DECISION_API;
         $cacheStrategy = CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE;
         $httpRequestUrl = "https://localhost";
@@ -162,7 +162,7 @@ class TroubleshootingTest extends TestCase
             'flagshipInstanceId' => $flagshipInstanceId,
             'stack.origin.name' => $stackOriginName,
             'stack.origin.version' => $stackOriginVersion,
-            'sdk.status' => FlagshipStatus::getStatusName($sdkStatus),
+            'sdk.status' => FSSdkStatus::getStatusName($sdkStatus),
             'sdk.config.logLevel' => LogLevel::getLogName($config->getLogLevel()),
             'sdk.config.mode' => DecisionMode::getDecisionModeName($sdkConfigMode),
             'sdk.config.customLogManager' => 'true',

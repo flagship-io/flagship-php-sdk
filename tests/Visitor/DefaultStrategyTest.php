@@ -12,7 +12,8 @@ use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FlagSyncStatus;
+use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
 use Flagship\Enum\HitType;
 use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
@@ -122,7 +123,8 @@ class DefaultStrategyTest extends TestCase
         $context = $visitor->getContext();
         $this->assertArrayHasKey($ageKey, $context);
         $this->assertEquals($newAge, $context[$ageKey]);
-        $this->assertSame(FlagSyncStatus::CONTEXT_UPDATED, $visitor->getFlagSyncStatus());
+        $this->assertSame(FSFetchReason::UPDATE_CONTEXT, $visitor->getFetchStatus()->getReason());
+        $this->assertSame(FSFetchStatus::FETCH_REQUIRED, $visitor->getFetchStatus()->getStatus());
 
         //Test bool value
         $isAdminKey = "isAdmin";
@@ -305,7 +307,8 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->authenticate($newVisitorId);
         $this->assertSame($visitorId, $visitor->getAnonymousId());
         $this->assertSame($newVisitorId, $visitor->getVisitorId());
-        $this->assertSame(FlagSyncStatus::AUTHENTICATED, $visitor->getFlagSyncStatus());
+        $this->assertSame(FSFetchReason::AUTHENTICATE, $visitor->getFetchStatus()->getReason());
+        $this->assertSame(FSFetchStatus::FETCH_REQUIRED, $visitor->getFetchStatus()->getStatus());
 
         //Test authenticate with null visitorId
 
@@ -385,7 +388,8 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->unauthenticate();
         $this->assertNull($visitor->getAnonymousId());
         $this->assertSame($anonymous, $visitor->getVisitorId());
-        $this->assertSame(FlagSyncStatus::UNAUTHENTICATED, $visitor->getFlagSyncStatus());
+        $this->assertSame(FSFetchReason::UNAUTHENTICATE, $visitor->getFetchStatus()->getReason());
+        $this->assertSame(FSFetchStatus::FETCH_REQUIRED, $visitor->getFetchStatus()->getStatus());
     }
 
     public function testFetchFlags()
@@ -427,7 +431,8 @@ class DefaultStrategyTest extends TestCase
         $modifications = $this->campaignsModifications();
 
         $this->assertJsonStringEqualsJsonString(json_encode($modifications), json_encode($visitor->getFlagsDTO()));
-        $this->assertSame(FlagSyncStatus::FLAGS_FETCHED, $visitor->getFlagSyncStatus());
+        $this->assertSame(FSFetchReason::NONE, $visitor->getFetchStatus()->getReason());
+        $this->assertSame(FSFetchStatus::FETCHED, $visitor->getFetchStatus()->getStatus());
     }
 
     public function testFetchFlagsTroubleshootingData()

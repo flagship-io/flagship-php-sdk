@@ -4,7 +4,10 @@ namespace Flagship\Visitor;
 
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
 use Flagship\Hit\Page;
+use Flagship\Model\FetchFlagsStatus;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use PHPUnit\Framework\TestCase;
@@ -68,10 +71,22 @@ class VisitorTest extends TestCase
 
         $visitorDelegateMock = $this->getMockBuilder('Flagship\Visitor\VisitorDelegate')
             ->setMethods([
-                'getContext', 'setContext', 'updateContext', 'updateContextCollection',
-                'clearContext', 'authenticate', 'unauthenticate','getAnonymousId', 'sendHit', 'fetchFlags', 'getFlag', 'getFlagsDTO'
-                ])
-            ->setConstructorArgs([new Container(),$configManager, $visitorId, false, $visitorContext, true])->getMock();
+                'getContext',
+                'setContext',
+                'updateContext',
+                'updateContextCollection',
+                'clearContext',
+                'authenticate',
+                'unauthenticate',
+                'getAnonymousId',
+                'sendHit',
+                'fetchFlags',
+                'getFlag',
+                'getFlagsDTO',
+                "getFetchStatus",
+                "setOnFetchFlagsStatusChanged"
+            ])
+            ->setConstructorArgs([new Container(), $configManager, $visitorId, false, $visitorContext, true])->getMock();
 
         $visitor = new Visitor($visitorDelegateMock);
 
@@ -146,18 +161,35 @@ class VisitorTest extends TestCase
             ->method('getFlagsDTO')
             ->willReturn([]);
         $visitor->getFlagsDTO();
+
+        //Test getFetchStatus
+        $visitorDelegateMock->expects($this->once())
+            ->method('getFetchStatus')
+            ->willReturn(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
+        $fetchStatus = $visitor->getFetchStatus();
+        $this->assertInstanceOf(FetchFlagsStatus::class, $fetchStatus);
+
+        //Test setOnFetchFlagsStatusChanged
+        $onFetchFlagsStatusChanged = function () {
+        };
+        $visitorDelegateMock->expects($this->once())
+            ->method('setOnFetchFlagsStatusChanged')
+            ->with($onFetchFlagsStatusChanged);
+        $visitor->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged);
     }
 
     public function testJson()
     {
         $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
-        $context = ["age" => 20,
+        $context = [
+            "age" => 20,
             "sdk_osName" => PHP_OS,
             "sdk_deviceType" => "server",
             FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
             FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,];
+            FlagshipConstant::FS_USERS => $visitorId,
+        ];
         $configManager = (new ConfigManager())->setConfig($config);
         $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $context, true);
 

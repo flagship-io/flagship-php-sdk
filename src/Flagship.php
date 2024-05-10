@@ -166,6 +166,7 @@ class Flagship
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
             );
         } catch (Exception $exception) {
+
             self::getInstance()->setStatus(FSSdkStatus::SDK_NOT_INITIALIZED);
 
             self::getInstance()->logError(
@@ -261,8 +262,9 @@ class Flagship
      */
     public function setStatus($status)
     {
-        if ($this->config && $this->config->getOnSdkStatusChanged() && $this->status !== $status) {
-            call_user_func($this->config->getOnSdkStatusChanged(), $status);
+        $onSdkStatusChanged = $this->config ? $this->config->getOnSdkStatusChanged() : null;
+        if ($onSdkStatusChanged && $this->status !== $status) {
+            call_user_func($onSdkStatusChanged, $status);
         }
         VisitorAbstract::setSdkStatus($status);
         $this->status = $status;

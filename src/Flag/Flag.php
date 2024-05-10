@@ -80,14 +80,6 @@ class Flag implements FlagInterface
     /**
      * @inheritDoc
      */
-    public function userExposed()
-    {
-        $this->visitorExposed();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getMetadata()
     {
         $flagDTO = $this->findFlagDTO($this->key);

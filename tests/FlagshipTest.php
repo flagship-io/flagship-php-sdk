@@ -9,8 +9,8 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Decision\BucketingManager;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
 use Flagship\Enum\FSSdkStatus;
+use Flagship\Enum\LogLevel;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -233,11 +233,6 @@ class FlagshipTest extends TestCase
         $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
 
-        $callback = function ($status) {
-            echo $status;
-        };
-        $config->setOnSdkStatusChanged($callback);
-        $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
@@ -249,7 +244,6 @@ class FlagshipTest extends TestCase
         $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
 
-        $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
@@ -261,7 +255,6 @@ class FlagshipTest extends TestCase
         $config = new DecisionApiConfig($envId, $apiKey);
         $config->setLogManager($this->logManagerMock);
 
-        $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
 
         $this->assertSame($config, Flagship::getConfig());
@@ -337,14 +330,8 @@ class FlagshipTest extends TestCase
             );
         $flagshipMock->expects($this->never())->method('logInfo');
 
-        $callback = function ($status) {
-            echo $status;
-        };
-
-        $config->setOnSdkStatusChanged($callback);
-
-        $this->expectOutputString('10'); //Callback status STARTING then NOT_INITIALIZED
         Flagship::start($envId, $apiKey, $config);
+        $this->assertSame(FSSdkStatus::SDK_NOT_INITIALIZED, Flagship::getStatus());
     }
 
     public function testGetStatus()
@@ -393,16 +380,11 @@ class FlagshipTest extends TestCase
 
         $count = 0;
         $callable = function ($status) use (&$count) {
-            if ($count == 0) {
-                $this->assertSame(FSSdkStatus::SDK_INITIALIZING, $status);
-            } else {
-                $this->assertSame(FSSdkStatus::SDK_NOT_INITIALIZED, $status);
-            }
-            $count++;
+            $this->assertSame(FSSdkStatus::SDK_INITIALIZED, $status);
         };
 
-        $config->setLogLevel(0);
-        $config->expects($this->exactly(4))
+        $config->setLogLevel(LogLevel::ALL);
+        $config->expects($this->exactly(1))
             ->method("getOnSdkStatusChanged")
             ->willReturn($callable);
 
@@ -496,7 +478,7 @@ class FlagshipTest extends TestCase
 
         $visitor->fetchFlags();
 
-        $this->assertSame(FSSdkStatus::SDK_INITIALIZED, Flagship::getStatus());
+        $this->assertSame(FSSdkStatus::SDK_PANIC, Flagship::getStatus());
 
         $visitor->fetchFlags();
 

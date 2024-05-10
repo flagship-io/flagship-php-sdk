@@ -2,12 +2,10 @@
 
 namespace Flagship\Hit;
 
-use DateTime;
-use DateTimeZone;
 use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Enum\LogLevel;
 use Flagship\Model\FlagDTO;
 
@@ -1352,7 +1350,7 @@ class Diagnostic extends HitAbstract
             $customVariable["stack.origin.version"] = $this->getStackOriginVersion();
         }
         if ($this->getSdkStatus() !== null) {
-            $customVariable["sdk.status"] = FlagshipStatus::getStatusName($this->getSdkStatus());
+            $customVariable["sdk.status"] = FSSdkStatus::getStatusName($this->getSdkStatus());
         }
         if ($this->getSdkConfigLogLeve() !== null) {
             $customVariable["sdk.config.logLevel"] = LogLevel::getLogName($this->getSdkConfigLogLeve());

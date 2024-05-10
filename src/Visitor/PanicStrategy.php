@@ -3,7 +3,7 @@
 namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Flag\FlagMetadata;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
@@ -26,7 +26,7 @@ class PanicStrategy extends DefaultStrategy
             $this->getVisitor()->getConfig(),
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
-                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
+                FSSdkStatus::getStatusName(FSSdkStatus::SDK_PANIC)
             ),
             [FlagshipConstant::TAG => __FUNCTION__]
         );
@@ -125,7 +125,7 @@ class PanicStrategy extends DefaultStrategy
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
+                FSSdkStatus::getStatusName(FSSdkStatus::SDK_PANIC)
             ),
             [FlagshipConstant::TAG => $functionName]
         );

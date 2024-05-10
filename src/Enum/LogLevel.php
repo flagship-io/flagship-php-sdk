@@ -55,6 +55,6 @@ class LogLevel
         $class = new \ReflectionClass(__CLASS__);
         $constants = array_flip($class->getConstants());
     
-        return isset($constants[$value]) ? $constants[$value] : null;
+        return isset($constants[$value]) ? $constants[$value] : "";
     }
 }

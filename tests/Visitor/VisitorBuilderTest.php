@@ -2,10 +2,13 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Utils\ConfigManager;
+use Flagship\Enum\FSFetchReason;
 use PHPUnit\Framework\TestCase;
+use Flagship\Enum\FSFetchStatus;
+use Flagship\Utils\ConfigManager;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\DecisionApiConfig;
+use Flagship\Model\FetchFlagsStatusInterface;
 
 class VisitorBuilderTest extends TestCase
 {
@@ -71,12 +74,19 @@ class VisitorBuilderTest extends TestCase
             FlagshipConstant::FS_USERS => $visitorId,
         ];
 
+        $onFetchFlagsStatusChanged = function (FetchFlagsStatusInterface $fetchFlagsStatus) {
+            $this->assertSame($fetchFlagsStatus->getStatus(), FSFetchStatus::FETCH_REQUIRED);
+            $this->assertSame($fetchFlagsStatus->getReason(), FSFetchReason::VISITOR_CREATED);
+        };
+
         $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $containerMock, null)
             ->isAuthenticated(true)
+            ->onFetchFlagsStatusChanged($onFetchFlagsStatusChanged)
             ->withContext($context)->build();
 
         $this->assertSame($context, $visitor->getContext());
         $this->assertTrue($visitor->hasConsented());
         $this->assertNotNull($visitor->getAnonymousId());
+        
     }
 }

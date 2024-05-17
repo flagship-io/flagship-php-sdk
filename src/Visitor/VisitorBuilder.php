@@ -89,7 +89,7 @@ class VisitorBuilder
      * @param bool $isAuthenticated true for an authenticated visitor, false for an anonymous visitor.
      * @return VisitorBuilder
      */
-    public function isAuthenticated($isAuthenticated)
+    public function setIsAuthenticated($isAuthenticated)
     {
         $this->isAuthenticated = $isAuthenticated;
         return $this;
@@ -101,7 +101,7 @@ class VisitorBuilder
      * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return VisitorBuilder
      */
-    public function withContext(array $context)
+    public function setContext(array $context)
     {
         $this->context = $context;
         return $this;
@@ -114,7 +114,7 @@ class VisitorBuilder
      * @param callable $onFetchFlagsStatusChanged
      * @return VisitorBuilder
      */
-    public function onFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged)
+    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged)
     {
         $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
         return $this;

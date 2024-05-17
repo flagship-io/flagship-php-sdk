@@ -80,9 +80,9 @@ class VisitorBuilderTest extends TestCase
         };
 
         $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $containerMock, null)
-            ->isAuthenticated(true)
-            ->onFetchFlagsStatusChanged($onFetchFlagsStatusChanged)
-            ->withContext($context)->build();
+            ->setIsAuthenticated(true)
+            ->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged)
+            ->setContext($context)->build();
 
         $this->assertSame($context, $visitor->getContext());
         $this->assertTrue($visitor->hasConsented());

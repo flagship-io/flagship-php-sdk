@@ -14,7 +14,7 @@ Flagship::start($envId, $apiKey, DecisionApiConfig::decisionApi()
     ->setCacheStrategy(CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE));
 
 $visitor = Flagship::newVisitor("visitor-1", true)
-    ->withContext(['ci-test' => true, 'test-ab' => true])
+    ->setContext(['ci-test' => true, 'test-ab' => true])
     ->build();
 
 $visitor->fetchFlags();
@@ -28,7 +28,7 @@ TestCase::assertSame('Test-campaign ab', $flag->getMetadata()->getCampaignName()
 
 //Test 2
 $visitor = Flagship::newVisitor("visitor-2", true)
-    ->withContext(['ci-test' => true, 'test-ab' => true])
+    ->setContext(['ci-test' => true, 'test-ab' => true])
     ->build();
 
 $visitor->fetchFlags();
@@ -41,7 +41,7 @@ TestCase::assertSame('Test-campaign ab', $flag->getMetadata()->getCampaignName()
 
 //Test 3
 $visitor = Flagship::newVisitor("visitor-6", true)
-    ->withContext(['ci-test' => false, 'test-ab' => true])
+    ->setContext(['ci-test' => false, 'test-ab' => true])
     ->build();
 
 $visitor->fetchFlags();

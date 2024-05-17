@@ -100,9 +100,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function setContext($context)
     {
         $this->getVisitorDelegate()->setContext($context);
-        return $this;
     }
-
 
     /**
      * @inheritDoc
@@ -210,13 +208,5 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function getFetchStatus()
     {
         return $this->visitorDelegate->getFetchStatus();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged)
-    {
-        $this->visitorDelegate->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged);
     }
 }

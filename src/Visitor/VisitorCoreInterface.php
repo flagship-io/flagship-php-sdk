@@ -35,7 +35,7 @@ interface VisitorCoreInterface
     public function updateContextCollection(array $context);
 
     /**
-     * clear the actual visitor context
+     * Clear the visitor's context
      * @return void
      */
     public function clearContext();

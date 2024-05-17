@@ -44,6 +44,13 @@ interface VisitorInterface extends VisitorCoreInterface
    */
   public function getContext();
 
+  /**
+   * Clear the current context and set a new context value
+   * @param  array $context : collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+   * @return void
+   */
+  public function setContext(array $context);
+
 
   /**
    * @param string $key key associated to the flag
@@ -57,17 +64,6 @@ interface VisitorInterface extends VisitorCoreInterface
    * @return FlagDTO[]
    */
   public function getFlagsDTO();
-
-/**
- * Set the callback function for when the fetch flags status changes.
- *
- * The callback function should have the following signature:
- * function(FetchFlagsStatusInterface $fetchFlagsStatus): void
- *
- * @param callable $onFetchFlagsStatusChanged The callback function.
- * @return void
- */
-  public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged);
 
   /**
    * @return FetchFlagsStatusInterface

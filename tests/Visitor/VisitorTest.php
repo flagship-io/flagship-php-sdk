@@ -168,14 +168,6 @@ class VisitorTest extends TestCase
             ->willReturn(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
         $fetchStatus = $visitor->getFetchStatus();
         $this->assertInstanceOf(FetchFlagsStatus::class, $fetchStatus);
-
-        //Test setOnFetchFlagsStatusChanged
-        $onFetchFlagsStatusChanged = function () {
-        };
-        $visitorDelegateMock->expects($this->once())
-            ->method('setOnFetchFlagsStatusChanged')
-            ->with($onFetchFlagsStatusChanged);
-        $visitor->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged);
     }
 
     public function testJson()

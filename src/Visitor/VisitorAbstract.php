@@ -323,7 +323,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
 
     /**
-     * /**
      * Clear the current context and set a new context value
      *
      * @param  array $context : collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]

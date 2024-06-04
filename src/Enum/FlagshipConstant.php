@@ -74,11 +74,13 @@ class FlagshipConstant
     const GET_MODIFICATION_KEY_ERROR = "Key '%s' must not be null. Default value is returned.";
     const GET_MODIFICATION_ERROR = "No modification for key '%s'.";
     const GET_FLAG_ERROR = "No flag for key '%s'.";
-    const USER_EXPOSED_NO_FLAG_ERROR = "Visitor %s, No Flags found for key %s: User exposition wont be sent";
-    const GET_FLAG_MISSING_ERROR = "Visitor %s, No Flags found for key %s : Default value is returned %s";
+    const USER_EXPOSED_NO_FLAG_ERROR =  "For the visitor '%s', no flags were found with the key '%s'. As a result, user exposure will not be sent.";
+    const VISITOR_EXPOSED_VALUE_NOT_CALLED = "Visitor '%s', the flag with the key '%s' has been exposed without calling the `getValue` method first.";
+    const GET_FLAG_MISSING_ERROR = "For the visitor '%s', no flags were found with the key '%s'. Therefore, the default value '%s' has been returned.";
     const GET_METADATA_CAST_ERROR = "Flag for key '%s' has a different type with defaultValue, an empty metadata object is returned";
-    const GET_FLAG_CAST_ERROR = "Visitor %s, Flag for key %s has a different type with default value : Default value is returned %s";
-    const USER_EXPOSED_CAST_ERROR = "Visitor %s, Flag for key %s has a different type with default value: User exposition wont be sent";
+    const NO_FLAG_METADATA = "For the visitor '%s',no flags were found with the key '%s'. As a result, an empty metadata object is returned";
+    const GET_FLAG_CAST_ERROR = "For the visitor '%s', the flag with key '%s' has a different type compared to the default value. Therefore, the default value '%s' has been returned.";
+    const USER_EXPOSED_CAST_ERROR = "For the visitor '%s', the flag with key '%s' has been exposed despite having a different type compared to the default value";
     const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null.";
     const TRACKER_MANAGER_MISSING_ERROR = "trackerManager must not be null.";
     const CURL_LIBRARY_IS_NOT_LOADED = 'curl library is not loaded';

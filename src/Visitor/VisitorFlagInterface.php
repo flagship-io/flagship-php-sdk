@@ -7,13 +7,16 @@ use Flagship\Model\FlagDTO;
 
 interface VisitorFlagInterface
 {
+
     /**
-     * @param string $key
-     * @param mixed $defaultValue
+     * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,
+     * or if types are different.
+     * @param string|numeric|bool|array $defaultValue
      * @param FlagDTO $flag
-     * @return void
+     * @param bool $hasGetValueBeenCalled
+     * @return string|numeric|bool|array
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null);
+    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false);
 
     /**
      * @param string $key
@@ -26,9 +29,8 @@ interface VisitorFlagInterface
 
     /**
      * @param string $key
-     * @param FSFlagMetadata $metadata
-     * @param bool $hasSameType
+     * @param FlagDTO $flag
      * @return FSFlagMetadata
      */
-    public function getFlagMetadata($key, FSFlagMetadata $metadata, $hasSameType);
+    public function getFlagMetadata($key, FlagDTO $flag = null);
 }

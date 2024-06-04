@@ -27,21 +27,21 @@ class FSFlag implements FSFlagInterface
      */
     private $defaultValue;
 
+    private $hasGetValueBeenCalled;
+
 
     /***
      * @param string          $key
      * @param VisitorAbstract $visitorDelegate
-     * @param mixed           $defaultValue
      */
     public function __construct(
         $key,
-        VisitorAbstract $visitorDelegate,
-        $defaultValue
+        VisitorAbstract $visitorDelegate
     ) {
         $this->key = $key;
         $this->visitorDelegate = $visitorDelegate;
-
-        $this->defaultValue = $defaultValue;
+        $this->defaultValue = null;
+        $this->hasGetValueBeenCalled = false;
     }
 
     /**
@@ -50,6 +50,10 @@ class FSFlag implements FSFlagInterface
      */
     protected function findFlagDTO($key)
     {
+        if (!$this->visitorDelegate) {
+            return null;
+        }
+
         foreach ($this->visitorDelegate->getFlagsDTO() as $flagDTO) {
             if ($flagDTO->getKey() === $key) {
                 return $flagDTO;
@@ -62,10 +66,17 @@ class FSFlag implements FSFlagInterface
     /**
      * @inheritDoc
      */
-    public function getValue($visitorExposed = true)
+    public function getValue($defaultValue, $visitorExposed = true)
     {
         $flagDTO = $this->findFlagDTO($this->key);
-        return $this->visitorDelegate->getFlagValue($this->key, $this->defaultValue, $flagDTO, $visitorExposed);
+        $this->defaultValue = $defaultValue;
+        $this->hasGetValueBeenCalled = true;
+
+        if (!$this->visitorDelegate) {
+            return $defaultValue;
+        }
+
+        return $this->visitorDelegate->getFlagValue($this->key, $defaultValue, $flagDTO, $visitorExposed);
     }
 
     /**
@@ -82,44 +93,13 @@ class FSFlag implements FSFlagInterface
      */
     public function getMetadata()
     {
-        $flagDTO = $this->findFlagDTO($this->key);
-        $metadata = new FSFlagMetadata(
-            $flagDTO ? $flagDTO->getCampaignId() : '',
-            $flagDTO ? $flagDTO->getVariationGroupId() : '',
-            $flagDTO ? $flagDTO->getVariationId() : '',
-            $flagDTO ? $flagDTO->getIsReference() : false,
-            $flagDTO ? $flagDTO->getCampaignType() : '',
-            $flagDTO ? $flagDTO->getSlug() : null,
-            $flagDTO ? $flagDTO->getCampaignName() : null,
-            $flagDTO ? $flagDTO->getVariationGroupName() : null,
-            $flagDTO ? $flagDTO->getVariationName() : null
-        );
-
-        if (!$flagDTO) {
-            return $metadata;
+        if (!$this->visitorDelegate) {
+            return FSFlagMetadata::getEmpty();
         }
 
-        return $this->visitorDelegate->getFlagMetadata(
-            $this->key,
-            $metadata,
-            !$flagDTO->getValue() || $this->hasSameType($flagDTO->getValue(), $this->defaultValue)
-        );
-    }
+        $flagDTO = $this->findFlagDTO($this->key);
 
-    /**
-     * @inheritDoc
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDefaultValue()
-    {
-        return $this->defaultValue;
+        return $this->visitorDelegate->getFlagMetadata($this->key, $flagDTO);
     }
 
     /**
@@ -127,11 +107,16 @@ class FSFlag implements FSFlagInterface
      */
     public function visitorExposed()
     {
+        if (!$this->visitorDelegate) {
+            return;
+        }
+
         $flagDTO = $this->findFlagDTO($this->key);
         $this->visitorDelegate->visitorExposed(
             $this->key,
             $this->defaultValue,
-            $flagDTO
+            $flagDTO,
+            $this->hasGetValueBeenCalled
         );
     }
 
@@ -140,6 +125,10 @@ class FSFlag implements FSFlagInterface
      */
     public function getStatus()
     {
+        if (!$this->visitorDelegate) {
+            return FSFlagStatus::NOT_FOUND;
+        }
+
         $fetchStatus = $this->visitorDelegate->getFetchStatus();
         if ($fetchStatus->getStatus() === FSFetchStatus::PANIC) {
             return FSFlagStatus::PANIC;

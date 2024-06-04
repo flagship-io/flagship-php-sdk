@@ -36,7 +36,7 @@ class FSFlag implements FSFlagInterface
      */
     public function __construct(
         $key,
-        VisitorAbstract $visitorDelegate
+        VisitorAbstract $visitorDelegate = null
     ) {
         $this->key = $key;
         $this->visitorDelegate = $visitorDelegate;

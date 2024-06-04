@@ -2,7 +2,7 @@
 
 namespace Flagship\Flag;
 
-interface FlagMetadataInterface
+interface FSFlagMetadataInterface
 {
     /**
      * @return string

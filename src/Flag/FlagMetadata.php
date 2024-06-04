@@ -4,7 +4,7 @@ namespace Flagship\Flag;
 
 use JsonSerializable;
 
-class FlagMetadata implements JsonSerializable, FlagMetadataInterface
+class FlagMetadata implements JsonSerializable, FSFlagMetadataInterface
 {
     /**
      * @var string

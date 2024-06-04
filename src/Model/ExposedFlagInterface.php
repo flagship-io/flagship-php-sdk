@@ -2,7 +2,7 @@
 
 namespace Flagship\Model;
 
-use Flagship\Flag\FlagMetadataInterface;
+use Flagship\Flag\FSFlagMetadataInterface;
 
 interface ExposedFlagInterface
 {
@@ -20,7 +20,7 @@ interface ExposedFlagInterface
 
     /**
      * Return the metadata of flag
-     * @return FlagMetadataInterface
+     * @return FSFlagMetadataInterface
      */
     public function getMetadata();
 

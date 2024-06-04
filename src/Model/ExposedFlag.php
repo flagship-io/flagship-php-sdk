@@ -2,7 +2,7 @@
 
 namespace Flagship\Model;
 
-use Flagship\Flag\FlagMetadataInterface;
+use Flagship\Flag\FSFlagMetadataInterface;
 
 class ExposedFlag implements ExposedFlagInterface
 {
@@ -17,7 +17,7 @@ class ExposedFlag implements ExposedFlagInterface
     private $value;
 
     /**
-     * @var FlagMetadataInterface
+     * @var FSFlagMetadataInterface
      */
     private $metadata;
 
@@ -30,9 +30,9 @@ class ExposedFlag implements ExposedFlagInterface
      * @param string $key
      * @param bool|numeric|string|array $value
      * @param bool|numeric|string|array $defaultValue
-     * @param FlagMetadataInterface $metadata
+     * @param FSFlagMetadataInterface $metadata
      */
-    public function __construct($key, $value, $defaultValue, FlagMetadataInterface $metadata)
+    public function __construct($key, $value, $defaultValue, FSFlagMetadataInterface $metadata)
     {
         $this->key = $key;
         $this->value = $value;
@@ -57,7 +57,7 @@ class ExposedFlag implements ExposedFlagInterface
     }
 
     /**
-     * @return FlagMetadataInterface
+     * @return FSFlagMetadataInterface
      */
     public function getMetadata()
     {

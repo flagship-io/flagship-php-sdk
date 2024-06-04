@@ -4,7 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
-use Flagship\Flag\FlagMetadataInterface;
+use Flagship\Flag\FSFlagMetadataInterface;
 
 class Activate extends HitAbstract
 {
@@ -36,7 +36,7 @@ class Activate extends HitAbstract
     private $visitorContext;
 
     /**
-     * @var FlagMetadataInterface
+     * @var FSFlagMetadataInterface
      */
     private $flagMetadata;
 
@@ -154,7 +154,7 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @return FlagMetadataInterface
+     * @return FSFlagMetadataInterface
      */
     public function getFlagMetadata()
     {
@@ -162,7 +162,7 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @param FlagMetadataInterface $flagMetadata
+     * @param FSFlagMetadataInterface $flagMetadata
      * @return Activate
      */
     public function setFlagMetadata($flagMetadata)

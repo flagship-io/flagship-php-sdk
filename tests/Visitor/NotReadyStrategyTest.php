@@ -5,7 +5,7 @@ namespace Flagship\Visitor;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FSSdkStatus;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\Page;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -108,7 +108,7 @@ class NotReadyStrategyTest extends TestCase
         $notReadyStrategy->visitorExposed('key', true, null);
 
         //Test getFlagMetadata
-        $notReadyStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);
+        $notReadyStrategy->getFlagMetadata('key', FSFlagMetadata::getEmpty(), true);
 
         $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
             "Flagship\Cache\IVisitorCacheImplementation",

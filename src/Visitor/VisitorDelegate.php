@@ -8,7 +8,7 @@ use Flagship\Flag\FSFlag;
 use Flagship\Model\FlagDTO;
 use Flagship\Hit\HitAbstract;
 use Flagship\Enum\DecisionMode;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Utils\ConfigManager;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipConstant;
@@ -150,7 +150,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    public function getFlagMetadata($key, FSFlagMetadata $metadata, $hasSameType)
     {
         return $this->getStrategy()->getFlagMetadata($key, $metadata, $hasSameType);
     }

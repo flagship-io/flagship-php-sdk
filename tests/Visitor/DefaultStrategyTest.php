@@ -17,7 +17,7 @@ use Flagship\Enum\FSFetchStatus;
 use Flagship\Enum\HitType;
 use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\UsageHit;
 use Flagship\Hit\Event;
@@ -765,7 +765,7 @@ class DefaultStrategyTest extends TestCase
             ->setValue("value");
         $defaultValue = "default";
 
-        $flagMetadata = new FlagMetadata(
+        $flagMetadata = new FSFlagMetadata(
             $flagDTO->getCampaignId(),
             $flagDTO->getVariationGroupId(),
             $flagDTO->getVariationId(),
@@ -863,7 +863,7 @@ class DefaultStrategyTest extends TestCase
         $flagDTO->setKey($key)
             ->setValue("value");
 
-        $flagMetadata = new FlagMetadata(
+        $flagMetadata = new FSFlagMetadata(
             $flagDTO->getCampaignId(),
             $flagDTO->getVariationGroupId(),
             $flagDTO->getVariationId(),
@@ -980,7 +980,7 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy = new DefaultStrategy($visitor);
 
         $key = "key";
-        $metadata = new FlagMetadata(
+        $metadata = new FSFlagMetadata(
             "campaignID",
             "varGroupID",
             "varID",
@@ -1005,7 +1005,7 @@ class DefaultStrategyTest extends TestCase
                     [FlagshipConstant::TAG => $functionName]]
             );
         $metadataValue = $defaultStrategy->getFlagMetadata($key, $metadata, false);
-        $this->assertEquals(FlagMetadata::getEmpty(), $metadataValue);
+        $this->assertEquals(FSFlagMetadata::getEmpty(), $metadataValue);
     }
 
     public function testLookupVisitor()

@@ -8,7 +8,7 @@ use Flagship\Enum\LogLevel;
 use Flagship\Model\FlagDTO;
 use Flagship\Hit\HitAbstract;
 use Flagship\Enum\DecisionMode;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FSFetchStatus;
@@ -454,7 +454,7 @@ class DefaultStrategy extends StrategyAbstract
      */
     protected function activateFlag(FlagDTO $flag, $defaultValue = null)
     {
-        $flagMetadata = new FlagMetadata(
+        $flagMetadata = new FSFlagMetadata(
             $flag->getCampaignId(),
             $flag->getVariationGroupId(),
             $flag->getVariationId(),
@@ -665,11 +665,11 @@ class DefaultStrategy extends StrategyAbstract
 
     /**
      * @param  string       $key
-     * @param  FlagMetadata $metadata
+     * @param  FSFlagMetadata $metadata
      * @param  boolean      $hasSameType
-     * @return FlagMetadata
+     * @return FSFlagMetadata
      */
-    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    public function getFlagMetadata($key, FSFlagMetadata $metadata, $hasSameType)
     {
         $functionName = 'flag.metadata';
         if (!$hasSameType && $metadata->getCampaignId()) {
@@ -698,7 +698,7 @@ class DefaultStrategy extends StrategyAbstract
                 ->setConfig($this->getConfig());
 
             $this->sendTroubleshootingHit($troubleshooting);
-            return FlagMetadata::getEmpty();
+            return FSFlagMetadata::getEmpty();
         }
 
         return $metadata;

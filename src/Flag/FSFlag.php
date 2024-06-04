@@ -83,7 +83,7 @@ class FSFlag implements FSFlagInterface
     public function getMetadata()
     {
         $flagDTO = $this->findFlagDTO($this->key);
-        $metadata = new FlagMetadata(
+        $metadata = new FSFlagMetadata(
             $flagDTO ? $flagDTO->getCampaignId() : '',
             $flagDTO ? $flagDTO->getVariationGroupId() : '',
             $flagDTO ? $flagDTO->getVariationId() : '',

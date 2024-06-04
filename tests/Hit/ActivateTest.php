@@ -4,7 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use PHPUnit\Framework\TestCase;
 
 class ActivateTest extends TestCase
@@ -21,7 +21,7 @@ class ActivateTest extends TestCase
         $flagValue = "value";
         $campaignName = "campaignName";
         $visitorContext = ["key" => "value"];
-        $flagMetadata = new FlagMetadata(
+        $flagMetadata = new FSFlagMetadata(
             "campaignId",
             $variationGroupId,
             $variationId,

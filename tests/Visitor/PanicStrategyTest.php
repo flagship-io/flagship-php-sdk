@@ -7,7 +7,7 @@ use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FSSdkStatus;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
@@ -127,7 +127,7 @@ class PanicStrategyTest extends TestCase
         $panicStrategy->visitorExposed('key', true, null);
 
         //Test getFlagMetadata
-        $panicStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);
+        $panicStrategy->getFlagMetadata('key', FSFlagMetadata::getEmpty(), true);
 
         $campaignsData = $this->campaigns();
         $assignmentsHistory = [];

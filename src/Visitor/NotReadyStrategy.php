@@ -4,7 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FSSdkStatus;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 use Flagship\Traits\LogTrait;
@@ -53,10 +53,10 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    public function getFlagMetadata($key, FSFlagMetadata $metadata, $hasSameType)
     {
         $this->log(__FUNCTION__);
-        return FlagMetadata::getEmpty();
+        return FSFlagMetadata::getEmpty();
     }
 
     /**

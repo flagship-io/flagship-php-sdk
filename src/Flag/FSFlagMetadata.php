@@ -4,7 +4,7 @@ namespace Flagship\Flag;
 
 use JsonSerializable;
 
-class FlagMetadata implements JsonSerializable, FSFlagMetadataInterface
+class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
 {
     /**
      * @var string
@@ -145,7 +145,7 @@ class FlagMetadata implements JsonSerializable, FSFlagMetadataInterface
 
     public static function getEmpty()
     {
-        return new FlagMetadata(
+        return new FSFlagMetadata(
             "",
             "",
             "",

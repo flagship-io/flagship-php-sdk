@@ -26,7 +26,7 @@ class FlagTest extends TestCase
             ->setSlug("slug")
             ->setCampaignType("ab");
 
-        $metadata = new FlagMetadata(
+        $metadata = new FSFlagMetadata(
             $flagDTO->getCampaignId(),
             $flagDTO->getVariationGroupId(),
             $flagDTO->getVariationId(),
@@ -119,7 +119,7 @@ class FlagTest extends TestCase
         $key = "key";
         $defaultValue = "DefaultValue";
 
-        $metadata = new FlagMetadata(
+        $metadata = new FSFlagMetadata(
             "",
             "",
             "",

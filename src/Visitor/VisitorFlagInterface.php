@@ -2,7 +2,7 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Model\FlagDTO;
 
 interface VisitorFlagInterface
@@ -26,9 +26,9 @@ interface VisitorFlagInterface
 
     /**
      * @param string $key
-     * @param FlagMetadata $metadata
+     * @param FSFlagMetadata $metadata
      * @param bool $hasSameType
-     * @return FlagMetadata
+     * @return FSFlagMetadata
      */
-    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType);
+    public function getFlagMetadata($key, FSFlagMetadata $metadata, $hasSameType);
 }

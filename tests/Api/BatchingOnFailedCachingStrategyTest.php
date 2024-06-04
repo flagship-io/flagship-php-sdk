@@ -10,7 +10,7 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
 use Flagship\Hit\UsageHit;
@@ -317,7 +317,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $activate = new Activate($variationGroupId1, $variationId1);
 
-        $flagMetadata1 = new FlagMetadata(
+        $flagMetadata1 = new FSFlagMetadata(
             $campaignId1,
             $variationGroupId1,
             $variationId1,
@@ -347,7 +347,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $flagValue2 = "value2";
         $flagDefaultValue2 = "defaultValue2";
 
-        $flagMetadata2 = new FlagMetadata(
+        $flagMetadata2 = new FSFlagMetadata(
             $campaignId2,
             $variationGroupId2,
             $variationId2,
@@ -464,7 +464,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $activate = new Activate($variationGroupId1, $variationId1);
 
-        $flagMetadata1 = new FlagMetadata(
+        $flagMetadata1 = new FSFlagMetadata(
             $campaignId1,
             $variationGroupId1,
             $variationId1,
@@ -492,7 +492,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $variationName2 = "variationName1";
         $campaignName2 = "campaignName1";
 
-        $flagMetadata2 = new FlagMetadata(
+        $flagMetadata2 = new FSFlagMetadata(
             $campaignId2,
             $variationGroupId2,
             $variationId2,

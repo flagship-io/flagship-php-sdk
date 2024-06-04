@@ -10,7 +10,7 @@ use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FSFetchReason;
 use Flagship\Enum\FSFetchStatus;
 use Flagship\Enum\FSSdkStatus;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\Event;
 use Flagship\Hit\Page;
 use Flagship\Model\FetchFlagsStatus;
@@ -308,7 +308,7 @@ class VisitorDelegateTest extends TestCase
 
         //Test getFlagMetadata
         $key = 'key';
-        $metadata = FlagMetadata::getEmpty();
+        $metadata = FSFlagMetadata::getEmpty();
         $defaultStrategy->expects($this->exactly(1))
             ->method('getFlagMetadata')
             ->withConsecutive([$key, $metadata, true]);

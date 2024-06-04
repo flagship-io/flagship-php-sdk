@@ -3,7 +3,7 @@
 namespace Flagship\Visitor;
 
 use Flagship\Model\FlagDTO;
-use Flagship\Flag\FlagInterface;
+use Flagship\Flag\FSFlagInterface;
 use Flagship\Model\FetchFlagsStatusInterface;
 
 /**
@@ -55,7 +55,7 @@ interface VisitorInterface extends VisitorCoreInterface
   /**
    * @param string $key key associated to the flag
    * @param string|bool|numeric|array $defaultValue flag default value.
-   * @return FlagInterface
+   * @return FSFlagInterface
    */
   public function getFlag($key, $defaultValue);
 

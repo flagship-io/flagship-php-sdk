@@ -8,7 +8,7 @@ use Flagship\Enum\FSFetchStatus;
 use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Visitor\VisitorAbstract;
 
-class Flag implements FlagInterface
+class Flag implements FSFlagInterface
 {
     use HasSameTypeTrait;
 

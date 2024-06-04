@@ -4,7 +4,7 @@ namespace Flagship\Flag;
 
 use Flagship\Model\ExposedFlagInterface;
 
-interface FlagInterface extends ExposedFlagInterface
+interface FSFlagInterface extends ExposedFlagInterface
 {
     /**
      * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,

@@ -23,4 +23,6 @@ class TroubleshootingLabel
     const SDK_BUCKETING_FILE = "SDK_BUCKETING_FILE";
     const SDK_CONFIG = "SDK_CONFIG";
     const SEND_HIT_ROUTE_ERROR = 'SEND_HIT_ROUTE_ERROR';
+
+    const FLAG_VALUE_NOT_CALLED = "FLAG_VALUE_NOT_CALLED";
 }

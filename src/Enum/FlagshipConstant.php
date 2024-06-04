@@ -77,6 +77,7 @@ class FlagshipConstant
     const USER_EXPOSED_NO_FLAG_ERROR =  "For the visitor '%s', no flags were found with the key '%s'. As a result, user exposure will not be sent.";
     const VISITOR_EXPOSED_VALUE_NOT_CALLED = "Visitor '%s', the flag with the key '%s' has been exposed without calling the `getValue` method first.";
     const GET_FLAG_MISSING_ERROR = "For the visitor '%s', no flags were found with the key '%s'. Therefore, the default value '%s' has been returned.";
+    const GET_FLAG_NOT_FOUND = "For the visitor '%s', no flags were found with the key '%s'. Therefore, an empty flag has been returned.";
     const GET_METADATA_CAST_ERROR = "Flag for key '%s' has a different type with defaultValue, an empty metadata object is returned";
     const NO_FLAG_METADATA = "For the visitor '%s',no flags were found with the key '%s'. As a result, an empty metadata object is returned";
     const GET_FLAG_CAST_ERROR = "For the visitor '%s', the flag with key '%s' has a different type compared to the default value. Therefore, the default value '%s' has been returned.";

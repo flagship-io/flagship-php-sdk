@@ -4,7 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Enum\FSFetchReason;
 use Flagship\Enum\FSFetchStatus;
-use Flagship\Flag\Flag;
+use Flagship\Flag\FSFlag;
 use Flagship\Model\FlagDTO;
 use Flagship\Hit\HitAbstract;
 use Flagship\Enum\DecisionMode;
@@ -169,7 +169,7 @@ class VisitorDelegate extends VisitorAbstract
                 [$this->getVisitorId(), $key]
             );
         }
-        return new Flag($key, $this, $defaultValue);
+        return new FSFlag($key, $this, $defaultValue);
     }
 
     /**

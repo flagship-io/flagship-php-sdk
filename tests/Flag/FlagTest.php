@@ -66,7 +66,7 @@ class FlagTest extends TestCase
             ]
         )->willReturn($flagDTO->getValue());
 
-        $flag = new Flag($key, $visitorDelegateMock, $defaultValue);
+        $flag = new FSFlag($key, $visitorDelegateMock, $defaultValue);
 
         $value = $flag->getValue();
         $this->assertEquals($value, $flagDTO->getValue());
@@ -136,7 +136,7 @@ class FlagTest extends TestCase
             '',
             false
         );
-        $flag = new Flag($key, $visitorDelegateMock, $defaultValue, $metadata, null);
+        $flag = new FSFlag($key, $visitorDelegateMock, $defaultValue, $metadata, null);
 
         $this->assertFalse($flag->exists());
 

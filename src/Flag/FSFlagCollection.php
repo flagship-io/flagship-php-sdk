@@ -7,7 +7,7 @@ use Flagship\Traits\LogTrait;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Visitor\VisitorAbstract;
 
-class FSFlagCollection implements IFSFlagCollection
+class FSFlagCollection implements FSFlagCollectionInterface
 {
     use LogTrait;
     use Helper;
@@ -26,6 +26,8 @@ class FSFlagCollection implements IFSFlagCollection
      */
     private $flags;
 
+    private $index = 0;
+
     /**
      * @param VisitorAbstract|null $visitor
      * @param array<string, FSFlag> $flags
@@ -37,7 +39,7 @@ class FSFlagCollection implements IFSFlagCollection
 
         if (count($this->flags) === 0) {
             $this->keys = array_map(function ($flag) {
-                return $flag->key;
+                return $flag->getKey();
             },  $visitor ? $visitor->getFlagsDTO() : []);
 
             foreach ($this->keys as $key) {
@@ -59,7 +61,7 @@ class FSFlagCollection implements IFSFlagCollection
             $this->logWarningSprintf(
                 $this->visitor->getConfig(),
                 FlagshipConstant::GET_FLAG,
-                FlagshipConstant::GET_FLAG_MISSING_ERROR,
+                FlagshipConstant::GET_FLAG_NOT_FOUND,
                 [$this->visitor->getVisitorId(), $key]
             );
             return new FSFlag($key);
@@ -77,7 +79,7 @@ class FSFlagCollection implements IFSFlagCollection
         return $this->keys;
     }
 
-    public function filter($predicate)
+    public function filter(callable $predicate)
     {
         $flags = [];
         foreach ($this->flags as $key => $flag) {
@@ -126,10 +128,49 @@ class FSFlagCollection implements IFSFlagCollection
         return $serializedData;
     }
 
-    public function forEach(callable $callbackfn)
+    public function each(callable $callbackfn)
     {
         foreach ($this->flags as $key => $flag) {
             $callbackfn($flag, $key, $this);
         }
+    }
+
+    #[\ReturnTypeWillChange]
+    public function current()
+    {
+        $key = $this->keys[$this->index];
+        if (!array_key_exists($key, $this->flags)) {
+            $this->logWarningSprintf(
+                $this->visitor->getConfig(),
+                FlagshipConstant::GET_FLAG,
+                FlagshipConstant::GET_FLAG_MISSING_ERROR,
+                [$this->visitor->getVisitorId(), $key]
+            );
+            return new FSFlag($key);
+        }
+        return $this->flags[$key];
+    }
+
+    #[\ReturnTypeWillChange]
+    public function next()
+    {
+        $this->index++;
+    }
+
+    #[\ReturnTypeWillChange]
+    public function key()
+    {
+        return $this->keys[$this->index];
+    }
+
+    #[\ReturnTypeWillChange]
+    public function valid()
+    {
+        return isset($this->keys[$this->index]);
+    }
+    #[\ReturnTypeWillChange]
+    public function rewind()
+    {
+        $this->index = 0;
     }
 }

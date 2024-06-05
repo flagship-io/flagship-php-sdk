@@ -328,7 +328,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param  array $context : collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      * @return VisitorAbstract
      */
-    public function setContext($context)
+    public function setContext(array $context)
     {
         $this->context = [];
         $this->updateContextCollection($context);

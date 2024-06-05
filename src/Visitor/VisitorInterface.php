@@ -4,6 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Model\FlagDTO;
 use Flagship\Flag\FSFlagInterface;
+use Flagship\Flag\FSFlagCollectionInterface;
 use Flagship\Model\FetchFlagsStatusInterface;
 
 /**
@@ -57,13 +58,13 @@ interface VisitorInterface extends VisitorCoreInterface
    * @param string|bool|numeric|array $defaultValue flag default value.
    * @return FSFlagInterface
    */
-  public function getFlag($key, $defaultValue);
+  public function getFlag($key);
 
   /**
-   * Return an array of all flags data fetched for the current visitor.
-   * @return FlagDTO[]
+   * Returns a Flag object by its key. If no flag matches the given key, an empty flag will be returned.
+   * @return FSFlagCollectionInterface
    */
-  public function getFlagsDTO();
+ public function getFlags();
 
   /**
    * @return FetchFlagsStatusInterface

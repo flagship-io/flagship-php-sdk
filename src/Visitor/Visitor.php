@@ -97,7 +97,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function setContext($context)
+    public function setContext(array $context)
     {
         $this->getVisitorDelegate()->setContext($context);
     }
@@ -188,18 +188,16 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function getFlag($key, $defaultValue)
+    public function getFlag($key)
     {
-        return $this->visitorDelegate->getFlag($key, $defaultValue);
+        return $this->visitorDelegate->getFlag($key);
     }
-
 
     /**
      * @inheritDoc
      */
-    public function getFlagsDTO()
-    {
-        return $this->visitorDelegate->getFlagsDTO();
+    public function getFlags(){
+        return $this->visitorDelegate->getFlags();
     }
 
     /**

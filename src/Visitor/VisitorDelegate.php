@@ -5,6 +5,7 @@ namespace Flagship\Visitor;
 use Flagship\Enum\FSFetchReason;
 use Flagship\Enum\FSFetchStatus;
 use Flagship\Flag\FSFlag;
+use Flagship\Flag\FSFlagCollection;
 use Flagship\Model\FlagDTO;
 use Flagship\Hit\HitAbstract;
 use Flagship\Enum\DecisionMode;
@@ -58,7 +59,6 @@ class VisitorDelegate extends VisitorAbstract
         $this->setConsent($hasConsented);
         $this->getStrategy()->lookupVisitor();
         $this->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::VISITOR_CREATED));
-
     }
 
     /**
@@ -132,9 +132,9 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null)
+    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false)
     {
-        $this->getStrategy()->visitorExposed($key, $defaultValue, $flag);
+        $this->getStrategy()->visitorExposed($key, $defaultValue, $flag, $hasGetValueBeenCalled);
     }
 
 
@@ -150,18 +150,18 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FSFlagMetadata $metadata, $hasSameType)
+    public function getFlagMetadata($key, FlagDTO $flag = null)
     {
-        return $this->getStrategy()->getFlagMetadata($key, $metadata, $hasSameType);
+        return $this->getStrategy()->getFlagMetadata($key, $flag);
     }
 
     /**
      * @inheritDoc
      */
-    public function getFlag($key, $defaultValue)
+    public function getFlag($key)
     {
         $fetchFlagsStatus = $this->getFetchStatus();
-        if ($fetchFlagsStatus->getStatus() !== FSFetchStatus::FETCHED) {
+        if ($fetchFlagsStatus->getStatus() !== FSFetchStatus::FETCHED && $fetchFlagsStatus->getStatus() !== FSFetchStatus::FETCHING) {
             $this->logWarningSprintf(
                 $this->getConfig(),
                 FlagshipConstant::GET_FLAG,
@@ -169,7 +169,15 @@ class VisitorDelegate extends VisitorAbstract
                 [$this->getVisitorId(), $key]
             );
         }
-        return new FSFlag($key, $this, $defaultValue);
+        return new FSFlag($key, $this);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFlags()
+    {
+        return new FSFlagCollection($this);
     }
 
     /**

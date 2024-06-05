@@ -2,9 +2,10 @@
 
 namespace Flagship\Flag;
 
+use Iterator;
 use Flagship\Flag\FSFlagInterface;
 
-interface IFSFlagCollection
+interface FSFlagCollectionInterface extends Iterator
 {
     /**
      * Gets the number of flags in the collection.
@@ -34,7 +35,7 @@ interface IFSFlagCollection
     /**
      * Filters the collection based on a predicate function.
      * @param callable $predicate - The predicate function used to filter the collection.
-     * @return IFSFlagCollection A new IFSFlagCollection containing the flags that satisfy the predicate.
+     * @return FSFlagCollectionInterface A new IFSFlagCollection containing the flags that satisfy the predicate.
      */
     public function filter(callable $predicate);
 
@@ -59,5 +60,5 @@ interface IFSFlagCollection
      * Iterates over each flag in the collection.
      * @param callable $callbackfn - The function to execute for each flag.
      */
-    public function forEach(callable $callbackfn);
+    public function each(callable $callbackfn);
 }

@@ -125,7 +125,7 @@ class FSFlagCollection implements FSFlagCollectionInterface
                 'hex' => $this->valueToHex(['v' => $flag->getValue(null, false)])
             ];
         }
-        return $serializedData;
+        return json_encode($serializedData);
     }
 
     public function each(callable $callbackfn)
@@ -144,15 +144,6 @@ class FSFlagCollection implements FSFlagCollectionInterface
     public function current()
     {
         $key = $this->keys[$this->index];
-        if (!array_key_exists($key, $this->flags)) {
-            $this->logWarningSprintf(
-                $this->visitor->getConfig(),
-                FlagshipConstant::GET_FLAG,
-                FlagshipConstant::GET_FLAG_MISSING_ERROR,
-                [$this->visitor->getVisitorId(), $key]
-            );
-            return new FSFlag($key);
-        }
         return $this->flags[$key];
     }
 

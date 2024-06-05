@@ -46,13 +46,13 @@ interface FSFlagCollectionInterface extends Iterator
 
     /**
      * Retrieves the metadata for all flags in the collection.
-     * @return array A map containing the metadata for all flags in the collection.
+     * @return array<string, FSFlagMetadataInterface> A map containing the metadata for all flags in the collection.
      */
     public function getMetadata();
 
     /**
      * Serializes the metadata for all flags in the collection.
-     * @return array An array of serialized flag metadata.
+     * @return string An array of serialized flag metadata.
      */
     public function toJSON();
 

@@ -76,7 +76,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null)
+    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false)
     {
         $this->log(__FUNCTION__);
     }
@@ -84,7 +84,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FSFlagMetadata $metadata, $hasSameType)
+    public function getFlagMetadata($key, FlagDTO $flag = null)
     {
         $this->log(__FUNCTION__);
         return FSFlagMetadata::getEmpty();

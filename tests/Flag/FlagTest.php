@@ -134,4 +134,26 @@ class FlagTest extends TestCase
         $value = $flag->getStatus();
         $this->assertEquals(FSFlagStatus::NOT_FOUND, $value);
     }
+
+    public function testFlagVisitorNull()
+    {
+        $key = "key";
+
+
+        $flag = new FSFlag($key, null);
+
+        $this->assertFalse($flag->exists());
+
+        $metadataValue = $flag->getMetadata();
+
+        $this->assertEquals($metadataValue, FSFlagMetadata::getEmpty());
+
+        $value = $flag->getStatus();
+        $this->assertEquals(FSFlagStatus::NOT_FOUND, $value);
+
+        $flag->visitorExposed();
+
+        $value = $flag->getValue("defaultValue");
+        $this->assertEquals("defaultValue", $value);
+    }
 }

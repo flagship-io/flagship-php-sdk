@@ -55,7 +55,6 @@ interface VisitorInterface extends VisitorCoreInterface
 
   /**
    * @param string $key key associated to the flag
-   * @param string|bool|numeric|array $defaultValue flag default value.
    * @return FSFlagInterface
    */
   public function getFlag($key);

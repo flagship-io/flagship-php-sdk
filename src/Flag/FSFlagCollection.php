@@ -135,6 +135,11 @@ class FSFlagCollection implements FSFlagCollectionInterface
         }
     }
 
+
+    /**
+     * Returns the current element.
+     * @return mixed Can return any type.
+     */
     #[\ReturnTypeWillChange]
     public function current()
     {
@@ -151,23 +156,43 @@ class FSFlagCollection implements FSFlagCollectionInterface
         return $this->flags[$key];
     }
 
+    /**
+     * Move forward to next element
+     * Moves the current position to the next element.
+     * @return void Any returned value is ignored.
+     */
     #[\ReturnTypeWillChange]
     public function next()
     {
         $this->index++;
     }
 
+    /**
+     * Returns the key of the current element.
+     * @return mixed|null Returns `scalar` on success, or `null` on failure.
+     */
     #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->keys[$this->index];
     }
 
+    /**
+     * Checks if current position is valid
+     * This method is called after Iterator::rewind() and Iterator::next() to check if the current position is valid.
+     * @return bool The return value will be casted to `bool` and then evaluated. Returns `true` on success or `false` on failure.
+     */
     #[\ReturnTypeWillChange]
     public function valid()
     {
         return isset($this->keys[$this->index]);
     }
+
+    /**
+     * Rewind the Iterator to the first element
+     * Rewinds back to the first element of the Iterator.
+     * @return void Any returned value is ignored.
+     */
     #[\ReturnTypeWillChange]
     public function rewind()
     {

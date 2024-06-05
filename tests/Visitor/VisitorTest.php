@@ -152,15 +152,10 @@ class VisitorTest extends TestCase
         $defaultValue = 'defaultValue';
         $visitorDelegateMock->expects($this->once())
             ->method('getFlag')
-            ->with($key, $defaultValue)->willReturn(null);
-        $flagValue = $visitor->getFlag($key, $defaultValue);
+            ->with($key)->willReturn(null);
+        $flagValue = $visitor->getFlag($key);
         $this->assertSame(null, $flagValue);
 
-        //Test getFlagsDTO
-        $visitorDelegateMock->expects($this->once())
-            ->method('getFlagsDTO')
-            ->willReturn([]);
-        $visitor->getFlagsDTO();
 
         //Test getFetchStatus
         $visitorDelegateMock->expects($this->once())

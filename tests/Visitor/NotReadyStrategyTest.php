@@ -108,7 +108,7 @@ class NotReadyStrategyTest extends TestCase
         $notReadyStrategy->visitorExposed('key', true, null);
 
         //Test getFlagMetadata
-        $notReadyStrategy->getFlagMetadata('key', FSFlagMetadata::getEmpty(), true);
+        $notReadyStrategy->getFlagMetadata('key', null);
 
         $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
             "Flagship\Cache\IVisitorCacheImplementation",

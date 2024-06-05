@@ -307,13 +307,14 @@ class VisitorDelegateTest extends TestCase
         $visitor->getFlagValue($key, $defaultValue, $flagDTO);
 
         //Test getFlagMetadata
+        $flagDTO = new FlagDTO();
         $key = 'key';
         $metadata = FSFlagMetadata::getEmpty();
         $defaultStrategy->expects($this->exactly(1))
             ->method('getFlagMetadata')
-            ->withConsecutive([$key, $metadata, true]);
+            ->withConsecutive([$key, $flagDTO]);
 
-        $visitor->getFlagMetadata($key, $metadata, true);
+        $visitor->getFlagMetadata($key,$flagDTO);
 
         //Test getFlag
         $flagDTO = new FlagDTO();
@@ -329,31 +330,31 @@ class VisitorDelegateTest extends TestCase
         ];
         $visitor->setFlagsDTO($flagsDTO);
         $defaultValue = "defaultValue";
-        $flag = $visitor->getFlag('key1', $defaultValue);
-        $this->assertInstanceOf("Flagship\Flag\Flag", $flag);
+        $flag = $visitor->getFlag('key1');
+        $this->assertInstanceOf("Flagship\Flag\FSFlag", $flag);
 
         //Test getFlag null
-        $flag = $visitor->getFlag('key2', $defaultValue);
-        $this->assertInstanceOf("Flagship\Flag\Flag", $flag);
+        $flag = $visitor->getFlag('key2');
+        $this->assertInstanceOf("Flagship\Flag\FSFlag", $flag);
 
         //Test  flag warning
         $config->setLogManager($logManagerStub);
         $logManagerStub->expects($this->exactly(6))->method('warning');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::VISITOR_CREATED));
-        $visitor->getFlag('key1', $defaultValue);
+        $visitor->getFlag('key1');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UPDATE_CONTEXT));
 
-        $visitor->getFlag('key1', $defaultValue);
+        $visitor->getFlag('key1');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::AUTHENTICATE));
-        $visitor->getFlag('key1', $defaultValue);
+        $visitor->getFlag('key1');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UNAUTHENTICATE));
-        $visitor->getFlag('key1', $defaultValue);
+        $visitor->getFlag('key1');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FETCH_ERROR));
-        $visitor->getFlag('key1', $defaultValue);
+        $visitor->getFlag('key1');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::READ_FROM_CACHE));
-        $visitor->getFlag('key1', $defaultValue);
+        $visitor->getFlag('key1');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
-        $visitor->getFlag('key1', $defaultValue);
+        $visitor->getFlag('key1');
 
     }
 

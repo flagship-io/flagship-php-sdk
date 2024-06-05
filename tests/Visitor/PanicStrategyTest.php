@@ -127,7 +127,7 @@ class PanicStrategyTest extends TestCase
         $panicStrategy->visitorExposed('key', true, null);
 
         //Test getFlagMetadata
-        $panicStrategy->getFlagMetadata('key', FSFlagMetadata::getEmpty(), true);
+        $panicStrategy->getFlagMetadata('key', null);
 
         $campaignsData = $this->campaigns();
         $assignmentsHistory = [];

@@ -11,28 +11,29 @@ class FSFlagCollection implements FSFlagCollectionInterface
 {
     use LogTrait;
     use Helper;
+
     /**
      * @var VisitorAbstract|null
      */
-    private $visitor;
+    private ?VisitorAbstract $visitor;
 
     /**
      * @var string[]
      */
-    private $keys;
+    private array $keys;
 
     /**
      * @var array<string, FSFlag> $flags
      */
-    private $flags;
+    private array $flags;
 
-    private $index = 0;
+    private int $index = 0;
 
     /**
      * @param VisitorAbstract|null $visitor
      * @param array<string, FSFlag> $flags
      */
-    public function __construct(VisitorAbstract $visitor = null, $flags = [])
+    public function __construct(VisitorAbstract $visitor = null, array $flags = [])
     {
         $this->visitor = $visitor;
         $this->flags = $flags;
@@ -40,22 +41,22 @@ class FSFlagCollection implements FSFlagCollectionInterface
         if (count($this->flags) === 0) {
             $this->keys = array_map(function ($flag) {
                 return $flag->getKey();
-            },  $visitor ? $visitor->getFlagsDTO() : []);
+            }, $visitor ? $visitor->getFlagsDTO() : []);
 
             foreach ($this->keys as $key) {
-                $this->flags[$key] = new FSFlag($key,  $visitor);
+                $this->flags[$key] = new FSFlag($key, $visitor);
             }
         } else {
             $this->keys = array_keys($this->flags);
         }
     }
 
-    public function getSize()
+    public function getSize(): int
     {
         return count($this->keys);
     }
 
-    public function get($key)
+    public function get(string $key): FSFlagInterface
     {
         if (!isset($this->flags[$key])) {
             $this->logWarningSprintf(
@@ -69,17 +70,21 @@ class FSFlagCollection implements FSFlagCollectionInterface
         return $this->flags[$key];
     }
 
-    public function has($key)
+    public function has(string $key): bool
     {
         return in_array($key, $this->keys);
     }
 
-    public function keys()
+    /**
+     * @inheritDoc
+     * @return string[] A set of all keys in the collection.
+     */
+    public function keys(): array
     {
         return $this->keys;
     }
 
-    public function filter(callable $predicate)
+    public function filter(callable $predicate): FSFlagCollectionInterface
     {
         $flags = [];
         foreach ($this->flags as $key => $flag) {
@@ -87,17 +92,21 @@ class FSFlagCollection implements FSFlagCollectionInterface
                 $flags[$key] = $flag;
             }
         }
-        return new FSFlagCollection($this->visitor,  $flags);
+        return new FSFlagCollection($this->visitor, $flags);
     }
 
-    public function exposeAll()
+    public function exposeAll(): void
     {
         foreach ($this->flags as $flag) {
             $flag->visitorExposed();
         }
     }
 
-    public function getMetadata()
+    /**
+     * @inheritDoc
+     * @return array<string, FSFlagMetadataInterface> An array containing the metadata for all flags in the collection.
+     */
+    public function getMetadata(): array
     {
         $metadata = [];
         foreach ($this->flags as $key => $flag) {
@@ -106,7 +115,7 @@ class FSFlagCollection implements FSFlagCollectionInterface
         return $metadata;
     }
 
-    public function toJSON()
+    public function toJSON(): string
     {
         $serializedData = [];
         foreach ($this->flags as $key => $flag) {
@@ -128,64 +137,55 @@ class FSFlagCollection implements FSFlagCollectionInterface
         return json_encode($serializedData);
     }
 
-    public function each(callable $callbackfn)
+    /**
+     * @inheritdoc
+     */
+    public function each(callable $callbackFn): void
     {
         foreach ($this->flags as $key => $flag) {
-            $callbackfn($flag, $key, $this);
+            $callbackFn($flag, $key, $this);
         }
     }
 
 
     /**
-     * Returns the current element.
-     * @return mixed Can return any type.
+     * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         $key = $this->keys[$this->index];
         return $this->flags[$key];
     }
 
+
     /**
-     * Move forward to next element
-     * Moves the current position to the next element.
-     * @return void Any returned value is ignored.
+     * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    public function next()
+    public function next(): void
     {
         $this->index++;
     }
 
     /**
-     * Returns the key of the current element.
-     * @return mixed|null Returns `scalar` on success, or `null` on failure.
+     * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    public function key()
+    public function key(): mixed
     {
         return $this->keys[$this->index];
     }
 
     /**
-     * Checks if current position is valid
-     * This method is called after Iterator::rewind() and Iterator::next() to check if the current position is valid.
-     * @return bool The return value will be casted to `bool` and then evaluated. Returns `true` on success or `false` on failure.
+     * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->keys[$this->index]);
     }
 
     /**
-     * Rewind the Iterator to the first element
-     * Rewinds back to the first element of the Iterator.
-     * @return void Any returned value is ignored.
+     * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    public function rewind()
+    public function rewind(): void
     {
         $this->index = 0;
     }

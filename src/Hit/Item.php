@@ -12,9 +12,9 @@ use Flagship\Enum\HitType;
  */
 class Item extends HitAbstract
 {
-    const ERROR_MESSAGE = 'Transaction Id, Item name and item code are required';
+    public const ERROR_MESSAGE = 'Transaction Id, Item name and item code are required';
 
-    public static function getClassName()
+    public static function getClassName(): string
     {
         return __CLASS__;
     }
@@ -22,32 +22,32 @@ class Item extends HitAbstract
     /**
      * @var string
      */
-    private $transactionId = null;
+    private string $transactionId;
 
     /**
      * @var string
      */
-    private $productName = null;
+    private string $productName;
 
     /**
      * @var string
      */
-    private $productSku = null;
+    private string $productSku;
 
     /**
-     * @var float
+     * @var float|null
      */
-    private $itemPrice;
+    private ?float $itemPrice;
 
     /**
-     * @var integer
+     * @var integer|null
      */
-    private $itemQuantity;
+    private ?int $itemQuantity;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $itemCategory;
+    private ?string $itemCategory;
 
     /**
      * Item constructor.
@@ -56,7 +56,7 @@ class Item extends HitAbstract
      * @param string $productName      : Name of the item product.
      * @param string $productSku      : The SKU or item code.
      */
-    public function __construct($transactionId, $productName, $productSku)
+    public function __construct(string $transactionId, string $productName, string $productSku)
     {
         parent::__construct(HitType::ITEM);
 
@@ -70,7 +70,7 @@ class Item extends HitAbstract
      *
      * @return string
      */
-    public function getTransactionId()
+    public function getTransactionId(): string
     {
         return $this->transactionId;
     }
@@ -78,10 +78,10 @@ class Item extends HitAbstract
     /**
      * Specify transaction unique identifier.
      *
-     * @param  string $transactionId : Transaction unique identifier.
+     * @param string $transactionId : Transaction unique identifier.
      * @return Item
      */
-    public function setTransactionId($transactionId)
+    public function setTransactionId(string $transactionId): static
     {
         if (!$this->isNoEmptyString($transactionId, 'transactionId')) {
             return $this;
@@ -95,7 +95,7 @@ class Item extends HitAbstract
      *
      * @return string
      */
-    public function getProductName()
+    public function getProductName(): string
     {
         return $this->productName;
     }
@@ -103,10 +103,10 @@ class Item extends HitAbstract
     /**
      * Specify name of the item product.
      *
-     * @param  string $productName : Name of the item product.
+     * @param string $productName : Name of the item product.
      * @return Item
      */
-    public function setProductName($productName)
+    public function setProductName(string $productName): static
     {
         if (!$this->isNoEmptyString($productName, 'productName')) {
             return $this;
@@ -120,7 +120,7 @@ class Item extends HitAbstract
      *
      * @return string
      */
-    public function getProductSku()
+    public function getProductSku(): string
     {
         return $this->productSku;
     }
@@ -128,10 +128,10 @@ class Item extends HitAbstract
     /**
      * Specify the SKU or item code.
      *
-     * @param  string $productSku
+     * @param string $productSku
      * @return Item
      */
-    public function setProductSku($productSku)
+    public function setProductSku(string $productSku): static
     {
         if (!$this->isNoEmptyString($productSku, 'productSku')) {
             return $this;
@@ -143,9 +143,9 @@ class Item extends HitAbstract
     /**
      * Price for a single item/unit.
      *
-     * @return float
+     * @return float|null
      */
-    public function getItemPrice()
+    public function getItemPrice(): ?float
     {
         return $this->itemPrice;
     }
@@ -153,10 +153,10 @@ class Item extends HitAbstract
     /**
      * Specify the price for a single item
      *
-     * @param  float $itemPrice
+     * @param float $itemPrice
      * @return Item
      */
-    public function setItemPrice($itemPrice)
+    public function setItemPrice(float $itemPrice): static
     {
         if (!$this->isNumeric($itemPrice, 'itemPrice')) {
             return $this;
@@ -168,9 +168,9 @@ class Item extends HitAbstract
     /**
      * Number of items purchased.
      *
-     * @return int
+     * @return int|null
      */
-    public function getItemQuantity()
+    public function getItemQuantity(): ?int
     {
         return $this->itemQuantity;
     }
@@ -178,10 +178,10 @@ class Item extends HitAbstract
     /**
      * Specify the number of items purchased.
      *
-     * @param  int $itemQuantity
+     * @param int $itemQuantity
      * @return Item
      */
-    public function setItemQuantity($itemQuantity)
+    public function setItemQuantity(int $itemQuantity): static
     {
         if (!$this->isInteger($itemQuantity, "itemQuantity")) {
             return $this;
@@ -193,9 +193,9 @@ class Item extends HitAbstract
     /**
      * Category that the item belongs to
      *
-     * @return string
+     * @return string|null
      */
-    public function getItemCategory()
+    public function getItemCategory(): ?string
     {
         return $this->itemCategory;
     }
@@ -203,10 +203,10 @@ class Item extends HitAbstract
     /**
      * Specify the category that the item belongs to
      *
-     * @param  string $itemCategory
+     * @param string $itemCategory
      * @return Item
      */
-    public function setItemCategory($itemCategory)
+    public function setItemCategory(string $itemCategory): static
     {
         if (!$this->isNoEmptyString($itemCategory, "itemCategory")) {
             return $this;
@@ -218,7 +218,7 @@ class Item extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::TID_API_ITEM] = $this->getTransactionId();
@@ -242,7 +242,7 @@ class Item extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return parent::isReady() && $this->getTransactionId() && $this->getProductName() && $this->getProductSku();
     }
@@ -250,7 +250,7 @@ class Item extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return self::ERROR_MESSAGE;
     }

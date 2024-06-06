@@ -2,51 +2,49 @@
 
 namespace Flagship\Flag;
 
-use JsonSerializable;
-
-class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
+class FSFlagMetadata implements FSFlagMetadataInterface
 {
     /**
      * @var string
      */
-    private $campaignId;
+    private string $campaignId;
 
     /**
      * @var string
      */
-    private $campaignName;
+    private string $campaignName;
     /**
      * @var string
      */
-    private $variationGroupId;
+    private string $variationGroupId;
 
     /**
      * @var string
      */
-    private $variationGroupName;
+    private string $variationGroupName;
 
     /**
      * @var string
      */
-    private $variationId;
+    private string $variationId;
 
     /**
      * @var string
      */
-    private $variationName;
+    private string $variationName;
     /**
      * @var bool
      */
-    private $isReference;
+    private bool $isReference;
     /**
      * @var string
      */
-    private $campaignType;
+    private string $campaignType;
 
     /**
      * @var string
      */
-    private $slug;
+    private string $slug;
 
     /**
      * @param string $campaignId
@@ -54,17 +52,21 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
      * @param string $variationId
      * @param bool $isReference
      * @param string $campaignType
+     * @param string $slug
+     * @param string $campaignName
+     * @param string $variationGroupName
+     * @param string $variationName
      */
     public function __construct(
-        $campaignId,
-        $variationGroupId,
-        $variationId,
-        $isReference,
-        $campaignType,
-        $slug,
-        $campaignName,
-        $variationGroupName,
-        $variationName
+        string $campaignId,
+        string $variationGroupId,
+        string $variationId,
+        bool $isReference,
+        string $campaignType,
+        string $slug,
+        string $campaignName,
+        string $variationGroupName,
+        string $variationName
     ) {
         $this->campaignId = $campaignId;
         $this->variationGroupId = $variationGroupId;
@@ -80,7 +82,7 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return string
      */
-    public function getCampaignId()
+    public function getCampaignId(): string
     {
         return $this->campaignId;
     }
@@ -89,7 +91,7 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return string
      */
-    public function getVariationGroupId()
+    public function getVariationGroupId(): string
     {
         return $this->variationGroupId;
     }
@@ -98,7 +100,7 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return string
      */
-    public function getVariationId()
+    public function getVariationId(): string
     {
         return $this->variationId;
     }
@@ -106,7 +108,7 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return bool
      */
-    public function isReference()
+    public function isReference(): bool
     {
         return $this->isReference;
     }
@@ -114,7 +116,7 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return string
      */
-    public function getCampaignType()
+    public function getCampaignType(): string
     {
         return $this->campaignType;
     }
@@ -122,7 +124,7 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return string
      */
-    public function getCampaignName()
+    public function getCampaignName(): string
     {
         return $this->campaignName;
     }
@@ -130,7 +132,7 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return string
      */
-    public function getVariationGroupName()
+    public function getVariationGroupName(): string
     {
         return $this->variationGroupName;
     }
@@ -138,12 +140,12 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return string
      */
-    public function getVariationName()
+    public function getVariationName(): string
     {
         return $this->variationName;
     }
 
-    public static function getEmpty()
+    public static function getEmpty(): FSFlagMetadata
     {
         return new FSFlagMetadata(
             "",
@@ -151,7 +153,7 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
             "",
             false,
             "",
-            null,
+            "",
             "",
             "",
             ""
@@ -161,17 +163,16 @@ class FSFlagMetadata implements JsonSerializable, FSFlagMetadataInterface
     /**
      * @return string
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }
 
     /**
      * @inheritDoc
-     * @return mixed
+     * @noinspection PhpMixedReturnTypeCanBeReducedInspection
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             "campaignId" => $this->getCampaignId(),

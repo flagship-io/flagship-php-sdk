@@ -673,7 +673,7 @@ class DefaultStrategy extends StrategyAbstract
         if (!$flag) {
             $this->logInfo(
                 $this->getVisitor()->getConfig(),
-                sprintf(FlagshipConstant::NO_FLAG_METADATA, $key),
+                sprintf(FlagshipConstant::NO_FLAG_METADATA, $this->getVisitor()->getVisitorId(), $key),
                 [FlagshipConstant::TAG => $flagMetadataFuncName]
             );
             return FSFlagMetadata::getEmpty();

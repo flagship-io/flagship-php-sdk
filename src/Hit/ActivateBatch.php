@@ -10,12 +10,12 @@ class ActivateBatch
     /***
      * @var Activate[]
      */
-    protected $hits;
+    protected array $hits;
 
     /**
      * @var FlagshipConfig
      */
-    protected $config;
+    protected FlagshipConfig $config;
 
     /**
      * @param FlagshipConfig $config
@@ -30,7 +30,7 @@ class ActivateBatch
     /**
      * @return array
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $activates = [];
         foreach ($this->hits as $hit) {

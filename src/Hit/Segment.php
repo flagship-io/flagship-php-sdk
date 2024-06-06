@@ -7,32 +7,32 @@ use Flagship\Enum\HitType;
 
 class Segment extends HitAbstract
 {
-    const SL_MESSAGE_ERROR = "Sl value must be an associative array";
-    const ERROR_MESSAGE  = 'sl is required';
+    public const SL_MESSAGE_ERROR = "Sl value must be an associative array";
+    public const ERROR_MESSAGE  = 'sl is required';
 
-    public static function getClassName()
+    public static function getClassName(): string
     {
         return __CLASS__;
     }
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $sl;
+    protected array $sl;
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getSl()
+    public function getSl(): array
     {
         return $this->sl;
     }
 
     /**
-     * @param array $sl
+     * @param array<string, mixed> $sl
      * @return Segment
      */
-    public function setSl(array $sl)
+    public function setSl(array $sl): static
     {
         if (!$this->isAssoc($sl)) {
             $this->logError($this->getConfig(), self::SL_MESSAGE_ERROR, [FlagshipConstant::TAG => __FUNCTION__]);
@@ -52,10 +52,10 @@ class Segment extends HitAbstract
     }
 
     /**
-     * @param array $array
+     * @param array<string, mixed> $array
      * @return bool
      */
-    public function isAssoc(array $array)
+    protected function isAssoc(array $array): bool
     {
         $keys = array_keys($array);
 
@@ -65,7 +65,7 @@ class Segment extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::SL_API_ITEM] = $this->getSl();
@@ -75,7 +75,7 @@ class Segment extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return parent::isReady() && $this->getSl();
     }
@@ -83,7 +83,7 @@ class Segment extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return self::ERROR_MESSAGE;
     }

@@ -337,6 +337,11 @@ class VisitorDelegateTest extends TestCase
         $flag = $visitor->getFlag('key2');
         $this->assertInstanceOf("Flagship\Flag\FSFlag", $flag);
 
+        //Test getFlags 
+        $flags = $visitor->getFlags();
+        $this->assertInstanceOf("Flagship\Flag\FSFlagCollection", $flags);
+
+
         //Test  flag warning
         $config->setLogManager($logManagerStub);
         $logManagerStub->expects($this->exactly(6))->method('warning');

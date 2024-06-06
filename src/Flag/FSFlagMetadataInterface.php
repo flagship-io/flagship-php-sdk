@@ -2,50 +2,52 @@
 
 namespace Flagship\Flag;
 
-interface FSFlagMetadataInterface
+use JsonSerializable;
+
+interface FSFlagMetadataInterface extends JsonSerializable
 {
     /**
      * @return string
      */
-    public function getCampaignId();
+    public function getCampaignId(): string;
 
     /**
      * @return string
      */
-    public function getCampaignName();
+    public function getCampaignName(): string;
 
     /**
      * @return string
      */
-    public function getVariationGroupId();
+    public function getVariationGroupId(): string;
 
     /**
      * @return string
      */
-    public function getVariationGroupName();
+    public function getVariationGroupName(): string;
 
     /**
      * @return string
      */
-    public function getVariationId();
+    public function getVariationId(): string;
 
     /**
      * @return string
      */
-    public function getVariationName();
+    public function getVariationName(): string;
 
     /**
      * @return bool
      */
-    public function isReference();
+    public function isReference(): bool;
 
     /**
      * @return string
      */
-    public function getCampaignType();
+    public function getCampaignType(): string;
 
     /**
      * @return string
      */
-    public function getSlug();
+    public function getSlug(): string;
 }

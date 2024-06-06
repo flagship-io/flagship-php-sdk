@@ -3,18 +3,25 @@
 namespace Flagship;
 
 use Exception;
-use Flagship\Config\BucketingConfig;
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Config\FlagshipConfig;
-use Flagship\Enum\DecisionMode;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FSSdkStatus;
 use Flagship\Traits\Guid;
+use Flagship\Utils\FlagshipLogManager8;
+use Flagship\Utils\HttpClient;
+use Psr\Log\LoggerInterface;
 use Flagship\Traits\LogTrait;
-use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
-use Flagship\Visitor\VisitorAbstract;
+use Flagship\Enum\FSSdkStatus;
+use Flagship\Utils\MurmurHash;
+use Flagship\Enum\DecisionMode;
+use Flagship\Api\TrackingManager;
+use Flagship\Decision\ApiManager;
+use Flagship\Utils\ConfigManager;
+use Flagship\Config\FlagshipConfig;
+use Flagship\Enum\FlagshipConstant;
 use Flagship\Visitor\VisitorBuilder;
+use Flagship\Visitor\VisitorAbstract;
+use Flagship\Config\DecisionApiConfig;
+use Flagship\Decision\BucketingManager;
+use Flagship\Utils\HttpClientInterface;
 
 /**
  * Flagship main singleton.
@@ -25,34 +32,36 @@ class Flagship
     use Guid;
 
     /**
+     * Flagship singleton instance
+     *
      * @var Flagship
      */
-    private static $instance;
+    private static Flagship $instance;
 
     /**
      * Dependency injection container
      *
      * @var Container
      */
-    private $container;
+    private Container $container;
     /**
-     * @var FlagshipConfig
+     * @var FlagshipConfig|null
      */
-    private $config;
+    private ?FlagshipConfig $config;
 
     /**
      * @var ConfigManager
      */
-    private $configManager;
+    private ConfigManager $configManager;
     /**
-     * @var int
+     * @var FSSdkStatus
      */
-    private $status;
+    private FSSdkStatus $status;
 
     /**
      * @var string
      */
-    private $flagshipInstanceId;
+    private string $flagshipInstanceId;
 
     /**
      * Flagship constructor.
@@ -74,9 +83,8 @@ class Flagship
      * Flagship singleton instance
      *
      * @return Flagship
-     * @throws Exception
      */
-    protected static function getInstance()
+    protected static function getInstance(): Flagship
     {
         if (!self::$instance) {
             self::$instance = new Flagship();
@@ -89,11 +97,11 @@ class Flagship
     /**
      * Start the flagship SDK
      *
-     * @param string $envId  Environment id provided by Flagship.
+     * @param string $envId Environment id provided by Flagship.
      * @param string $apiKey Secure api key provided by Flagship.
-     * @param BucketingConfig|DecisionApiConfig|null $config : (optional) SDK configuration.
+     * @param FlagshipConfig|null $config : (optional) SDK configuration.
      */
-    public static function start($envId, $apiKey, FlagshipConfig $config = null)
+    public static function start(string $envId, string $apiKey, ?FlagshipConfig $config = null): void
     {
         try {
             $flagship = self::getInstance();
@@ -101,7 +109,7 @@ class Flagship
             $container = $flagship->getContainer();
 
             if (!$config) {
-                $config = $container->get('Flagship\Config\DecisionApiConfig', [$envId, $apiKey]);
+                $config = $container->get(DecisionApiConfig::class, [$envId, $apiKey]);
             }
             $config->setEnvId($envId);
             $config->setApiKey($apiKey);
@@ -111,32 +119,32 @@ class Flagship
 
 
             if (!$config->getLogManager()) {
-                $logManager = $container->get('Psr\Log\LoggerInterface');
+                $logManager = $container->get(LoggerInterface::class);
                 $config->setLogManager($logManager);
             }
 
-            $httpClient = $container->get('Flagship\Utils\HttpClientInterface');
+            $httpClient = $container->get(HttpClientInterface::class);
 
             if ($config->getDecisionMode() === DecisionMode::BUCKETING) {
-                $murmurHash = $container->get('Flagship\Utils\MurmurHash');
+                $murmurHash = $container->get(MurmurHash::class);
                 $decisionManager = $container->get(
-                    'Flagship\Decision\BucketingManager',
+                    BucketingManager::class,
                     [$httpClient, $config, $murmurHash]
                 );
             } else {
-                $decisionManager = $container->get('Flagship\Decision\ApiManager', [$httpClient, $config]);
+                $decisionManager = $container->get(ApiManager::class, [$httpClient, $config]);
             }
             $decisionManager->setFlagshipInstanceId($flagship->flagshipInstanceId);
 
             //Will trigger setStatus method of Flagship if decisionManager want update status
             $decisionManager->setStatusChangedCallback([$flagship, 'setStatus']);
 
-            $configManager = $container->get('Flagship\Utils\ConfigManager');
+            $configManager = $container->get(ConfigManager::class);
 
             $configManager->setDecisionManager($decisionManager);
 
             $trackingManager = $container->get(
-                'Flagship\Api\TrackingManager',
+                TrackingManager::class,
                 [$config, $httpClient, $flagship->flagshipInstanceId]
             );
 
@@ -166,7 +174,6 @@ class Flagship
                 [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
             );
         } catch (Exception $exception) {
-
             self::getInstance()->setStatus(FSSdkStatus::SDK_NOT_INITIALIZED);
 
             self::getInstance()->logError(
@@ -181,34 +188,27 @@ class Flagship
      * This function initialize the dependency injection container
      *
      * @return Container
-     * @throws Exception
      */
-    private function containerInitialization()
+    private function containerInitialization(): Container
     {
         $newContainer = new Container();
 
         $newContainer->bind(
-            'Flagship\Utils\HttpClientInterface',
-            'Flagship\Utils\HttpClient'
+            HttpClientInterface::class,
+            HttpClient::class
         );
-        if (version_compare(phpversion(), '8', '>=')) {
-            $newContainer->bind(
-                'Psr\Log\LoggerInterface',
-                'Flagship\Utils\FlagshipLogManager8'
-            );
-        } else {
-            $newContainer->bind(
-                'Psr\Log\LoggerInterface',
-                'Flagship\Utils\FlagshipLogManager'
-            );
-        }
+        $newContainer->bind(
+            LoggerInterface::class,
+            FlagshipLogManager8::class
+        );
+
         return $newContainer;
     }
 
     /**
      * @return ConfigManager
      */
-    protected function getConfigManager()
+    protected function getConfigManager(): ConfigManager
     {
         return $this->configManager;
     }
@@ -217,7 +217,7 @@ class Flagship
      * @param ConfigManager $configManager
      * @return Flagship
      */
-    protected function setConfigManager($configManager)
+    protected function setConfigManager(ConfigManager $configManager): static
     {
         $this->configManager = $configManager;
         return $this;
@@ -229,16 +229,16 @@ class Flagship
      *
      * @return FlagshipConfig
      */
-    public static function getConfig()
+    public static function getConfig(): FlagshipConfig
     {
         return self::getInstance()->config;
     }
 
     /**
-     * @param  FlagshipConfig $config
+     * @param FlagshipConfig $config
      * @return Flagship
      */
-    protected function setConfig($config)
+    protected function setConfig(FlagshipConfig $config): static
     {
         $this->config = $config;
         return $this;
@@ -246,10 +246,9 @@ class Flagship
 
     /**
      * Return current status of Flagship SDK.
-     * @see \Flagship\Enum\FSSdkStatus for possible values.
-     * @return int
+     * @return FSSdkStatus
      */
-    public static function getStatus()
+    public static function getStatus(): FSSdkStatus
     {
         return self::getInstance()->status;
     }
@@ -257,12 +256,12 @@ class Flagship
     /**
      * Set Flagship SDK status
      *
-     * @param int $status FSSdkStatus
+     * @param FSSdkStatus $status FSSdkStatus
      * @return Flagship
      */
-    public function setStatus($status)
+    public function setStatus(FSSdkStatus $status): static
     {
-        $onSdkStatusChanged = $this->config ? $this->config->getOnSdkStatusChanged() : null;
+        $onSdkStatusChanged = $this->config?->getOnSdkStatusChanged();
         if ($onSdkStatusChanged && $this->status !== $status) {
             call_user_func($onSdkStatusChanged, $status);
         }
@@ -274,17 +273,18 @@ class Flagship
     /**
      * @return Container
      */
-    public function getContainer()
+    public function getContainer(): Container
     {
         return $this->container;
     }
 
     /**
      * This method batches and sends all collected hits.
-     * It should be called when your application (script) is about to terminate or in the event of a crash to ensures that all collected data is sent and not lost.
+     * It should be called when your application (script) is about to terminate
+     * or in the event of a crash to ensures that all collected data is sent and not lost.
      * @return void
      */
-    public static function close()
+    public static function close(): void
     {
         $instance = self::getInstance();
         if (!$instance->getConfigManager()) {
@@ -300,7 +300,7 @@ class Flagship
      * @param bool $hasConsented Whether the visitor has given consent.
      * @return VisitorBuilder
      */
-    public static function newVisitor($visitorId, $hasConsented)
+    public static function newVisitor(?string $visitorId, bool $hasConsented): VisitorBuilder
     {
         $instance = self::getInstance();
         return VisitorBuilder::builder(

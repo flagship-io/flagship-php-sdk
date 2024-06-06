@@ -2,53 +2,59 @@
 
 namespace Flagship\Enum;
 
-class HitType
+/**
+ * HitType Enum
+ */
+enum HitType: string
 {
     /**
      * User has seen a URL
-     *
-     * @var string
      */
-    const PAGE_VIEW = "PAGEVIEW";
+    case PAGE_VIEW = "PAGEVIEW";
 
     /**
      * User has seen a screen.
-     *
-     * @var string
      */
-    const SCREEN_VIEW = "SCREENVIEW";
+    case SCREEN_VIEW = "SCREENVIEW";
 
     /**
      * User has made a transaction.
-     *
-     * @var string
      */
-    const TRANSACTION = "TRANSACTION";
+    case TRANSACTION = "TRANSACTION";
 
     /**
      * Item bought in a transaction.
-     *
-     * @var string
      */
-    const ITEM = "ITEM";
+    case ITEM = "ITEM";
 
     /**
      * User has made a specific action.
-     *
-     * @var string
      */
-    const EVENT = "EVENT";
+    case EVENT = "EVENT";
 
     /**
-     * @var string
+     * User has activated something.
      */
-    const ACTIVATE = "ACTIVATE";
+    case ACTIVATE = "ACTIVATE";
 
-    const CONSENT = "CONSENT";
+    /**
+     * User has given consent.
+     */
+    case CONSENT = "CONSENT";
 
-    const SEGMENT = "SEGMENT";
+    /**
+     * User has been segmented.
+     */
+    case SEGMENT = "SEGMENT";
 
-    const TROUBLESHOOTING = "TROUBLESHOOTING";
+    /**
+     * User is troubleshooting.
+     */
+    case TROUBLESHOOTING = "TROUBLESHOOTING";
 
-    const USAGE = "USAGE";
+    /**
+     * User is using something.
+     */
+    case USAGE = "USAGE";
+    case BATCH = "BATCH";
 }

@@ -11,19 +11,19 @@ class BucketingConfig extends FlagshipConfig
     /**
      * @var string
      */
-    private $syncAgentUrl;
+    private string $syncAgentUrl;
 
     /**
      * @var bool
      */
-    protected $fetchThirdPartyData;
+    protected bool $fetchThirdPartyData;
 
     /**
      * @param string $syncAgentUrl
-     * @param string $envId
-     * @param string $apiKey
+     * @param string|null $envId
+     * @param string|null $apiKey
      */
-    public function __construct($syncAgentUrl, $envId = null, $apiKey = null)
+    public function __construct(string $syncAgentUrl, ?string $envId = null, ?string $apiKey = null)
     {
         parent::__construct($envId, $apiKey);
         $this->setDecisionMode(DecisionMode::BUCKETING);
@@ -33,17 +33,18 @@ class BucketingConfig extends FlagshipConfig
     /**
      * @return string
      */
-    public function getSyncAgentUrl()
+    public function getSyncAgentUrl(): string
     {
         return $this->syncAgentUrl;
     }
 
     /**
-     * Define the [flagship-sync-agent](https://github.com/flagship-io/flagship-sync-agent) endpoint URL where the SDK will fetch the bucketing file from polling process
+     * Define the [flagship-sync-agent](https://github.com/flagship-io/flagship-sync-agent)
+     * endpoint URL where the SDK will fetch the bucketing file from polling process
      * @param string $syncAgentUrl
      * @return BucketingConfig
      */
-    public function setSyncAgentUrl($syncAgentUrl)
+    public function setSyncAgentUrl(string $syncAgentUrl): static
     {
         $this->syncAgentUrl = $syncAgentUrl;
         return $this;
@@ -55,7 +56,7 @@ class BucketingConfig extends FlagshipConfig
      * each time fetchFlags is called and append those segments in the visitor context
      * @return bool
      */
-    public function getFetchThirdPartyData()
+    public function getFetchThirdPartyData(): bool
     {
         return $this->fetchThirdPartyData;
     }
@@ -67,7 +68,7 @@ class BucketingConfig extends FlagshipConfig
      * @param bool $fetchThirdPartyData
      * @return BucketingConfig
      */
-    public function setFetchThirdPartyData($fetchThirdPartyData)
+    public function setFetchThirdPartyData(bool $fetchThirdPartyData): static
     {
         $this->fetchThirdPartyData = $fetchThirdPartyData;
         return $this;
@@ -75,10 +76,8 @@ class BucketingConfig extends FlagshipConfig
 
     /**
      * @inheritDoc
-     * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $parent = parent::jsonSerialize();
         $parent[FlagshipField::FIELD_BUCKETING_URL] = $this->syncAgentUrl;

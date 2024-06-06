@@ -238,9 +238,9 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
-     * @return callable(FSSdkStatus $status): void
+     * @return (callable(FSSdkStatus $status): void)|null
      */
-    public function getOnSdkStatusChanged(): callable
+    public function getOnSdkStatusChanged(): ?callable
     {
         return $this->onSdkStatusChanged;
     }

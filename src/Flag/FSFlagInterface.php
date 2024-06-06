@@ -2,39 +2,43 @@
 
 namespace Flagship\Flag;
 
+use Flagship\Enum\FSFlagStatus;
+
 interface FSFlagInterface
 {
      /**
       * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,
       * or if types are different.
-      * @param bool|numeric|string|array $defaultValue
+      * @param array|bool|string|numeric|null $defaultValue
       * @param boolean $visitorExposed
-      * @return bool|numeric|string|array
+      * @return bool|numeric|string|array|null
       */
-    public function getValue($defaultValue, $visitorExposed = true);
+    public function getValue(
+        float|array|bool|int|string|null $defaultValue,
+        bool $visitorExposed = true
+    ): float|array|bool|int|string|null;
 
     /**
      * This method will return true if a Flag exists in Flagship.
      * @return bool
      */
-    public function exists();
+    public function exists(): bool;
 
     /**
      * Tells Flagship the visitor have been exposed and have seen this flag.
      * @return void
      */
-    public function visitorExposed();
+    public function visitorExposed(): void;
 
     /**
-     * @inheritdoc
+     * Returns the metadata of the flag.
+     * @return FSFlagMetadataInterface
      */
-    public function getMetadata();
+    public function getMetadata(): FSFlagMetadataInterface;
 
     /**
      * Returns the status of the flag.
-     * @see \Flagship\Enum\FSFlagStatus for possible values.
-     * @return int
+     * @return FSFlagStatus
      */
-    public function getStatus();
-
+    public function getStatus(): FSFlagStatus;
 }

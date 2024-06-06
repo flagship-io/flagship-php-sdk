@@ -8,44 +8,44 @@ use Flagship\Flag\FSFlagMetadataInterface;
 
 class Activate extends HitAbstract
 {
-    const ERROR_MESSAGE  = 'variationId and variationGroupId are required';
+    public const ERROR_MESSAGE  = 'variationId and variationGroupId are required';
 
     /**
      * @var string
      */
-    private $variationGroupId;
+    private string $variationGroupId;
 
     /**
      * @var string
      */
-    private $variationId;
+    private string $variationId;
 
     /**
      * @var string
      */
-    private $flagKey;
+    private string $flagKey;
 
     /**
-     * @var  bool|numeric|string|array
+     * @var  bool|numeric|string|array|null
      */
-    private $flagValue;
+    private string|array|bool|int|float|null $flagValue;
 
     /**
      * @var array
      */
-    private $visitorContext;
+    private array $visitorContext;
 
     /**
      * @var FSFlagMetadataInterface
      */
-    private $flagMetadata;
+    private FSFlagMetadataInterface $flagMetadata;
 
     /**
-     * @var  bool|numeric|string|array
+     * @var  bool|numeric|string|array|null
      */
-    private $flagDefaultValue;
+    private string|array|bool|int|float|null $flagDefaultValue;
 
-    public static function getClassName()
+    public static function getClassName(): string
     {
         return __CLASS__;
     }
@@ -56,7 +56,7 @@ class Activate extends HitAbstract
      * @param string $variationGroupId
      * @param string $variationId
      */
-    public function __construct($variationGroupId, $variationId)
+    public function __construct(string $variationGroupId, string $variationId)
     {
         parent::__construct(HitType::ACTIVATE);
         $this->variationGroupId = $variationGroupId;
@@ -66,7 +66,7 @@ class Activate extends HitAbstract
     /**
      * @return string
      */
-    public function getVariationGroupId()
+    public function getVariationGroupId(): string
     {
         return $this->variationGroupId;
     }
@@ -75,7 +75,7 @@ class Activate extends HitAbstract
      * @param string $variationGroupId
      * @return Activate
      */
-    public function setVariationGroupId($variationGroupId)
+    public function setVariationGroupId(string $variationGroupId): static
     {
         $this->variationGroupId = $variationGroupId;
         return $this;
@@ -84,7 +84,7 @@ class Activate extends HitAbstract
     /**
      * @return string
      */
-    public function getVariationId()
+    public function getVariationId(): string
     {
         return $this->variationId;
     }
@@ -93,7 +93,7 @@ class Activate extends HitAbstract
      * @param string $variationId
      * @return Activate
      */
-    public function setVariationId($variationId)
+    public function setVariationId(string $variationId): static
     {
         $this->variationId = $variationId;
         return $this;
@@ -102,7 +102,7 @@ class Activate extends HitAbstract
     /**
      * @return string
      */
-    public function getFlagKey()
+    public function getFlagKey(): string
     {
         return $this->flagKey;
     }
@@ -111,34 +111,34 @@ class Activate extends HitAbstract
      * @param string $flagKey
      * @return Activate
      */
-    public function setFlagKey($flagKey)
+    public function setFlagKey(string $flagKey): static
     {
         $this->flagKey = $flagKey;
         return $this;
     }
 
     /**
-     * @return  bool|numeric|string|array
+     * @return  bool|numeric|string|array|null
      */
-    public function getFlagValue()
+    public function getFlagValue(): float|array|bool|int|string|null
     {
         return $this->flagValue;
     }
 
     /**
-     * @param  bool|numeric|string|array $flagValue
+     * @param array|bool|string|numeric|null $flagValue
      * @return Activate
      */
-    public function setFlagValue($flagValue)
+    public function setFlagValue(float|array|bool|int|string|null $flagValue): static
     {
         $this->flagValue = $flagValue;
         return $this;
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getVisitorContext()
+    public function getVisitorContext(): array
     {
         return $this->visitorContext;
     }
@@ -147,7 +147,7 @@ class Activate extends HitAbstract
      * @param array $visitorContext
      * @return Activate
      */
-    public function setVisitorContext($visitorContext)
+    public function setVisitorContext(array $visitorContext): static
     {
         $this->visitorContext = $visitorContext;
         return $this;
@@ -156,7 +156,7 @@ class Activate extends HitAbstract
     /**
      * @return FSFlagMetadataInterface
      */
-    public function getFlagMetadata()
+    public function getFlagMetadata(): FSFlagMetadataInterface
     {
         return $this->flagMetadata;
     }
@@ -165,25 +165,25 @@ class Activate extends HitAbstract
      * @param FSFlagMetadataInterface $flagMetadata
      * @return Activate
      */
-    public function setFlagMetadata($flagMetadata)
+    public function setFlagMetadata(FSFlagMetadataInterface $flagMetadata): static
     {
         $this->flagMetadata = $flagMetadata;
         return $this;
     }
 
     /**
-     * @return  bool|numeric|string|array
+     * @return  bool|numeric|string|array|null
      */
-    public function getFlagDefaultValue()
+    public function getFlagDefaultValue(): float|array|bool|int|string|null
     {
         return $this->flagDefaultValue;
     }
 
     /**
-     * @param  bool|numeric|string|array $flagDefaultValue
+     * @param array|bool|string|numeric|null $flagDefaultValue
      * @return Activate
      */
-    public function setFlagDefaultValue($flagDefaultValue)
+    public function setFlagDefaultValue(float|array|bool|int|string|null $flagDefaultValue): static
     {
         $this->flagDefaultValue = $flagDefaultValue;
         return $this;
@@ -195,7 +195,7 @@ class Activate extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $apiKeys = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
@@ -218,7 +218,7 @@ class Activate extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return parent::isReady() && $this->getVisitorId() && $this->getVariationGroupId();
     }
@@ -227,7 +227,7 @@ class Activate extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return self::ERROR_MESSAGE;
     }

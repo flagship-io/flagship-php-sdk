@@ -1033,6 +1033,10 @@ class DefaultStrategyTest extends TestCase
 
         $metadataValue = $defaultStrategy->getFlagMetadata($key, $flagDTO);
         $this->assertEquals($metadata, $metadataValue);
+
+        //Test flag null
+        $metadataValue = $defaultStrategy->getFlagMetadata($key, null);
+        $this->assertEquals(FSFlagMetadata::getEmpty(), $metadataValue);
     }
 
     public function testLookupVisitor()

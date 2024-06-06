@@ -4,18 +4,19 @@ namespace Flagship\Hit;
 
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\HitType;
 
 class HitBatch extends HitAbstract
 {
     /**
      * @var HitAbstract[]
      */
-    protected $hits;
+    protected array $hits;
 
     /**
      * @return HitAbstract[]
      */
-    public function getHits()
+    public function getHits(): array
     {
         return $this->hits;
     }
@@ -25,7 +26,7 @@ class HitBatch extends HitAbstract
      */
     public function __construct(FlagshipConfig $config, array $hits)
     {
-        parent::__construct("BATCH");
+        parent::__construct(HitType::BATCH);
         $this->hits = $hits;
         $this->config = $config;
     }
@@ -33,7 +34,7 @@ class HitBatch extends HitAbstract
     /**
      * @return array
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $data = [
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
@@ -55,8 +56,8 @@ class HitBatch extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
-        // TODO: Implement getErrorMessage() method.
+        return '';
     }
 }

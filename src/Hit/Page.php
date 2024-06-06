@@ -12,9 +12,9 @@ use Flagship\Enum\HitType;
  */
 class Page extends HitAbstract
 {
-    const ERROR_MESSAGE = 'Page url is required';
+    public const ERROR_MESSAGE = 'Page url is required';
 
-    public static function getClassName()
+    public static function getClassName(): string
     {
         return __CLASS__;
     }
@@ -22,14 +22,14 @@ class Page extends HitAbstract
     /**
      * @var string
      */
-    private $pageUrl = null;
+    private string $pageUrl;
 
     /**
      * Page constructor.
      *
      * @param string $pageUrl : Valid url of the page seen.
      */
-    public function __construct($pageUrl)
+    public function __construct(string $pageUrl)
     {
         parent::__construct(HitType::PAGE_VIEW);
         $this->setPageUrl($pageUrl);
@@ -38,7 +38,7 @@ class Page extends HitAbstract
     /**
      * @return string
      */
-    public function getPageUrl()
+    public function getPageUrl(): string
     {
         return $this->pageUrl;
     }
@@ -46,10 +46,10 @@ class Page extends HitAbstract
     /**
      * Specify Valid url of the page seen.
      *
-     * @param  string $pageUrl
+     * @param string $pageUrl
      * @return Page
      */
-    public function setPageUrl($pageUrl)
+    public function setPageUrl(string $pageUrl): static
     {
         if (!$this->isNoEmptyString($pageUrl, 'pageUrl')) {
             return $this;
@@ -61,7 +61,7 @@ class Page extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::DL_API_ITEM] = $this->getPageUrl();
@@ -71,7 +71,7 @@ class Page extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return parent::isReady() && $this->getPageUrl();
     }
@@ -79,7 +79,7 @@ class Page extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return self::ERROR_MESSAGE;
     }

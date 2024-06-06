@@ -7,10 +7,10 @@ use Flagship\Enum\DecisionMode;
 class DecisionApiConfig extends FlagshipConfig
 {
     /**
-     * @param string $envId
-     * @param string $apiKey
+     * @param string|null $envId
+     * @param string|null $apiKey
      */
-    public function __construct($envId = null, $apiKey = null)
+    public function __construct(?string $envId = null, ?string $apiKey = null)
     {
         parent::__construct($envId, $apiKey);
         $this->setDecisionMode(DecisionMode::DECISION_API);

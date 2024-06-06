@@ -2,8 +2,18 @@
 
 namespace Flagship\Enum;
 
-class EventCategory
+/**
+ * EventCategory Enum
+ */
+enum EventCategory: string
 {
-    const ACTION_TRACKING = "ACTION_TRACKING";
-    const USER_ENGAGEMENT = "USER_ENGAGEMENT";
+    /**
+     * Represents action tracking event category.
+     */
+    case ACTION_TRACKING = "ACTION_TRACKING";
+
+    /**
+     * Represents user engagement event category.
+     */
+    case USER_ENGAGEMENT = "USER_ENGAGEMENT";
 }

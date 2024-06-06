@@ -12,13 +12,13 @@ use Flagship\Enum\HitType;
  */
 class Transaction extends HitAbstract
 {
-    const CURRENCY_ERROR = "'%s' must be a string and have exactly 3 letters";
-    const ERROR_MESSAGE  = 'Transaction Id and Transaction affiliation are required';
+    public const CURRENCY_ERROR = "'%s' must be a string and have exactly 3 letters";
+    public const ERROR_MESSAGE  = 'Transaction Id and Transaction affiliation are required';
 
     /**
      * @return string
      */
-    public static function getClassName()
+    public static function getClassName(): string
     {
         return __CLASS__;
     }
@@ -26,43 +26,43 @@ class Transaction extends HitAbstract
     /**
      * @var string
      */
-    private $transactionId;
+    private string $transactionId;
     /**
      * @var string
      */
-    private $affiliation;
+    private string $affiliation;
     /**
-     * @var float
+     * @var float|null
      */
-    private $taxes;
+    private ?float $taxes;
     /**
-     * @var string
+     * @var string|null
      */
-    private $currency;
+    private ?string $currency;
     /**
-     * @var string
+     * @var string|null
      */
-    private $couponCode;
+    private ?string $couponCode;
     /**
-     * @var int
+     * @var int|null
      */
-    private $itemCount;
+    private ?int $itemCount;
     /**
-     * @var string
+     * @var string|null
      */
-    private $shippingMethod;
+    private ?string $shippingMethod;
     /**
-     * @var string
+     * @var string|null
      */
-    private $paymentMethod;
+    private ?string $paymentMethod;
     /**
-     * @var float
+     * @var float|null
      */
-    private $totalRevenue;
+    private ?float $totalRevenue;
     /**
-     * @var float
+     * @var float|null
      */
-    private $shippingCosts;
+    private ?float $shippingCosts;
 
     /**
      * Transaction constructor.
@@ -70,7 +70,7 @@ class Transaction extends HitAbstract
      * @param string $transactionId : Transaction unique identifier..
      * @param string $affiliation   : Transaction affiliation.
      */
-    public function __construct($transactionId, $affiliation)
+    public function __construct(string $transactionId, string $affiliation)
     {
         parent::__construct(HitType::TRANSACTION);
         $this->setTransactionId($transactionId);
@@ -82,7 +82,7 @@ class Transaction extends HitAbstract
      *
      * @return string
      */
-    public function getTransactionId()
+    public function getTransactionId(): string
     {
         return $this->transactionId;
     }
@@ -93,7 +93,7 @@ class Transaction extends HitAbstract
      * @param string $transactionId
      * @return Transaction
      */
-    public function setTransactionId($transactionId)
+    public function setTransactionId(string $transactionId): static
     {
         if (!$this->isNoEmptyString($transactionId, 'transactionId')) {
             return $this;
@@ -107,7 +107,7 @@ class Transaction extends HitAbstract
      *
      * @return string
      */
-    public function getAffiliation()
+    public function getAffiliation(): string
     {
         return $this->affiliation;
     }
@@ -118,7 +118,7 @@ class Transaction extends HitAbstract
      * @param string $affiliation
      * @return Transaction
      */
-    public function setAffiliation($affiliation)
+    public function setAffiliation(string $affiliation): static
     {
         if (
             !$this->isNoEmptyString(
@@ -135,9 +135,9 @@ class Transaction extends HitAbstract
     /**
      * Total amount of taxes
      *
-     * @return float
+     * @return float|null
      */
-    public function getTaxes()
+    public function getTaxes(): ?float
     {
         return $this->taxes;
     }
@@ -148,19 +148,16 @@ class Transaction extends HitAbstract
      * @param float $taxes
      * @return Transaction
      */
-    public function setTaxes($taxes)
+    public function setTaxes(float $taxes): static
     {
-        if (!$this->isNumeric($taxes, 'taxes')) {
-            return $this;
-        }
         $this->taxes = $taxes;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCurrency()
+    public function getCurrency(): ?string
     {
         return $this->currency;
     }
@@ -172,9 +169,9 @@ class Transaction extends HitAbstract
      * @param string $currency
      * @return Transaction
      */
-    public function setCurrency($currency)
+    public function setCurrency(string $currency): static
     {
-        if (!is_string($currency) || strlen($currency) != 3) {
+        if (strlen($currency) != 3) {
             $this->logError(
                 $this->getConfig(),
                 sprintf(self::CURRENCY_ERROR, 'currency')
@@ -188,9 +185,9 @@ class Transaction extends HitAbstract
     /**
      * Coupon code used by the customer
      *
-     * @return string
+     * @return string|null
      */
-    public function getCouponCode()
+    public function getCouponCode(): ?string
     {
         return $this->couponCode;
     }
@@ -201,7 +198,7 @@ class Transaction extends HitAbstract
      * @param string $couponCode
      * @return Transaction
      */
-    public function setCouponCode($couponCode)
+    public function setCouponCode(string $couponCode): static
     {
         if (!$this->isNoEmptyString($couponCode, 'couponCode')) {
             return $this;
@@ -213,9 +210,9 @@ class Transaction extends HitAbstract
     /**
      * The number of items in the transaction
      *
-     * @return integer
+     * @return int|null
      */
-    public function getItemCount()
+    public function getItemCount(): ?int
     {
         return $this->itemCount;
     }
@@ -226,7 +223,7 @@ class Transaction extends HitAbstract
      * @param integer $itemsCount
      * @return Transaction
      */
-    public function setItemCount($itemsCount)
+    public function setItemCount(int $itemsCount): static
     {
         if (!$this->isInteger($itemsCount, 'itemCount')) {
             return $this;
@@ -238,9 +235,9 @@ class Transaction extends HitAbstract
     /**
      * The shipping method.
      *
-     * @return string
+     * @return string|null
      */
-    public function getShippingMethod()
+    public function getShippingMethod(): ?string
     {
         return $this->shippingMethod;
     }
@@ -251,7 +248,7 @@ class Transaction extends HitAbstract
      * @param string $shippingMethod
      * @return Transaction
      */
-    public function setShippingMethod($shippingMethod)
+    public function setShippingMethod(string $shippingMethod): static
     {
         if (!$this->isNoEmptyString($shippingMethod, 'shippingMethod')) {
             return $this;
@@ -263,9 +260,9 @@ class Transaction extends HitAbstract
     /**
      * Payment method
      *
-     * @return string
+     * @return string|null
      */
-    public function getPaymentMethod()
+    public function getPaymentMethod(): ?string
     {
         return $this->paymentMethod;
     }
@@ -276,7 +273,7 @@ class Transaction extends HitAbstract
      * @param string $paymentMethod
      * @return Transaction
      */
-    public function setPaymentMethod($paymentMethod)
+    public function setPaymentMethod(string $paymentMethod): static
     {
         if (!$this->isNoEmptyString($paymentMethod, 'paymentMethod')) {
             return $this;
@@ -288,9 +285,9 @@ class Transaction extends HitAbstract
     /**
      * Total revenue associated with the transaction
      *
-     * @return float
+     * @return float|null
      */
-    public function getTotalRevenue()
+    public function getTotalRevenue(): ?float
     {
         return $this->totalRevenue;
     }
@@ -302,11 +299,8 @@ class Transaction extends HitAbstract
      * @param float $totalRevenue
      * @return Transaction
      */
-    public function setTotalRevenue($totalRevenue)
+    public function setTotalRevenue(float $totalRevenue): static
     {
-        if (!$this->isNumeric($totalRevenue, 'totalRevenue')) {
-            return $this;
-        }
         $this->totalRevenue = $totalRevenue;
         return $this;
     }
@@ -314,9 +308,9 @@ class Transaction extends HitAbstract
     /**
      * Total shipping cost of the transaction
      *
-     * @return float
+     * @return float|null
      */
-    public function getShippingCosts()
+    public function getShippingCosts(): ?float
     {
         return $this->shippingCosts;
     }
@@ -327,11 +321,8 @@ class Transaction extends HitAbstract
      * @param float $shippingCosts
      * @return Transaction
      */
-    public function setShippingCosts($shippingCosts)
+    public function setShippingCosts(float $shippingCosts): static
     {
-        if (!$this->isNumeric($shippingCosts, 'shippingCosts')) {
-            return $this;
-        }
         $this->shippingCosts = $shippingCosts;
         return $this;
     }
@@ -339,7 +330,7 @@ class Transaction extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::TID_API_ITEM] = $this->getTransactionId();
@@ -383,7 +374,7 @@ class Transaction extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return parent::isReady() && $this->getTransactionId() && $this->getAffiliation();
     }
@@ -391,7 +382,7 @@ class Transaction extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return self::ERROR_MESSAGE;
     }

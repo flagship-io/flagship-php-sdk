@@ -82,6 +82,7 @@ class VisitorTest extends TestCase
                 'sendHit',
                 'fetchFlags',
                 'getFlag',
+                'getFlags',
                 'getFlagsDTO',
                 "getFetchStatus",
                 "setOnFetchFlagsStatusChanged"
@@ -155,6 +156,13 @@ class VisitorTest extends TestCase
             ->with($key)->willReturn(null);
         $flagValue = $visitor->getFlag($key);
         $this->assertSame(null, $flagValue);
+
+        //Test getFlags
+        $visitorDelegateMock->expects($this->once())
+            ->method('getFlags')
+            ->willReturn(null);
+
+        $flags = $visitor->getFlags();
 
 
         //Test getFetchStatus

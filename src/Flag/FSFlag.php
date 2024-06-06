@@ -15,27 +15,27 @@ class FSFlag implements FSFlagInterface
     /**
      * @var string
      */
-    private $key;
+    private string $key;
 
     /**
-     * @var VisitorAbstract
+     * @var VisitorAbstract|null
      */
-    private $visitorDelegate;
+    private ?VisitorAbstract $visitorDelegate;
 
     /**
      * @var array|bool|float|int|string
      */
-    private $defaultValue;
+    private string|array|bool|int|null|float $defaultValue;
 
-    private $hasGetValueBeenCalled;
+    private bool $hasGetValueBeenCalled;
 
 
     /***
-     * @param string          $key
-     * @param VisitorAbstract $visitorDelegate
+     * @param string $key
+     * @param VisitorAbstract|null $visitorDelegate
      */
     public function __construct(
-        $key,
+        string $key,
         VisitorAbstract $visitorDelegate = null
     ) {
         $this->key = $key;
@@ -45,10 +45,10 @@ class FSFlag implements FSFlagInterface
     }
 
     /**
-     * @param  $key
+     * @param string $key
      * @return FlagDTO|null
      */
-    protected function findFlagDTO($key)
+    protected function findFlagDTO(string $key): ?FlagDTO
     {
         if (!$this->visitorDelegate) {
             return null;
@@ -66,8 +66,10 @@ class FSFlag implements FSFlagInterface
     /**
      * @inheritDoc
      */
-    public function getValue($defaultValue, $visitorExposed = true)
-    {
+    public function getValue(
+        float|array|bool|int|string|null $defaultValue,
+        bool                             $visitorExposed = true
+    ): float|array|bool|int|string {
         $flagDTO = $this->findFlagDTO($this->key);
         $this->defaultValue = $defaultValue;
         $this->hasGetValueBeenCalled = true;
@@ -82,7 +84,7 @@ class FSFlag implements FSFlagInterface
     /**
      * @inheritDoc
      */
-    public function exists()
+    public function exists(): bool
     {
         $flagDTO = $this->findFlagDTO($this->key);
         return $flagDTO && $flagDTO->getCampaignId() && $flagDTO->getVariationId() && $flagDTO->getVariationGroupId();
@@ -91,7 +93,7 @@ class FSFlag implements FSFlagInterface
     /**
      * @inheritDoc
      */
-    public function getMetadata()
+    public function getMetadata(): FSFlagMetadataInterface
     {
         if (!$this->visitorDelegate) {
             return FSFlagMetadata::getEmpty();
@@ -105,7 +107,7 @@ class FSFlag implements FSFlagInterface
     /**
      * @inheritDoc
      */
-    public function visitorExposed()
+    public function visitorExposed(): void
     {
         if (!$this->visitorDelegate) {
             return;
@@ -123,7 +125,7 @@ class FSFlag implements FSFlagInterface
     /**
      * @inheritDoc
      */
-    public function getStatus()
+    public function getStatus(): FSFlagStatus
     {
         if (!$this->visitorDelegate) {
             return FSFlagStatus::NOT_FOUND;
@@ -138,7 +140,10 @@ class FSFlag implements FSFlagInterface
             return FSFlagStatus::NOT_FOUND;
         }
 
-        if ($fetchStatus->getStatus() === FSFetchStatus::FETCH_REQUIRED || $fetchStatus->getStatus() === FSFetchStatus::FETCHING) {
+        if (
+            $fetchStatus->getStatus() === FSFetchStatus::FETCH_REQUIRED ||
+            $fetchStatus->getStatus() === FSFetchStatus::FETCHING
+        ) {
             return FSFlagStatus::FETCH_REQUIRED;
         }
 

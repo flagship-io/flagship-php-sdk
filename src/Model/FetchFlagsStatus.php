@@ -2,22 +2,25 @@
 
 namespace Flagship\Model;
 
+use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
+
 class FetchFlagsStatus implements FetchFlagsStatusInterface
 {
     /**
-     * @var int
+     * @var FSFetchStatus
      */
-    private $status;
+    private FSFetchStatus $status;
     /**
-     * @var int
+     * @var FSFetchReason
      */
-    private $reason;
+    private FSFetchReason $reason;
 
     /**
-     * @param int $status
-     * @param int $reason
+     * @param FSFetchStatus $status
+     * @param FSFetchReason $reason
      */
-    public function __construct($status, $reason)
+    public function __construct(FSFetchStatus $status, FSFetchReason $reason)
     {
         $this->status = $status;
         $this->reason = $reason;
@@ -26,7 +29,7 @@ class FetchFlagsStatus implements FetchFlagsStatusInterface
     /**
      * @inheritDoc
      */
-    public function getStatus()
+    public function getStatus(): FSFetchStatus
     {
         return $this->status;
     }
@@ -34,7 +37,7 @@ class FetchFlagsStatus implements FetchFlagsStatusInterface
     /**
      * @inheritDoc
      */
-    public function getReason()
+    public function getReason(): FSFetchReason
     {
         return $this->reason;
     }

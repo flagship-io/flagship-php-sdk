@@ -15,67 +15,67 @@ class FlagDTO implements JsonSerializable
     /**
      * @var string
      */
-    private $key;
+    private string $key;
     /**
      * @var string
      */
-    private $campaignId;
+    private string $campaignId;
 
     /**
      * @var string
      */
-    private $campaignName;
+    private string $campaignName;
     /**
      * @var string
      */
-    private $variationGroupId;
+    private string $variationGroupId;
 
     /**
      * @var string
      */
-    private $variationGroupName;
+    private string $variationGroupName;
 
     /**
      * @var string
      */
-    private $variationId;
+    private string $variationId;
 
     /**
      * @var string
      */
-    private $variationName;
+    private string $variationName;
     /**
      * @var bool
      */
-    private $isReference;
+    private bool $isReference;
     /**
      * @var string|bool|numeric
      */
-    private $value;
+    private string|int|bool|float $value;
 
     /**
      * @var string
      */
-    private $campaignType;
+    private string $campaignType;
 
     /**
      * @var string
      */
-    private $slug;
+    private string $slug;
 
     /**
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
 
     /**
-     * @param  string $key
+     * @param string $key
      * @return FlagDTO
      */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         $this->key = $key;
         return $this;
@@ -84,16 +84,16 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string
      */
-    public function getCampaignId()
+    public function getCampaignId(): string
     {
         return $this->campaignId;
     }
 
     /**
-     * @param  string $campaignId
+     * @param string $campaignId
      * @return FlagDTO
      */
-    public function setCampaignId($campaignId)
+    public function setCampaignId(string $campaignId): static
     {
         $this->campaignId = $campaignId;
         return $this;
@@ -102,16 +102,16 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string
      */
-    public function getVariationGroupId()
+    public function getVariationGroupId(): string
     {
         return $this->variationGroupId;
     }
 
     /**
-     * @param  string $variationGroupId
+     * @param string $variationGroupId
      * @return FlagDTO
      */
-    public function setVariationGroupId($variationGroupId)
+    public function setVariationGroupId(string $variationGroupId): static
     {
         $this->variationGroupId = $variationGroupId;
         return $this;
@@ -120,16 +120,16 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string
      */
-    public function getVariationId()
+    public function getVariationId(): string
     {
         return $this->variationId;
     }
 
     /**
-     * @param  string $variationId
+     * @param string $variationId
      * @return FlagDTO
      */
-    public function setVariationId($variationId)
+    public function setVariationId(string $variationId): static
     {
         $this->variationId = $variationId;
         return $this;
@@ -138,16 +138,16 @@ class FlagDTO implements JsonSerializable
     /**
      * @return bool
      */
-    public function getIsReference()
+    public function getIsReference(): bool
     {
         return $this->isReference;
     }
 
     /**
-     * @param  bool $isReference
+     * @param bool $isReference
      * @return FlagDTO
      */
-    public function setIsReference($isReference)
+    public function setIsReference(bool $isReference): static
     {
         $this->isReference = $isReference;
         return $this;
@@ -156,16 +156,16 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string|bool|numeric
      */
-    public function getValue()
+    public function getValue(): float|bool|int|string
     {
         return $this->value;
     }
 
     /**
-     * @param  string|bool|numeric $value
+     * @param bool|string|numeric $value
      * @return FlagDTO
      */
-    public function setValue($value)
+    public function setValue(float|bool|int|string $value): static
     {
         $this->value = $value;
         return $this;
@@ -174,7 +174,7 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string
      */
-    public function getCampaignType()
+    public function getCampaignType(): string
     {
         return $this->campaignType;
     }
@@ -183,7 +183,7 @@ class FlagDTO implements JsonSerializable
      * @param string $campaignType
      * @return FlagDTO
      */
-    public function setCampaignType($campaignType)
+    public function setCampaignType(string $campaignType): static
     {
         $this->campaignType = $campaignType;
         return $this;
@@ -192,7 +192,7 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -201,7 +201,7 @@ class FlagDTO implements JsonSerializable
      * @param string $slug
      * @return FlagDTO
      */
-    public function setSlug($slug)
+    public function setSlug(string $slug): static
     {
         $this->slug = $slug;
         return $this;
@@ -210,7 +210,7 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string
      */
-    public function getCampaignName()
+    public function getCampaignName(): string
     {
         return $this->campaignName;
     }
@@ -219,7 +219,7 @@ class FlagDTO implements JsonSerializable
      * @param string $campaignName
      * @return FlagDTO
      */
-    public function setCampaignName($campaignName)
+    public function setCampaignName(string $campaignName): static
     {
         $this->campaignName = $campaignName;
         return $this;
@@ -228,7 +228,7 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string
      */
-    public function getVariationGroupName()
+    public function getVariationGroupName(): string
     {
         return $this->variationGroupName;
     }
@@ -237,7 +237,7 @@ class FlagDTO implements JsonSerializable
      * @param string $variationGroupName
      * @return FlagDTO
      */
-    public function setVariationGroupName($variationGroupName)
+    public function setVariationGroupName(string $variationGroupName): static
     {
         $this->variationGroupName = $variationGroupName;
         return $this;
@@ -246,7 +246,7 @@ class FlagDTO implements JsonSerializable
     /**
      * @return string
      */
-    public function getVariationName()
+    public function getVariationName(): string
     {
         return $this->variationName;
     }
@@ -255,18 +255,13 @@ class FlagDTO implements JsonSerializable
      * @param string $variationName
      * @return FlagDTO
      */
-    public function setVariationName($variationName)
+    public function setVariationName(string $variationName): static
     {
         $this->variationName = $variationName;
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     * @return mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             FlagshipField::FIELD_KEY => $this->getKey(),

@@ -9,31 +9,35 @@ class ExposedFlag implements ExposedFlagInterface
     /**
      * @var string
      */
-    private $key;
+    private string $key;
 
     /**
      * @var bool|numeric|string|array
      */
-    private $value;
+    private string|array|bool|int|float $value;
 
     /**
      * @var FSFlagMetadataInterface
      */
-    private $metadata;
+    private FSFlagMetadataInterface $metadata;
 
     /**
      * @var bool|numeric|string|array
      */
-    private $defaultValue;
+    private string|array|bool|int|float $defaultValue;
 
     /**
      * @param string $key
-     * @param bool|numeric|string|array $value
-     * @param bool|numeric|string|array $defaultValue
+     * @param array|bool|string|numeric $value
+     * @param array|bool|string|numeric $defaultValue
      * @param FSFlagMetadataInterface $metadata
      */
-    public function __construct($key, $value, $defaultValue, FSFlagMetadataInterface $metadata)
-    {
+    public function __construct(
+        string $key,
+        float|array|bool|int|string $value,
+        float|array|bool|int|string $defaultValue,
+        FSFlagMetadataInterface $metadata
+    ) {
         $this->key = $key;
         $this->value = $value;
         $this->metadata = $metadata;
@@ -43,7 +47,7 @@ class ExposedFlag implements ExposedFlagInterface
     /**
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -51,7 +55,7 @@ class ExposedFlag implements ExposedFlagInterface
     /**
      * @return bool|numeric|string|array
      */
-    public function getValue()
+    public function getValue(): float|int|bool|array|string
     {
         return $this->value;
     }
@@ -59,7 +63,7 @@ class ExposedFlag implements ExposedFlagInterface
     /**
      * @return FSFlagMetadataInterface
      */
-    public function getMetadata()
+    public function getMetadata(): FSFlagMetadataInterface
     {
         return $this->metadata;
     }
@@ -67,7 +71,7 @@ class ExposedFlag implements ExposedFlagInterface
     /**
      * @inheritDoc
      */
-    public function getDefaultValue()
+    public function getDefaultValue(): float|array|bool|int|string
     {
         return $this->defaultValue;
     }

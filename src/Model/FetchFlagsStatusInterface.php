@@ -2,24 +2,25 @@
 
 namespace Flagship\Model;
 
+use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
+
 /**
  * Represents the status of visitor fetch for flag data.
  */
 interface FetchFlagsStatusInterface
 {
     /**
-     * The new status of the flags fetch. 
-     * @see \Flagship\Enum\FSFetchStatus for possible values.
+     * The new status of the flags fetch.
      *
-     * @return int
+     * @return FSFetchStatus
      */
-    public function getStatus();
+    public function getStatus(): FSFetchStatus;
 
     /**
      * The reason for the status change
-     * @see \Flagship\Enum\FSFetchReason For possible values.
-     * 
-     * @return int
+     *
+     * @return FSFetchReason
      */
-    public function getReason();
+    public function getReason(): FSFetchReason;
 }

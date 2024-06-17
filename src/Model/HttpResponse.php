@@ -8,12 +8,12 @@ namespace Flagship\Model;
  */
 class HttpResponse
 {
-    private $statusCode;
-    private $body;
+    private string $statusCode;
+    private mixed $body;
     /**
      * @var array
      */
-    private $headers;
+    private array $headers;
 
     /**
      * HttpResponse constructor.
@@ -30,9 +30,9 @@ class HttpResponse
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getStatusCode()
+    public function getStatusCode(): string
     {
         return $this->statusCode;
     }
@@ -41,7 +41,7 @@ class HttpResponse
      * @param  mixed $statusCode
      * @return HttpResponse
      */
-    public function setStatusCode($statusCode)
+    public function setStatusCode(mixed $statusCode): static
     {
         $this->statusCode = $statusCode;
         return $this;
@@ -50,7 +50,7 @@ class HttpResponse
     /**
      * @return mixed
      */
-    public function getBody()
+    public function getBody(): mixed
     {
         return $this->body;
     }
@@ -59,7 +59,7 @@ class HttpResponse
      * @param  mixed $body
      * @return HttpResponse
      */
-    public function setBody($body)
+    public function setBody(mixed $body): static
     {
         $this->body = $body;
         return $this;
@@ -68,7 +68,7 @@ class HttpResponse
     /**
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }

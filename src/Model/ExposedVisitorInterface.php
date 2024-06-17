@@ -8,17 +8,17 @@ interface ExposedVisitorInterface
      * Visitor id
      * @return string
      */
-    public function getId();
+    public function getId(): string;
 
     /**
      * visitor anonymous id
      * @return string
      */
-    public function getAnonymousId();
+    public function getAnonymousId(): string;
 
     /**
      * visitor context
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getContext();
+    public function getContext(): array;
 }

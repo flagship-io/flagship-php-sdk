@@ -27,9 +27,9 @@ class ApiManager extends DecisionManagerAbstract
      * return an associative array of campaigns
      *
      * @param VisitorAbstract $visitor
-     * @return array|null return an associative array of campaigns
+     * @return array return an associative array of campaigns
      */
-    public function getCampaigns(VisitorAbstract $visitor)
+    public function getCampaigns(VisitorAbstract $visitor): array
     {
         $postData = [
             "visitorId" => $visitor->getVisitorId(),
@@ -72,7 +72,6 @@ class ApiManager extends DecisionManagerAbstract
                 return $body[FlagshipField::FIELD_CAMPAIGNS];
             }
         } catch (Exception $exception) {
-
             $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FETCH_ERROR));
             $this->logError($this->getConfig(), $exception->getMessage(), [
                 FlagshipConstant::TAG => __FUNCTION__
@@ -97,13 +96,13 @@ class ApiManager extends DecisionManagerAbstract
             ;
             $visitor->sendTroubleshootingHit($troubleshooting);
         }
-        return null;
+        return [];
     }
 
     /**
      * @inheritDoc
      */
-    public function getCampaignFlags(VisitorAbstract $visitor)
+    public function getCampaignFlags(VisitorAbstract $visitor): array
     {
         $campaigns = $this->getCampaigns($visitor);
         return $this->getFlagsData($campaigns);

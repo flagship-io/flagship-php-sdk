@@ -23,11 +23,11 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @var bool
      */
-    protected $isPanicMode = false;
+    protected bool $isPanicMode = false;
     /**
      * @var HttpClientInterface
      */
-    protected $httpClient;
+    protected HttpClientInterface $httpClient;
     /**
      * @var callable
      */
@@ -36,21 +36,21 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @var FlagshipConfig
      */
-    protected $config;
+    protected FlagshipConfig $config;
 
     /**
-     * @var TroubleshootingData
+     * @var ?TroubleshootingData
      */
-    protected $troubleshootingData;
+    protected ?TroubleshootingData $troubleshootingData;
 
     /**
      * @var TrackingManagerInterface
      */
-    protected $trackingManager;
+    protected TrackingManagerInterface $trackingManager;
     /**
      * @var string
      */
-    protected $flagshipInstanceId;
+    protected string $flagshipInstanceId;
 
     /**
      * ApiManager constructor.
@@ -67,7 +67,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return TrackingManagerInterface
      */
-    public function getTrackingManager()
+    public function getTrackingManager(): TrackingManagerInterface
     {
         return $this->trackingManager;
     }
@@ -76,7 +76,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param TrackingManagerInterface $trackingManager
      * @return DecisionManagerAbstract
      */
-    public function setTrackingManager($trackingManager)
+    public function setTrackingManager(TrackingManagerInterface $trackingManager): static
     {
         $this->trackingManager = $trackingManager;
         return $this;
@@ -85,7 +85,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return string
      */
-    public function getFlagshipInstanceId()
+    public function getFlagshipInstanceId(): string
     {
         return $this->flagshipInstanceId;
     }
@@ -94,7 +94,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param string $flagshipInstanceId
      * @return DecisionManagerAbstract
      */
-    public function setFlagshipInstanceId($flagshipInstanceId)
+    public function setFlagshipInstanceId(string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
@@ -102,7 +102,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return HttpClientInterface
      */
-    public function getHttpClient()
+    public function getHttpClient(): HttpClientInterface
     {
         return $this->httpClient;
     }
@@ -110,7 +110,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return bool
      */
-    public function getIsPanicMode()
+    public function getIsPanicMode(): bool
     {
         return $this->isPanicMode;
     }
@@ -119,7 +119,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param bool $isPanicMode
      * @return DecisionManagerAbstract
      */
-    public function setIsPanicMode($isPanicMode)
+    public function setIsPanicMode(bool $isPanicMode): static
     {
         $status = $isPanicMode ? FSSdkStatus::SDK_PANIC : FSSdkStatus::SDK_INITIALIZED;
         $this->updateFlagshipStatus($status);
@@ -133,7 +133,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param callable $statusChangedCallback callback
      * @return DecisionManagerAbstract
      */
-    public function setStatusChangedCallback($statusChangedCallback)
+    public function setStatusChangedCallback(callable $statusChangedCallback): static
     {
         if (is_callable($statusChangedCallback)) {
             $this->statusChangedCallback = $statusChangedCallback;
@@ -144,7 +144,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return FlagshipConfig
      */
-    public function getConfig()
+    public function getConfig(): FlagshipConfig
     {
         return $this->config;
     }
@@ -153,17 +153,17 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param FlagshipConfig $config
      * @return DecisionManagerAbstract
      */
-    public function setConfig($config)
+    public function setConfig(FlagshipConfig $config): static
     {
         $this->config = $config;
         return $this;
     }
 
     /**
-     * @param $newStatus
+     * @param FSSdkStatus $newStatus
      * @return void
      */
-    protected function updateFlagshipStatus($newStatus)
+    protected function updateFlagshipStatus(FSSdkStatus $newStatus): void
     {
         $callable = $this->statusChangedCallback;
         if ($callable) {
@@ -172,11 +172,11 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     }
 
     /**
-     * @param  FlagDTO[] $flags
-     * @param  $key
+     * @param FlagDTO[] $flags
+     * @param string $key
      * @return FlagDTO|null
      */
-    protected function checkFlagKeyExist(array $flags, $key)
+    protected function checkFlagKeyExist(array $flags, string $key): ?FlagDTO
     {
         foreach ($flags as $flag) {
             if ($flag->getKey() === $key) {
@@ -192,7 +192,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param  $campaigns
      * @return FlagDTO[] Return an array of flags
      */
-    public function getFlagsData($campaigns)
+    public function getFlagsData($campaigns): array
     {
 
         $flags = [];
@@ -217,12 +217,12 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * Return modification of a campaign
      *
-     * @param  array $flagsValue
-     * @param  $campaign
-     * @param  array $flagsDTO
+     * @param array $flagsValue
+     * @param array $campaign
+     * @param array $flagsDTO
      * @return array
      */
-    protected function getFlagsValue(array $flagsValue, $campaign, $flagsDTO)
+    protected function getFlagsValue(array $flagsValue, array $campaign, array $flagsDTO): array
     {
         $localFlags = [];
         foreach ($flagsValue as $key => $flagValue) {
@@ -295,18 +295,18 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param VisitorAbstract $visitor
      * @return array
      */
-    abstract public function getCampaigns(VisitorAbstract $visitor);
+    abstract public function getCampaigns(VisitorAbstract $visitor): array;
 
     /**
      * @inheritDoc
      */
-    public function getCampaignFlags(VisitorAbstract $visitor)
+    public function getCampaignFlags(VisitorAbstract $visitor): array
     {
         $campaigns = $this->getCampaigns($visitor);
         return $this->getFlagsData($campaigns);
     }
 
-    public function getTroubleshootingData()
+    public function getTroubleshootingData(): ?TroubleshootingData
     {
         return $this->troubleshootingData;
     }

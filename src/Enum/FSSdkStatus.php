@@ -18,7 +18,8 @@ enum FSSdkStatus: int
     case SDK_INITIALIZING = 1;
 
     /**
-     * Flagship SDK is ready but is running in Panic mode: All features are disabled except the one which refresh this status.
+     * Flagship SDK is ready but is running in Panic mode:
+     * All features are disabled except the one which refresh this status.
      */
     case SDK_PANIC = 2;
 

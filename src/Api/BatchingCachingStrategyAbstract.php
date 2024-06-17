@@ -2,7 +2,7 @@
 
 namespace Flagship\Api;
 
-use DateTime;
+use Exception;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
@@ -32,51 +32,51 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @var HitAbstract[]
      */
-    protected $hitsPoolQueue;
+    protected array $hitsPoolQueue;
 
     /**
      * @var Activate[]
      */
-    protected $activatePoolQueue;
+    protected array $activatePoolQueue;
 
     /**
      * @var Troubleshooting[]
      */
-    protected $troubleshootingQueue;
+    protected array $troubleshootingQueue;
 
     /**
      * @var UsageHit[]
      */
-    protected $usageHitQueue;
+    protected array $usageHitQueue;
 
     /**
-     * @var TroubleshootingData
+     * @var TroubleshootingData|null
      */
-    protected $troubleshootingData;
+    protected ?TroubleshootingData $troubleshootingData;
 
 
 
     /**
      * @var HttpClientInterface
      */
-    protected $httpClient;
+    protected HttpClientInterface $httpClient;
 
     /**
      * @var FlagshipConfig
      */
-    protected $config;
+    protected FlagshipConfig $config;
 
-    protected $flagshipInstanceId;
+    protected string $flagshipInstanceId;
 
     /**
      * @param FlagshipConfig $config
      * @param HttpClientInterface $httpClient
-     * @param null $flagshipInstanceId
+     * @param string|null $flagshipInstanceId
      */
     public function __construct(
         FlagshipConfig $config,
         HttpClientInterface $httpClient,
-        $flagshipInstanceId = null
+        string $flagshipInstanceId = null
     ) {
         $this->httpClient = $httpClient;
         $this->config = $config;
@@ -90,33 +90,32 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return UsageHit []
      */
-    public function getUsageHitQueue()
+    public function getUsageHitQueue(): array
     {
         return $this->usageHitQueue;
     }
 
     /**
-     * @return TroubleshootingData
+     * @return TroubleshootingData|null
      */
-    public function getTroubleshootingData()
+    public function getTroubleshootingData(): ?TroubleshootingData
     {
         return $this->troubleshootingData;
     }
 
     /**
      * @param TroubleshootingData $troubleshootingData
-     * @return BatchingCachingStrategyAbstract
+     * @return void
      */
-    public function setTroubleshootingData($troubleshootingData)
+    public function setTroubleshootingData(TroubleshootingData $troubleshootingData): void
     {
         $this->troubleshootingData = $troubleshootingData;
-        return $this;
     }
 
     /**
      * @return Troubleshooting[]
      */
-    public function getTroubleshootingQueue()
+    public function getTroubleshootingQueue(): array
     {
         return $this->troubleshootingQueue;
     }
@@ -124,7 +123,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return HitAbstract[]
      */
-    public function getHitsPoolQueue()
+    public function getHitsPoolQueue(): array
     {
         return $this->hitsPoolQueue;
     }
@@ -132,7 +131,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return Activate[]
      */
-    public function getActivatePoolQueue()
+    public function getActivatePoolQueue(): array
     {
         return $this->activatePoolQueue;
     }
@@ -142,7 +141,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param HitAbstract $hit
      * @return void
      */
-    public function hydrateHitsPoolQueue($key, HitAbstract $hit)
+    public function hydrateHitsPoolQueue($key, HitAbstract $hit): void
     {
         $this->hitsPoolQueue[$key] = $hit;
     }
@@ -152,7 +151,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param Activate $hit
      * @return void
      */
-    public function hydrateActivatePoolQueue($key, Activate $hit)
+    public function hydrateActivatePoolQueue($key, Activate $hit): void
     {
         $this->activatePoolQueue[$key] = $hit;
     }
@@ -161,7 +160,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return array
      */
-    public function getActivateHeaders()
+    public function getActivateHeaders(): array
     {
         return [
             FlagshipConstant::HEADER_X_API_KEY => $this->config->getApiKey(),
@@ -175,7 +174,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param $visitorId
      * @return string
      */
-    public function generateHitKey($visitorId)
+    public function generateHitKey($visitorId): string
     {
         return $visitorId . ":" . $this->newGuid();
     }
@@ -184,7 +183,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param HitAbstract $hit
      * @return void
      */
-    public function addHit(HitAbstract $hit)
+    public function addHit(HitAbstract $hit): void
     {
         $hitKey = $this->generateHitKey($hit->getVisitorId());
         $hit->setKey($hitKey);
@@ -210,7 +209,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param Activate $hit
      * @return void
      */
-    public function activateFlag(Activate $hit)
+    public function activateFlag(Activate $hit): void
     {
         $hitKey = $this->generateHitKey($hit->getVisitorId());
 
@@ -227,16 +226,16 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     }
 
     /**
-     * @param $visitorId
+     * @param string $visitorId
      * @return void
      */
-    abstract protected function notConsent($visitorId);
+    abstract protected function notConsent(string $visitorId): void;
 
     /**
      * @param HitAbstract $hit
      * @return void
      */
-    protected function addHitInPoolQueue(HitAbstract $hit)
+    protected function addHitInPoolQueue(HitAbstract $hit): void
     {
         $this->hitsPoolQueue[$hit->getKey()] = $hit;
     }
@@ -245,7 +244,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param Activate $hit
      * @return void
      */
-    protected function addActivateHitInPoolQueue(Activate $hit)
+    protected function addActivateHitInPoolQueue(Activate $hit): void
     {
         $this->activatePoolQueue[$hit->getKey()] = $hit;
     }
@@ -254,7 +253,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param string[] $hitKeysToRemove
      * @return void
      */
-    protected function flushSentActivateHit(array $hitKeysToRemove)
+    protected function flushSentActivateHit(array $hitKeysToRemove): void
     {
         $this->flushHits($hitKeysToRemove);
     }
@@ -263,7 +262,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param string[] $hitKeysToRemove
      * @return void
      */
-    protected function flushBatchedHits(array $hitKeysToRemove)
+    protected function flushBatchedHits(array $hitKeysToRemove): void
     {
         $this->flushHits($hitKeysToRemove);
     }
@@ -272,7 +271,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param Activate $activate
      * @return void
      */
-    protected function onVisitorExposed(Activate $activate)
+    protected function onVisitorExposed(Activate $activate): void
     {
         $onUserExposed = $this->config->getOnVisitorExposed();
         if (!$onUserExposed) {
@@ -293,7 +292,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
         try {
             call_user_func($onUserExposed, $exposedUser, $exposedFlag);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logErrorSprintf($this->config, __FUNCTION__, $exception->getMessage());
         }
     }
@@ -301,7 +300,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return void
      */
-    protected function sendActivateHit()
+    protected function sendActivateHit(): void
     {
         $headers = $this->getActivateHeaders();
 
@@ -338,7 +337,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             if (count($hitKeysToRemove) > 0) {
                 $this->flushSentActivateHit($hitKeysToRemove);
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->cacheHit($this->activatePoolQueue);
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)
@@ -367,10 +366,10 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     }
 
     /**
-     * @param $visitorId
+     * @param string $visitorId
      * @return string []
      */
-    protected function commonNotConsent($visitorId)
+    protected function commonNotConsent(string $visitorId): array
     {
         $hitKeys = [];
         $keysToFlush = [];
@@ -413,7 +412,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return void
      */
-    public function sendBatch()
+    public function sendBatch(): void
     {
         if (count($this->activatePoolQueue)) {
             $this->sendActivateHit();
@@ -465,7 +464,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             if (count($hitKeysToRemove) > 0) {
                 $this->flushBatchedHits($hitKeysToRemove);
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->cacheHit($this->hitsPoolQueue);
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SEND_BATCH_HIT_ROUTE_RESPONSE_ERROR)
@@ -497,7 +496,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param HitAbstract[] $hits
      * @return void
      */
-    public function cacheHit(array $hits)
+    public function cacheHit(array $hits): void
     {
         try {
             $hitCacheImplementation = $this->config->getHitCacheImplementation();
@@ -530,7 +529,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::HIT_CACHE_SAVED,
                 [$data]
             );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::PROCESS_CACHE,
@@ -544,7 +543,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      * @param array $hitKeys
      * @return void
      */
-    public function flushHits(array $hitKeys)
+    public function flushHits(array $hitKeys): void
     {
         try {
             $hitCacheImplementation = $this->config->getHitCacheImplementation();
@@ -559,7 +558,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::HIT_DATA_FLUSHED,
                 [$hitKeys]
             );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::PROCESS_CACHE,
@@ -572,7 +571,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return void
      */
-    public function flushAllHits()
+    public function flushAllHits(): void
     {
         try {
             $hitCacheImplementation = $this->config->getHitCacheImplementation();
@@ -581,7 +580,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             }
             $hitCacheImplementation->flushAllHits();
             $this->logDebugSprintf($this->config, FlagshipConstant::PROCESS_CACHE, FlagshipConstant::ALL_HITS_FLUSHED);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::PROCESS_CACHE,
@@ -594,7 +593,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     /**
      * @return boolean
      */
-    public function isTroubleshootingActivated()
+    public function isTroubleshootingActivated(): bool
     {
         $troubleshootingData = $this->getTroubleshootingData();
 
@@ -615,7 +614,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         return true;
     }
 
-    public function addTroubleshootingHit(Troubleshooting $hit)
+    public function addTroubleshootingHit(Troubleshooting $hit): void
     {
         if (!$this->isTroubleshootingActivated()) {
             return;
@@ -636,7 +635,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     }
 
 
-    protected function sendTroubleshooting(Troubleshooting $hit)
+    protected function sendTroubleshooting(Troubleshooting $hit): void
     {
         $now = $this->getNow();
         $requestBody = $hit->toApiKeys();
@@ -651,7 +650,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::TROUBLESHOOTING_SENT_SUCCESS,
                 [$this->getLogFormat(null, $url, $requestBody, [], $this->getNow() - $now)]
             );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::SEND_TROUBLESHOOTING,
@@ -661,7 +660,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             );
         }
     }
-    public function sendTroubleshootingQueue()
+    public function sendTroubleshootingQueue(): void
     {
         if (!$this->isTroubleshootingActivated() || count($this->troubleshootingQueue) === 0) {
             return;
@@ -672,7 +671,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->troubleshootingQueue = [];
     }
 
-    public function addUsageHit(UsageHit $hit)
+    public function addUsageHit(UsageHit $hit): void
     {
         $hitKey = $this->generateHitKey($hit->getVisitorId());
         $hit->setKey($hitKey);
@@ -684,7 +683,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
             [$hit->toApiKeys()]
         );
     }
-    public function sendUsageHit(UsageHit $hit)
+    public function sendUsageHit(UsageHit $hit): void
     {
         $now = $this->getNow();
         $requestBody = $hit->toApiKeys();
@@ -698,7 +697,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::USAGE_HIT_HAS_BEEN_SENT_S,
                 [$this->getLogFormat(null, $url, $requestBody, [], $this->getNow() - $now)]
             );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::SEND_USAGE_HIT,
@@ -709,9 +708,9 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         }
     }
 
-    public function sendUsageHitQueue()
+    public function sendUsageHitQueue(): void
     {
-        if ( count($this->usageHitQueue) === 0) {
+        if (count($this->usageHitQueue) === 0) {
             return;
         }
         foreach ($this->usageHitQueue as $item) {

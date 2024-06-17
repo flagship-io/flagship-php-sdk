@@ -151,7 +151,7 @@ class FSFlagCollection implements FSFlagCollectionInterface
     /**
      * @inheritDoc
      */
-    public function current(): mixed
+    public function current(): FSFlag
     {
         $key = $this->keys[$this->index];
         return $this->flags[$key];

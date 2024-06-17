@@ -7,18 +7,19 @@ use Flagship\Enum\FlagshipConstant;
 
 trait CommonLogManagerTrait
 {
-    public function getDateTime()
+    public function getDateTime(): string
     {
         $date = new DateTime();
         return $date->format("Y-m-d H:i:s.u");
     }
+
     /**
      * @param $level
-     * @param $message
+     * @param string $message
      * @param array $context
      * @return void
      */
-    public function customLog($level, $message, array $context = [])
+    public function customLog($level, string $message, array $context = []): void
     {
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $formatDate = $this->getDateTime();
@@ -28,10 +29,10 @@ trait CommonLogManagerTrait
     }
 
     /**
-     * @param $context
+     * @param array $context
      * @return string
      */
-    private function parseContextToString($context)
+    private function parseContextToString(array $context): string
     {
         $contextToString = "";
 

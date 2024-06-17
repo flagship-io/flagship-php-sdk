@@ -9,9 +9,10 @@ trait BuildApiTrait
     /**
      * Build http request header
      *
+     * @param string $apiKey
      * @return array
      */
-    protected function buildHeader($apiKey)
+    protected function buildHeader(string $apiKey): array
     {
         return [
             FlagshipConstant::HEADER_X_API_KEY => $apiKey,
@@ -24,9 +25,10 @@ trait BuildApiTrait
     /**
      * Build and return the Decision Api url
      *
+     * @param string $url
      * @return string
      */
-    protected function buildDecisionApiUrl($url)
+    protected function buildDecisionApiUrl(string $url): string
     {
         return FlagshipConstant::BASE_API_URL . '/' . $url;
     }

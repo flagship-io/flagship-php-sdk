@@ -14,7 +14,7 @@ trait ValidatorTrait
      * @param string $string
      * @return bool
      */
-    protected function isJsonObject($string)
+    protected function isJsonObject(string $string): bool
     {
         $jsonObject = json_decode($string);
 
@@ -24,7 +24,7 @@ trait ValidatorTrait
 
         $json = ltrim($string);
 
-        if (strpos($json, '{') !== 0) {
+        if (!str_starts_with($json, '{')) {
             return false;
         }
         return true;
@@ -35,23 +35,13 @@ trait ValidatorTrait
      * @param mixed $value
      * @return bool
      */
-    protected function checkType($type, $value)
+    protected function checkType(string $type, mixed $value): bool
     {
-        switch ($type) {
-            case 'bool':
-                $check = null !== filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-                break;
-            case 'double':
-            case 'long':
-            case 'float':
-            case 'int':
-            case 'integer':
-                $check = is_numeric($value);
-                break;
-            default:
-                $check = is_string($value);
-        }
-        return $check;
+        return match ($type) {
+            'bool' => null !== filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'double', 'long', 'float', 'int', 'integer' => is_numeric($value),
+            default => is_string($value),
+        };
     }
 
     /**
@@ -60,7 +50,7 @@ trait ValidatorTrait
      * @param FlagshipConfig $config
      * @return bool|null
      */
-    protected function checkFlagshipContext($key, $value, FlagshipConfig $config)
+    protected function checkFlagshipContext($key, $value, FlagshipConfig $config): ?bool
     {
         $type = FlagshipContext::getType($key);
 
@@ -89,7 +79,7 @@ trait ValidatorTrait
      * @param  mixed $key Context key
      * @return bool
      */
-    protected function isKeyValid($key)
+    protected function isKeyValid(mixed $key): bool
     {
         return !empty($key) && is_string($key);
     }
@@ -101,7 +91,7 @@ trait ValidatorTrait
      * @param  $value
      * @return bool
      */
-    protected function isValueValid($value)
+    protected function isValueValid($value): bool
     {
         return (is_numeric($value) || is_bool($value) || is_string($value) || is_null($value));
     }
@@ -112,7 +102,7 @@ trait ValidatorTrait
      * @param FlagshipConfig $config
      * @return bool
      */
-    protected function isNumeric($value, $itemName, FlagshipConfig $config)
+    protected function isNumeric($value, $itemName, FlagshipConfig $config): bool
     {
         if (!is_numeric($value)) {
             $this->logError(

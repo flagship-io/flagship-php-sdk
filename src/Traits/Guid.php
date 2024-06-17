@@ -7,7 +7,7 @@ trait Guid
     /**
      * @return string
      */
-    protected function newGuid()
+    protected function newGuid(): string
     {
         $rand = function ($min, $max) {
             return rand($min, $max);

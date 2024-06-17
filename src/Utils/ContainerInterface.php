@@ -5,10 +5,10 @@ namespace Flagship\Utils;
 interface ContainerInterface
 {
     /**
-     * @param $id
-     * @param $args
-     * @param $isFactory
+     * @param string $id
+     * @param array|null $args
+     * @param bool $isFactory
      * @return mixed|object|null
      */
-    public function get($id, $args = null, $isFactory = false);
+    public function get(string $id, array $args = null, bool $isFactory = false): mixed;
 }

@@ -5,19 +5,20 @@ namespace Flagship\Utils;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionParameter;
 
 class Container implements ContainerInterface
 {
-    private $instances = [];
-    private $bindings = [];
+    private array $instances = [];
+    private array $bindings = [];
 
     /**
-     * @param  $alias
-     * @param  $className
+     * @param string $alias
+     * @param string $className
      * @return $this
      * @throws Exception
      */
-    public function bind($alias, $className)
+    public function bind(string $alias, string $className): static
     {
         if (isset($this->bindings[$alias])) {
             throw new Exception('alias ' . $alias . ' already exist');
@@ -27,13 +28,13 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @param $id
-     * @param $args
-     * @param $isFactory
+     * @param string $id
+     * @param null $args
+     * @param bool $isFactory
      * @return mixed|object|null
      * @throws ReflectionException
      */
-    public function get($id, $args = null, $isFactory = false)
+    public function get(string $id, $args = null, bool $isFactory = false): mixed
     {
         if ($isFactory) {
             return $this->resolve($id, $args);
@@ -45,13 +46,13 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @param $id
-     * @param $args
+     * @param string $id
+     * @param array|null $args
      * @return object|null
      * @throws ReflectionException
      * @throws Exception
      */
-    private function resolve($id, $args = null)
+    private function resolve(string $id, array $args = null): ?object
     {
         $className = $id;
         if (isset($this->bindings[$id])) {
@@ -79,16 +80,15 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @param $parameters
+     * @param ReflectionParameter[] $parameters
      * @return array
      * @throws ReflectionException
      */
-    private function extractConstructorParam($parameters)
+    private function extractConstructorParam(array $parameters): array
     {
         $constructorParameters = [];
         foreach ($parameters as $parameter) {
-            $isPhp5 = version_compare(phpversion(), '7', '<');
-            $typeName = $isPhp5 ? $parameter->getClass() : $parameter->getType();
+            $typeName = $parameter->getType();
             if ($typeName) {
                 $constructorParameters[] = $this->get($typeName->getName());
             } else {

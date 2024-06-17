@@ -2,293 +2,294 @@
 
 namespace Flagship\Hit;
 
-use Flagship\Enum\CacheStrategy;
-use Flagship\Enum\DecisionMode;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FSSdkStatus;
 use Flagship\Enum\LogLevel;
 use Flagship\Model\FlagDTO;
+use Flagship\Enum\FSSdkStatus;
+use Flagship\Enum\DecisionMode;
+use Flagship\Enum\CacheStrategy;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\TroubleshootingLabel;
 
 class Diagnostic extends HitAbstract
 {
     /**
      * @var string
      */
-    private $version;
+    private string $version;
 
     /**
-     * @var int
+     * @var LogLevel
      */
-    private $logLevel;
-
-    /**
-     * @var string
-     */
-    private $timestamp;
+    private LogLevel $logLevel;
 
     /**
      * @var string
      */
-    private $timeZone;
+    private string $timestamp;
 
     /**
      * @var string
      */
-    private $label;
+    private string $timeZone;
 
     /**
      * @var string
      */
-    private $stackType;
+    private TroubleshootingLabel $label;
 
     /**
      * @var string
      */
-    private $stackName;
+    private string $stackType;
 
     /**
      * @var string
      */
-    private $stackVersion;
+    private string $stackName;
 
     /**
      * @var string
      */
-    private $stackOriginName;
+    private string $stackVersion;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $stackOriginVersion;
+    private ?string $stackOriginName;
 
     /**
-     * @var int
+     * @var ?string
      */
-    private $sdkStatus;
+    private ?string $stackOriginVersion;
 
     /**
-     * @var numeric
+     * @var FSSdkStatus
      */
-    private $sdkConfigMode;
+    private FSSdkStatus $sdkStatus;
 
     /**
-     * @var numeric
+     * @var DecisionMode
      */
-    private $sdkConfigLogLeve;
+    private DecisionMode $sdkConfigMode;
 
     /**
-     * @var bool
+     * @var LogLevel
      */
-    private $sdkConfigCustomLogManager;
+    private LogLevel $sdkConfigLogLeve;
 
     /**
-     * @var bool
+     * @var ?bool
      */
-    private $sdkConfigCustomCacheManager;
+    private ?bool $sdkConfigCustomLogManager;
 
     /**
-     * @var bool
+     * @var ?bool
      */
-    private $sdkConfigStatusListener;
+    private ?bool $sdkConfigCustomCacheManager;
 
     /**
-     * @var numeric
+     * @var ?bool
      */
-    private $sdkConfigTimeout;
+    private ?bool $sdkConfigStatusListener;
+
+    /**
+     * @var int|float|null
+     */
+    private int|float|null $sdkConfigTimeout;
 
 
     /**
-     * @var int
+     * @var CacheStrategy
      */
-    private $sdkConfigTrackingManagerConfigStrategy;
+    private CacheStrategy $sdkConfigTrackingManagerConfigStrategy;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $sdkConfigBucketingUrl;
+    private ?string $sdkConfigBucketingUrl;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $sdkConfigFetchThirdPartyData;
+    private ?string $sdkConfigFetchThirdPartyData;
 
     /**
-     * @var boolean
+     * @var ?boolean
      */
-    private $sdkConfigUsingCustomHitCache;
+    private ?bool $sdkConfigUsingCustomHitCache;
 
     /**
-     * @var boolean
+     * @var ?boolean
      */
-    private $sdkConfigUsingCustomVisitorCache;
+    private ?bool $sdkConfigUsingCustomVisitorCache;
 
     /**
-     * @var boolean
+     * @var ?boolean
      */
-    private $sdkConfigUsingOnVisitorExposed;
+    private ?bool $sdkConfigUsingOnVisitorExposed;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $httpRequestUrl;
+    private ?string $httpRequestUrl;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $httpRequestMethod;
+    private ?string $httpRequestMethod;
 
     /**
-     * @var array
+     * @var ?array
      */
-    private $httpRequestHeaders;
+    private ?array $httpRequestHeaders;
+
+    /**
+     * @var ?mixed
+     */
+    private mixed $httpRequestBody;
+
+    /**
+     * @var ?string
+     */
+    private ?string $httpResponseUrl;
+
+    /**
+     * @var ?string
+     */
+    private ?string $httpResponseMethod;
+
+    /**
+     * @var ?array
+     */
+    private ?array $httpResponseHeaders;
+
+    /**
+     * @var ?int
+     */
+    private ?int $httpResponseCode;
 
     /**
      * @var mixed
      */
-    private $httpRequestBody;
+    private mixed $httpResponseBody;
 
     /**
-     * @var string
+     * @var ?int
      */
-    private $httpResponseUrl;
+    private ?int $httpResponseTime;
 
     /**
-     * @var string
+     * @var ?array
      */
-    private $httpResponseMethod;
+    private ?array $visitorContext;
 
     /**
-     * @var array
+     * @var ?bool
      */
-    private $httpResponseHeaders;
+    private ?bool $visitorConsent;
 
     /**
-     * @var int
+     * @var ?array
      */
-    private $httpResponseCode;
+    private ?array $visitorAssignmentHistory;
 
     /**
-     * @var mixed
+     * @var ?FlagDTO[]
      */
-    private $httpResponseBody;
+    private ?array $visitorFlags;
 
     /**
-     * @var int
+     * @var ?array
      */
-    private $httpResponseTime;
+    private ?array $visitorCampaigns;
 
     /**
-     * @var array
+     * @var ?bool
      */
-    private $visitorContext;
+    private ?bool $visitorIsAuthenticated;
 
     /**
-     * @var boolean
+     * @var ?string
      */
-    private $visitorConsent;
-
-    /**
-     * @var array
-     */
-    private $visitorAssignmentHistory;
-
-    /**
-     * @var FlagDTO[]
-     */
-    private $visitorFlags;
-
-    /**
-     * @var array
-     */
-    private $visitorCampaigns;
-
-    /**
-     * @var boolean
-     */
-    private $visitorIsAuthenticated;
-
-    /**
-     * @var string
-     */
-    private $flagKey;
+    private ?string $flagKey;
 
     /**
      * @var mixed
      */
-    private $flagValue;
+    private mixed $flagValue;
 
     /**
      * @var mixed
      */
-    private $flagDefault;
+    private mixed $flagDefault;
 
     /**
-     * @var boolean
+     * @var ?bool
      */
-    private $visitorExposed;
+    private ?bool $visitorExposed;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $flagMetadataCampaignId;
+    private ?string $flagMetadataCampaignId;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $flagMetadataCampaignName;
+    private ?string $flagMetadataCampaignName;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $flagMetadataVariationGroupId;
+    private ?string $flagMetadataVariationGroupId;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $flagMetadataVariationGroupName;
+    private ?string $flagMetadataVariationGroupName;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $flagMetadataVariationId;
+    private ?string $flagMetadataVariationId;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $flagMetadataVariationName;
+    private ?string $flagMetadataVariationName;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $flagMetadataCampaignSlug;
+    private ?string $flagMetadataCampaignSlug;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $flagMetadataCampaignType;
+    private ?string $flagMetadataCampaignType;
 
     /**
-     * @var boolean
+     * @var ?bool
      */
-    private $flagMetadataCampaignIsReference;
+    private ?bool $flagMetadataCampaignIsReference;
 
 
     /**
      * @var mixed
      */
-    private $hitContent;
+    private mixed $hitContent;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $visitorSessionId;
+    private ?string $visitorSessionId;
 
     /**
-     * @var numeric
+     * @var int|float
      */
-    private $traffic;
+    private int|float $traffic;
 
-    private $flagshipInstanceId;
+    private ?string $flagshipInstanceId;
 
 
     public function __construct($type)
@@ -304,9 +305,9 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagshipInstanceId()
+    public function getFlagshipInstanceId(): ?string
     {
         return $this->flagshipInstanceId;
     }
@@ -315,16 +316,16 @@ class Diagnostic extends HitAbstract
      * @param string $flagshipInstanceId
      * @return Diagnostic
      */
-    public function setFlagshipInstanceId($flagshipInstanceId)
+    public function setFlagshipInstanceId(string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getVisitorSessionId()
+    public function getVisitorSessionId(): ?string
     {
         return $this->visitorSessionId;
     }
@@ -333,25 +334,25 @@ class Diagnostic extends HitAbstract
      * @param string $visitorSessionId
      * @return Diagnostic
      */
-    public function setVisitorSessionId($visitorSessionId)
+    public function setVisitorSessionId(string $visitorSessionId): static
     {
         $this->visitorSessionId = $visitorSessionId;
         return $this;
     }
 
     /**
-     * @return float|int|string
+     * @return float|int
      */
-    public function getTraffic()
+    public function getTraffic(): float|int
     {
         return $this->traffic;
     }
 
     /**
-     * @param float|int|string $traffic
+     * @param float|int $traffic
      * @return Diagnostic
      */
-    public function setTraffic($traffic)
+    public function setTraffic(float|int $traffic): static
     {
         $this->traffic = $traffic;
         return $this;
@@ -360,7 +361,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version;
     }
@@ -369,25 +370,25 @@ class Diagnostic extends HitAbstract
      * @param string $version
      * @return Diagnostic
      */
-    public function setVersion($version)
+    public function setVersion(string $version): static
     {
         $this->version = $version;
         return $this;
     }
 
     /**
-     * @return int
+     * @return LogLevel
      */
-    public function getLogLevel()
+    public function getLogLevel(): LogLevel
     {
         return $this->logLevel;
     }
 
     /**
-     * @param int $logLevel
+     * @param LogLevel $logLevel
      * @return Diagnostic
      */
-    public function setLogLevel($logLevel)
+    public function setLogLevel(LogLevel $logLevel): static
     {
         $this->logLevel = $logLevel;
         return $this;
@@ -396,7 +397,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getTimestamp()
+    public function getTimestamp(): string
     {
         return $this->timestamp;
     }
@@ -405,7 +406,7 @@ class Diagnostic extends HitAbstract
      * @param string $timestamp
      * @return Diagnostic
      */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(string $timestamp): static
     {
         $this->timestamp = $timestamp;
         return $this;
@@ -414,7 +415,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getTimeZone()
+    public function getTimeZone(): string
     {
         return $this->timeZone;
     }
@@ -423,25 +424,25 @@ class Diagnostic extends HitAbstract
      * @param string $timeZone
      * @return Diagnostic
      */
-    public function setTimeZone($timeZone)
+    public function setTimeZone(string $timeZone): static
     {
         $this->timeZone = $timeZone;
         return $this;
     }
 
     /**
-     * @return string
+     * @return TroubleshootingLabel
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
     /**
-     * @param string $label
+     * @param TroubleshootingLabel $label
      * @return Diagnostic
      */
-    public function setLabel($label)
+    public function setLabel(TroubleshootingLabel $label): static
     {
         $this->label = $label;
         return $this;
@@ -450,7 +451,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getStackType()
+    public function getStackType(): string
     {
         return $this->stackType;
     }
@@ -459,7 +460,7 @@ class Diagnostic extends HitAbstract
      * @param string $stackType
      * @return Diagnostic
      */
-    public function setStackType($stackType)
+    public function setStackType(string $stackType): static
     {
         $this->stackType = $stackType;
         return $this;
@@ -468,7 +469,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getStackName()
+    public function getStackName(): string
     {
         return $this->stackName;
     }
@@ -477,7 +478,7 @@ class Diagnostic extends HitAbstract
      * @param string $stackName
      * @return Diagnostic
      */
-    public function setStackName($stackName)
+    public function setStackName(string $stackName): static
     {
         $this->stackName = $stackName;
         return $this;
@@ -486,7 +487,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getStackVersion()
+    public function getStackVersion(): string
     {
         return $this->stackVersion;
     }
@@ -495,16 +496,16 @@ class Diagnostic extends HitAbstract
      * @param string $stackVersion
      * @return Diagnostic
      */
-    public function setStackVersion($stackVersion)
+    public function setStackVersion(string $stackVersion): static
     {
         $this->stackVersion = $stackVersion;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getStackOriginName()
+    public function getStackOriginName(): ?string
     {
         return $this->stackOriginName;
     }
@@ -513,16 +514,16 @@ class Diagnostic extends HitAbstract
      * @param string $stackOriginName
      * @return Diagnostic
      */
-    public function setStackOriginName($stackOriginName)
+    public function setStackOriginName(string $stackOriginName): static
     {
         $this->stackOriginName = $stackOriginName;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getStackOriginVersion()
+    public function getStackOriginVersion(): ?string
     {
         return $this->stackOriginVersion;
     }
@@ -531,52 +532,52 @@ class Diagnostic extends HitAbstract
      * @param string $stackOriginVersion
      * @return Diagnostic
      */
-    public function setStackOriginVersion($stackOriginVersion)
+    public function setStackOriginVersion(string $stackOriginVersion): static
     {
         $this->stackOriginVersion = $stackOriginVersion;
         return $this;
     }
 
     /**
-     * @return int
+     * @return FSSdkStatus
      */
-    public function getSdkStatus()
+    public function getSdkStatus(): FSSdkStatus
     {
         return $this->sdkStatus;
     }
 
     /**
-     * @param int $sdkStatus
+     * @param FSSdkStatus $sdkStatus
      * @return Diagnostic
      */
-    public function setSdkStatus($sdkStatus)
+    public function setSdkStatus(FSSdkStatus $sdkStatus): static
     {
         $this->sdkStatus = $sdkStatus;
         return $this;
     }
 
     /**
-     * @return numeric
+     * @return DecisionMode
      */
-    public function getSdkConfigMode()
+    public function getSdkConfigMode(): DecisionMode
     {
         return $this->sdkConfigMode;
     }
 
     /**
-     * @param numeric $sdkConfigMode
+     * @param DecisionMode $sdkConfigMode
      * @return Diagnostic
      */
-    public function setSdkConfigMode($sdkConfigMode)
+    public function setSdkConfigMode(DecisionMode $sdkConfigMode): static
     {
         $this->sdkConfigMode = $sdkConfigMode;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function getSdkConfigCustomLogManager()
+    public function getSdkConfigCustomLogManager(): ?bool
     {
         return $this->sdkConfigCustomLogManager;
     }
@@ -585,16 +586,16 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigCustomLogManager
      * @return Diagnostic
      */
-    public function setSdkConfigCustomLogManager($sdkConfigCustomLogManager)
+    public function setSdkConfigCustomLogManager(bool $sdkConfigCustomLogManager): static
     {
         $this->sdkConfigCustomLogManager = $sdkConfigCustomLogManager;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function getSdkConfigCustomCacheManager()
+    public function getSdkConfigCustomCacheManager(): ?bool
     {
         return $this->sdkConfigCustomCacheManager;
     }
@@ -603,16 +604,16 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigCustomCacheManager
      * @return Diagnostic
      */
-    public function setSdkConfigCustomCacheManager($sdkConfigCustomCacheManager)
+    public function setSdkConfigCustomCacheManager(bool $sdkConfigCustomCacheManager): static
     {
         $this->sdkConfigCustomCacheManager = $sdkConfigCustomCacheManager;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function getSdkConfigStatusListener()
+    public function getSdkConfigStatusListener(): ?bool
     {
         return $this->sdkConfigStatusListener;
     }
@@ -621,16 +622,16 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigStatusListener
      * @return Diagnostic
      */
-    public function setSdkConfigStatusListener($sdkConfigStatusListener)
+    public function setSdkConfigStatusListener(bool $sdkConfigStatusListener): static
     {
         $this->sdkConfigStatusListener = $sdkConfigStatusListener;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSdkConfigBucketingUrl()
+    public function getSdkConfigBucketingUrl(): ?string
     {
         return $this->sdkConfigBucketingUrl;
     }
@@ -639,16 +640,16 @@ class Diagnostic extends HitAbstract
      * @param string $sdkConfigBucketingUrl
      * @return Diagnostic
      */
-    public function setSdkConfigBucketingUrl($sdkConfigBucketingUrl)
+    public function setSdkConfigBucketingUrl(string $sdkConfigBucketingUrl): static
     {
         $this->sdkConfigBucketingUrl = $sdkConfigBucketingUrl;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSdkConfigFetchThirdPartyData()
+    public function getSdkConfigFetchThirdPartyData(): ?string
     {
         return $this->sdkConfigFetchThirdPartyData;
     }
@@ -657,16 +658,16 @@ class Diagnostic extends HitAbstract
      * @param string $sdkConfigFetchThirdPartyData
      * @return Diagnostic
      */
-    public function setSdkConfigFetchThirdPartyData($sdkConfigFetchThirdPartyData)
+    public function setSdkConfigFetchThirdPartyData(string $sdkConfigFetchThirdPartyData): static
     {
         $this->sdkConfigFetchThirdPartyData = $sdkConfigFetchThirdPartyData;
         return $this;
     }
 
     /**
-     * @return numeric
+     * @return float|int|string|null
      */
-    public function getSdkConfigTimeout()
+    public function getSdkConfigTimeout(): float|int|string|null
     {
         return $this->sdkConfigTimeout;
     }
@@ -675,7 +676,7 @@ class Diagnostic extends HitAbstract
      * @param numeric $sdkConfigTimeout
      * @return Diagnostic
      */
-    public function setSdkConfigTimeout($sdkConfigTimeout)
+    public function setSdkConfigTimeout(float|int|string $sdkConfigTimeout): static
     {
         $this->sdkConfigTimeout = $sdkConfigTimeout;
         return $this;
@@ -683,27 +684,28 @@ class Diagnostic extends HitAbstract
 
 
     /**
-     * @return int
+     * @return CacheStrategy
      */
-    public function getSdkConfigTrackingManagerConfigStrategy()
+    public function getSdkConfigTrackingManagerConfigStrategy(): CacheStrategy
     {
         return $this->sdkConfigTrackingManagerConfigStrategy;
     }
 
     /**
-     * @param int $sdkConfigTrackingManagerConfigStrategy
+     * @param CacheStrategy $sdkConfigTrackingManagerConfigStrategy
      * @return Diagnostic
      */
-    public function setSdkConfigTrackingManagerConfigStrategy($sdkConfigTrackingManagerConfigStrategy)
-    {
+    public function setSdkConfigTrackingManagerConfigStrategy(
+        CacheStrategy $sdkConfigTrackingManagerConfigStrategy
+    ): static {
         $this->sdkConfigTrackingManagerConfigStrategy = $sdkConfigTrackingManagerConfigStrategy;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isSdkConfigUsingCustomHitCache()
+    public function isSdkConfigUsingCustomHitCache(): ?bool
     {
         return $this->sdkConfigUsingCustomHitCache;
     }
@@ -712,16 +714,16 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigUsingCustomHitCache
      * @return Diagnostic
      */
-    public function setSdkConfigUsingCustomHitCache($sdkConfigUsingCustomHitCache)
+    public function setSdkConfigUsingCustomHitCache(bool $sdkConfigUsingCustomHitCache): static
     {
         $this->sdkConfigUsingCustomHitCache = $sdkConfigUsingCustomHitCache;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isSdkConfigUsingCustomVisitorCache()
+    public function isSdkConfigUsingCustomVisitorCache(): ?bool
     {
         return $this->sdkConfigUsingCustomVisitorCache;
     }
@@ -730,16 +732,16 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigUsingCustomVisitorCache
      * @return Diagnostic
      */
-    public function setSdkConfigUsingCustomVisitorCache($sdkConfigUsingCustomVisitorCache)
+    public function setSdkConfigUsingCustomVisitorCache(bool $sdkConfigUsingCustomVisitorCache): static
     {
         $this->sdkConfigUsingCustomVisitorCache = $sdkConfigUsingCustomVisitorCache;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isSdkConfigUsingOnVisitorExposed()
+    public function isSdkConfigUsingOnVisitorExposed(): ?bool
     {
         return $this->sdkConfigUsingOnVisitorExposed;
     }
@@ -748,16 +750,16 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigUsingOnVisitorExposed
      * @return Diagnostic
      */
-    public function setSdkConfigUsingOnVisitorExposed($sdkConfigUsingOnVisitorExposed)
+    public function setSdkConfigUsingOnVisitorExposed(bool $sdkConfigUsingOnVisitorExposed): static
     {
         $this->sdkConfigUsingOnVisitorExposed = $sdkConfigUsingOnVisitorExposed;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getHttpRequestUrl()
+    public function getHttpRequestUrl(): ?string
     {
         return $this->httpRequestUrl;
     }
@@ -766,16 +768,16 @@ class Diagnostic extends HitAbstract
      * @param string $httpRequestUrl
      * @return Diagnostic
      */
-    public function setHttpRequestUrl($httpRequestUrl)
+    public function setHttpRequestUrl(string $httpRequestUrl): static
     {
         $this->httpRequestUrl = $httpRequestUrl;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getHttpRequestMethod()
+    public function getHttpRequestMethod(): ?string
     {
         return $this->httpRequestMethod;
     }
@@ -784,16 +786,16 @@ class Diagnostic extends HitAbstract
      * @param string $httpRequestMethod
      * @return Diagnostic
      */
-    public function setHttpRequestMethod($httpRequestMethod)
+    public function setHttpRequestMethod(string $httpRequestMethod): static
     {
         $this->httpRequestMethod = $httpRequestMethod;
         return $this;
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getHttpRequestHeaders()
+    public function getHttpRequestHeaders(): ?array
     {
         return $this->httpRequestHeaders;
     }
@@ -802,7 +804,7 @@ class Diagnostic extends HitAbstract
      * @param array $httpRequestHeaders
      * @return Diagnostic
      */
-    public function setHttpRequestHeaders($httpRequestHeaders)
+    public function setHttpRequestHeaders(array $httpRequestHeaders): static
     {
         $this->httpRequestHeaders = $httpRequestHeaders;
         return $this;
@@ -811,7 +813,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return mixed
      */
-    public function getHttpRequestBody()
+    public function getHttpRequestBody(): mixed
     {
         return $this->httpRequestBody;
     }
@@ -820,16 +822,16 @@ class Diagnostic extends HitAbstract
      * @param mixed $httpRequestBody
      * @return Diagnostic
      */
-    public function setHttpRequestBody($httpRequestBody)
+    public function setHttpRequestBody(mixed $httpRequestBody): static
     {
         $this->httpRequestBody = $httpRequestBody;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getHttpResponseUrl()
+    public function getHttpResponseUrl(): ?string
     {
         return $this->httpResponseUrl;
     }
@@ -838,16 +840,16 @@ class Diagnostic extends HitAbstract
      * @param string $httpResponseUrl
      * @return Diagnostic
      */
-    public function setHttpResponseUrl($httpResponseUrl)
+    public function setHttpResponseUrl(string $httpResponseUrl): static
     {
         $this->httpResponseUrl = $httpResponseUrl;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getHttpResponseMethod()
+    public function getHttpResponseMethod(): ?string
     {
         return $this->httpResponseMethod;
     }
@@ -856,16 +858,16 @@ class Diagnostic extends HitAbstract
      * @param string $httpResponseMethod
      * @return Diagnostic
      */
-    public function setHttpResponseMethod($httpResponseMethod)
+    public function setHttpResponseMethod(string $httpResponseMethod): static
     {
         $this->httpResponseMethod = $httpResponseMethod;
         return $this;
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getHttpResponseHeaders()
+    public function getHttpResponseHeaders(): ?array
     {
         return $this->httpResponseHeaders;
     }
@@ -874,16 +876,16 @@ class Diagnostic extends HitAbstract
      * @param array $httpResponseHeaders
      * @return Diagnostic
      */
-    public function setHttpResponseHeaders($httpResponseHeaders)
+    public function setHttpResponseHeaders(array $httpResponseHeaders): static
     {
         $this->httpResponseHeaders = $httpResponseHeaders;
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getHttpResponseCode()
+    public function getHttpResponseCode(): ?int
     {
         return $this->httpResponseCode;
     }
@@ -892,7 +894,7 @@ class Diagnostic extends HitAbstract
      * @param int $httpResponseCode
      * @return Diagnostic
      */
-    public function setHttpResponseCode($httpResponseCode)
+    public function setHttpResponseCode(int $httpResponseCode): static
     {
         $this->httpResponseCode = $httpResponseCode;
         return $this;
@@ -901,7 +903,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return mixed
      */
-    public function getHttpResponseBody()
+    public function getHttpResponseBody(): mixed
     {
         return $this->httpResponseBody;
     }
@@ -910,16 +912,16 @@ class Diagnostic extends HitAbstract
      * @param mixed $httpResponseBody
      * @return Diagnostic
      */
-    public function setHttpResponseBody($httpResponseBody)
+    public function setHttpResponseBody(mixed $httpResponseBody): static
     {
         $this->httpResponseBody = $httpResponseBody;
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getHttpResponseTime()
+    public function getHttpResponseTime(): ?int
     {
         return $this->httpResponseTime;
     }
@@ -928,16 +930,16 @@ class Diagnostic extends HitAbstract
      * @param int $httpResponseTime
      * @return Diagnostic
      */
-    public function setHttpResponseTime($httpResponseTime)
+    public function setHttpResponseTime(int $httpResponseTime): static
     {
         $this->httpResponseTime = $httpResponseTime;
         return $this;
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getVisitorContext()
+    public function getVisitorContext(): ?array
     {
         return $this->visitorContext;
     }
@@ -946,16 +948,16 @@ class Diagnostic extends HitAbstract
      * @param array $visitorContext
      * @return Diagnostic
      */
-    public function setVisitorContext($visitorContext)
+    public function setVisitorContext(array $visitorContext): static
     {
         $this->visitorContext = $visitorContext;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isVisitorConsent()
+    public function isVisitorConsent(): ?bool
     {
         return $this->visitorConsent;
     }
@@ -964,16 +966,16 @@ class Diagnostic extends HitAbstract
      * @param bool $visitorConsent
      * @return Diagnostic
      */
-    public function setVisitorConsent($visitorConsent)
+    public function setVisitorConsent(bool $visitorConsent): static
     {
         $this->visitorConsent = $visitorConsent;
         return $this;
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getVisitorAssignmentHistory()
+    public function getVisitorAssignmentHistory(): ?array
     {
         return $this->visitorAssignmentHistory;
     }
@@ -982,16 +984,16 @@ class Diagnostic extends HitAbstract
      * @param array $visitorAssignmentHistory
      * @return Diagnostic
      */
-    public function setVisitorAssignmentHistory($visitorAssignmentHistory)
+    public function setVisitorAssignmentHistory(array $visitorAssignmentHistory): static
     {
         $this->visitorAssignmentHistory = $visitorAssignmentHistory;
         return $this;
     }
 
     /**
-     * @return FlagDTO[]
+     * @return array|null
      */
-    public function getVisitorFlags()
+    public function getVisitorFlags(): ?array
     {
         return $this->visitorFlags;
     }
@@ -1000,16 +1002,16 @@ class Diagnostic extends HitAbstract
      * @param FlagDTO[] $visitorFlags
      * @return Diagnostic
      */
-    public function setVisitorFlags($visitorFlags)
+    public function setVisitorFlags(array $visitorFlags): static
     {
         $this->visitorFlags = $visitorFlags;
         return $this;
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getVisitorCampaigns()
+    public function getVisitorCampaigns(): ?array
     {
         return $this->visitorCampaigns;
     }
@@ -1018,16 +1020,16 @@ class Diagnostic extends HitAbstract
      * @param array $visitorCampaigns
      * @return Diagnostic
      */
-    public function setVisitorCampaigns($visitorCampaigns)
+    public function setVisitorCampaigns(array $visitorCampaigns): static
     {
         $this->visitorCampaigns = $visitorCampaigns;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isVisitorIsAuthenticated()
+    public function isVisitorIsAuthenticated(): ?bool
     {
         return $this->visitorIsAuthenticated;
     }
@@ -1036,16 +1038,16 @@ class Diagnostic extends HitAbstract
      * @param bool $visitorIsAuthenticated
      * @return Diagnostic
      */
-    public function setVisitorIsAuthenticated($visitorIsAuthenticated)
+    public function setVisitorIsAuthenticated(bool $visitorIsAuthenticated): static
     {
         $this->visitorIsAuthenticated = $visitorIsAuthenticated;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagKey()
+    public function getFlagKey(): ?string
     {
         return $this->flagKey;
     }
@@ -1054,7 +1056,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagKey
      * @return Diagnostic
      */
-    public function setFlagKey($flagKey)
+    public function setFlagKey(string $flagKey): static
     {
         $this->flagKey = $flagKey;
         return $this;
@@ -1063,7 +1065,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return mixed
      */
-    public function getFlagValue()
+    public function getFlagValue(): mixed
     {
         return $this->flagValue;
     }
@@ -1072,7 +1074,7 @@ class Diagnostic extends HitAbstract
      * @param mixed $flagValue
      * @return Diagnostic
      */
-    public function setFlagValue($flagValue)
+    public function setFlagValue(mixed $flagValue): static
     {
         $this->flagValue = $flagValue;
         return $this;
@@ -1081,7 +1083,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return mixed
      */
-    public function getFlagDefault()
+    public function getFlagDefault(): mixed
     {
         return $this->flagDefault;
     }
@@ -1090,16 +1092,16 @@ class Diagnostic extends HitAbstract
      * @param mixed $flagDefault
      * @return Diagnostic
      */
-    public function setFlagDefault($flagDefault)
+    public function setFlagDefault(mixed $flagDefault): static
     {
         $this->flagDefault = $flagDefault;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isVisitorExposed()
+    public function isVisitorExposed(): ?bool
     {
         return $this->visitorExposed;
     }
@@ -1108,16 +1110,16 @@ class Diagnostic extends HitAbstract
      * @param bool $visitorExposed
      * @return Diagnostic
      */
-    public function setVisitorExposed($visitorExposed)
+    public function setVisitorExposed(bool $visitorExposed): static
     {
         $this->visitorExposed = $visitorExposed;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagMetadataCampaignId()
+    public function getFlagMetadataCampaignId(): ?string
     {
         return $this->flagMetadataCampaignId;
     }
@@ -1126,16 +1128,16 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataCampaignId
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignId($flagMetadataCampaignId)
+    public function setFlagMetadataCampaignId(string $flagMetadataCampaignId): static
     {
         $this->flagMetadataCampaignId = $flagMetadataCampaignId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagMetadataVariationGroupId()
+    public function getFlagMetadataVariationGroupId(): ?string
     {
         return $this->flagMetadataVariationGroupId;
     }
@@ -1144,16 +1146,16 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataVariationGroupId
      * @return Diagnostic
      */
-    public function setFlagMetadataVariationGroupId($flagMetadataVariationGroupId)
+    public function setFlagMetadataVariationGroupId(string $flagMetadataVariationGroupId): static
     {
         $this->flagMetadataVariationGroupId = $flagMetadataVariationGroupId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagMetadataVariationId()
+    public function getFlagMetadataVariationId(): ?string
     {
         return $this->flagMetadataVariationId;
     }
@@ -1162,16 +1164,16 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataVariationId
      * @return Diagnostic
      */
-    public function setFlagMetadataVariationId($flagMetadataVariationId)
+    public function setFlagMetadataVariationId(string $flagMetadataVariationId): static
     {
         $this->flagMetadataVariationId = $flagMetadataVariationId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagMetadataCampaignSlug()
+    public function getFlagMetadataCampaignSlug(): ?string
     {
         return $this->flagMetadataCampaignSlug;
     }
@@ -1180,16 +1182,16 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataCampaignSlug
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignSlug($flagMetadataCampaignSlug)
+    public function setFlagMetadataCampaignSlug(string $flagMetadataCampaignSlug): static
     {
         $this->flagMetadataCampaignSlug = $flagMetadataCampaignSlug;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagMetadataCampaignType()
+    public function getFlagMetadataCampaignType(): ?string
     {
         return $this->flagMetadataCampaignType;
     }
@@ -1198,16 +1200,16 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataCampaignType
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignType($flagMetadataCampaignType)
+    public function setFlagMetadataCampaignType(string $flagMetadataCampaignType): static
     {
         $this->flagMetadataCampaignType = $flagMetadataCampaignType;
         return $this;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isFlagMetadataCampaignIsReference()
+    public function isFlagMetadataCampaignIsReference(): ?bool
     {
         return $this->flagMetadataCampaignIsReference;
     }
@@ -1216,16 +1218,16 @@ class Diagnostic extends HitAbstract
      * @param bool $flagMetadataCampaignIsReference
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignIsReference($flagMetadataCampaignIsReference)
+    public function setFlagMetadataCampaignIsReference(bool $flagMetadataCampaignIsReference): static
     {
         $this->flagMetadataCampaignIsReference = $flagMetadataCampaignIsReference;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagMetadataCampaignName()
+    public function getFlagMetadataCampaignName(): ?string
     {
         return $this->flagMetadataCampaignName;
     }
@@ -1234,16 +1236,16 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataCampaignName
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignName($flagMetadataCampaignName)
+    public function setFlagMetadataCampaignName(string $flagMetadataCampaignName): static
     {
         $this->flagMetadataCampaignName = $flagMetadataCampaignName;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagMetadataVariationGroupName()
+    public function getFlagMetadataVariationGroupName(): ?string
     {
         return $this->flagMetadataVariationGroupName;
     }
@@ -1252,16 +1254,16 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataVariationGroupName
      * @return Diagnostic
      */
-    public function setFlagMetadataVariationGroupName($flagMetadataVariationGroupName)
+    public function setFlagMetadataVariationGroupName(string $flagMetadataVariationGroupName): static
     {
         $this->flagMetadataVariationGroupName = $flagMetadataVariationGroupName;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFlagMetadataVariationName()
+    public function getFlagMetadataVariationName(): ?string
     {
         return $this->flagMetadataVariationName;
     }
@@ -1270,7 +1272,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataVariationName
      * @return Diagnostic
      */
-    public function setFlagMetadataVariationName($flagMetadataVariationName)
+    public function setFlagMetadataVariationName(string $flagMetadataVariationName): static
     {
         $this->flagMetadataVariationName = $flagMetadataVariationName;
         return $this;
@@ -1280,7 +1282,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return mixed
      */
-    public function getHitContent()
+    public function getHitContent(): mixed
     {
         return $this->hitContent;
     }
@@ -1289,25 +1291,25 @@ class Diagnostic extends HitAbstract
      * @param mixed $hitContent
      * @return Diagnostic
      */
-    public function setHitContent($hitContent)
+    public function setHitContent(mixed $hitContent): static
     {
         $this->hitContent = $hitContent;
         return $this;
     }
 
     /**
-     * @return float|int|string
+     * @return LogLevel
      */
-    public function getSdkConfigLogLeve()
+    public function getSdkConfigLogLeve(): LogLevel
     {
         return $this->sdkConfigLogLeve;
     }
 
     /**
-     * @param float|int|string $sdkConfigLogLeve
+     * @param LogLevel $sdkConfigLogLeve
      * @return Diagnostic
      */
-    public function setSdkConfigLogLeve($sdkConfigLogLeve)
+    public function setSdkConfigLogLevel(LogLevel $sdkConfigLogLeve): static
     {
         $this->sdkConfigLogLeve = $sdkConfigLogLeve;
         return $this;
@@ -1315,15 +1317,15 @@ class Diagnostic extends HitAbstract
 
 
 
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $customVariable = [
             'version' => $this->getVersion(),
-            'logLevel' => LogLevel::getLogName($this->getLogLevel()),
+            'logLevel' => $this->getLogLevel()->name,
             'envId' => $this->getConfig()->getEnvId(),
             "timestamp" => $this->getTimestamp(),
             'timeZone' => $this->getTimeZone(),
-            'label' => $this->getLabel(),
+            'label' => $this->getLabel()->name,
             'stack.type' => $this->getStackType(),
             'stack.name' => $this->getStackName(),
             'stack.version' => $this->getStackVersion()
@@ -1350,13 +1352,13 @@ class Diagnostic extends HitAbstract
             $customVariable["stack.origin.version"] = $this->getStackOriginVersion();
         }
         if ($this->getSdkStatus() !== null) {
-            $customVariable["sdk.status"] = FSSdkStatus::getStatusName($this->getSdkStatus());
+            $customVariable["sdk.status"] = $this->getSdkStatus()->name;
         }
         if ($this->getSdkConfigLogLeve() !== null) {
-            $customVariable["sdk.config.logLevel"] = LogLevel::getLogName($this->getSdkConfigLogLeve());
+            $customVariable["sdk.config.logLevel"] = $this->getSdkConfigLogLeve()->name;
         }
         if ($this->getSdkConfigMode() !== null) {
-            $customVariable["sdk.config.mode"] = DecisionMode::getDecisionModeName($this->getSdkConfigMode());
+            $customVariable["sdk.config.mode"] = $this->getSdkConfigMode()->name;
         }
         if ($this->getSdkConfigCustomLogManager() !== null) {
             $customVariable["sdk.config.customLogManager"] = json_encode($this->getSdkConfigCustomLogManager());
@@ -1373,7 +1375,7 @@ class Diagnostic extends HitAbstract
 
         if ($this->getSdkConfigTrackingManagerConfigStrategy() !== null) {
             $customVariable["sdk.config.trackingManager.strategy"] =
-                CacheStrategy::getCacheStrategyName($this->getSdkConfigTrackingManagerConfigStrategy());
+                $this->getSdkConfigTrackingManagerConfigStrategy()->name;
         }
 
         if ($this->getSdkConfigBucketingUrl() !== null) {
@@ -1543,9 +1545,8 @@ class Diagnostic extends HitAbstract
     /**
      * @return string
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
-        // TODO: Implement getErrorMessage() method.
         return  "";
     }
 }

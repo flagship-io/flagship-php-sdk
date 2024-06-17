@@ -13,33 +13,33 @@ class VisitorBuilder
     /**
      * @var bool
      */
-    private $isAuthenticated;
+    private bool $isAuthenticated;
     /**
      * @var bool
      */
-    private $hasConsented;
+    private bool $hasConsented;
 
     /**
      * @var array
      */
-    private $context;
+    private array $context;
     /**
      * @var string
      */
-    private $visitorId;
+    private string $visitorId;
     /**
      * @var ConfigManager
      */
-    private $configManager;
+    private ConfigManager $configManager;
     /**
      * @var ContainerInterface
      */
-    private $dependencyIContainer;
+    private ContainerInterface $dependencyIContainer;
 
     /**
      * @var string
      */
-    private $flagshipInstance;
+    private string $flagshipInstance;
 
 
     /**
@@ -50,14 +50,19 @@ class VisitorBuilder
 
 
     /**
-     * @param string|null $visitorId
+     * @param string $visitorId
      * @param bool $hasConsented
      * @param ConfigManager $configManager
      * @param ContainerInterface $dependencyIContainer
      * @param string|null $flagshipInstance
      */
-    private function __construct($visitorId, $hasConsented, ConfigManager $configManager, ContainerInterface $dependencyIContainer, $flagshipInstance)
-    {
+    private function __construct(
+        string $visitorId,
+        bool $hasConsented,
+        ConfigManager $configManager,
+        ContainerInterface $dependencyIContainer,
+        ?string $flagshipInstance
+    ) {
         $this->visitorId = $visitorId;
         $this->hasConsented = $hasConsented;
         $this->configManager = $configManager;
@@ -74,12 +79,16 @@ class VisitorBuilder
      * @param bool $hasConsented Set to true when the visitor has consented, false otherwise.
      * @param ConfigManager $configManager The configuration manager.
      * @param ContainerInterface $container The dependency injection container.
-
-     * @param string|null $flagshipInstance The Flagship instance identifier.
+ * @param string|null $flagshipInstance The Flagship instance identifier.
      * @return VisitorBuilder
      */
-    public static function builder($visitorId, $hasConsented, ConfigManager $configManager, ContainerInterface $container, $flagshipInstance)
-    {
+    public static function builder(
+        string $visitorId,
+        bool $hasConsented,
+        ConfigManager $configManager,
+        ContainerInterface $container,
+        ?string $flagshipInstance
+    ): VisitorBuilder {
         return new VisitorBuilder($visitorId, $hasConsented, $configManager, $container, $flagshipInstance);
     }
 
@@ -89,7 +98,7 @@ class VisitorBuilder
      * @param bool $isAuthenticated true for an authenticated visitor, false for an anonymous visitor.
      * @return VisitorBuilder
      */
-    public function setIsAuthenticated($isAuthenticated)
+    public function setIsAuthenticated(bool $isAuthenticated): static
     {
         $this->isAuthenticated = $isAuthenticated;
         return $this;
@@ -101,7 +110,7 @@ class VisitorBuilder
      * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return VisitorBuilder
      */
-    public function setContext(array $context)
+    public function setContext(array $context): static
     {
         $this->context = $context;
         return $this;
@@ -109,12 +118,12 @@ class VisitorBuilder
 
     /**
      * Specify a callback function to be called when the status of the fetchFlags method changes.
-     * The callback function should have the following signature: 
+     * The callback function should have the following signature:
      * function(FetchFlagsStatusInterface $fetchFlagsStatus): void
      * @param callable $onFetchFlagsStatusChanged
      * @return VisitorBuilder
      */
-    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged)
+    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged): static
     {
         $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
         return $this;
@@ -124,9 +133,9 @@ class VisitorBuilder
      * Create a new visitor.
      * @return VisitorInterface
      */
-    public function build()
+    public function build(): VisitorInterface
     {
-        $visitorDelegate = $this->dependencyIContainer->get('Flagship\Visitor\VisitorDelegate', [
+        $visitorDelegate = $this->dependencyIContainer->get(VisitorDelegate::class, [
             $this->dependencyIContainer,
             $this->configManager,
             $this->visitorId,
@@ -139,6 +148,6 @@ class VisitorBuilder
 
         $visitorDelegate->setFlagshipInstanceId($this->flagshipInstance);
 
-        return $this->dependencyIContainer->get('Flagship\Visitor\Visitor', [$visitorDelegate], true);
+        return $this->dependencyIContainer->get(Visitor::class, [$visitorDelegate], true);
     }
 }

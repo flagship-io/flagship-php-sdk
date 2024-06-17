@@ -15,7 +15,7 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function sendHit(HitAbstract $hit)
+    public function sendHit(HitAbstract $hit): void
     {
         $this->log(__FUNCTION__);
     }
@@ -23,15 +23,19 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false)
-    {
+    public function visitorExposed(
+        $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): void {
         $this->log(__FUNCTION__);
     }
 
     /**
      * @inheritDoc
      */
-    public function lookupVisitor()
+    public function lookupVisitor(): void
     {
         //
     }
@@ -39,7 +43,7 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function cacheVisitor()
+    public function cacheVisitor(): void
     {
         //
     }
@@ -47,7 +51,7 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor): array
     {
         return [];
     }
@@ -56,7 +60,7 @@ class NoConsentStrategy extends DefaultStrategy
      * @param string $functionName
      * @return void
      */
-    private function log($functionName)
+    private function log(string $functionName): void
     {
         $this->logInfo(
             $this->getVisitor()->getConfig(),

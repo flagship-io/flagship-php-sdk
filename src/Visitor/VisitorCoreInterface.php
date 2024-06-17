@@ -11,7 +11,7 @@ interface VisitorCoreInterface
      * @param bool $hasConsented True if the visitor has consented false otherwise.
      * @return void
      */
-    public function setConsent($hasConsented);
+    public function setConsent(bool $hasConsented): void;
     /**
      * Update the visitor context values, matching the given keys, used for targeting.
      *
@@ -19,10 +19,10 @@ interface VisitorCoreInterface
      * Context key must be String, and value type must be one of the following : Number, Boolean, String.
      *
      * @param string $key  context key.
-     * @param numeric|string|bool $value : context value.
+     * @param bool|string|numeric $value : context value.
      * @return void
      */
-    public function updateContext($key, $value);
+    public function updateContext(string $key, float|bool|int|string $value): void;
 
     /**
      * Update the visitor context values, matching the given keys, used for targeting.
@@ -30,7 +30,7 @@ interface VisitorCoreInterface
      * A new context value associated with this key will be created if there is no previous matching value.
      * Context keys must be String, and values types must be one of the following : Number, Boolean, String.
      *
-     * @param array $context : collection of keys, values. e.g: ["age"=>42, "IsVip"=>true, "country"=>"UK"]
+     * @param array $context collection of keys, values. e.g: ["age"=>42, "IsVip"=>true, "country"=>"UK"]
      */
     public function updateContextCollection(array $context);
 
@@ -38,7 +38,7 @@ interface VisitorCoreInterface
      * Clear the visitor's context
      * @return void
      */
-    public function clearContext();
+    public function clearContext(): void;
 
     /**
      * In DecisionApi Mode this function calls the Flagship Decision API to run
@@ -49,25 +49,25 @@ interface VisitorCoreInterface
      * assigns a variation and retrieve applicable flags
      * @return void
      */
-    public function fetchFlags();
+    public function fetchFlags(): void;
 
     /**
      * Send a Hit to Flagship servers for reporting.
      * @param HitAbstract $hit
      * @return void
      */
-    public function sendHit(HitAbstract $hit);
+    public function sendHit(HitAbstract $hit): void;
 
       /**
      * Authenticate anonymous visitor
      * @param string $visitorId
      * @return void
      */
-    public function authenticate($visitorId);
+    public function authenticate(string $visitorId): void;
 
     /**
      * This function change authenticated Visitor to anonymous visitor
      * @return void
      */
-    public function unauthenticate();
+    public function unauthenticate(): void;
 }

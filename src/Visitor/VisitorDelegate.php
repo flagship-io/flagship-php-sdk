@@ -23,22 +23,22 @@ class VisitorDelegate extends VisitorAbstract
      *
      * @param ContainerInterface $dependencyIContainer
      * @param ConfigManager      $configManager
-     * @param string             $visitorId             visitor unique identifier.
-     * @param boolean            $isAuthenticated
+     * @param string $visitorId             visitor unique identifier.
+     * @param boolean $isAuthenticated
      * @param array              $context     visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
-     * @param boolean            $hasConsented
-     * @param string             $flagshipInstanceId
-     * @param callable           $onFetchFlagsStatusChanged
+     * @param boolean $hasConsented
+     * @param string|null $flagshipInstanceId
+     * @param callable|null $onFetchFlagsStatusChanged
      */
     public function __construct(
         ContainerInterface $dependencyIContainer,
         ConfigManager $configManager,
-        $visitorId,
-        $isAuthenticated = false,
+        string $visitorId,
+        bool $isAuthenticated = false,
         array $context = [],
-        $hasConsented = false,
-        $flagshipInstanceId = null,
-        $onFetchFlagsStatusChanged = null
+        bool $hasConsented = false,
+        string $flagshipInstanceId = null,
+        callable $onFetchFlagsStatusChanged = null
     ) {
         parent::__construct();
         $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
@@ -75,7 +75,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function updateContext($key, $value)
+    public function updateContext(string $key, float|bool|int|string $value)
     {
         $this->getStrategy()->updateContext($key, $value);
     }
@@ -100,7 +100,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function authenticate($visitorId)
+    public function authenticate(string $visitorId)
     {
         $this->getStrategy()->authenticate($visitorId);
     }
@@ -132,7 +132,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false)
+    public function visitorExposed($key, float|array|bool|int|string $defaultValue, FlagDTO $flag = null, bool $hasGetValueBeenCalled = false)
     {
         $this->getStrategy()->visitorExposed($key, $defaultValue, $flag, $hasGetValueBeenCalled);
     }
@@ -141,7 +141,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    public function getFlagValue(string $key, float|array|bool|int|string $defaultValue, FlagDTO $flag = null, bool $userExposed = true)
     {
         return $this->getStrategy()->getFlagValue($key, $defaultValue, $flag, $userExposed);
     }
@@ -150,7 +150,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FlagDTO $flag = null)
+    public function getFlagMetadata(string $key, FlagDTO $flag = null)
     {
         return $this->getStrategy()->getFlagMetadata($key, $flag);
     }
@@ -158,7 +158,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function getFlag($key)
+    public function getFlag(string $key)
     {
         $fetchFlagsStatus = $this->getFetchStatus();
         if ($fetchFlagsStatus->getStatus() !== FSFetchStatus::FETCHED && $fetchFlagsStatus->getStatus() !== FSFetchStatus::FETCHING) {

@@ -19,14 +19,14 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function setConsent($hasConsented)
+    public function setConsent(bool $hasConsented): void
     {
         $this->visitor->hasConsented = $hasConsented;
         $this->logInfo(
             $this->getVisitor()->getConfig(),
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
-                FSSdkStatus::getStatusName(FSSdkStatus::SDK_PANIC)
+                FSSdkStatus::SDK_PANIC
             ),
             [FlagshipConstant::TAG => __FUNCTION__]
         );
@@ -35,7 +35,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function updateContext($key, $value)
+    public function updateContext(string $key, float|bool|int|string $value): void
     {
         $this->log(__FUNCTION__);
     }
@@ -43,7 +43,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function updateContextCollection(array $context)
+    public function updateContextCollection(array $context): void
     {
         $this->log(__FUNCTION__);
     }
@@ -51,7 +51,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function clearContext()
+    public function clearContext(): void
     {
         $this->log(__FUNCTION__);
     }
@@ -59,7 +59,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function sendHit(HitAbstract $hit)
+    public function sendHit(HitAbstract $hit): void
     {
         $this->log(__FUNCTION__);
     }
@@ -67,8 +67,12 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
-    {
+    public function getFlagValue(
+        string $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $userExposed = true
+    ): float|int|bool|array|string {
         $this->log(__FUNCTION__);
         return $defaultValue;
     }
@@ -76,15 +80,19 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false)
-    {
+    public function visitorExposed(
+        $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): void {
         $this->log(__FUNCTION__);
     }
 
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FlagDTO $flag = null)
+    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
     {
         $this->log(__FUNCTION__);
         return FSFlagMetadata::getEmpty();
@@ -93,7 +101,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function lookupVisitor()
+    public function lookupVisitor(): void
     {
         //
     }
@@ -101,7 +109,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function cacheVisitor()
+    public function cacheVisitor(): void
     {
         //
     }
@@ -109,7 +117,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor): array
     {
         return [];
     }
@@ -118,14 +126,14 @@ class PanicStrategy extends DefaultStrategy
      * @param string $functionName
      * @return void
      */
-    private function log($functionName)
+    private function log(string $functionName): void
     {
         $this->logInfo(
             $this->getVisitor()->getConfig(),
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FSSdkStatus::getStatusName(FSSdkStatus::SDK_PANIC)
+                FSSdkStatus::SDK_PANIC
             ),
             [FlagshipConstant::TAG => $functionName]
         );

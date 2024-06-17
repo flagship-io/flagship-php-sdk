@@ -104,7 +104,7 @@ class TroubleshootingTest extends TestCase
             ->setStackOriginVersion($stackOriginVersion)
             ->setSdkStatus($sdkStatus)
             ->setSdkConfigMode($sdkConfigMode)
-            ->setSdkConfigLogLeve($config->getLogLevel())
+            ->setSdkConfigLogLevel($config->getLogLevel())
             ->setSdkConfigCustomLogManager(true)
             ->setSdkConfigCustomCacheManager(true)
             ->setSdkConfigStatusListener(false)

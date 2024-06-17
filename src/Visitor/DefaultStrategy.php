@@ -23,14 +23,14 @@ use Flagship\Enum\TroubleshootingLabel;
  */
 class DefaultStrategy extends StrategyAbstract
 {
-    const TYPE_NULL = 'NULL';
+    public const TYPE_NULL = 'NULL';
 
 
     /**
-     * @param  boolean $hasConsented
+     * @param boolean $hasConsented
      * @return void
      */
-    public function setConsent($hasConsented)
+    public function setConsent(bool $hasConsented): void
     {
         if (!$hasConsented) {
             $this->flushVisitor();
@@ -44,9 +44,6 @@ class DefaultStrategy extends StrategyAbstract
             ->setAnonymousId($this->getVisitor()->getAnonymousId());
 
         $trackingManager = $this->getTrackingManager();
-        if (!$trackingManager) {
-            return;
-        }
 
         $trackingManager->addHit($consentHit);
 
@@ -72,10 +69,10 @@ class DefaultStrategy extends StrategyAbstract
 
     /**
      * @param string $key  context key.
-     * @param numeric|string|bool $value : context value.
+     * @param bool|string|numeric $value : context value.
      * @return void
      */
-    protected function updateContextKeyValue($key, $value)
+    protected function updateContextKeyValue(string $key, float|bool|int|string $value): void
     {
         if (!$this->isKeyValid($key) || !$this->isValueValid($value)) {
             $this->logError(
@@ -99,18 +96,17 @@ class DefaultStrategy extends StrategyAbstract
         $this->getVisitor()->context[$key] = $value;
     }
 
-    protected function fetchStatusUpdateContext()
+    protected function fetchStatusUpdateContext(): void
     {
         $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UPDATE_CONTEXT);
     }
 
     /**
-
-     * @param int $status
-     * @param int $reason
+     * @param FSFetchStatus $status
+     * @param FSFetchReason $reason
      * @return void
      */
-    protected function setFetchStatus($status, $reason)
+    protected function setFetchStatus(FSFetchStatus $status, FSFetchReason $reason): void
     {
         $this->getVisitor()->setFetchStatus(new FetchFlagsStatus($status, $reason));
     }
@@ -118,7 +114,7 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function updateContext($key, $value)
+    public function updateContext(string $key, float|bool|int|string $value): void
     {
         $this->updateContextKeyValue($key, $value);
         $this->fetchStatusUpdateContext();
@@ -128,7 +124,7 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function updateContextCollection(array $context)
+    public function updateContextCollection(array $context): void
     {
         if (count($context) == 0) {
             return;
@@ -143,7 +139,7 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function clearContext()
+    public function clearContext(): void
     {
         $this->getVisitor()->context = [];
         $this->fetchStatusUpdateContext();
@@ -151,10 +147,10 @@ class DefaultStrategy extends StrategyAbstract
 
 
     /**
-     * @param  string $functionName
+     * @param string $functionName
      * @return void
      */
-    private function logDeactivate($functionName)
+    private function logDeactivate(string $functionName): void
     {
         $this->logError(
             $this->getVisitor()->getConfig(),
@@ -170,7 +166,7 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function authenticate($visitorId)
+    public function authenticate(string $visitorId): void
     {
         if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
             $this->logDeactivate(__FUNCTION__);
@@ -207,7 +203,7 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function unauthenticate()
+    public function unauthenticate(): void
     {
         if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
             $this->logDeactivate(__FUNCTION__);
@@ -246,7 +242,7 @@ class DefaultStrategy extends StrategyAbstract
      * @param  VisitorAbstract $visitor
      * @return array
      */
-    protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor): array
     {
         $now = $this->getNow();
         $visitorCache = $visitor->visitorCache;
@@ -297,7 +293,7 @@ class DefaultStrategy extends StrategyAbstract
         return $campaigns;
     }
 
-    protected function logFetchFlagsStarted($functionName)
+    protected function logFetchFlagsStarted(string $functionName): void
     {
         $this->logDebugSprintf(
             $this->getConfig(),
@@ -307,7 +303,7 @@ class DefaultStrategy extends StrategyAbstract
         );
     }
 
-    protected function logFetchCampaignsSuccess($functionName, $campaigns, $now)
+    protected function logFetchCampaignsSuccess($functionName, $campaigns, $now): void
     {
         $this->logDebugSprintf(
             $this->getConfig(),
@@ -323,7 +319,7 @@ class DefaultStrategy extends StrategyAbstract
         );
     }
 
-    protected function logFetchFlagsFromCampaigns($functionName, $campaigns, $flagsDTO)
+    protected function logFetchFlagsFromCampaigns($functionName, $campaigns, $flagsDTO): void
     {
         $this->logDebugSprintf(
             $this->getConfig(),
@@ -338,7 +334,7 @@ class DefaultStrategy extends StrategyAbstract
         );
     }
 
-    protected function sendTroubleshootingAndAnalyticHits($flagsDTO, $campaigns, $now)
+    protected function sendTroubleshootingAndAnalyticHits($flagsDTO, $campaigns, $now): void
     {
         $troubleshootingData = $this->getDecisionManager()->getTroubleshootingData();
         $this->getTrackingManager()->setTroubleshootingData($troubleshootingData);
@@ -352,7 +348,7 @@ class DefaultStrategy extends StrategyAbstract
     }
 
 
-    protected function getCampaignsFromCacheIfNotArray($campaigns)
+    protected function getCampaignsFromCacheIfNotArray($campaigns): array
     {
         if (!is_array($campaigns)) {
             $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
@@ -369,7 +365,7 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function fetchFlags()
+    public function fetchFlags(): void
     {
         $functionName = __FUNCTION__;
         $decisionManager = $this->getDecisionManager($functionName);
@@ -409,13 +405,9 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function sendHit(HitAbstract $hit)
+    public function sendHit(HitAbstract $hit): void
     {
         $trackingManager = $this->getTrackingManager(__FUNCTION__);
-
-        if ($trackingManager === null) {
-            return;
-        }
 
         $visitor = $this->getVisitor();
         $hit->setConfig($visitor->getConfig())
@@ -516,11 +508,11 @@ class DefaultStrategy extends StrategyAbstract
 
     /**
      * @param  string       $key
-     * @param  mixed        $defaultValue
+     * @param float|array|bool|int|string $defaultValue
      * @param  FlagDTO|null $flag
      * @return void
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false)
+    public function visitorExposed($key, float|array|bool|int|string $defaultValue, FlagDTO $flag = null, bool $hasGetValueBeenCalled = false)
     {
         if (!$flag) {
             $this->logInfoSprintf(
@@ -588,13 +580,13 @@ class DefaultStrategy extends StrategyAbstract
 
 
     /**
-     * @param  string       $key
-     * @param  mixed        $defaultValue
+     * @param string $key
+     * @param float|array|bool|int|string $defaultValue
      * @param  FlagDTO|null $flag
-     * @param  boolean      $userExposed
+     * @param boolean $userExposed
      * @return array|boolean|float|integer|string
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
+    public function getFlagValue(string $key, float|array|bool|int|string $defaultValue, FlagDTO $flag = null, bool $userExposed = true)
     {
         if (!$flag) {
             $this->logInfoSprintf(
@@ -663,11 +655,11 @@ class DefaultStrategy extends StrategyAbstract
 
 
     /**
-     * @param  string $key
+     * @param string $key
      * @param  FlagDTO|null $flag
      * @return FSFlagMetadata
      */
-    public function getFlagMetadata($key, FlagDTO $flag = null)
+    public function getFlagMetadata(string $key, FlagDTO $flag = null)
     {
         $flagMetadataFuncName = 'flag.metadata';
         if (!$flag) {

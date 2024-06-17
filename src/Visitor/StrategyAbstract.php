@@ -31,35 +31,35 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     use HasSameTypeTrait;
     use Helper;
 
-    const DATA       = 'data';
-    const CAMPAIGNS  = 'campaigns';
-    const VISITOR_ID = 'visitorId';
-    const VISITOR_ID_MISMATCH_ERROR = "Visitor ID mismatch: '%s' vs '%s'";
-    const CAMPAIGN_ID               = 'campaignId';
-    const CAMPAIGN_TYPE             = 'type';
-    const VARIATION_GROUP_ID        = 'variationGroupId';
-    const VARIATION_ID              = 'variationId';
-    const LOOKUP_VISITOR_JSON_OBJECT_ERROR = 'JSON DATA must fit the type VisitorCache';
-    const VERSION             = 'version';
-    const CURRENT_VERSION     = 1;
-    const ASSIGNMENTS_HISTORY = 'assignmentsHistory';
-    const FLAGS               = 'flags';
-    const ACTIVATED           = 'activated';
-    const ANONYMOUS_ID        = 'anonymousId';
-    const CONSENT             = 'consent';
-    const CONTEXT             = 'context';
+    public const DATA       = 'data';
+    public const CAMPAIGNS  = 'campaigns';
+    public const VISITOR_ID = 'visitorId';
+    public const VISITOR_ID_MISMATCH_ERROR = "Visitor ID mismatch: '%s' vs '%s'";
+    public const CAMPAIGN_ID               = 'campaignId';
+    public const CAMPAIGN_TYPE             = 'type';
+    public const VARIATION_GROUP_ID        = 'variationGroupId';
+    public const VARIATION_ID              = 'variationId';
+    public const LOOKUP_VISITOR_JSON_OBJECT_ERROR = 'JSON DATA must fit the type VisitorCache';
+    public const VERSION             = 'version';
+    public const CURRENT_VERSION     = 1;
+    public const ASSIGNMENTS_HISTORY = 'assignmentsHistory';
+    public const FLAGS               = 'flags';
+    public const ACTIVATED           = 'activated';
+    public const ANONYMOUS_ID        = 'anonymousId';
+    public const CONSENT             = 'consent';
+    public const CONTEXT             = 'context';
 
     /**
      * @var VisitorAbstract
      */
-    protected $visitor;
+    protected VisitorAbstract $visitor;
 
     /**
      * @var MurmurHash
      */
-    protected $murmurHash;
+    protected MurmurHash $murmurHash;
 
-    protected $flagshipInstanceId;
+    protected string $flagshipInstanceId;
 
 
     /**
@@ -70,20 +70,16 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         $this->visitor = $visitor;
     }
 
-
-    /**
-     * @return mixed
-     */
-    public function getFlagshipInstanceId()
+    public function getFlagshipInstanceId(): string
     {
         return $this->flagshipInstanceId;
     }
 
     /**
-     * @param mixed $flagshipInstanceId
+     * @param string $flagshipInstanceId
      * @return StrategyAbstract
      */
-    public function setFlagshipInstanceId($flagshipInstanceId)
+    public function setFlagshipInstanceId(string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
@@ -92,7 +88,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     /**
      * @return MurmurHash
      */
-    public function getMurmurHash()
+    public function getMurmurHash(): MurmurHash
     {
         return $this->murmurHash;
     }
@@ -101,7 +97,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
      * @param MurmurHash $murmurHash
      * @return StrategyAbstract
      */
-    public function setMurmurHash($murmurHash)
+    public function setMurmurHash(MurmurHash $murmurHash): static
     {
         $this->murmurHash = $murmurHash;
         return $this;
@@ -110,7 +106,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     /**
      * @return VisitorAbstract
      */
-    protected function getVisitor()
+    protected function getVisitor(): VisitorAbstract
     {
         return $this->visitor;
     }
@@ -118,7 +114,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     /**
      * @return ConfigManager
      */
-    protected function getConfigManager()
+    protected function getConfigManager(): ConfigManager
     {
         return $this->getVisitor()->getConfigManager();
     }
@@ -127,56 +123,34 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     /**
      * @return FlagshipConfig
      */
-    protected function getConfig()
+    protected function getConfig(): FlagshipConfig
     {
         return $this->getVisitor()->getConfig();
     }
 
 
-
     /**
-     * @param  string $process
-     * @return TrackingManagerAbstract|null
+     * @return TrackingManagerAbstract
      */
-    protected function getTrackingManager($process = null)
+    protected function getTrackingManager(): TrackingManagerAbstract
     {
-        $trackingManager = $this->getConfigManager()->getTrackingManager();
-
-        if (!$trackingManager) {
-            $this->logError(
-                $this->getVisitor()->getConfig(),
-                FlagshipConstant::TRACKER_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::TAG => $process]
-            );
-        }
-
-        return $trackingManager;
+        return $this->getConfigManager()->getTrackingManager();
     }
 
 
     /**
-     * @param  string $process
-     * @return DecisionManagerAbstract|null
+     * @return DecisionManagerAbstract
      */
-    protected function getDecisionManager($process = null)
+    protected function getDecisionManager(): DecisionManagerAbstract
     {
-        $decisionManager = $this->getConfigManager()->getDecisionManager();
-        if (!$decisionManager) {
-            $this->logError(
-                $this->getVisitor()->getConfig(),
-                FlagshipConstant::DECISION_MANAGER_MISSING_ERROR,
-                [FlagshipConstant::TAG => $process]
-            );
-        }
-
-        return $decisionManager;
+        return $this->getConfigManager()->getDecisionManager();
     }
 
 
     /**
      * @throws Exception
      */
-    private function checkLookupVisitorDataV1(array $item)
+    private function checkLookupVisitorDataV1(array $item): bool
     {
         if (!$item || !isset($item[self::DATA]) || !isset($item[self::DATA][self::VISITOR_ID])) {
             return false;
@@ -224,7 +198,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
      * @return boolean
      * @throws Exception
      */
-    private function checkLookupVisitorData(array $item)
+    private function checkLookupVisitorData(array $item): bool
     {
         if (isset($item[self::VERSION]) && $item[self::VERSION] == 1) {
             return $this->checkLookupVisitorDataV1($item);
@@ -237,7 +211,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     /**
      * @return void
      */
-    public function lookupVisitor()
+    public function lookupVisitor(): void
     {
         try {
             $visitorCacheInstance = $this->getConfig()->getVisitorCacheImplementation();
@@ -265,7 +239,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     /**
      * @return void
      */
-    public function cacheVisitor()
+    public function cacheVisitor(): void
     {
         try {
             $visitorCacheInstance = $this->getConfig()->getVisitorCacheImplementation();
@@ -285,8 +259,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
 
                 $campaigns[] = [
                     FlagshipField::FIELD_CAMPAIGN_ID        => $campaign[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_SLUG               => isset($campaign[FlagshipField::FIELD_SLUG]) ?
-                        $campaign[FlagshipField::FIELD_SLUG] : null,
+                    FlagshipField::FIELD_SLUG               => $campaign[FlagshipField::FIELD_SLUG] ?? null,
                     FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
                     FlagshipField::FIELD_VARIATION_ID       => $variation[FlagshipField::FIELD_ID],
                     FlagshipField::FIELD_IS_REFERENCE       => $variation[FlagshipField::FIELD_REFERENCE],
@@ -333,7 +306,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     /**
      * @return void
      */
-    public function flushVisitor()
+    public function flushVisitor(): void
     {
         try {
             $visitorCacheInstance = $this->getConfig()->getVisitorCacheImplementation();
@@ -347,7 +320,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         }
     }
 
-    public function sendTroubleshootingHit(Troubleshooting $hit)
+    public function sendTroubleshootingHit(Troubleshooting $hit): void
     {
         $this->getTrackingManager()->addTroubleshootingHit($hit);
     }
@@ -355,12 +328,12 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     /**
      * @return DateTime
      */
-    public function getCurrentDateTime()
+    public function getCurrentDateTime(): DateTime
     {
         return new DateTime();
     }
 
-    public function sendSdkConfigAnalyticHit()
+    public function sendSdkConfigAnalyticHit(): void
     {
         if ($this->getConfig()->disableDeveloperUsageTracking()) {
             return;
@@ -385,7 +358,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)
             ->setLogLevel(LogLevel::INFO)
             ->setSdkConfigMode($config->getDecisionMode())
-            ->setSdkConfigLogLeve($config->getLogLevel())
+            ->setSdkConfigLogLevel($config->getLogLevel())
             ->setSdkConfigTimeout($config->getTimeout())
             ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
             ->setSdkConfigBucketingUrl($bucketingUrl)
@@ -405,13 +378,17 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
      * @param TroubleshootingData $troubleshootingData
      * @param FlagDTO[] $flagsDTO
      * @param array $campaigns
-     * @param numeric $now
+     * @param float|int $now
      * @return void
      * /
      * @return void
      */
-    public function sendFetchFlagsTroubleshooting($troubleshootingData, $flagsDTO, $campaigns, $now)
-    {
+    public function sendFetchFlagsTroubleshooting(
+        TroubleshootingData $troubleshootingData,
+        array $flagsDTO,
+        array $campaigns,
+        float|int $now
+    ): void {
         $visitor = $this->getVisitor();
         $config = $this->getConfig();
         $bucketingUrl = null;
@@ -446,7 +423,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
             ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
             ->setHttpResponseTime(($this->getNow() - $now))
             ->setSdkConfigMode($config->getDecisionMode())
-            ->setSdkConfigLogLeve($config->getLogLevel())
+            ->setSdkConfigLogLevel($config->getLogLevel())
             ->setSdkConfigTimeout($config->getTimeout())
             ->setSdkConfigBucketingUrl($bucketingUrl)
             ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
@@ -461,7 +438,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         $this->sendTroubleshootingHit($troubleshootingHit);
     }
 
-    public function sendConsentHitTroubleshooting()
+    public function sendConsentHitTroubleshooting(): void
     {
         $consentHitTroubleshooting = $this->getVisitor()->getConsentHitTroubleshooting();
         if (!$consentHitTroubleshooting) {

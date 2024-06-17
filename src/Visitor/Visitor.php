@@ -3,7 +3,10 @@
 namespace Flagship\Visitor;
 
 use Flagship\Config\FlagshipConfig;
+use Flagship\Flag\FSFlagCollectionInterface;
+use Flagship\Flag\FSFlagInterface;
 use Flagship\Hit\HitAbstract;
+use Flagship\Model\FetchFlagsStatusInterface;
 use Flagship\Traits\LogTrait;
 use JsonSerializable;
 
@@ -14,7 +17,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @var VisitorDelegate
      */
-    private $visitorDelegate;
+    private VisitorDelegate $visitorDelegate;
 
 
     /**
@@ -31,7 +34,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @return VisitorDelegate
      */
-    private function getVisitorDelegate()
+    private function getVisitorDelegate(): VisitorDelegate
     {
         return $this->visitorDelegate;
     }
@@ -41,7 +44,7 @@ class Visitor implements VisitorInterface, JsonSerializable
      *
      * @return FlagshipConfig
      */
-    public function getConfig()
+    public function getConfig(): FlagshipConfig
     {
         return $this->getVisitorDelegate()->getConfig();
     }
@@ -50,16 +53,13 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function getVisitorId()
+    public function getVisitorId(): string
     {
         return $this->getVisitorDelegate()->getVisitorId();
     }
 
 
-    /**
-     * @inheritDoc
-     */
-    public function setVisitorId($visitorId)
+    public function setVisitorId($visitorId): static
     {
         $this->getVisitorDelegate()->setVisitorId($visitorId);
         return $this;
@@ -69,7 +69,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      *@inheritDoc
      */
-    public function hasConsented()
+    public function hasConsented(): bool
     {
         return $this->getVisitorDelegate()->hasConsented();
     }
@@ -78,17 +78,16 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function setConsent($hasConsented)
+    public function setConsent(bool $hasConsented): void
     {
         $this->getVisitorDelegate()->setConsent($hasConsented);
-        return $this;
     }
 
 
     /**
      * @inheritDoc
      */
-    public function getContext()
+    public function getContext(): array
     {
         return $this->getVisitorDelegate()->getContext();
     }
@@ -97,7 +96,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function setContext(array $context)
+    public function setContext(array $context): void
     {
         $this->getVisitorDelegate()->setContext($context);
     }
@@ -105,7 +104,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function getAnonymousId()
+    public function getAnonymousId(): string
     {
         return $this->getVisitorDelegate()->getAnonymousId();
     }
@@ -114,7 +113,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function updateContext($key, $value)
+    public function updateContext(string $key, float|bool|int|string $value): void
     {
         $this->getVisitorDelegate()->updateContext($key, $value);
     }
@@ -123,7 +122,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function updateContextCollection(array $context)
+    public function updateContextCollection(array $context): void
     {
         $this->getVisitorDelegate()->updateContextCollection($context);
     }
@@ -132,7 +131,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function clearContext()
+    public function clearContext(): void
     {
         $this->getVisitorDelegate()->clearContext();
     }
@@ -141,7 +140,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function authenticate($visitorId)
+    public function authenticate(string $visitorId): void
     {
         $this->getVisitorDelegate()->authenticate($visitorId);
     }
@@ -150,7 +149,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function unauthenticate()
+    public function unauthenticate(): void
     {
         $this->getVisitorDelegate()->unauthenticate();
     }
@@ -159,18 +158,12 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function sendHit(HitAbstract $hit)
+    public function sendHit(HitAbstract $hit): void
     {
         $this->getVisitorDelegate()->sendHit($hit);
     }
 
-
-    /**
-     * @inheritDoc
-     * @return     mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getVisitorDelegate()->jsonSerialize();
     }
@@ -179,7 +172,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function fetchFlags()
+    public function fetchFlags(): void
     {
         $this->visitorDelegate->fetchFlags();
     }
@@ -188,7 +181,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function getFlag($key)
+    public function getFlag(string $key): FSFlagInterface
     {
         return $this->visitorDelegate->getFlag($key);
     }
@@ -196,14 +189,15 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function getFlags(){
+    public function getFlags(): FSFlagCollectionInterface
+    {
         return $this->visitorDelegate->getFlags();
     }
 
     /**
      * @inheritDoc
      */
-    public function getFetchStatus()
+    public function getFetchStatus(): FetchFlagsStatusInterface
     {
         return $this->visitorDelegate->getFetchStatus();
     }

@@ -20,7 +20,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function sendHit(HitAbstract $hit)
+    public function sendHit(HitAbstract $hit): void
     {
         $this->log(__FUNCTION__);
     }
@@ -28,7 +28,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function fetchFlags()
+    public function fetchFlags(): void
     {
         $this->log(__FUNCTION__);
     }
@@ -36,8 +36,12 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
-    {
+    public function getFlagValue(
+        string $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $userExposed = true
+    ): float|array|bool|int|string {
         $this->log(__FUNCTION__);
         return $defaultValue;
     }
@@ -45,15 +49,19 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false)
-    {
+    public function visitorExposed(
+        $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): void {
         $this->log(__FUNCTION__);
     }
 
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FlagDTO $flag = null)
+    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
     {
         $this->log(__FUNCTION__);
         return FSFlagMetadata::getEmpty();
@@ -62,7 +70,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function lookupVisitor()
+    public function lookupVisitor(): void
     {
         //
     }
@@ -70,7 +78,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function cacheVisitor()
+    public function cacheVisitor(): void
     {
         //
     }
@@ -79,11 +87,15 @@ class NotReadyStrategy extends DefaultStrategy
      * @param string $functionName
      * @return void
      */
-    private function log($functionName)
+    private function log(string $functionName): void
     {
         $this->logError(
             $this->getVisitor()->getConfig(),
-            sprintf(FlagshipConstant::METHOD_DEACTIVATED_ERROR, $functionName, FSSdkStatus::getStatusName(FSSdkStatus::SDK_NOT_INITIALIZED)),
+            sprintf(
+                FlagshipConstant::METHOD_DEACTIVATED_ERROR,
+                $functionName,
+                FSSdkStatus::SDK_NOT_INITIALIZED
+            ),
             [FlagshipConstant::TAG => $functionName]
         );
     }

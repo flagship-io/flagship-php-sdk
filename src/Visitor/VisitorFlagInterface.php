@@ -7,30 +7,40 @@ use Flagship\Model\FlagDTO;
 
 interface VisitorFlagInterface
 {
-
     /**
      * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,
      * or if types are different.
-     * @param string|numeric|bool|array $defaultValue
-     * @param FlagDTO $flag
+     * @param $key
+     * @param array|bool|string|numeric $defaultValue
+     * @param FlagDTO|null $flag
      * @param bool $hasGetValueBeenCalled
      * @return string|numeric|bool|array
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null, $hasGetValueBeenCalled = false);
+    public function visitorExposed(
+        $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): float|array|bool|int|string;
 
     /**
      * @param string $key
-     * @param string|numeric|bool|array $defaultValue
-     * @param FlagDTO $flag
+     * @param array|bool|string|numeric $defaultValue
+     * @param FlagDTO|null $flag
      * @param bool $userExposed
      * @return string|numeric|bool|array
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true);
+    public function getFlagValue(
+        string $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $userExposed = true
+    ): float|array|bool|int|string;
 
     /**
      * @param string $key
-     * @param FlagDTO $flag
+     * @param FlagDTO|null $flag
      * @return FSFlagMetadata
      */
-    public function getFlagMetadata($key, FlagDTO $flag = null);
+    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata;
 }

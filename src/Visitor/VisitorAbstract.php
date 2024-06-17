@@ -24,76 +24,76 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @var FlagshipConfig
      */
-    protected $config;
+    protected FlagshipConfig $config;
 
     /**
      * @var string
      */
-    private $visitorId;
+    private string $visitorId;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $anonymousId;
+    private ?string $anonymousId;
 
     /**
      * @var array
      */
-    public $context = [];
+    public array $context = [];
 
     /**
      * @var FlagDTO[]
      */
-    protected $flagsDTO = [];
+    protected array $flagsDTO = [];
 
     /**
      * @var array
      */
-    public $campaigns = [];
+    public array $campaigns = [];
 
     /**
      * @var ConfigManager
      */
-    protected $configManager;
+    protected ConfigManager $configManager;
 
     /**
      * @var boolean
      */
-    public $hasConsented = false;
+    public bool $hasConsented = false;
 
     /**
      * @var ContainerInterface
      */
-    private $dependencyIContainer;
+    private ContainerInterface $dependencyIContainer;
 
     /**
-     * @var array
+     * @var ?array
      */
-    public $visitorCache;
-
-    /**
-     * @var string
-     */
-    private $flagSyncStatus;
-
-    /**
-     * @var numeric
-     */
-    protected $traffic;
+    public ?array $visitorCache;
 
     /**
      * @var string
      */
-    protected $instanceId;
+    private string $flagSyncStatus;
 
-    protected static $sdkStatus;
+    /**
+     * @var int|float
+     */
+    protected int|float $traffic;
 
-    protected $flagshipInstanceId;
+    /**
+     * @var string
+     */
+    protected string $instanceId;
+
+    protected static FSSdkStatus $sdkStatus;
+
+    protected string $flagshipInstanceId;
 
     /**
      * @var Troubleshooting
      */
-    protected $ConsentHitTroubleshooting;
+    protected Troubleshooting $ConsentHitTroubleshooting;
 
     /**
      * @var callable
@@ -105,12 +105,12 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      *
      * @var FetchFlagsStatusInterface
      */
-    protected $fetchStatus;
+    protected FetchFlagsStatusInterface $fetchStatus;
 
     /**
      * @return callable
      */
-    public function getOnFetchFlagsStatusChanged()
+    public function getOnFetchFlagsStatusChanged(): callable
     {
         return $this->onFetchFlagsStatusChanged;
     }
@@ -119,13 +119,13 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param callable $onFetchFlagsStatusChanged
      * @return VisitorAbstract
      */
-    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged)
+    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged): static
     {
         $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
         return $this;
     }
 
-    public function setFetchStatus(FetchFlagsStatusInterface $fetchStatus)
+    public function setFetchStatus(FetchFlagsStatusInterface $fetchStatus): static
     {
         if ($this->onFetchFlagsStatusChanged !== null) {
             call_user_func($this->onFetchFlagsStatusChanged, $fetchStatus);
@@ -137,7 +137,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @return FetchFlagsStatusInterface
      */
-    public function getFetchStatus()
+    public function getFetchStatus(): FetchFlagsStatusInterface
     {
         return $this->fetchStatus;
     }
@@ -145,7 +145,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @return Troubleshooting|null
      */
-    public function getConsentHitTroubleshooting()
+    public function getConsentHitTroubleshooting(): ?Troubleshooting
     {
         return $this->ConsentHitTroubleshooting;
     }
@@ -154,33 +154,33 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param Troubleshooting|null $ConsentHitTroubleshooting
      * @return VisitorAbstract
      */
-    public function setConsentHitTroubleshooting($ConsentHitTroubleshooting)
+    public function setConsentHitTroubleshooting(?Troubleshooting $ConsentHitTroubleshooting): static
     {
         $this->ConsentHitTroubleshooting = $ConsentHitTroubleshooting;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return FSSdkStatus
      */
-    public function getSdkStatus()
+    public function getSdkStatus(): FSSdkStatus
     {
         return self::$sdkStatus;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getFlagshipInstanceId()
+    public function getFlagshipInstanceId(): string
     {
         return $this->flagshipInstanceId;
     }
 
     /**
-     * @param mixed $flagshipInstanceId
+     * @param string $flagshipInstanceId
      * @return VisitorAbstract
      */
-    public function setFlagshipInstanceId($flagshipInstanceId)
+    public function setFlagshipInstanceId(string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
@@ -188,9 +188,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
 
     /**
-     * @param mixed $sdkStatus
+     * @param FSSdkStatus $sdkStatus
      */
-    public static function setSdkStatus($sdkStatus)
+    public static function setSdkStatus(FSSdkStatus $sdkStatus): void
     {
         self::$sdkStatus = $sdkStatus;
     }
@@ -204,24 +204,24 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @return string
      */
-    public function getInstanceId()
+    public function getInstanceId(): string
     {
         return $this->instanceId;
     }
 
     /**
-     * @return float|int|string
+     * @return float|int
      */
-    public function getTraffic()
+    public function getTraffic(): float|int
     {
         return $this->traffic;
     }
 
     /**
-     * @param float|int|string $traffic
+     * @param float|int $traffic
      * @return VisitorAbstract
      */
-    public function setTraffic($traffic)
+    public function setTraffic(float|int $traffic): static
     {
         $this->traffic = $traffic;
         return $this;
@@ -230,16 +230,16 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @return ConfigManager
      */
-    public function getConfigManager()
+    public function getConfigManager(): ConfigManager
     {
         return $this->configManager;
     }
 
     /**
-     * @param  FlagDTO[] $flagsDTO
+     * @param FlagDTO[] $flagsDTO
      * @return VisitorAbstract
      */
-    public function setFlagsDTO($flagsDTO)
+    public function setFlagsDTO(array $flagsDTO): static
     {
         $this->flagsDTO = $flagsDTO;
         return $this;
@@ -249,16 +249,16 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @return FlagDTO[]
      */
-    public function getFlagsDTO()
+    public function getFlagsDTO(): array
     {
         return $this->flagsDTO;
     }
 
     /**
-     * @param  ConfigManager $configManager
+     * @param ConfigManager $configManager
      * @return VisitorAbstract
      */
-    public function setConfigManager($configManager)
+    public function setConfigManager(ConfigManager $configManager): static
     {
         $this->configManager = $configManager;
         return $this;
@@ -267,17 +267,17 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @return string
      */
-    public function getVisitorId()
+    public function getVisitorId(): string
     {
         return $this->visitorId;
     }
 
 
     /**
-     * @param  string $visitorId
+     * @param string $visitorId
      * @return VisitorAbstract
      */
-    public function setVisitorId($visitorId)
+    public function setVisitorId(string $visitorId): static
     {
         if (empty($visitorId)) {
             $this->logError(
@@ -294,19 +294,19 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getAnonymousId()
+    public function getAnonymousId(): ?string
     {
         return $this->anonymousId;
     }
 
 
     /**
-     * @param  string $anonymousId
+     * @param string|null $anonymousId
      * @return VisitorAbstract
      */
-    public function setAnonymousId($anonymousId)
+    public function setAnonymousId(?string $anonymousId): static
     {
         $this->anonymousId = $anonymousId;
         return $this;
@@ -314,9 +314,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getContext()
+    public function getContext(): array
     {
         return $this->context;
     }
@@ -325,51 +325,50 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * Clear the current context and set a new context value
      *
-     * @param  array $context : collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
-     * @return VisitorAbstract
+     * @param array $context collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+     * @return void
      */
-    public function setContext(array $context)
+    public function setContext(array $context): void
     {
         $this->context = [];
         $this->updateContextCollection($context);
-        return $this;
     }
 
 
     /**
      * @return FlagshipConfig
      */
-    public function getConfig()
+    public function getConfig(): FlagshipConfig
     {
         return $this->config;
     }
 
 
     /**
-     * @param  FlagshipConfig $config
+     * @param FlagshipConfig $config
      * @return VisitorAbstract
      */
-    public function setConfig($config)
+    public function setConfig(FlagshipConfig $config): static
     {
         $this->config = $config;
         return $this;
     }
 
-    
+
 
     /**
      * @return StrategyAbstract
      */
-    protected function getStrategy()
+    protected function getStrategy(): StrategyAbstract
     {
         if (Flagship::getStatus() === FSSdkStatus::SDK_NOT_INITIALIZED) {
-            $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\NotReadyStrategy', [$this], true);
+            $strategy = $this->getDependencyIContainer()->get(NotReadyStrategy::class, [$this], true);
         } elseif (Flagship::getStatus() === FSSdkStatus::SDK_PANIC) {
-            $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\PanicStrategy', [$this], true);
+            $strategy = $this->getDependencyIContainer()->get(PanicStrategy::class, [$this], true);
         } elseif (!$this->hasConsented()) {
-            $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\NoConsentStrategy', [$this], true);
+            $strategy = $this->getDependencyIContainer()->get(NoConsentStrategy::class, [$this], true);
         } else {
-            $strategy = $this->getDependencyIContainer()->get('Flagship\Visitor\DefaultStrategy', [$this], true);
+            $strategy = $this->getDependencyIContainer()->get(DefaultStrategy::class, [$this], true);
         }
         $strategy->setMurmurHash(new MurmurHash());
         $strategy->setFlagshipInstanceId($this->getFlagshipInstanceId());
@@ -382,7 +381,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      *
      * @return boolean
      */
-    public function hasConsented()
+    public function hasConsented(): bool
     {
         return $this->hasConsented;
     }
@@ -391,10 +390,10 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * Set if visitor has consented for private data usage.
      *
-     * @param  $hasConsented True if the visitor has consented false otherwise.
+     * @param  $hasConsented bool if the visitor has consented false otherwise.
      * @return void
      */
-    public function setConsent($hasConsented)
+    public function setConsent(bool $hasConsented): void
     {
         $this->hasConsented = $hasConsented;
         $this->getStrategy()->setConsent($hasConsented);
@@ -404,7 +403,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @return ContainerInterface
      */
-    public function getDependencyIContainer()
+    public function getDependencyIContainer(): ContainerInterface
     {
         return $this->dependencyIContainer;
     }
@@ -414,23 +413,17 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param  ContainerInterface $dependencyIContainer
      * @return void
      */
-    public function setDependencyIContainer(ContainerInterface $dependencyIContainer)
+    public function setDependencyIContainer(ContainerInterface $dependencyIContainer): void
     {
         $this->dependencyIContainer = $dependencyIContainer;
     }
 
-    public function sendTroubleshootingHit(Troubleshooting $hit)
+    public function sendTroubleshootingHit(Troubleshooting $hit): void
     {
         $this->getStrategy()->sendTroubleshootingHit($hit);
     }
 
-
-    /**
-     * @inheritDoc
-     * @return     mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'visitorId'  => $this->getVisitorId(),

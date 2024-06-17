@@ -1657,7 +1657,7 @@ class DefaultStrategyTest extends TestCase
         $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)
             ->setLogLevel(LogLevel::INFO)
 
-            ->setSdkConfigLogLeve($config->getLogLevel())
+            ->setSdkConfigLogLevel($config->getLogLevel())
             ->setSdkConfigMode($config->getDecisionMode())
             ->setSdkConfigTimeout($config->getTimeout())
             ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())

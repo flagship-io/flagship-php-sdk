@@ -2,6 +2,7 @@
 
 namespace Flagship\Api;
 
+use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
@@ -17,13 +18,13 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
     /**
      * @var string[]
      */
-    protected $cacheHitKeys = [];
+    protected array $cacheHitKeys = [];
 
     /**
      * @param HitAbstract $hit
      * @return void
      */
-    public function addHit(HitAbstract $hit)
+    public function addHit(HitAbstract $hit): void
     {
         if (
             ($hit instanceof Event) && $hit->getAction() === FlagshipConstant::FS_CONSENT &&
@@ -39,7 +40,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
      * @param HitAbstract $hit
      * @return void
      */
-    protected function onError(HitAbstract $hit)
+    protected function onError(HitAbstract $hit): void
     {
         $hitKey = $this->generateHitKey($hit->getVisitorId());
         $hit->setKey($hitKey);
@@ -47,7 +48,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
         $this->cacheHit([$hit]);
     }
 
-    protected function sendHit(HitAbstract $hit)
+    protected function sendHit(HitAbstract $hit): void
     {
         $header = [
             FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON
@@ -70,7 +71,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                     FlagshipConstant::SEND_HIT,
                     $this->getLogFormat(null, $url, $requestBody, $header, $this->getNow() - $now)]
             );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->onError($hit);
             $this->logErrorSprintf(
                 $this->config,
@@ -102,7 +103,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
      * @param Activate $hit
      * @return void
      */
-    public function activateFlag(Activate $hit)
+    public function activateFlag(Activate $hit): void
     {
         $headers = $this->getActivateHeaders();
 
@@ -128,7 +129,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                     FlagshipConstant::SEND_ACTIVATE,
                 $this->getLogFormat(null, $url, $requestBody, $headers, $this->getNow() - $now)]
             );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->onError($hit);
             $this->logErrorSprintf(
                 $this->config,
@@ -161,7 +162,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
      * @param string $visitorId
      * @return void
      */
-    protected function notConsent($visitorId)
+    protected function notConsent(string $visitorId): void
     {
         $keysToFlush = $this->commonNotConsent($visitorId);
         $mergedQueue = array_merge($keysToFlush, $this->cacheHitKeys);
@@ -172,12 +173,12 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
         $this->cacheHitKeys = [];
     }
 
-    public function addTroubleshootingHit(Troubleshooting $hit)
+    public function addTroubleshootingHit(Troubleshooting $hit): void
     {
          $this->sendTroubleshooting($hit);
     }
 
-    public function addUsageHit(UsageHit $hit)
+    public function addUsageHit(UsageHit $hit): void
     {
         $this->sendUsageHit($hit);
     }

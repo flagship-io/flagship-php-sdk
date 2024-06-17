@@ -7,7 +7,7 @@ class BatchingOnFailedCachingStrategy extends BatchingCachingStrategyAbstract
     /**
      * @inheritDoc
      */
-    protected function notConsent($visitorId)
+    protected function notConsent(string $visitorId): void
     {
         $keysToFlush = $this->commonNotConsent($visitorId);
         if (count($keysToFlush) === 0) {

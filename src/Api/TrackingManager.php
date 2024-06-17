@@ -16,7 +16,7 @@ class TrackingManager extends TrackingManagerAbstract
     /**
      * @inheritDoc
      */
-    public function addHit(HitAbstract $hit)
+    public function addHit(HitAbstract $hit): void
     {
         $this->getStrategy()->addHit($hit);
     }
@@ -24,7 +24,7 @@ class TrackingManager extends TrackingManagerAbstract
     /**
      * @inheritDoc
      */
-    public function activateFlag(Activate $hit)
+    public function activateFlag(Activate $hit): void
     {
         $this->getStrategy()->activateFlag($hit);
     }
@@ -32,7 +32,7 @@ class TrackingManager extends TrackingManagerAbstract
     /**
      * @inheritDoc
      */
-    public function sendBatch()
+    public function sendBatch(): void
     {
         $strategy = $this->getStrategy();
         $strategy->sendBatch();
@@ -43,7 +43,7 @@ class TrackingManager extends TrackingManagerAbstract
     /**
      * @inheritDoc
      */
-    public function addTroubleshootingHit(Troubleshooting $hit)
+    public function addTroubleshootingHit(Troubleshooting $hit): void
     {
         $this->getStrategy()->addTroubleshootingHit($hit);
     }
@@ -51,7 +51,7 @@ class TrackingManager extends TrackingManagerAbstract
     /**
      * @inheritDoc
      */
-    public function addUsageHit(UsageHit $hit)
+    public function addUsageHit(UsageHit $hit): void
     {
         $this->getStrategy()->addUsageHit($hit);
     }

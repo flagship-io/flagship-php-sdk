@@ -188,6 +188,7 @@ class Flagship
      * This function initialize the dependency injection container
      *
      * @return Container
+     * @throws Exception
      */
     private function containerInitialization(): Container
     {

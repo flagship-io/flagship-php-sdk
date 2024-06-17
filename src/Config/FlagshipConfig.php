@@ -56,14 +56,14 @@ abstract class FlagshipConfig implements JsonSerializable
     private $onSdkStatusChanged;
 
     /**
-     * @var IVisitorCacheImplementation
+     * @var ?IVisitorCacheImplementation
      */
-    private IVisitorCacheImplementation $visitorCacheImplementation;
+    private ?IVisitorCacheImplementation $visitorCacheImplementation;
 
     /**
-     * @var IHitCacheImplementation
+     * @var ?IHitCacheImplementation
      */
-    private IHitCacheImplementation $hitCacheImplementation;
+    private ?IHitCacheImplementation $hitCacheImplementation;
 
     /**
      * @var CacheStrategy
@@ -267,9 +267,9 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
-     * @return IVisitorCacheImplementation
+     * @return ?IVisitorCacheImplementation
      */
-    public function getVisitorCacheImplementation(): IVisitorCacheImplementation
+    public function getVisitorCacheImplementation(): ?IVisitorCacheImplementation
     {
         return $this->visitorCacheImplementation;
     }
@@ -286,9 +286,9 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
-     * @return IHitCacheImplementation
+     * @return ?IHitCacheImplementation
      */
-    public function getHitCacheImplementation(): IHitCacheImplementation
+    public function getHitCacheImplementation(): ?IHitCacheImplementation
     {
         return $this->hitCacheImplementation;
     }

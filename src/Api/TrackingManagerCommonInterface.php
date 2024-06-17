@@ -14,30 +14,31 @@ interface TrackingManagerCommonInterface
      * @param HitAbstract $hit
      * @return void
      */
-    public function addHit(HitAbstract $hit);
+    public function addHit(HitAbstract $hit): void;
 
     /**
      * @param Activate $hit
      * @return void
      */
-    public function activateFlag(Activate $hit);
+    public function activateFlag(Activate $hit): void;
 
     /**
+     * @param Troubleshooting $hit
      * @return void
      */
-    public function addTroubleshootingHit(Troubleshooting $hit);
+    public function addTroubleshootingHit(Troubleshooting $hit): void;
 
     /**
+     * @param UsageHit $hit
      * @return void
      */
-    public function addUsageHit(UsageHit $hit);
+    public function addUsageHit(UsageHit $hit): void;
 
-    public function getTroubleshootingData();
+    public function getTroubleshootingData(): ?TroubleshootingData;
 
     /**
      * @param TroubleshootingData $troubleshootingData
-     * @return BatchingCachingStrategyAbstract
+     * @return void
      */
-    public function setTroubleshootingData($troubleshootingData);
-
+    public function setTroubleshootingData(TroubleshootingData $troubleshootingData): void;
 }

@@ -7,5 +7,5 @@ interface TrackingManagerInterface extends TrackingManagerCommonInterface
     /**
      * @return void
      */
-    public function sendBatch();
+    public function sendBatch(): void;
 }

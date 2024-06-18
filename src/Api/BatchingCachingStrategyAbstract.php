@@ -66,7 +66,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
      */
     protected FlagshipConfig $config;
 
-    protected string $flagshipInstanceId;
+    protected ?string $flagshipInstanceId;
 
     /**
      * @param FlagshipConfig $config
@@ -76,7 +76,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     public function __construct(
         FlagshipConfig $config,
         HttpClientInterface $httpClient,
-        string $flagshipInstanceId = null
+        ?string $flagshipInstanceId = null
     ) {
         $this->httpClient = $httpClient;
         $this->config = $config;
@@ -85,6 +85,7 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         $this->troubleshootingQueue = [];
         $this->usageHitQueue = [];
         $this->flagshipInstanceId = $flagshipInstanceId;
+        $this->troubleshootingData = null;
     }
 
     /**

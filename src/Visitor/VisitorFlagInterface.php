@@ -10,18 +10,18 @@ interface VisitorFlagInterface
     /**
      * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,
      * or if types are different.
-     * @param $key
+     * @param string $key
      * @param array|bool|string|numeric $defaultValue
      * @param FlagDTO|null $flag
      * @param bool $hasGetValueBeenCalled
-     * @return string|numeric|bool|array
+     * @return void
      */
     public function visitorExposed(
-        $key,
+        string $key,
         float|array|bool|int|string $defaultValue,
         FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
-    ): float|array|bool|int|string;
+    ): void;
 
     /**
      * @param string $key

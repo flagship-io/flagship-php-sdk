@@ -33,7 +33,7 @@ class Diagnostic extends HitAbstract
     private string $timeZone;
 
     /**
-     * @var string
+     * @var TroubleshootingLabel
      */
     private TroubleshootingLabel $label;
 
@@ -433,7 +433,7 @@ class Diagnostic extends HitAbstract
     /**
      * @return TroubleshootingLabel
      */
-    public function getLabel(): string
+    public function getLabel(): TroubleshootingLabel
     {
         return $this->label;
     }

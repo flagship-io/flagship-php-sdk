@@ -12,9 +12,9 @@ interface ExposedVisitorInterface
 
     /**
      * visitor anonymous id
-     * @return string
+     * @return string|null
      */
-    public function getAnonymousId(): string;
+    public function getAnonymousId(): ?string;
 
     /**
      * visitor context

@@ -26,13 +26,13 @@ abstract class FlagshipConfig implements JsonSerializable
     use ValidatorTrait;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private string $envId;
+    private ?string $envId;
     /**
-     * @var string
+     * @var ?string
      */
-    private string $apiKey;
+    private ?string $apiKey;
     /**
      * @var DecisionMode
      */
@@ -42,9 +42,9 @@ abstract class FlagshipConfig implements JsonSerializable
      */
     private int $timeout = FlagshipConstant::REQUEST_TIME_OUT;
     /**
-     * @var LoggerInterface
+     * @var ?LoggerInterface
      */
-    private LoggerInterface $logManager;
+    private ?LoggerInterface $logManager;
     /**
      * @var LogLevel
      */
@@ -92,6 +92,7 @@ abstract class FlagshipConfig implements JsonSerializable
         $this->apiKey = $apiKey;
         $this->cacheStrategy = CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE;
         $this->setDisableDeveloperUsageTracking(false);
+        $this->logManager = null;
     }
 
     /**
@@ -179,9 +180,9 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
-     * @return LoggerInterface
+     * @return ?LoggerInterface
      */
-    public function getLogManager(): LoggerInterface
+    public function getLogManager(): ?LoggerInterface
     {
         return $this->logManager;
     }
@@ -294,10 +295,10 @@ abstract class FlagshipConfig implements JsonSerializable
     }
 
     /**
-     * @param IHitCacheImplementation $hitCacheImplementation
+     * @param ?IHitCacheImplementation $hitCacheImplementation
      * @return FlagshipConfig
      */
-    public function setHitCacheImplementation(IHitCacheImplementation $hitCacheImplementation): static
+    public function setHitCacheImplementation(?IHitCacheImplementation $hitCacheImplementation): static
     {
         $this->hitCacheImplementation = $hitCacheImplementation;
         return $this;

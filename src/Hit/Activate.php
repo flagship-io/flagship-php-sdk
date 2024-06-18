@@ -21,29 +21,29 @@ class Activate extends HitAbstract
     private string $variationId;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private string $flagKey;
+    private ?string $flagKey = null;
 
     /**
      * @var  bool|numeric|string|array|null
      */
-    private string|array|bool|int|float|null $flagValue;
+    private string|array|bool|int|float|null $flagValue = null;
 
     /**
-     * @var array
+     * @var ?array
      */
-    private array $visitorContext;
+    private ?array $visitorContext = null;
 
     /**
-     * @var FSFlagMetadataInterface
+     * @var ?FSFlagMetadataInterface
      */
-    private FSFlagMetadataInterface $flagMetadata;
+    private ?FSFlagMetadataInterface $flagMetadata = null;
 
     /**
      * @var  bool|numeric|string|array|null
      */
-    private string|array|bool|int|float|null $flagDefaultValue;
+    private string|array|bool|int|float|null $flagDefaultValue = null;
 
     public static function getClassName(): string
     {

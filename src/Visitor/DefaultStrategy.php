@@ -23,9 +23,6 @@ use Flagship\Enum\TroubleshootingLabel;
  */
 class DefaultStrategy extends StrategyAbstract
 {
-    public const TYPE_NULL = 'NULL';
-
-
     /**
      * @param boolean $hasConsented
      * @return void
@@ -319,7 +316,7 @@ class DefaultStrategy extends StrategyAbstract
         );
     }
 
-    protected function logFetchFlagsFromCampaigns($functionName, $campaigns, $flagsDTO): void
+    protected function logFetchFlagsFromCampaigns($functionName, $flagsDTO): void
     {
         $this->logDebugSprintf(
             $this->getConfig(),
@@ -368,10 +365,7 @@ class DefaultStrategy extends StrategyAbstract
     public function fetchFlags(): void
     {
         $functionName = __FUNCTION__;
-        $decisionManager = $this->getDecisionManager($functionName);
-        if (!$decisionManager) {
-            return;
-        }
+        $decisionManager = $this->getDecisionManager();
 
         $this->logFetchFlagsStarted($functionName);
 
@@ -397,7 +391,7 @@ class DefaultStrategy extends StrategyAbstract
             $this->setFetchStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE);
         }
 
-        $this->logFetchFlagsFromCampaigns($functionName, $campaigns, $flagsDTO);
+        $this->logFetchFlagsFromCampaigns($functionName, $flagsDTO);
 
         $this->sendTroubleshootingAndAnalyticHits($flagsDTO, $campaigns, $now);
     }
@@ -407,7 +401,7 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function sendHit(HitAbstract $hit): void
     {
-        $trackingManager = $this->getTrackingManager(__FUNCTION__);
+        $trackingManager = $this->getTrackingManager();
 
         $visitor = $this->getVisitor();
         $hit->setConfig($visitor->getConfig())
@@ -441,10 +435,10 @@ class DefaultStrategy extends StrategyAbstract
 
     /**
      * @param FlagDTO $flag
-     * @param mixed $defaultValue
+     * @param mixed|null $defaultValue
      * @return void
      */
-    protected function activateFlag(FlagDTO $flag, $defaultValue = null)
+    protected function activateFlag(FlagDTO $flag, mixed $defaultValue = null): void
     {
         $flagMetadata = new FSFlagMetadata(
             $flag->getCampaignId(),
@@ -486,7 +480,7 @@ class DefaultStrategy extends StrategyAbstract
         $this->sendTroubleshootingHit($troubleshooting);
     }
 
-    private function sendFlagTroubleshooting($label, $key, $defaultValue, $visitorExposed)
+    private function sendFlagTroubleshooting($label, $key, $defaultValue, $visitorExposed): void
     {
         $visitor = $this->getVisitor();
         $troubleshooting = new Troubleshooting();
@@ -507,13 +501,18 @@ class DefaultStrategy extends StrategyAbstract
     }
 
     /**
-     * @param  string       $key
+     * @param string $key
      * @param float|array|bool|int|string $defaultValue
-     * @param  FlagDTO|null $flag
+     * @param FlagDTO|null $flag
+     * @param bool $hasGetValueBeenCalled
      * @return void
      */
-    public function visitorExposed($key, float|array|bool|int|string $defaultValue, FlagDTO $flag = null, bool $hasGetValueBeenCalled = false)
-    {
+    public function visitorExposed(
+        string $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): void {
         if (!$flag) {
             $this->logInfoSprintf(
                 $this->getConfig(),
@@ -554,8 +553,8 @@ class DefaultStrategy extends StrategyAbstract
         }
 
         if (
-            gettype($defaultValue) != self::TYPE_NULL
-            && gettype($flag->getValue()) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)
+            gettype($defaultValue) != "NULL"
+            && gettype($flag->getValue()) != "NULL" && !$this->hasSameType($flag->getValue(), $defaultValue)
         ) {
             $this->logInfoSprintf(
                 $this->getConfig(),
@@ -586,8 +585,12 @@ class DefaultStrategy extends StrategyAbstract
      * @param boolean $userExposed
      * @return array|boolean|float|integer|string
      */
-    public function getFlagValue(string $key, float|array|bool|int|string $defaultValue, FlagDTO $flag = null, bool $userExposed = true)
-    {
+    public function getFlagValue(
+        string $key,
+        float|array|bool|int|string $defaultValue,
+        FlagDTO $flag = null,
+        bool $userExposed = true
+    ): float|array|bool|int|string {
         if (!$flag) {
             $this->logInfoSprintf(
                 $this->getConfig(),
@@ -613,11 +616,11 @@ class DefaultStrategy extends StrategyAbstract
             $this->activateFlag($flag, $defaultValue);
         }
 
-        if (gettype($flag->getValue()) === self::TYPE_NULL) {
+        if (gettype($flag->getValue()) === "NULL") {
             return $defaultValue;
         }
 
-        if (gettype($defaultValue) != self::TYPE_NULL && !$this->hasSameType($flag->getValue(), $defaultValue)) {
+        if (gettype($defaultValue) != "NULL" && !$this->hasSameType($flag->getValue(), $defaultValue)) {
             $this->logInfoSprintf(
                 $this->getConfig(),
                 FlagshipConstant::FLAG_VALUE,
@@ -659,7 +662,7 @@ class DefaultStrategy extends StrategyAbstract
      * @param  FlagDTO|null $flag
      * @return FSFlagMetadata
      */
-    public function getFlagMetadata(string $key, FlagDTO $flag = null)
+    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
     {
         $flagMetadataFuncName = 'flag.metadata';
         if (!$flag) {
@@ -671,7 +674,7 @@ class DefaultStrategy extends StrategyAbstract
             return FSFlagMetadata::getEmpty();
         }
 
-        $metadata = new FSFlagMetadata(
+        return new FSFlagMetadata(
             $flag->getCampaignId(),
             $flag->getVariationGroupId(),
             $flag->getVariationId(),
@@ -682,7 +685,5 @@ class DefaultStrategy extends StrategyAbstract
             $flag->getVariationGroupName(),
             $flag->getVariationName()
         );
-
-        return $metadata;
     }
 }

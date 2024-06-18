@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flagship\Api;
 
 require_once __DIR__ . "/../Traits/Round.php";
@@ -10,6 +12,8 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
+use Flagship\Enum\LogLevel;
+use Flagship\Enum\TroubleshootingLabel;
 use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\Activate;
 use Flagship\Hit\ActivateBatch;
@@ -24,6 +28,7 @@ use Flagship\Model\ExposedFlag;
 use Flagship\Model\ExposedVisitor;
 use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\LogTrait;
+use Flagship\Utils\HttpClientInterface;
 use PHPUnit\Framework\TestCase;
 
 class BatchingOnFailedCachingStrategyTest extends TestCase
@@ -34,7 +39,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
     {
         $config = new DecisionApiConfig("envId", "apiKey");
 
-        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+        $httpClientMock = $this->getMockForAbstractClass(HttpClientInterface::class);
 
         $strategy = new BatchingOnFailedCachingStrategy($config, $httpClientMock);
 
@@ -60,11 +65,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         //Test generateHitKey method
         $visitorId = "visitorId";
-        if (method_exists($this, "assertMatchesRegularExpression")) {
-            $this->assertMatchesRegularExpression("/^$visitorId:/", $strategy->generateHitKey($visitorId));
-        } else {
-            $this->assertRegExp("/^$visitorId:/", $strategy->generateHitKey($visitorId));
-        }
+        $this->assertMatchesRegularExpression("/^$visitorId:/", $strategy->generateHitKey($visitorId));
     }
 
     public function testAddHit()
@@ -76,10 +77,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $page3Key = "$visitorId:b1b48180-0d72-410d-8e9b-44ee90dfafc6";
         $activate3Key = "$visitorId:51d18dbf-53ba-4aec-9bff-0d295c1d5d02";
 
-        $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
+        $httpClientMock = $this->getMockForAbstractClass(HttpClientInterface::class);
 
         $strategy = $this->getMockForAbstractClass(
-            "Flagship\Api\BatchingOnFailedCachingStrategy",
+            BatchingOnFailedCachingStrategy::class,
             [$config, $httpClientMock],
             "",
             true,
@@ -111,7 +112,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             'pageUrl' => 'page1',
             'visitorId' => $visitorId,
             'ds' => 'APP',
-            'type' => 'PAGEVIEW',
+            'type' => "PAGEVIEW",
             'anonymousId' => null,
             'userIP' => null,
             'pageResolution' => null,
@@ -121,7 +122,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             'createdAt' => 1676542078047,
         ];
 
-        $page3 = HitAbstract::hydrate(Event::getClassName(), $contentPage3);
+        $page3 = HitAbstract::hydrate(Page::getClassName(), $contentPage3);
 
         $page3->setConfig($config);
 
@@ -395,8 +396,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $config->setOnVisitorExposed(function (
             ExposedVisitor $exposedUser,
             ExposedFlag $exposedFlag
-        )
-            use (
+        ) use (
             $visitorId,
             $context,
             &$check1,
@@ -574,7 +574,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [$config, $httpClientMock, "instanceId"],
             "",
             true,
             true,
@@ -643,7 +643,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [$config, $httpClientMock, "instanceId"],
             "",
             true,
             true,
@@ -659,7 +659,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             'pageUrl' => 'page1',
             'visitorId' => $visitorId,
             'ds' => 'APP',
-            'type' => 'PAGEVIEW',
+            'type' => "PAGEVIEW",
             'anonymousId' => null,
             'userIP' => null,
             'pageResolution' => null,
@@ -669,7 +669,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             'createdAt' => 1676542078047,
         ];
 
-        $page3 = HitAbstract::hydrate(Event::getClassName(), $contentPage3);
+        $page3 = HitAbstract::hydrate(Page::getClassName(), $contentPage3);
 
         $page3->setConfig($config);
 
@@ -739,7 +739,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [$config, $httpClientMock, "instanceId"],
             "",
             true,
             true,
@@ -1048,6 +1048,8 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $activate = new Activate("varGrid", "varId");
         $activate->setVisitorId($visitorId)->setConfig($config);
         $activate->setKey($key);
+        $activate->setFlagKey("flagKey");
+        $activate->setFlagValue("flagValue");
 
         $hitData = [
             HitCacheFields::VERSION => 1,
@@ -1169,6 +1171,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setConfig($config)
             ->setVisitorId($visitorId)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
             ->setTraffic(100);
 
         $strategy->addTroubleshootingHit($troubleshooting);
@@ -1179,6 +1185,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $troubleshooting2 = new Troubleshooting();
         $troubleshooting2->setConfig($config)
             ->setVisitorId($visitorId)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
             ->setTraffic(50);
 
         $strategy->addTroubleshootingHit($troubleshooting2);
@@ -1201,6 +1211,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $troubleshooting4 = new Troubleshooting();
         $troubleshooting4->setConfig($config)
             ->setVisitorId($visitorId)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
             ->setTraffic(50);
 
         $strategy->addTroubleshootingHit($troubleshooting4);
@@ -1258,10 +1272,20 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $strategy->setTroubleshootingData($troubleshootingData);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)->setVisitorId($visitorId)->setTraffic(100);
+        $troubleshooting->setConfig($config)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
+            ->setVisitorId($visitorId)->setTraffic(100);
 
         $troubleshooting2 = new Troubleshooting();
-        $troubleshooting2->setConfig($config)->setVisitorId($visitorId)->setTraffic(100);
+        $troubleshooting2->setConfig($config)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
+            ->setVisitorId($visitorId)->setTraffic(100);
 
         $strategy->addTroubleshootingHit($troubleshooting);
         $strategy->addTroubleshootingHit($troubleshooting2);
@@ -1318,7 +1342,12 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $strategy->setTroubleshootingData($troubleshootingData);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)->setVisitorId($visitorId)
+        $troubleshooting->setConfig($config)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
+            ->setVisitorId($visitorId)
             ->setTraffic(100);
 
         $strategy->addTroubleshootingHit($troubleshooting);
@@ -1406,6 +1435,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $usageHit = new UsageHit();
         $usageHit->setConfig($config)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
             ->setVisitorId($visitorId)
             ->setTraffic(100);
 
@@ -1418,13 +1451,16 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $usageHit2 = new UsageHit();
         $usageHit2->setConfig($config)
             ->setVisitorId($visitorId)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
             ->setTraffic(50);
 
         $strategy->addUsageHit($usageHit2);
 
         $usageHitQueue = $strategy->getUsageHitQueue();
         $this->assertCount(2, $usageHitQueue);
-
     }
 
     public function testSendUsageHitQueue()
@@ -1448,6 +1484,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $usageHit = new UsageHit();
         $usageHit->setConfig($config)
             ->setVisitorId($visitorId)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
             ->setTraffic(100);
 
         $strategy->addUsageHit($usageHit);
@@ -1457,26 +1497,31 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $usageHit2 = new UsageHit();
         $usageHit2->setConfig($config)
             ->setVisitorId($visitorId)
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
             ->setTraffic(50);
 
         $strategy->addUsageHit($usageHit2);
 
         $matcher = $this->exactly(2);
-        $strategy->expects($matcher)->method('sendUsageHit')->with($this->callback(function ($hit) use($matcher, $usageHit, $usageHit2){
-            switch ($matcher->getInvocationCount()){
-                case 1:{
-                    return $hit===$usageHit;
+        $strategy->expects($matcher)->method('sendUsageHit')
+            ->with($this->callback(function ($hit) use ($matcher, $usageHit, $usageHit2) {
+                switch ($matcher->getInvocationCount()) {
+                    case 1:{
+                        return $hit === $usageHit;
+                    }
+                    case 2:{
+                        return $hit === $usageHit2;
+                    }
                 }
-                case 2:{
-                    return $hit === $usageHit2;
-                }
-            }
-            return  false;
-        }));
+                return  false;
+            }));
 
         $strategy->sendUsageHitQueue();
         $usageHitQueue = $strategy->getUsageHitQueue();
-        $this->assertCount(0,$usageHitQueue);
+        $this->assertCount(0, $usageHitQueue);
 
         $strategy->sendUsageHitQueue();
     }
@@ -1520,7 +1565,13 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             }));
 
         $analytic = new UsageHit();
-        $analytic->setConfig($config);
+        $analytic
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
+            ->setVisitorId($visitorId)
+            ->setConfig($config);
 
         $strategy->sendUsageHit($analytic);
     }
@@ -1559,7 +1610,13 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->willThrowException($exception);
 
         $analytic = new UsageHit();
-        $analytic->setConfig($config);
+        $analytic
+            ->setLogLevel(LogLevel::ALL)
+            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
+            ->setVisitorSessionId("visitorSessionId")
+            ->setFlagshipInstanceId("flagshipInstanceId")
+            ->setVisitorId($visitorId)
+            ->setConfig($config);
 
         $strategy->sendUsageHit($analytic);
     }

@@ -55,241 +55,241 @@ class Diagnostic extends HitAbstract
     /**
      * @var ?string
      */
-    private ?string $stackOriginName;
+    private ?string $stackOriginName = null;
 
     /**
      * @var ?string
      */
-    private ?string $stackOriginVersion;
+    private ?string $stackOriginVersion = null;
 
     /**
-     * @var FSSdkStatus
+     * @var ?FSSdkStatus
      */
-    private FSSdkStatus $sdkStatus;
+    private ?FSSdkStatus $sdkStatus = null;
 
     /**
-     * @var DecisionMode
+     * @var ?DecisionMode
      */
-    private DecisionMode $sdkConfigMode;
+    private ?DecisionMode $sdkConfigMode = null;
 
     /**
      * @var LogLevel
      */
-    private LogLevel $sdkConfigLogLeve;
+    private ?LogLevel $sdkConfigLogLeve = null;
 
     /**
      * @var ?bool
      */
-    private ?bool $sdkConfigCustomLogManager;
+    private ?bool $sdkConfigCustomLogManager = null;
 
     /**
      * @var ?bool
      */
-    private ?bool $sdkConfigCustomCacheManager;
+    private ?bool $sdkConfigCustomCacheManager = null;
 
     /**
      * @var ?bool
      */
-    private ?bool $sdkConfigStatusListener;
+    private ?bool $sdkConfigStatusListener = null;
 
     /**
      * @var int|float|null
      */
-    private int|float|null $sdkConfigTimeout;
+    private int|float|null $sdkConfigTimeout = null;
 
 
     /**
-     * @var CacheStrategy
+     * @var ?CacheStrategy
      */
-    private CacheStrategy $sdkConfigTrackingManagerConfigStrategy;
-
-    /**
-     * @var ?string
-     */
-    private ?string $sdkConfigBucketingUrl;
+    private ?CacheStrategy $sdkConfigTrackingManagerConfigStrategy = null;
 
     /**
      * @var ?string
      */
-    private ?string $sdkConfigFetchThirdPartyData;
+    private ?string $sdkConfigBucketingUrl = null;
+
+    /**
+     * @var ?string
+     */
+    private ?string $sdkConfigFetchThirdPartyData = null;
 
     /**
      * @var ?boolean
      */
-    private ?bool $sdkConfigUsingCustomHitCache;
+    private ?bool $sdkConfigUsingCustomHitCache = null;
 
     /**
      * @var ?boolean
      */
-    private ?bool $sdkConfigUsingCustomVisitorCache;
+    private ?bool $sdkConfigUsingCustomVisitorCache = null;
 
     /**
      * @var ?boolean
      */
-    private ?bool $sdkConfigUsingOnVisitorExposed;
+    private ?bool $sdkConfigUsingOnVisitorExposed = null;
 
     /**
      * @var ?string
      */
-    private ?string $httpRequestUrl;
+    private ?string $httpRequestUrl = null;
 
     /**
      * @var ?string
      */
-    private ?string $httpRequestMethod;
+    private ?string $httpRequestMethod  = null;
 
     /**
      * @var ?array
      */
-    private ?array $httpRequestHeaders;
+    private ?array $httpRequestHeaders = null;
 
     /**
      * @var ?mixed
      */
-    private mixed $httpRequestBody;
+    private mixed $httpRequestBody = null;
 
     /**
      * @var ?string
      */
-    private ?string $httpResponseUrl;
+    private ?string $httpResponseUrl = null;
 
     /**
      * @var ?string
      */
-    private ?string $httpResponseMethod;
+    private ?string $httpResponseMethod = null;
 
     /**
      * @var ?array
      */
-    private ?array $httpResponseHeaders;
+    private ?array $httpResponseHeaders = null;
 
     /**
      * @var ?int
      */
-    private ?int $httpResponseCode;
+    private ?int $httpResponseCode = null;
 
     /**
      * @var mixed
      */
-    private mixed $httpResponseBody;
+    private mixed $httpResponseBody = null;
 
     /**
      * @var ?int
      */
-    private ?int $httpResponseTime;
+    private ?int $httpResponseTime = null;
 
     /**
      * @var ?array
      */
-    private ?array $visitorContext;
+    private ?array $visitorContext  = null;
 
     /**
      * @var ?bool
      */
-    private ?bool $visitorConsent;
+    private ?bool $visitorConsent = null;
 
     /**
      * @var ?array
      */
-    private ?array $visitorAssignmentHistory;
+    private ?array $visitorAssignmentHistory = null;
 
     /**
      * @var ?FlagDTO[]
      */
-    private ?array $visitorFlags;
+    private ?array $visitorFlags = null;
 
     /**
      * @var ?array
      */
-    private ?array $visitorCampaigns;
+    private ?array $visitorCampaigns = null;
 
     /**
      * @var ?bool
      */
-    private ?bool $visitorIsAuthenticated;
+    private ?bool $visitorIsAuthenticated = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagKey;
+    private ?string $flagKey = null;
 
     /**
      * @var mixed
      */
-    private mixed $flagValue;
+    private mixed $flagValue = null;
 
     /**
      * @var mixed
      */
-    private mixed $flagDefault;
+    private mixed $flagDefault = null;
 
     /**
      * @var ?bool
      */
-    private ?bool $visitorExposed;
+    private ?bool $visitorExposed = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagMetadataCampaignId;
+    private ?string $flagMetadataCampaignId = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagMetadataCampaignName;
+    private ?string $flagMetadataCampaignName = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagMetadataVariationGroupId;
+    private ?string $flagMetadataVariationGroupId = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagMetadataVariationGroupName;
+    private ?string $flagMetadataVariationGroupName = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagMetadataVariationId;
+    private ?string $flagMetadataVariationId = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagMetadataVariationName;
+    private ?string $flagMetadataVariationName = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagMetadataCampaignSlug;
+    private ?string $flagMetadataCampaignSlug = null;
 
     /**
      * @var ?string
      */
-    private ?string $flagMetadataCampaignType;
+    private ?string $flagMetadataCampaignType = null;
 
     /**
      * @var ?bool
      */
-    private ?bool $flagMetadataCampaignIsReference;
+    private ?bool $flagMetadataCampaignIsReference = null;
 
 
     /**
      * @var mixed
      */
-    private mixed $hitContent;
+    private mixed $hitContent = null;
 
     /**
      * @var ?string
      */
-    private ?string $visitorSessionId;
+    private ?string $visitorSessionId = null;
 
     /**
      * @var int|float
      */
     private int|float $traffic;
 
-    private ?string $flagshipInstanceId;
+    private ?string $flagshipInstanceId = null;
 
 
     public function __construct($type)
@@ -539,9 +539,9 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return FSSdkStatus
+     * @return ?FSSdkStatus
      */
-    public function getSdkStatus(): FSSdkStatus
+    public function getSdkStatus(): ?FSSdkStatus
     {
         return $this->sdkStatus;
     }
@@ -557,9 +557,9 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return DecisionMode
+     * @return ?DecisionMode
      */
-    public function getSdkConfigMode(): DecisionMode
+    public function getSdkConfigMode(): ?DecisionMode
     {
         return $this->sdkConfigMode;
     }
@@ -684,9 +684,9 @@ class Diagnostic extends HitAbstract
 
 
     /**
-     * @return CacheStrategy
+     * @return ?CacheStrategy
      */
-    public function getSdkConfigTrackingManagerConfigStrategy(): CacheStrategy
+    public function getSdkConfigTrackingManagerConfigStrategy(): ?CacheStrategy
     {
         return $this->sdkConfigTrackingManagerConfigStrategy;
     }
@@ -1298,9 +1298,9 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return LogLevel
+     * @return ?LogLevel
      */
-    public function getSdkConfigLogLeve(): LogLevel
+    public function getSdkConfigLogLeve(): ?LogLevel
     {
         return $this->sdkConfigLogLeve;
     }

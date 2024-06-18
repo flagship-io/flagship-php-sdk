@@ -100,10 +100,10 @@ abstract class HitAbstract
 
     /**
      * @param  mixed  $value
-     * @param  string $itemName
+     * @param string $itemName
      * @return bool
      */
-    protected function isNoEmptyString($value, $itemName)
+    protected function isNoEmptyString(mixed $value, string $itemName): bool
     {
         if (empty($value) || !is_string($value)) {
             $this->logError(
@@ -117,10 +117,10 @@ abstract class HitAbstract
 
     /**
      * @param  mixed  $value
-     * @param  string $itemName
+     * @param string $itemName
      * @return bool
      */
-    protected function isNumeric($value, $itemName)
+    protected function isNumeric(mixed $value, string $itemName): bool
     {
         if (!is_numeric($value)) {
             $this->logError(
@@ -134,10 +134,10 @@ abstract class HitAbstract
 
     /**
      * @param  mixed  $value
-     * @param  string $itemName
+     * @param string $itemName
      * @return bool
      */
-    protected function isInteger($value, $itemName)
+    protected function isInteger(mixed $value, string $itemName): bool
     {
         if (!is_int($value)) {
             $this->logError(

@@ -47,28 +47,28 @@ abstract class HitAbstract
     /**
      * @var string|null
      */
-    protected ?string $anonymousId;
+    protected ?string $anonymousId = null;
 
     /**
      * The User IP address
      * @var string|null
      */
-    protected ?string $userIP;
+    protected ?string $userIP = null;
 
     /**
      * @var string|null
      */
-    protected ?string $screenResolution;
+    protected ?string $screenResolution = null;
 
     /**
      * @var string|null
      */
-    protected ?string $locale;
+    protected ?string $locale = null;
 
     /**
      * @var numeric|string|null
      */
-    protected string|int|float|null $sessionNumber;
+    protected string|int|float|null $sessionNumber = null;
 
     /**
      * @var string
@@ -92,10 +92,15 @@ abstract class HitAbstract
      */
     public function __construct(HitType $type)
     {
-        $this->type = $type;
+        $this->setType($type);
         $this->ds = FlagshipConstant::SDK_APP;
         $this->createdAt =  $this->getNow();
+        $this->anonymousId = null;
         $this->isFromCache = false;
+        $this->userIP = null;
+        $this->screenResolution = null;
+        $this->locale = null;
+        $this->sessionNumber = null;
     }
 
     /**
@@ -195,6 +200,12 @@ abstract class HitAbstract
     public function getType(): HitType
     {
         return $this->type;
+    }
+
+    protected function setType(HitType $type): static
+    {
+         $this->type = $type;
+         return $this;
     }
 
     /**
@@ -419,6 +430,9 @@ abstract class HitAbstract
         foreach ($data as $key => $value) {
             $method = 'set' . ucwords($key);
             if (is_callable(array($objet, $method))) {
+                if ($key === "type") {
+                    $value = HitType::from($value);
+                }
                 $objet->$method($value);
             }
         }

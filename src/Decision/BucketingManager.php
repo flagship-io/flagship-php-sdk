@@ -119,7 +119,7 @@ class BucketingManager extends DecisionManagerAbstract
                         $response->getStatusCode()
                     )]
             );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logErrorSprintf(
                 $this->getConfig(),
                 self::GET_THIRD_PARTY_SEGMENT,
@@ -530,8 +530,8 @@ class BucketingManager extends DecisionManagerAbstract
             "LOWER_THAN" => $contextValue < $targetingValue,
             "GREATER_THAN_OR_EQUALS" => $contextValue >= $targetingValue,
             "LOWER_THAN_OR_EQUALS" => $contextValue <= $targetingValue,
-            "STARTS_WITH" => (bool)preg_match("/^{$targetingValue}/i", $contextValue),
-            "ENDS_WITH" => (bool)preg_match("/{$targetingValue}$/i", $contextValue),
+            "STARTS_WITH" => (bool)preg_match("/^$targetingValue/i", $contextValue),
+            "ENDS_WITH" => (bool)preg_match("/$targetingValue$/i", $contextValue),
             default => false,
         };
     }

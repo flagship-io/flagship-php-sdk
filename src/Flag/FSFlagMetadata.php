@@ -42,9 +42,9 @@ class FSFlagMetadata implements FSFlagMetadataInterface
     private string $campaignType;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private string $slug;
+    private ?string $slug;
 
     /**
      * @param string $campaignId
@@ -52,7 +52,7 @@ class FSFlagMetadata implements FSFlagMetadataInterface
      * @param string $variationId
      * @param bool $isReference
      * @param string $campaignType
-     * @param string $slug
+     * @param string|null $slug
      * @param string $campaignName
      * @param string $variationGroupName
      * @param string $variationName
@@ -63,7 +63,7 @@ class FSFlagMetadata implements FSFlagMetadataInterface
         string $variationId,
         bool $isReference,
         string $campaignType,
-        string $slug,
+        ?string $slug,
         string $campaignName,
         string $variationGroupName,
         string $variationName

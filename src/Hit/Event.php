@@ -55,6 +55,8 @@ class Event extends HitAbstract
         parent::__construct(HitType::EVENT);
         $this->setCategory($category)
             ->setAction($action);
+        $this->label = null;
+        $this->value = null;
     }
 
     /**

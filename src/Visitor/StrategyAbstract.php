@@ -221,10 +221,6 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
 
             $visitorCache = $visitorCacheInstance->lookupVisitor($this->visitor->getVisitorId());
 
-            if (!is_array($visitorCache)) {
-                return;
-            }
-
             if (!$this->checkLookupVisitorData($visitorCache)) {
                 throw new Exception(self::LOOKUP_VISITOR_JSON_OBJECT_ERROR);
             }

@@ -14,7 +14,7 @@ class ExposedFlag implements ExposedFlagInterface
     /**
      * @var bool|numeric|string|array
      */
-    private string|array|bool|int|float $value;
+    private string|array|bool|int|float|null $value;
 
     /**
      * @var FSFlagMetadataInterface
@@ -24,7 +24,7 @@ class ExposedFlag implements ExposedFlagInterface
     /**
      * @var bool|numeric|string|array
      */
-    private string|array|bool|int|float $defaultValue;
+    private string|array|bool|int|float|null $defaultValue;
 
     /**
      * @param string $key
@@ -34,8 +34,8 @@ class ExposedFlag implements ExposedFlagInterface
      */
     public function __construct(
         string $key,
-        float|array|bool|int|string $value,
-        float|array|bool|int|string $defaultValue,
+        float|array|bool|int|string|null $value,
+        float|array|bool|int|string|null $defaultValue,
         FSFlagMetadataInterface $metadata
     ) {
         $this->key = $key;

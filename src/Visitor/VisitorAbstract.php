@@ -34,7 +34,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * @var ?string
      */
-    private ?string $anonymousId;
+    private ?string $anonymousId = null;
 
     /**
      * @var array
@@ -77,9 +77,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     private string $flagSyncStatus;
 
     /**
-     * @var int|float
+     * @var int|float|null
      */
-    protected int|float $traffic;
+    protected int|float|null $traffic = null;
 
     /**
      * @var string
@@ -88,7 +88,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
     protected static FSSdkStatus $sdkStatus;
 
-    protected string $flagshipInstanceId;
+    protected ?string $flagshipInstanceId;
 
     /**
      * @var Troubleshooting
@@ -169,18 +169,18 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getFlagshipInstanceId(): string
+    public function getFlagshipInstanceId(): ?string
     {
         return $this->flagshipInstanceId;
     }
 
     /**
-     * @param string $flagshipInstanceId
+     * @param ?string $flagshipInstanceId
      * @return VisitorAbstract
      */
-    public function setFlagshipInstanceId(string $flagshipInstanceId): static
+    public function setFlagshipInstanceId(?string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
@@ -210,9 +210,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     }
 
     /**
-     * @return float|int
+     * @return float|int|null
      */
-    public function getTraffic(): float|int
+    public function getTraffic(): float|int|null
     {
         return $this->traffic;
     }

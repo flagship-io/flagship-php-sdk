@@ -285,9 +285,9 @@ class Diagnostic extends HitAbstract
     private ?string $visitorSessionId = null;
 
     /**
-     * @var int|float
+     * @var int|float|null
      */
-    private int|float $traffic;
+    private int|float|null $traffic;
 
     private ?string $flagshipInstanceId = null;
 
@@ -313,10 +313,10 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $flagshipInstanceId
+     * @param ?string $flagshipInstanceId
      * @return Diagnostic
      */
-    public function setFlagshipInstanceId(string $flagshipInstanceId): static
+    public function setFlagshipInstanceId(?string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
@@ -341,18 +341,18 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return float|int
+     * @return float|int|null
      */
-    public function getTraffic(): float|int
+    public function getTraffic(): float|int|null
     {
         return $this->traffic;
     }
 
     /**
-     * @param float|int $traffic
+     * @param float|int|null $traffic
      * @return Diagnostic
      */
-    public function setTraffic(float|int $traffic): static
+    public function setTraffic(float|int|null $traffic): static
     {
         $this->traffic = $traffic;
         return $this;

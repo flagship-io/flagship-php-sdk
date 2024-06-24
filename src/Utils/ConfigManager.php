@@ -22,6 +22,16 @@ class ConfigManager
      */
     private TrackingManagerAbstract $trackingManager;
 
+    public function __construct(
+        FlagshipConfig $config,
+        DecisionManagerAbstract $decisionManager,
+        TrackingManagerAbstract $trackingManager
+    ) {
+        $this->config = $config;
+        $this->decisionManager = $decisionManager;
+        $this->trackingManager = $trackingManager;
+    }
+
     /**
      * @return FlagshipConfig
      */

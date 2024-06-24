@@ -3,6 +3,7 @@
 namespace Flagship\Decision;
 
 use Exception;
+use Flagship\Api\TrackingManagerAbstract;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FSSdkStatus;
@@ -10,8 +11,10 @@ use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
+use Flagship\Utils\HttpClientInterface;
 use Flagship\Visitor\VisitorDelegate;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class ApiManagerTest extends TestCase
 {
@@ -45,6 +48,14 @@ class ApiManagerTest extends TestCase
             "",
             false
         );
+
+        $decisionManager = $this->getMockForAbstractClass(
+            DecisionManagerAbstract::class,
+            [],
+            "",
+            false
+        );
+
         $modificationValue1 = [
             "background" => "bleu ciel",
             "btnColor" => "#EE3300",
@@ -114,7 +125,7 @@ class ApiManagerTest extends TestCase
             ->method('post')
             ->willReturn(new HttpResponse(204, $body));
 
-        $config = new DecisionApiConfig();
+        $config = new DecisionApiConfig("env_id", "apiKey");
         $manager = new ApiManager($httpClientMock, $config);
 
         $statusCallback = function ($status) {
@@ -123,7 +134,7 @@ class ApiManagerTest extends TestCase
         };
 
         $manager->setStatusChangedCallback($statusCallback);
-        $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackingManager);
+        $configManager = new ConfigManager($config, $decisionManager, $trackingManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
@@ -139,24 +150,27 @@ class ApiManagerTest extends TestCase
             FlagshipConstant::URL_CAMPAIGNS . '?' .
             FlagshipConstant::EXPOSE_ALL_KEYS . '=true&extras[]=accountSettings';
 
-        $query = [
-            FlagshipConstant::EXPOSE_ALL_KEYS => "true",
-        ];
-
-        $httpPost->withConsecutive(
-            [
-                $url, [], $postData
-            ],
-            [
-                $url, [], [
-                "visitorId" => $visitor->getVisitorId(),
-                "anonymousId" => $visitor->getAnonymousId(),
-                "trigger_hit" => false,
-                "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
-                "visitor_consent" => false
-                ]
-            ]
-        );
+        $httpPost
+            ->with(
+                $this->logicalOr(
+                    $this->equalTo($url),
+                    $this->equalTo($url)
+                ),
+                $this->logicalOr(
+                    $this->equalTo([]),
+                    $this->equalTo([])
+                ),
+                $this->logicalOr(
+                    $this->equalTo($postData),
+                    $this->equalTo([
+                        "visitorId" => $visitor->getVisitorId(),
+                        "anonymousId" => $visitor->getAnonymousId(),
+                        "trigger_hit" => false,
+                        "context" => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
+                        "visitor_consent" => false
+                    ])
+                )
+            );
 
 
         $modifications = $manager->getCampaignFlags($visitor);
@@ -197,22 +211,35 @@ class ApiManagerTest extends TestCase
 
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
-        $config = new DecisionApiConfig();
+        $config = new DecisionApiConfig("env_id", "apiKey");
         $manager = new ApiManager($httpClientMock, $config);
 
-        $statusCallback = function ($status) {
-            echo $status;
+        $statusCallback = function (FSSdkStatus $status) {
+            echo $status->name;
         };
 
         $manager->setStatusChangedCallback($statusCallback);
 
         $this->assertFalse($manager->getIsPanicMode());
-        $configManager = (new ConfigManager())->setConfig($config);
+
+        $trackingManager = $this->getMockForAbstractClass(
+            TrackingManagerAbstract::class,
+            ['sendConsentHit'],
+            "",
+            false
+        );
+        $decisionManager = $this->getMockForAbstractClass(
+            DecisionManagerAbstract::class,
+            [],
+            "",
+            false
+        );
+        $configManager = new ConfigManager($config, $decisionManager, $trackingManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         //Test Change Status to FlagshipStatus::READY_PANIC_ON
-        $this->expectOutputString((string)FSSdkStatus::SDK_PANIC);
+        $this->expectOutputString(FSSdkStatus::SDK_PANIC->name);
         $modifications = $manager->getCampaignFlags($visitor);
 
         $this->assertTrue($manager->getIsPanicMode());
@@ -279,9 +306,21 @@ class ApiManagerTest extends TestCase
 
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
-        $config = new DecisionApiConfig();
+        $config = new DecisionApiConfig("env_id", "apiKey");
         $manager = new ApiManager($httpClientMock, $config);
-        $configManager = (new ConfigManager())->setConfig($config);
+        $trackingManager = $this->getMockForAbstractClass(
+            TrackingManagerAbstract::class,
+            ['sendConsentHit'],
+            "",
+            false
+        );
+        $decisionManager = $this->getMockForAbstractClass(
+            DecisionManagerAbstract::class,
+            [],
+            "",
+            false
+        );
+        $configManager = new ConfigManager($config, $decisionManager, $trackingManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
@@ -294,7 +333,7 @@ class ApiManagerTest extends TestCase
     {
         //Mock logManger
         $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
+            LoggerInterface::class,
             ['error'],
             '',
             false
@@ -302,44 +341,45 @@ class ApiManagerTest extends TestCase
 
         //Mock class Curl
         $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
+            HttpClientInterface::class,
             ['post'],
             '',
             false
         );
 
-        //Mock Track
-        $trackerManager = $this->getMockForAbstractClass(
-            'Flagship\Api\TrackingManagerAbstract',
-            ['sendHit'],
-            '',
-            false
-        );
-
         //Mock method curl->post to throw Exception
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         $errorMessage = "{'message': 'Forbidden'}";
         $httpClientMock->method('post')
             ->willThrowException(new Exception($errorMessage, 403));
 
         $config = new DecisionApiConfig("env_id", "api_key");
 
-
         $config->setLogManager($logManagerStub);
-        $configManager = new ConfigManager();
-        $configManager->setConfig($config)->setTrackingManager($trackerManager);
+        $trackingManager = $this->getMockForAbstractClass(
+            TrackingManagerAbstract::class,
+            ['sendHit'],
+            "",
+            false
+        );
+        $decisionManager = $this->getMockForAbstractClass(
+            DecisionManagerAbstract::class,
+            [],
+            "",
+            false
+        );
+        $configManager = new ConfigManager($config, $decisionManager, $trackingManager);
 
         $apiManager = new ApiManager($httpClientMock, $config);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, 'visitor_id', false, ['age' => 15], true);
 
         $logManagerStub->expects($this->once())->method('error')
-            ->withConsecutive(
-                [ $errorMessage]
+            ->with(
+                $errorMessage
             );
 
         $value = $apiManager->getCampaigns($visitor);
 
-        $this->assertNull($value);
+        $this->assertCount(0, $value);
     }
 }

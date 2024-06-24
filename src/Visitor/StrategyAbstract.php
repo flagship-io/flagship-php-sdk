@@ -59,7 +59,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
      */
     protected MurmurHash $murmurHash;
 
-    protected string $flagshipInstanceId;
+    protected ?string $flagshipInstanceId = null;
 
 
     /**
@@ -76,10 +76,10 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
     }
 
     /**
-     * @param string $flagshipInstanceId
+     * @param ?string $flagshipInstanceId
      * @return StrategyAbstract
      */
-    public function setFlagshipInstanceId(string $flagshipInstanceId): static
+    public function setFlagshipInstanceId(?string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;

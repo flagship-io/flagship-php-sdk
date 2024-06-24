@@ -51,7 +51,7 @@ class FlagDTO implements JsonSerializable
     /**
      * @var string|bool|numeric
      */
-    private string|int|bool|float $value;
+    private string|int|bool|float|null $value;
 
     /**
      * @var string
@@ -165,7 +165,7 @@ class FlagDTO implements JsonSerializable
      * @param bool|string|numeric $value
      * @return FlagDTO
      */
-    public function setValue(float|bool|int|string $value): static
+    public function setValue(float|bool|int|string|null $value): static
     {
         $this->value = $value;
         return $this;

@@ -110,7 +110,7 @@ abstract class HitAbstract
      */
     protected function isNoEmptyString(mixed $value, string $itemName): bool
     {
-        if (empty($value) || !is_string($value)) {
+        if (is_string($value) && empty($value)) {
             $this->logError(
                 $this->config,
                 sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'string')

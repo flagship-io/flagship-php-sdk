@@ -18,7 +18,7 @@ interface VisitorFlagInterface
      */
     public function visitorExposed(
         string $key,
-        float|array|bool|int|string $defaultValue,
+        float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
     ): void;
@@ -32,7 +32,7 @@ interface VisitorFlagInterface
      */
     public function getFlagValue(
         string $key,
-        float|array|bool|int|string $defaultValue,
+        float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $userExposed = true
     ): float|array|bool|int|string;

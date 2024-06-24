@@ -3,9 +3,6 @@
 namespace Flagship\Flag;
 
 use Flagship\Config\DecisionApiConfig;
-use Flagship\Enum\FSFetchReason;
-use Flagship\Enum\FSFlagStatus;
-use Flagship\Model\FetchFlagsStatus;
 use Flagship\Model\FlagDTO;
 use PHPUnit\Framework\TestCase;
 

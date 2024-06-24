@@ -53,8 +53,8 @@ class Event extends HitAbstract
     public function __construct(EventCategory $category, string $action)
     {
         parent::__construct(HitType::EVENT);
-        $this->setCategory($category)
-            ->setAction($action);
+        $this->category = $category;
+        $this->action = $action;
     }
 
     /**
@@ -97,9 +97,6 @@ class Event extends HitAbstract
      */
     public function setAction(string $action): static
     {
-        if (!$this->isNoEmptyString($action, 'action')) {
-            return $this;
-        }
         $this->action = $action;
         return $this;
     }

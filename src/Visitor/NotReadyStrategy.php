@@ -94,7 +94,7 @@ class NotReadyStrategy extends DefaultStrategy
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FSSdkStatus::SDK_NOT_INITIALIZED
+                FSSdkStatus::SDK_NOT_INITIALIZED->name
             ),
             [FlagshipConstant::TAG => $functionName]
         );

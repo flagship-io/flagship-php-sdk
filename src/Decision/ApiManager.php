@@ -23,12 +23,27 @@ use Flagship\Model\TroubleshootingData;
 class ApiManager extends DecisionManagerAbstract
 {
     /**
-     * This function will fetch campaigns flag from the server according to the visitor context and
-     * return an associative array of campaigns
-     *
-     * @param VisitorAbstract $visitor
-     * @return array return an associative array of campaigns
+     * @throws Exception
      */
+    protected function setTroubleshootingData(array $body): void
+    {
+        $this->troubleshootingData = null;
+        if (
+            isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING])
+        ) {
+            $troubleshooting = $body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS]
+            [FlagshipField::TROUBLESHOOTING];
+            $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
+            $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
+            $troubleshootingData = new TroubleshootingData();
+            $troubleshootingData->setStartDate($startDate)
+                ->setEndDate($endDate)
+                ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
+                ->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
+            $this->troubleshootingData = $troubleshootingData;
+        }
+    }
+
     public function getCampaigns(VisitorAbstract $visitor): array
     {
         $postData = [
@@ -52,21 +67,8 @@ class ApiManager extends DecisionManagerAbstract
             $hasPanicMode = !empty($body["panic"]);
 
             $this->setIsPanicMode($hasPanicMode);
-            $this->troubleshootingData = null;
-            if (
-                isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING])
-            ) {
-                $troubleshooting = $body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS]
-                [FlagshipField::TROUBLESHOOTING];
-                $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
-                $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
-                $troubleshootingData = new TroubleshootingData();
-                $troubleshootingData->setStartDate($startDate)
-                    ->setEndDate($endDate)
-                    ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
-                    ->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
-                $this->troubleshootingData = $troubleshootingData;
-            }
+
+            $this->setTroubleshootingData($body);
 
             if (isset($body[FlagshipField::FIELD_CAMPAIGNS])) {
                 return $body[FlagshipField::FIELD_CAMPAIGNS];
@@ -78,21 +80,21 @@ class ApiManager extends DecisionManagerAbstract
             ]);
 
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::GET_CAMPAIGNS_ROUTE_RESPONSE_ERROR)
-                ->setLogLevel(LogLevel::ERROR)
-                ->setVisitorSessionId($visitor->getInstanceId())
-                ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
-                ->setTraffic(100)
-                ->setConfig($this->getConfig())
+            $troubleshooting->setLabel(TroubleshootingLabel::GET_CAMPAIGNS_ROUTE_RESPONSE_ERROR)     
                 ->setHttpRequestBody($postData)
                 ->setHttpRequestHeaders($headers)
                 ->setHttpRequestMethod("POST")
                 ->setHttpRequestUrl($url)
                 ->setHttpResponseBody($exception->getMessage())
                 ->setHttpResponseTime($this->getNow() - $now)
+                ->setVisitorContext($visitor->getContext())
+                ->setLogLevel(LogLevel::ERROR)
+                ->setVisitorSessionId($visitor->getInstanceId())
+                ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
+                ->setTraffic(100)
+                ->setConfig($this->getConfig())
                 ->setVisitorId($visitor->getVisitorId())
                 ->setAnonymousId($visitor->getAnonymousId())
-                ->setVisitorContext($visitor->getContext())
             ;
             $visitor->sendTroubleshootingHit($troubleshooting);
         }

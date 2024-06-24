@@ -48,9 +48,9 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      */
     protected TrackingManagerInterface $trackingManager;
     /**
-     * @var string
+     * @var ?string
      */
-    protected string $flagshipInstanceId;
+    protected ?string $flagshipInstanceId = null;
 
     /**
      * ApiManager constructor.
@@ -83,18 +83,18 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getFlagshipInstanceId(): string
+    public function getFlagshipInstanceId(): ?string
     {
         return $this->flagshipInstanceId;
     }
 
     /**
-     * @param string $flagshipInstanceId
+     * @param ?string $flagshipInstanceId
      * @return DecisionManagerAbstract
      */
-    public function setFlagshipInstanceId(string $flagshipInstanceId): static
+    public function setFlagshipInstanceId(?string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;

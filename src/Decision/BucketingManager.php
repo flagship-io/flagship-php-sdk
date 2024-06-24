@@ -264,8 +264,8 @@ class BucketingManager extends DecisionManagerAbstract
      * @param string $campaignId
      * @param VisitorAbstract $visitor
      * @param string $campaignType
-     * @param string $slug
-     * @param string $campaignName
+     * @param ?string $slug
+     * @param ?string $campaignName
      * @return array
      */
     private function getVisitorCampaigns(
@@ -273,8 +273,8 @@ class BucketingManager extends DecisionManagerAbstract
         string $campaignId,
         VisitorAbstract $visitor,
         string $campaignType,
-        string $slug,
-        string $campaignName
+        ?string $slug,
+        ?string $campaignName
     ): array {
         $visitorCampaigns = [];
         foreach ($variationGroups as $variationGroup) {

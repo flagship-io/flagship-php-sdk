@@ -41,7 +41,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @var ?TroubleshootingData
      */
-    protected ?TroubleshootingData $troubleshootingData;
+    protected ?TroubleshootingData $troubleshootingData = null;
 
     /**
      * @var TrackingManagerInterface

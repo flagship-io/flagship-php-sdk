@@ -27,6 +27,7 @@ class BucketingConfig extends FlagshipConfig
         parent::__construct($envId, $apiKey);
         $this->setDecisionMode(DecisionMode::BUCKETING);
         $this->setSyncAgentUrl($syncAgentUrl);
+        $this->setFetchThirdPartyData(false);
     }
 
     /**

@@ -34,35 +34,35 @@ class Transaction extends HitAbstract
     /**
      * @var float|null
      */
-    private ?float $taxes;
+    private ?float $taxes = null;
     /**
      * @var string|null
      */
-    private ?string $currency;
+    private ?string $currency = null;
     /**
      * @var string|null
      */
-    private ?string $couponCode;
+    private ?string $couponCode = null;
     /**
      * @var int|null
      */
-    private ?int $itemCount;
+    private ?int $itemCount = null;
     /**
      * @var string|null
      */
-    private ?string $shippingMethod;
+    private ?string $shippingMethod = null;
     /**
      * @var string|null
      */
-    private ?string $paymentMethod;
+    private ?string $paymentMethod = null;
     /**
      * @var float|null
      */
-    private ?float $totalRevenue;
+    private ?float $totalRevenue = null;
     /**
      * @var float|null
      */
-    private ?float $shippingCosts;
+    private ?float $shippingCosts = null;
 
     /**
      * Transaction constructor.
@@ -145,10 +145,10 @@ class Transaction extends HitAbstract
     /**
      * Specify the total amount of taxes
      *
-     * @param float $taxes
+     * @param ?float $taxes
      * @return Transaction
      */
-    public function setTaxes(float $taxes): static
+    public function setTaxes(?float $taxes): static
     {
         $this->taxes = $taxes;
         return $this;
@@ -166,19 +166,19 @@ class Transaction extends HitAbstract
      * Specify the currency of transaction.
      *     NOTE: This value should be a valid ISO 4217 currency code.
      *
-     * @param string $currency
+     * @param ?string $currency
      * @return Transaction
      */
-    public function setCurrency(string $currency): static
+    public function setCurrency(?string $currency): static
     {
-        if (strlen($currency) != 3) {
+        if (is_string($currency) && strlen($currency) != 3) {
             $this->logError(
                 $this->getConfig(),
                 sprintf(self::CURRENCY_ERROR, 'currency')
             );
             return $this;
         }
-        $this->currency = strtoupper($currency);
+        $this->currency = strtoupper($currency || '');
         return $this;
     }
 
@@ -195,12 +195,12 @@ class Transaction extends HitAbstract
     /**
      * Specify the coupon code used by the customer
      *
-     * @param string $couponCode
+     * @param ?string $couponCode
      * @return Transaction
      */
-    public function setCouponCode(string $couponCode): static
+    public function setCouponCode(?string $couponCode): static
     {
-        if (!$this->isNoEmptyString($couponCode, 'couponCode')) {
+        if (is_string($couponCode) && !$this->isNoEmptyString($couponCode, 'couponCode')) {
             return $this;
         }
         $this->couponCode = $couponCode;
@@ -220,14 +220,11 @@ class Transaction extends HitAbstract
     /**
      * Specify the number of items in the transaction.
      *
-     * @param integer $itemsCount
+     * @param ?integer $itemsCount
      * @return Transaction
      */
-    public function setItemCount(int $itemsCount): static
+    public function setItemCount(?int $itemsCount): static
     {
-        if (!$this->isInteger($itemsCount, 'itemCount')) {
-            return $this;
-        }
         $this->itemCount = $itemsCount;
         return $this;
     }
@@ -245,12 +242,12 @@ class Transaction extends HitAbstract
     /**
      * Specify the shipping method.
      *
-     * @param string $shippingMethod
+     * @param ?string $shippingMethod
      * @return Transaction
      */
-    public function setShippingMethod(string $shippingMethod): static
+    public function setShippingMethod(?string $shippingMethod): static
     {
-        if (!$this->isNoEmptyString($shippingMethod, 'shippingMethod')) {
+        if (is_string($shippingMethod) && !$this->isNoEmptyString($shippingMethod, 'shippingMethod')) {
             return $this;
         }
         $this->shippingMethod = $shippingMethod;
@@ -270,12 +267,12 @@ class Transaction extends HitAbstract
     /**
      * Specify the payment method used
      *
-     * @param string $paymentMethod
+     * @param ?string $paymentMethod
      * @return Transaction
      */
-    public function setPaymentMethod(string $paymentMethod): static
+    public function setPaymentMethod(?string $paymentMethod): static
     {
-        if (!$this->isNoEmptyString($paymentMethod, 'paymentMethod')) {
+        if (is_string($paymentMethod) && !$this->isNoEmptyString($paymentMethod, 'paymentMethod')) {
             return $this;
         }
         $this->paymentMethod = $paymentMethod;
@@ -296,10 +293,10 @@ class Transaction extends HitAbstract
      * Specify the total revenue associated with the transaction.
      *     NOTE: This value should include any shipping and/or tax amounts.
      *
-     * @param float $totalRevenue
+     * @param ?float $totalRevenue
      * @return Transaction
      */
-    public function setTotalRevenue(float $totalRevenue): static
+    public function setTotalRevenue(?float $totalRevenue): static
     {
         $this->totalRevenue = $totalRevenue;
         return $this;
@@ -318,10 +315,10 @@ class Transaction extends HitAbstract
     /**
      * Specify the total shipping cost of the transaction\
      *
-     * @param float $shippingCosts
+     * @param ?float $shippingCosts
      * @return Transaction
      */
-    public function setShippingCosts(float $shippingCosts): static
+    public function setShippingCosts(?float $shippingCosts): static
     {
         $this->shippingCosts = $shippingCosts;
         return $this;

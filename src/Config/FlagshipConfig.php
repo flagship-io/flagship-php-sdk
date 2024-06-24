@@ -58,12 +58,12 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @var ?IVisitorCacheImplementation
      */
-    private ?IVisitorCacheImplementation $visitorCacheImplementation;
+    private ?IVisitorCacheImplementation $visitorCacheImplementation = null;
 
     /**
      * @var ?IHitCacheImplementation
      */
-    private ?IHitCacheImplementation $hitCacheImplementation;
+    private ?IHitCacheImplementation $hitCacheImplementation = null;
 
     /**
      * @var CacheStrategy

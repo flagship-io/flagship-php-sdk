@@ -43,7 +43,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
      */
     protected BatchingCachingStrategyAbstract $strategy;
 
-    protected string $flagshipInstanceId;
+    protected ?string $flagshipInstanceId = null;
 
     /**
      * ApiManager constructor.
@@ -55,7 +55,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     public function __construct(
         FlagshipConfig $config,
         HttpClientInterface $httpClient,
-        string $flagshipInstanceId = null
+        ?string $flagshipInstanceId = null
     ) {
         $this->flagshipInstanceId = $flagshipInstanceId;
         $this->httpClient = $httpClient;
@@ -89,18 +89,18 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     }
 
     /**
-     * @return TroubleshootingData
+     * @return TroubleshootingData|null
      */
-    public function getTroubleshootingData(): TroubleshootingData
+    public function getTroubleshootingData(): ?TroubleshootingData
     {
         return $this->getStrategy()->getTroubleshootingData();
     }
 
     /**
-     * @param TroubleshootingData $troubleshootingData
+     * @param ?TroubleshootingData $troubleshootingData
      * @return void
      */
-    public function setTroubleshootingData(TroubleshootingData $troubleshootingData): void
+    public function setTroubleshootingData(?TroubleshootingData $troubleshootingData): void
     {
         $this->getStrategy()->setTroubleshootingData($troubleshootingData);
     }
@@ -182,27 +182,27 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                 $content = $item[HitCacheFields::DATA][HitCacheFields::CONTENT];
 
                 switch ($type) {
-                    case HitType::EVENT:
+                    case HitType::EVENT->value:
                         $hit = HitAbstract::hydrate(Event::getClassName(), $content);
                         break;
-                    case HitType::ITEM:
+                    case HitType::ITEM->value:
                         $hit = HitAbstract::hydrate(Item::getClassName(), $content);
                         break;
-                    case HitType::PAGE_VIEW:
+                    case HitType::PAGE_VIEW->value:
                         $hit = HitAbstract::hydrate(Page::getClassName(), $content);
                         break;
-                    case HitType::SCREEN_VIEW:
+                    case HitType::SCREEN_VIEW->value:
                         $hit = HitAbstract::hydrate(Screen::getClassName(), $content);
                         break;
-                    case HitType::SEGMENT:
+                    case HitType::SEGMENT->value:
                         $hit = HitAbstract::hydrate(Segment::getClassName(), $content);
                         break;
-                    case HitType::ACTIVATE:
+                    case HitType::ACTIVATE->value:
                         $hit = HitAbstract::hydrate(Activate::getClassName(), $content);
                         $hit->setConfig($this->config);
                         $this->getStrategy()->hydrateActivatePoolQueue($hit->getKey(), $hit);
                         continue 2;
-                    case HitType::TRANSACTION:
+                    case HitType::TRANSACTION->value:
                         $hit = HitAbstract::hydrate(Transaction::getClassName(), $content);
                         break;
                     default:
@@ -215,6 +215,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
 
             $this->getStrategy()->flushHits($hitKeysToRemove);
         } catch (Exception $exception) {
+            var_dump($exception->getMessage());
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::PROCESS_CACHE,

@@ -37,17 +37,17 @@ class Item extends HitAbstract
     /**
      * @var float|null
      */
-    private ?float $itemPrice;
+    private ?float $itemPrice = null;
 
     /**
      * @var integer|null
      */
-    private ?int $itemQuantity;
+    private ?int $itemQuantity = null;
 
     /**
      * @var string|null
      */
-    private ?string $itemCategory;
+    private ?string $itemCategory = null;
 
     /**
      * Item constructor.
@@ -153,14 +153,11 @@ class Item extends HitAbstract
     /**
      * Specify the price for a single item
      *
-     * @param float $itemPrice
+     * @param ?float $itemPrice
      * @return Item
      */
-    public function setItemPrice(float $itemPrice): static
+    public function setItemPrice(?float $itemPrice): static
     {
-        if (!$this->isNumeric($itemPrice, 'itemPrice')) {
-            return $this;
-        }
         $this->itemPrice = $itemPrice;
         return $this;
     }
@@ -178,14 +175,11 @@ class Item extends HitAbstract
     /**
      * Specify the number of items purchased.
      *
-     * @param int $itemQuantity
+     * @param ?int $itemQuantity
      * @return Item
      */
-    public function setItemQuantity(int $itemQuantity): static
+    public function setItemQuantity(?int $itemQuantity): static
     {
-        if (!$this->isInteger($itemQuantity, "itemQuantity")) {
-            return $this;
-        }
         $this->itemQuantity = $itemQuantity;
         return $this;
     }
@@ -203,14 +197,11 @@ class Item extends HitAbstract
     /**
      * Specify the category that the item belongs to
      *
-     * @param string $itemCategory
+     * @param ?string $itemCategory
      * @return Item
      */
-    public function setItemCategory(string $itemCategory): static
+    public function setItemCategory(?string $itemCategory): static
     {
-        if (!$this->isNoEmptyString($itemCategory, "itemCategory")) {
-            return $this;
-        }
         $this->itemCategory = $itemCategory;
         return $this;
     }

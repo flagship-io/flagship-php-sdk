@@ -108,10 +108,10 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @param string $flagKey
+     * @param ?string $flagKey
      * @return Activate
      */
-    public function setFlagKey(string $flagKey): static
+    public function setFlagKey(?string $flagKey): static
     {
         $this->flagKey = $flagKey;
         return $this;
@@ -144,10 +144,10 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @param array $visitorContext
+     * @param ?array $visitorContext
      * @return Activate
      */
-    public function setVisitorContext(array $visitorContext): static
+    public function setVisitorContext(?array $visitorContext): static
     {
         $this->visitorContext = $visitorContext;
         return $this;
@@ -162,10 +162,10 @@ class Activate extends HitAbstract
     }
 
     /**
-     * @param FSFlagMetadataInterface $flagMetadata
+     * @param ?FSFlagMetadataInterface $flagMetadata
      * @return Activate
      */
-    public function setFlagMetadata(FSFlagMetadataInterface $flagMetadata): static
+    public function setFlagMetadata(?FSFlagMetadataInterface $flagMetadata): static
     {
         $this->flagMetadata = $flagMetadata;
         return $this;

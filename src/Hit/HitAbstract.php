@@ -40,9 +40,9 @@ abstract class HitAbstract
     protected HitType $type;
 
     /**
-     * @var FlagshipConfig
+     * @var ?FlagshipConfig
      */
-    protected FlagshipConfig $config;
+    protected ?FlagshipConfig $config = null;
 
     /**
      * @var string|null
@@ -209,9 +209,9 @@ abstract class HitAbstract
     }
 
     /**
-     * @return FlagshipConfig
+     * @return ?FlagshipConfig
      */
-    public function getConfig(): FlagshipConfig
+    public function getConfig(): ?FlagshipConfig
     {
         return $this->config;
     }
@@ -389,7 +389,7 @@ abstract class HitAbstract
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId ?: $this->anonymousId,
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-            FlagshipConstant::T_API_ITEM => $this->getType(),
+            FlagshipConstant::T_API_ITEM => $this->getType()->value,
             FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::QT_API_ITEM => $this->getNow() - $this->createdAt,
         ];
@@ -454,6 +454,9 @@ abstract class HitAbstract
             }
             $property->setAccessible(true);
             $value = $property->getValue($this);
+            if ($value instanceof HitType) {
+                $value = $value->value;
+            }
             $outArray[$property->getName()] = $value;
         }
         return $outArray;

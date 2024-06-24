@@ -36,12 +36,12 @@ class Event extends HitAbstract
     /**
      * @var string|null
      */
-    private ?string $label;
+    private ?string $label = null;
 
     /**
      * @var float|null
      */
-    private ?float $value;
+    private ?float $value = null;
 
     /**
      * Event constructor.
@@ -55,8 +55,6 @@ class Event extends HitAbstract
         parent::__construct(HitType::EVENT);
         $this->setCategory($category)
             ->setAction($action);
-        $this->label = null;
-        $this->value = null;
     }
 
     /**
@@ -119,14 +117,11 @@ class Event extends HitAbstract
     /**
      * Specify additional description of event.
      *
-     * @param string $label : event label.
+     * @param ?string $label : event label.
      * @return Event
      */
-    public function setLabel(string $label): static
+    public function setLabel(?string $label): static
     {
-        if (!$this->isNoEmptyString($label, 'eventLabel')) {
-            return $this;
-        }
         $this->label = $label;
         return $this;
     }
@@ -146,12 +141,12 @@ class Event extends HitAbstract
      *      (e.g. you earn 10 to 100 euros depending on the quality of lead generated).
      *      NOTE: this value must be non-negative.
      *
-     * @param float $value : event value
+     * @param float|null $value : event value
      * @return Event
      */
-    public function setValue(float $value): static
+    public function setValue(?float $value): static
     {
-        if ($value < 0) {
+        if (is_numeric($value) && $value < 0) {
             $this->logError(
                 $this->config,
                 self::VALUE_FIELD_ERROR,

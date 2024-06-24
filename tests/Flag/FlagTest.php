@@ -3,6 +3,7 @@
 namespace Flagship\Flag;
 
 use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
 use Flagship\Enum\FSFlagStatus;
 use Flagship\Model\FetchFlagsStatus;
 use Flagship\Model\FlagDTO;
@@ -46,25 +47,23 @@ class FlagTest extends TestCase
             true,
             ['getFlagValue', 'userExposed', 'getFlagMetadata', 'getFlagsDTO'],
             '',
-            false
         );
 
         $visitorDelegateMock->method("getFlagsDTO")->willReturn([$flagDTO]);
 
-        $visitorDelegateMock->expects($this->exactly(2))->method('getFlagValue')->withConsecutive(
-            [
-                $key,
+        $visitorDelegateMock->expects($this->exactly(2))->method('getFlagValue')
+            ->with(
+                $this->logicalOr(
+                    $key,
+                    $key
+                ),
                 $defaultValue,
                 $flagDTO,
-                true
-            ],
-            [
-                $key,
-                $defaultValue,
-                $flagDTO,
-                false
-            ]
-        )->willReturn($flagDTO->getValue());
+                $this->logicalOr(
+                    true,
+                    false
+                )
+            )->willReturn($flagDTO->getValue());
 
         $flag = new FSFlag($key, $visitorDelegateMock);
 
@@ -93,18 +92,21 @@ class FlagTest extends TestCase
 
         $this->assertSame($metadataValue, $metadata);
 
-        $visitorDelegateMock->setFetchStatus(new FetchFlagsStatus(FSFlagStatus::PANIC, FSFetchReason::NONE));
-        // Test flag status 
+        $visitorDelegateMock->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::PANIC, FSFetchReason::NONE));
+        // Test flag status
         $value = $flag->getStatus();
         $this->assertEquals(FSFlagStatus::PANIC, $value);
 
-        $visitorDelegateMock->setFetchStatus(new FetchFlagsStatus(FSFlagStatus::FETCH_REQUIRED, FSFetchReason::UPDATE_CONTEXT));
-        // Test flag status 
+        $visitorDelegateMock->setFetchStatus(new FetchFlagsStatus(
+            FSFetchStatus::FETCH_REQUIRED,
+            FSFetchReason::UPDATE_CONTEXT
+        ));
+        // Test flag status
         $value = $flag->getStatus();
         $this->assertEquals(FSFlagStatus::FETCH_REQUIRED, $value);
 
-        $visitorDelegateMock->setFetchStatus(new FetchFlagsStatus(FSFlagStatus::FETCHED, FSFetchReason::NONE));
-        // Test flag status 
+        $visitorDelegateMock->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
+        // Test flag status
         $value = $flag->getStatus();
         $this->assertEquals(FSFlagStatus::FETCHED, $value);
     }
@@ -129,8 +131,8 @@ class FlagTest extends TestCase
 
         $this->assertEquals($metadataValue, FSFlagMetadata::getEmpty());
 
-        $visitorDelegateMock->setFetchStatus(new FetchFlagsStatus(FSFlagStatus::FETCHED, FSFetchReason::NONE));
-        // Test flag status 
+        $visitorDelegateMock->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
+        // Test flag status
         $value = $flag->getStatus();
         $this->assertEquals(FSFlagStatus::NOT_FOUND, $value);
     }

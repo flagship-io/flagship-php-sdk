@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flagship\Hit;
 
 use Flagship\Config\DecisionApiConfig;
@@ -26,9 +28,9 @@ class PageTest extends TestCase
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::PAGE_VIEW,
+            FlagshipConstant::T_API_ITEM => HitType::PAGE_VIEW->value,
             FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0,
+            FlagshipConstant::QT_API_ITEM => 0.0,
             FlagshipConstant::DL_API_ITEM => $pageUrl
         ];
 
@@ -40,19 +42,16 @@ class PageTest extends TestCase
         //Test isReady without require HitAbstract fields
         $pageUrl = "pageUrl";
         $page = new Page($pageUrl);
+        $page->setVisitorId('visitorId');
 
         $this->assertFalse($page->isReady());
 
-        //Test with require HitAbstract fields and with null pageUrl
-        $pageUrl = null;
-        $page = new Page($pageUrl);
+
         $config = new DecisionApiConfig('envId');
 
         $page->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);
-
-        $this->assertFalse($page->isReady());
 
         //Test isReady Test with require HitAbstract fields and  with empty pageUrl
         $pageUrl = "";

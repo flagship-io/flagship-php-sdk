@@ -51,9 +51,6 @@ class Page extends HitAbstract
      */
     public function setPageUrl(string $pageUrl): static
     {
-        if (!$this->isNoEmptyString($pageUrl, 'pageUrl')) {
-            return $this;
-        }
         $this->pageUrl = $pageUrl;
         return $this;
     }

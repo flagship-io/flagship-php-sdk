@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flagship\Hit;
 
 use Flagship\Config\DecisionApiConfig;
@@ -19,7 +21,7 @@ class EventTest extends TestCase
         $eventAction = "eventAction";
         $eventCategory = EventCategory::USER_ENGAGEMENT;
         $eventLabel = "eventLabel";
-        $eventValue = 458;
+        $eventValue = 458.0;
         $userIp = "127.0.0.1";
         $screenResolution = "200X200";
         $userLanguage = "Fr";
@@ -29,9 +31,9 @@ class EventTest extends TestCase
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::EVENT,
+            FlagshipConstant::T_API_ITEM => HitType::EVENT->value,
             FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0,
+            FlagshipConstant::QT_API_ITEM => 0.0,
             FlagshipConstant::USER_IP_API_ITEM => $userIp,
             FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $screenResolution,
             FlagshipConstant::USER_LANGUAGE => $userLanguage,
@@ -63,49 +65,6 @@ class EventTest extends TestCase
 
         $this->assertSame($eventArray, $event->toApiKeys());
 
-        $logManagerMock = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
-            [],
-            "",
-            true,
-            true,
-            true,
-            ['error']
-        );
-
-        $event->getConfig()->setLogManager($logManagerMock);
-
-        $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-        $errorMessage = function ($itemName, $typeName) use ($flagshipSdk) {
-
-            return sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
-        };
-
-        $logManagerMock->expects($this->exactly(5))->method('error')
-            ->withConsecutive(
-                [sprintf(Event::CATEGORY_ERROR, 'category')],
-                [$errorMessage('action', 'string')],
-                [$errorMessage('eventLabel', 'string')],
-                [ Event::VALUE_FIELD_ERROR,['TAG' => 'setValue']]
-            );
-
-        //Test category validation with empty
-        $event->setCategory('');
-
-        //Test category validation with no string
-        $event->setAction(455);
-
-        //Test label validation with no string
-        $event->setLabel([]);
-
-        //Test value validation with no numeric
-        $event->setValue('abc');
-
-        //Test value validation with no numeric
-        $event->setValue(2.5);
-
-        $this->assertSame($eventArray, $event->toApiKeys());
-
         $anonymousId = "anonymousId";
         $event->setAnonymousId($anonymousId);
 
@@ -114,6 +73,9 @@ class EventTest extends TestCase
         $this->assertSame($eventArray, $event->toApiKeys());
 
         $this->assertEquals($anonymousId, $event->getAnonymousId());
+
+        $event->setAction("newAction");
+        $this->assertEquals("newAction", $event->getAction());
     }
 
     public function testSetCategory()
@@ -126,10 +88,6 @@ class EventTest extends TestCase
         $event->setCategory(EventCategory::USER_ENGAGEMENT);
 
         $this->assertSame(EventCategory::USER_ENGAGEMENT, $event->getCategory());
-
-        $event->setCategory("otherCat");
-
-        $this->assertSame(EventCategory::USER_ENGAGEMENT, $event->getCategory());
     }
 
     public function testIsReady()
@@ -138,19 +96,11 @@ class EventTest extends TestCase
         $eventCategory = EventCategory::USER_ENGAGEMENT;
         $eventAction = "eventAction";
         $event = new Event($eventCategory, $eventAction);
+        $event->setVisitorId('visitorId');
 
         $this->assertFalse($event->isReady());
 
-        //Test with require HitAbstract fields and with null eventCategory
-        $eventCategory = null;
-        $eventAction = "eventAction";
-        $event = new Event($eventCategory, $eventAction);
-        $config = new DecisionApiConfig("envId");
-        $event->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
-
-        $this->assertFalse($event->isReady());
+        $config = new DecisionApiConfig("envId", "apiKey");
 
         //Test isReady with require HitAbstract fields and  with empty eventAction
         $eventAction = "";
@@ -166,7 +116,6 @@ class EventTest extends TestCase
         $this->assertSame(Event::ERROR_MESSAGE, $event->getErrorMessage());
 
         //Test with require HitAbstract fields and require Transaction fields
-        $eventCategory = EventCategory::ACTION_TRACKING;
         $eventAction = "ItemName";
         $event = new Event($eventCategory, $eventAction);
         $event->setConfig($config)

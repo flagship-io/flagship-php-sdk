@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flagship\Hit;
 
 use Flagship\Config\DecisionApiConfig;
@@ -16,7 +18,7 @@ class ItemTest extends TestCase
         $itemCode = "itemCode";
         $visitorId = "visitorId";
         $envId = "envId";
-        $itemPrice = 125;
+        $itemPrice = 125.0;
         $itemQuantity = 45;
         $itemCategory = "category 1";
 
@@ -24,9 +26,9 @@ class ItemTest extends TestCase
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::ITEM,
+            FlagshipConstant::T_API_ITEM => HitType::ITEM->value,
             FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0,
+            FlagshipConstant::QT_API_ITEM => 0.0,
             FlagshipConstant::TID_API_ITEM => $transactionId,
             FlagshipConstant::IN_API_ITEM => $itemName,
             FlagshipConstant::IC_API_ITEM => $itemCode
@@ -68,37 +70,6 @@ class ItemTest extends TestCase
 
         $item->getConfig()->setLogManager($logManagerMock);
 
-        $errorMessage = function ($itemName, $typeName) {
-            return sprintf(FlagshipConstant::TYPE_ERROR, $itemName, $typeName);
-        };
-
-        $logManagerMock->expects($this->exactly(6))->method('error')->withConsecutive(
-            [$errorMessage('transactionId', 'string')],
-            [$errorMessage('productName', 'string')],
-            [$errorMessage('productSku', 'string')],
-            [$errorMessage('itemPrice', 'numeric')],
-            [$errorMessage('itemQuantity', 'integer')],
-            [$errorMessage('itemCategory', 'string')]
-        );
-
-        //Test transition id validation
-        $item->setTransactionId('');
-
-        //Test itemName validation
-        $item->setProductName(4886);
-
-        //Test itemCode validation
-        $item->setProductSku([]);
-
-        //Test itemPrice validation
-        $item->setItemPrice("abc");
-
-        //Test itemQuantity validation
-        $item->setItemQuantity(12.5);
-
-        //itemCategory
-        $item->setItemCategory(7895);
-
         $this->assertSame($itemArray, $item->toApiKeys());
     }
 
@@ -111,24 +82,17 @@ class ItemTest extends TestCase
         $itemName = "itemName";
         $itemCode = "itemCode";
         $item = new Item($transactionId, $itemName, $itemCode);
+        $item->setVisitorId('visitorId');
 
         $this->assertFalse($item->isReady());
 
         //Test with require HitAbstract fields and with null transactionId
-        $transactionId = null;
-        $itemName = "itemName";
-        $itemCode = "itemCode";
-        $item = new Item($transactionId, $itemName, $itemCode);
-        $config = new DecisionApiConfig('envId');
-        $item->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
 
-        $this->assertFalse($item->isReady());
+        $config = new DecisionApiConfig('envId');
+
 
         //Test isReady Test with require HitAbstract fields and  with empty itemName
         $itemName = "";
-        $transactionId = "transactionId";
         $item = new Item($transactionId, $itemName, $itemCode);
 
         $item->setConfig($config)
@@ -139,7 +103,6 @@ class ItemTest extends TestCase
         $this->assertSame(Item::ERROR_MESSAGE, $item->getErrorMessage());
 
         //Test with require HitAbstract fields and require Item fields
-        $transactionId = "transactionId";
         $itemName = "ItemName";
         $item = new Item($transactionId, $itemName, $itemCode);
         $item->setConfig($config)

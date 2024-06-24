@@ -83,9 +83,6 @@ class Item extends HitAbstract
      */
     public function setTransactionId(string $transactionId): static
     {
-        if (!$this->isNoEmptyString($transactionId, 'transactionId')) {
-            return $this;
-        }
         $this->transactionId = $transactionId;
         return $this;
     }
@@ -108,9 +105,6 @@ class Item extends HitAbstract
      */
     public function setProductName(string $productName): static
     {
-        if (!$this->isNoEmptyString($productName, 'productName')) {
-            return $this;
-        }
         $this->productName = $productName;
         return $this;
     }
@@ -133,9 +127,6 @@ class Item extends HitAbstract
      */
     public function setProductSku(string $productSku): static
     {
-        if (!$this->isNoEmptyString($productSku, 'productSku')) {
-            return $this;
-        }
         $this->productSku = $productSku;
         return $this;
     }

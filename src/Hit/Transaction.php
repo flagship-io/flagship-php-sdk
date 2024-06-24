@@ -95,9 +95,6 @@ class Transaction extends HitAbstract
      */
     public function setTransactionId(string $transactionId): static
     {
-        if (!$this->isNoEmptyString($transactionId, 'transactionId')) {
-            return $this;
-        }
         $this->transactionId = $transactionId;
         return $this;
     }
@@ -120,14 +117,6 @@ class Transaction extends HitAbstract
      */
     public function setAffiliation(string $affiliation): static
     {
-        if (
-            !$this->isNoEmptyString(
-                $affiliation,
-                'affiliation'
-            )
-        ) {
-            return $this;
-        }
         $this->affiliation = $affiliation;
         return $this;
     }
@@ -171,14 +160,7 @@ class Transaction extends HitAbstract
      */
     public function setCurrency(?string $currency): static
     {
-        if (is_string($currency) && strlen($currency) != 3) {
-            $this->logError(
-                $this->getConfig(),
-                sprintf(self::CURRENCY_ERROR, 'currency')
-            );
-            return $this;
-        }
-        $this->currency = strtoupper($currency || '');
+        $this->currency = $currency;
         return $this;
     }
 
@@ -200,9 +182,6 @@ class Transaction extends HitAbstract
      */
     public function setCouponCode(?string $couponCode): static
     {
-        if (is_string($couponCode) && !$this->isNoEmptyString($couponCode, 'couponCode')) {
-            return $this;
-        }
         $this->couponCode = $couponCode;
         return $this;
     }
@@ -247,9 +226,6 @@ class Transaction extends HitAbstract
      */
     public function setShippingMethod(?string $shippingMethod): static
     {
-        if (is_string($shippingMethod) && !$this->isNoEmptyString($shippingMethod, 'shippingMethod')) {
-            return $this;
-        }
         $this->shippingMethod = $shippingMethod;
         return $this;
     }
@@ -272,9 +248,6 @@ class Transaction extends HitAbstract
      */
     public function setPaymentMethod(?string $paymentMethod): static
     {
-        if (is_string($paymentMethod) && !$this->isNoEmptyString($paymentMethod, 'paymentMethod')) {
-            return $this;
-        }
         $this->paymentMethod = $paymentMethod;
         return $this;
     }

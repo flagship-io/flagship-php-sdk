@@ -32,7 +32,7 @@ class Screen extends HitAbstract
      *
      * @param string $screenName : Name of the interface seen.
      */
-    public function __construct($screenName)
+    public function __construct(string $screenName)
     {
         parent::__construct(HitType::SCREEN_VIEW);
 
@@ -57,9 +57,6 @@ class Screen extends HitAbstract
      */
     public function setScreenName(string $screenName): static
     {
-        if (!$this->isNoEmptyString($screenName, 'screenName')) {
-            return $this;
-        }
         $this->screenName = $screenName;
         return $this;
     }

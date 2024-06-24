@@ -33,9 +33,9 @@ class SegmentTest extends TestCase
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::SEGMENT,
+            FlagshipConstant::T_API_ITEM => HitType::SEGMENT->value,
             FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0,
+            FlagshipConstant::QT_API_ITEM => 0.0,
             FlagshipConstant::SL_API_ITEM => $context
         ];
 

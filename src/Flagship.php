@@ -34,9 +34,9 @@ class Flagship
     /**
      * Flagship singleton instance
      *
-     * @var Flagship
+     * @var ?Flagship
      */
-    private static Flagship $instance;
+    private static ?Flagship $instance = null;
 
     /**
      * Dependency injection container
@@ -139,18 +139,12 @@ class Flagship
             //Will trigger setStatus method of Flagship if decisionManager want update status
             $decisionManager->setStatusChangedCallback([$flagship, 'setStatus']);
 
-            $configManager = $container->get(ConfigManager::class);
-
-            $configManager->setDecisionManager($decisionManager);
-
             $trackingManager = $container->get(
                 TrackingManager::class,
                 [$config, $httpClient, $flagship->flagshipInstanceId]
             );
 
-            $configManager->setTrackingManager($trackingManager);
-
-            $configManager->setConfig($config);
+            $configManager = $container->get(ConfigManager::class, [$config, $decisionManager, $trackingManager]);
 
             $decisionManager->setTrackingManager($trackingManager);
 

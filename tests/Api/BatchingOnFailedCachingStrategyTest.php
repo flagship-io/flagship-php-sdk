@@ -532,12 +532,9 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $httpClientMock->expects($this->once())->method("post")
             ->with($url, [], $requestBody);
 
-        $check1 = false;
-        $check2 = false;
         $count = 0;
 
-
-        $config->setOnVisitorExposed(function (ExposedVisitor $exposedUser, ExposedFlag $exposedFlag)
+        $config->setOnVisitorExposed(function ()
  use (&$count) {
             $exceptionMessage = "Message error";
             $count++;
@@ -808,7 +805,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $page->setConfig($config)->setVisitorId($visitorId);
 
         \Flagship\Traits\Round::$returnValue = 0;
-        ;
+
         $screen = new Screen("home");
         $screen->setConfig($config)->setVisitorId($visitorId);
 
@@ -1508,15 +1505,11 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $matcher = $this->exactly(2);
         $strategy->expects($matcher)->method('sendUsageHit')
             ->with($this->callback(function ($hit) use ($matcher, $usageHit, $usageHit2) {
-                switch ($matcher->getInvocationCount()) {
-                    case 1:{
-                        return $hit === $usageHit;
-                    }
-                    case 2:{
-                        return $hit === $usageHit2;
-                    }
-                }
-                return  false;
+                return match ($matcher->getInvocationCount()) {
+                    1 => $hit === $usageHit,
+                    2 => $hit === $usageHit2,
+                    default => false,
+                };
             }));
 
         $strategy->sendUsageHitQueue();
@@ -1560,7 +1553,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ->with($this->callback(function ($url) use ($match) {
                 $troubleshootingUrl = FlagshipConstant::ANALYTICS_HIT_URL;
                 return $url === $troubleshootingUrl;
-            }), $this->callback(function ($hit) use ($match) {
+            }), $this->callback(function () use ($match) {
                 return true;
             }));
 

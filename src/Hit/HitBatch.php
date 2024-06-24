@@ -39,7 +39,7 @@ class HitBatch extends HitAbstract
         $data = [
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-            FlagshipConstant::T_API_ITEM => $this->getType(),
+            FlagshipConstant::T_API_ITEM => $this->getType()->value,
             FlagshipConstant::QT_API_ITEM => $this->getNow() - $this->createdAt,
             FlagshipConstant::H_API_ITEM => []
         ];

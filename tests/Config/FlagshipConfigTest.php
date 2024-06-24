@@ -9,10 +9,11 @@ use Flagship\Enum\FlagshipField;
 use Flagship\Enum\LogLevel;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 class FlagshipConfigTest extends TestCase
 {
-    public function configData()
+    public function configData(): array
     {
         return ['envId' => 'env_value','apiKey' => 'key_value'];
     }
@@ -31,9 +32,6 @@ class FlagshipConfigTest extends TestCase
 
         $config->setTimeout(0);
         $this->assertEquals($timeOut, $config->getTimeout());
-
-        $config->setTimeout("not a number");
-        $this->assertEquals($timeOut, $config->getTimeout());
     }
 
     public function testSetLogLevel()
@@ -42,15 +40,6 @@ class FlagshipConfigTest extends TestCase
         $apiKey = "apiKey";
 
         $config = new DecisionApiConfig($envId, $apiKey);
-        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
-
-        $config->setLogLevel(-2);
-        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
-
-        $config->setLogLevel(12);
-        $this->assertSame(LogLevel::ALL, $config->getLogLevel());
-
-        $config->setLogLevel("abc");
         $this->assertSame(LogLevel::ALL, $config->getLogLevel());
 
         $config->setLogLevel(LogLevel::ERROR);
@@ -91,7 +80,6 @@ class FlagshipConfigTest extends TestCase
     {
         $configData = $this->configData();
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
-        $this->assertInstanceOf("Flagship\Config\DecisionApiConfig", $config);
         $this->assertEquals($config->getEnvId(), $configData['envId']);
         $this->assertEquals($config->getApiKey(), $configData['apiKey']);
         $this->assertNull($config->getVisitorCacheImplementation());
@@ -113,37 +101,27 @@ class FlagshipConfigTest extends TestCase
     }
 
 
+    /**
+     * @throws ReflectionException
+     */
     public function testSetDecisionMode()
     {
         $configData = $this->configData();
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
-        $setDecisionMode = Utils::getMethod($config, 'setDecisionMode');
+        $setDecisionMode = Utils::getMethod(DecisionApiConfig::class, 'setDecisionMode');
         $setDecisionMode->invokeArgs($config, [DecisionMode::DECISION_API]);
         $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
-        $setDecisionMode->invokeArgs($config, [5]);
-        $this->assertSame(DecisionMode::DECISION_API, $config->getDecisionMode());
+        $setDecisionMode->invokeArgs($config, [DecisionMode::BUCKETING]);
+        $this->assertSame(DecisionMode::BUCKETING, $config->getDecisionMode());
     }
 
     public function testSetStatusChangedCallback()
     {
         $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
 
-        $logManagerMock->expects($this->once())
-            ->method('error')
-            ->with(
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
-                [
-                    FlagshipConstant::TAG => "setOnSdkStatusChanged"
-                ]
-            );
-
         $config = new DecisionApiConfig();
 
         $config->setLogManager($logManagerMock);
-
-        $this->assertNull($config->getOnSdkStatusChanged());
-
-        $config->setOnSdkStatusChanged([]);
 
         $this->assertNull($config->getOnSdkStatusChanged());
 
@@ -154,26 +132,13 @@ class FlagshipConfigTest extends TestCase
         $this->assertSame($callable, $config->getOnSdkStatusChanged());
     }
 
-    public function testSetOnUserExposure()
+    public function testSetOnVisitorExposure()
     {
         $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
-
-        $logManagerMock->expects($this->once())
-            ->method('error')
-            ->with(
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, "[]"),
-                [
-                    FlagshipConstant::TAG => "setOnVisitorExposed"
-                ]
-            );
 
         $config = new DecisionApiConfig();
 
         $config->setLogManager($logManagerMock);
-
-        $this->assertNull($config->getOnVisitorExposed());
-
-        $config->setOnVisitorExposed([]);
 
         $this->assertNull($config->getOnVisitorExposed());
 

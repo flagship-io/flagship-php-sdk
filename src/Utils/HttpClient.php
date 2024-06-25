@@ -12,7 +12,7 @@ class HttpClient implements HttpClientInterface
     /**
      * @var ?array
      */
-    private ?array $curl;
+    private ?array $curl = null;
 
     /**
      * @var array

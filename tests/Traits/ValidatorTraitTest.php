@@ -7,9 +7,13 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 class ValidatorTraitTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     */
     public function testIsValueValid()
     {
         $validatorTraitMock = $this->getMockForTrait(
@@ -34,6 +38,9 @@ class ValidatorTraitTest extends TestCase
     }
 
 
+    /**
+     * @throws ReflectionException
+     */
     public function testIsKeyValid()
     {
         $validatorTraitMock = $this->getMockForTrait(
@@ -69,6 +76,9 @@ class ValidatorTraitTest extends TestCase
         $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [false]));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testCheckType()
     {
         $validatorTraitMock = $this->getMockForTrait(
@@ -95,6 +105,9 @@ class ValidatorTraitTest extends TestCase
         $this->assertTrue($checkType->invokeArgs($validatorTraitMock, ['string', "abc"]));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testCheckFlagshipContext()
     {
         //Mock logManger
@@ -150,6 +163,9 @@ class ValidatorTraitTest extends TestCase
         $this->assertTrue($check);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testIsJsonObject()
     {
         $validatorTraitMock = $this->getMockForTrait(
@@ -168,6 +184,9 @@ class ValidatorTraitTest extends TestCase
         $this->assertFalse($isJsonObject->invokeArgs($validatorTraitMock, ["[]"]));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testIsNumeric()
     {
         //Mock logManger

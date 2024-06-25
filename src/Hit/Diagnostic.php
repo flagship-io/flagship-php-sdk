@@ -73,7 +73,7 @@ class Diagnostic extends HitAbstract
     private ?DecisionMode $sdkConfigMode = null;
 
     /**
-     * @var LogLevel
+     * @var ?LogLevel
      */
     private ?LogLevel $sdkConfigLogLeve = null;
 
@@ -109,9 +109,9 @@ class Diagnostic extends HitAbstract
     private ?string $sdkConfigBucketingUrl = null;
 
     /**
-     * @var ?string
+     * @var ?bool
      */
-    private ?string $sdkConfigFetchThirdPartyData = null;
+    private ?bool $sdkConfigFetchThirdPartyData = null;
 
     /**
      * @var ?boolean
@@ -647,9 +647,9 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @return string|null
+     * @return bool|null
      */
-    public function getSdkConfigFetchThirdPartyData(): ?string
+    public function getSdkConfigFetchThirdPartyData(): ?bool
     {
         return $this->sdkConfigFetchThirdPartyData;
     }
@@ -1325,7 +1325,7 @@ class Diagnostic extends HitAbstract
             'envId' => $this->getConfig()->getEnvId(),
             "timestamp" => $this->getTimestamp(),
             'timeZone' => $this->getTimeZone(),
-            'label' => $this->getLabel()->name,
+            'label' => $this->getLabel()->value,
             'stack.type' => $this->getStackType(),
             'stack.name' => $this->getStackName(),
             'stack.version' => $this->getStackVersion()
@@ -1537,7 +1537,7 @@ class Diagnostic extends HitAbstract
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId,
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-            FlagshipConstant::T_API_ITEM => $this->getType(),
+            FlagshipConstant::T_API_ITEM => $this->getType()->value,
             'cv' => $customVariable
         ];
     }

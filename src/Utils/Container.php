@@ -5,6 +5,7 @@ namespace Flagship\Utils;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
 use ReflectionParameter;
 
 class Container implements ContainerInterface
@@ -79,22 +80,55 @@ class Container implements ContainerInterface
         return $reflectedClass->newInstanceArgs($constructorParameters);
     }
 
+    private function getDefaultForType(string $typeName): float|bool|array|int|string|null
+    {
+        return match ($typeName) {
+            'string' => '',
+            'int' => 0,
+            'bool' => false,
+            'float' => 0.0,
+            'array' => [],
+            default => null,
+        };
+    }
+
+
+    private function resolveBuiltInType(string $typeName, bool $allowsNull): float|bool|array|int|string|null
+    {
+        return $allowsNull ? null : $this->getDefaultForType($typeName);
+    }
+
     /**
-     * @param ReflectionParameter[] $parameters
-     * @return array
+     * @throws ReflectionException
+     */
+    private function resolveParameter(ReflectionParameter $parameter)
+    {
+        if ($parameter->isDefaultValueAvailable()) {
+            return $parameter->getDefaultValue();
+        }
+
+        $type = $parameter->getType();
+        if (!$type) {
+            return null;
+        }
+
+        $typeName = $type instanceof ReflectionNamedType ? $type->getName() : (string)$type;
+        $allowsNull = $type->allowsNull();
+
+        if ($type->isBuiltin()) {
+            return $this->resolveBuiltInType($typeName, $allowsNull);
+        }
+        return $this->get($typeName);
+    }
+
+    /**
      * @throws ReflectionException
      */
     private function extractConstructorParam(array $parameters): array
     {
         $constructorParameters = [];
         foreach ($parameters as $parameter) {
-            $typeName = $parameter->getType();
-            if ($typeName) {
-                $constructorParameters[] = $this->get($typeName->getName());
-            } else {
-                $constructorParameters[] = $parameter->isDefaultValueAvailable() ?
-                    $parameter->getDefaultValue() : null;
-            }
+            $constructorParameters[] = $this->resolveParameter($parameter);
         }
         return $constructorParameters;
     }

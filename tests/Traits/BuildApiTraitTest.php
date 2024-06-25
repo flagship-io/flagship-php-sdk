@@ -5,14 +5,18 @@ namespace Flagship\Traits;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Utils\Utils;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 class BuildApiTraitTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     */
     public function testBuildHeader()
     {
 
         $buildApiTraitMock = $this->getMockForTrait(
-            'Flagship\Traits\BuildApiTrait',
+            BuildApiTrait::class,
             [],
             "",
             false,

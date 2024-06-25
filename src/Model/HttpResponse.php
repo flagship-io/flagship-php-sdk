@@ -8,7 +8,7 @@ namespace Flagship\Model;
  */
 class HttpResponse
 {
-    private string $statusCode;
+    private string|int $statusCode;
     private mixed $body;
     /**
      * @var array
@@ -17,22 +17,24 @@ class HttpResponse
 
     /**
      * HttpResponse constructor.
-     * @param $statusCode
-     * @param $body
+     * @param string|int $statusCode
+     * @param mixed $body
      * @param array $headers
      */
-    public function __construct($statusCode, $body, array $headers = [])
-    {
-
+    public function __construct(
+        string|int $statusCode,
+        mixed $body,
+        array $headers = []
+    ) {
         $this->statusCode = $statusCode;
         $this->body = $body;
         $this->headers = $headers;
     }
 
     /**
-     * @return string
+     * @return string|int
      */
-    public function getStatusCode(): string
+    public function getStatusCode(): string|int
     {
         return $this->statusCode;
     }

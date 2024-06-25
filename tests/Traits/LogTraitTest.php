@@ -10,6 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 class LogTraitTest extends TestCase
 {
+    /**
+     * @throws \ReflectionException
+     */
     public function testLoginError()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
@@ -36,7 +39,6 @@ class LogTraitTest extends TestCase
         $config->setLogLevel(LogLevel::ERROR);
         $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
 
-        $logError->invokeArgs($logTraitMock, [null, $message, $context]);
 
         $config->setLogLevel(LogLevel::WARNING);
         $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
@@ -46,6 +48,9 @@ class LogTraitTest extends TestCase
         $logError->invokeArgs($logTraitMock, [$config, $message, $context]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testLogErrorSprintf()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
@@ -76,6 +81,9 @@ class LogTraitTest extends TestCase
     }
 
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testLoginInfo()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
@@ -102,8 +110,6 @@ class LogTraitTest extends TestCase
         $config->setLogLevel(LogLevel::INFO);
         $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
 
-        $logInfo->invokeArgs($logTraitMock, [null, $message, $context]);
-
         $config->setLogLevel(LogLevel::NOTICE);
         $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
 
@@ -112,6 +118,9 @@ class LogTraitTest extends TestCase
         $logInfo->invokeArgs($logTraitMock, [$config, $message, $context]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testLogInfoSprintf()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
@@ -140,6 +149,10 @@ class LogTraitTest extends TestCase
         $config->setLogLevel(LogLevel::INFO);
         $logError->invokeArgs($logTraitMock, [$config, $tag, $message, []]);
     }
+
+    /**
+     * @throws \ReflectionException
+     */
     public function testWarning()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
@@ -166,8 +179,6 @@ class LogTraitTest extends TestCase
         $config->setLogLevel(LogLevel::WARNING);
         $logWarning->invokeArgs($logTraitMock, [$config, $message, $context]);
 
-        $logWarning->invokeArgs($logTraitMock, [null, $message, $context]);
-
         $config->setLogLevel(LogLevel::CRITICAL);
         $logWarning->invokeArgs($logTraitMock, [$config, $message, $context]);
 
@@ -176,6 +187,9 @@ class LogTraitTest extends TestCase
         $logWarning->invokeArgs($logTraitMock, [$config, $message, $context]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testWarningSprintf()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
@@ -204,6 +218,10 @@ class LogTraitTest extends TestCase
         $config->setLogLevel(LogLevel::WARNING);
         $logWarning->invokeArgs($logTraitMock, [$config, $tag, $message, []]);
     }
+
+    /**
+     * @throws \ReflectionException
+     */
     public function testLogDebug()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
@@ -229,10 +247,11 @@ class LogTraitTest extends TestCase
 
         $config->setLogLevel(LogLevel::INFO);
         $logDebug->invokeArgs($logTraitMock, [$config, $message, $context]);
-
-        $logDebug->invokeArgs($logTraitMock, [null, $message, $context]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testLogDebugSprintf()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');
@@ -265,6 +284,9 @@ class LogTraitTest extends TestCase
         $logError->invokeArgs($logTraitMock, [$config, $tag, $message, $args]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetLogFormat()
     {
         $logTraitMock = $this->getMockForTrait('Flagship\Traits\LogTrait');

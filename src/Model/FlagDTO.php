@@ -51,7 +51,7 @@ class FlagDTO implements JsonSerializable
     /**
      * @var string|bool|numeric
      */
-    private string|int|bool|float|null $value;
+    private string|int|bool|float|null|array $value;
 
     /**
      * @var string
@@ -59,9 +59,9 @@ class FlagDTO implements JsonSerializable
     private string $campaignType;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private string $slug;
+    private ?string $slug = null;
 
     /**
      * @return string
@@ -154,9 +154,9 @@ class FlagDTO implements JsonSerializable
     }
 
     /**
-     * @return string|bool|numeric
+     * @return float|bool|int|string|array|null
      */
-    public function getValue(): float|bool|int|string
+    public function getValue(): float|bool|int|string|null|array
     {
         return $this->value;
     }
@@ -165,7 +165,7 @@ class FlagDTO implements JsonSerializable
      * @param bool|string|numeric $value
      * @return FlagDTO
      */
-    public function setValue(float|bool|int|string|null $value): static
+    public function setValue(float|bool|int|string|null|array $value): static
     {
         $this->value = $value;
         return $this;
@@ -190,9 +190,9 @@ class FlagDTO implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getSlug(): string
+    public function getSlug(): ?string
     {
         return $this->slug;
     }

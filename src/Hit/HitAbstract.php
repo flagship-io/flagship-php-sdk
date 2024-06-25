@@ -104,57 +104,6 @@ abstract class HitAbstract
     }
 
     /**
-     * @param  mixed  $value
-     * @param string $itemName
-     * @return bool
-     */
-    protected function isNoEmptyString(mixed $value, string $itemName): bool
-    {
-        if (is_string($value) && empty($value)) {
-            $this->logError(
-                $this->config,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'string')
-            );
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @param  mixed  $value
-     * @param string $itemName
-     * @return bool
-     */
-    protected function isNumeric(mixed $value, string $itemName): bool
-    {
-        if (!is_numeric($value)) {
-            $this->logError(
-                $this->config,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
-            );
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @param  mixed  $value
-     * @param string $itemName
-     * @return bool
-     */
-    protected function isInteger(mixed $value, string $itemName): bool
-    {
-        if (!is_int($value)) {
-            $this->logError(
-                $this->config,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'integer')
-            );
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * @return string
      */
     public function getVisitorId(): string

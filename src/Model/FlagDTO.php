@@ -22,18 +22,18 @@ class FlagDTO implements JsonSerializable
     private string $campaignId;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private string $campaignName;
+    private ?string $campaignName = null;
     /**
      * @var string
      */
     private string $variationGroupId;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private string $variationGroupName;
+    private ?string $variationGroupName = null;
 
     /**
      * @var string
@@ -41,9 +41,9 @@ class FlagDTO implements JsonSerializable
     private string $variationId;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private string $variationName;
+    private ?string $variationName = null;
     /**
      * @var bool
      */
@@ -208,9 +208,9 @@ class FlagDTO implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getCampaignName(): string
+    public function getCampaignName(): ?string
     {
         return $this->campaignName;
     }
@@ -226,9 +226,9 @@ class FlagDTO implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getVariationGroupName(): string
+    public function getVariationGroupName(): ?string
     {
         return $this->variationGroupName;
     }
@@ -244,9 +244,9 @@ class FlagDTO implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getVariationName(): string
+    public function getVariationName(): ?string
     {
         return $this->variationName;
     }

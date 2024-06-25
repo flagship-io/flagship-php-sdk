@@ -186,7 +186,7 @@ class BucketingManager extends DecisionManagerAbstract
     /**
      * @inheritDoc
      */
-    public function getCampaigns(VisitorAbstract $visitor): array
+    public function getCampaigns(VisitorAbstract $visitor): array|null
     {
         $bucketingCampaigns = $this->getBucketingFile();
 

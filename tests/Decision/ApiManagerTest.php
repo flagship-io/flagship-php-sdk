@@ -380,6 +380,6 @@ class ApiManagerTest extends TestCase
 
         $value = $apiManager->getCampaigns($visitor);
 
-        $this->assertCount(0, $value);
+        $this->assertNull($value);
     }
 }

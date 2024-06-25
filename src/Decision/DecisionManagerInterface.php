@@ -18,9 +18,9 @@ interface DecisionManagerInterface
 
     /**
      * @param VisitorAbstract $visitor
-     * @return array
+     * @return array|null
      */
-    public function getCampaigns(VisitorAbstract $visitor): array;
+    public function getCampaigns(VisitorAbstract $visitor): array|null;
 
     /**
      * @param $campaigns

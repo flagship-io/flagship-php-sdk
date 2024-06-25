@@ -86,14 +86,14 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     protected string $instanceId;
 
-    protected static FSSdkStatus $sdkStatus;
+    protected static ?FSSdkStatus $sdkStatus = null;
 
     protected ?string $flagshipInstanceId;
 
     /**
-     * @var Troubleshooting
+     * @var ?Troubleshooting
      */
-    protected Troubleshooting $ConsentHitTroubleshooting;
+    protected ?Troubleshooting $ConsentHitTroubleshooting = null;
 
     /**
      * @var callable
@@ -161,9 +161,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     }
 
     /**
-     * @return FSSdkStatus
+     * @return ?FSSdkStatus
      */
-    public function getSdkStatus(): FSSdkStatus
+    public function getSdkStatus(): ?FSSdkStatus
     {
         return self::$sdkStatus;
     }

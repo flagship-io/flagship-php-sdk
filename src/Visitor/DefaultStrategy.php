@@ -2,6 +2,7 @@
 
 namespace Flagship\Visitor;
 
+use Flagship\Enum\FlagshipContext;
 use Flagship\Hit\Event;
 use Flagship\Hit\Activate;
 use Flagship\Enum\LogLevel;
@@ -80,7 +81,10 @@ class DefaultStrategy extends StrategyAbstract
             return;
         }
 
-        if (preg_match('/^fs_/i', $key)) {
+        if (
+            $key === FlagshipContext::FLAGSHIP_CLIENT
+            || $key === FlagshipContext::FLAGSHIP_VERSION || $key === FlagshipContext::FLAGSHIP_VISITOR
+        ) {
             return;
         }
 
@@ -167,6 +171,16 @@ class DefaultStrategy extends StrategyAbstract
     {
         if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
             $this->logDeactivate(__FUNCTION__);
+            return;
+        }
+
+        $anonymousId = $this->getVisitor()->getAnonymousId();
+        if (!empty($anonymousId)) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                FlagshipConstant::FLAGSHIP_VISITOR_ALREADY_AUTHENTICATE,
+                [FlagshipConstant::TAG => __FUNCTION__]
+            );
             return;
         }
 
@@ -509,7 +523,7 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function visitorExposed(
         string $key,
-        float|array|bool|int|string $defaultValue,
+        float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
     ): void {
@@ -587,7 +601,7 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function getFlagValue(
         string $key,
-        float|array|bool|int|string $defaultValue,
+        float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $userExposed = true
     ): float|array|bool|int|string {

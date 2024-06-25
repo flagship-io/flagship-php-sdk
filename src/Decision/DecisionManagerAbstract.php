@@ -293,9 +293,9 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
 
     /**
      * @param VisitorAbstract $visitor
-     * @return array
+     * @return array|null
      */
-    abstract public function getCampaigns(VisitorAbstract $visitor): array;
+    abstract public function getCampaigns(VisitorAbstract $visitor): array|null;
 
     /**
      * @inheritDoc

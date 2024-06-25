@@ -69,7 +69,7 @@ class PanicStrategy extends DefaultStrategy
      */
     public function getFlagValue(
         string $key,
-        float|array|bool|int|string $defaultValue,
+        float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $userExposed = true
     ): float|int|bool|array|string {
@@ -82,7 +82,7 @@ class PanicStrategy extends DefaultStrategy
      */
     public function visitorExposed(
         $key,
-        float|array|bool|int|string $defaultValue,
+        float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
     ): void {

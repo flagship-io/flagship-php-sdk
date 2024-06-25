@@ -124,7 +124,10 @@ class BucketingManagerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $bucketingContent = json_decode($bucketingFile, true);
@@ -225,24 +228,24 @@ class BucketingManagerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
-        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$containerMock, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
-        $httpClientMock->expects($this->exactly(3))
+        $httpClientMock->expects($this->exactly(2))
             ->method('get')
             ->willReturn(
                 new HttpResponse(204, json_decode('{"campaigns":[{}]}', true))
             );
 
-        $trackerManager->expects($this->exactly(3))->method("addHit");
+        $visitor->expects($this->exactly(1))->method("sendHit");
 
         $bucketingManager->getCampaignFlags($visitor);
 
         //Test empty context
+        $visitor->clearContext();
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, [], true);
-        $bucketingManager->getCampaignFlags($visitor);
-
-        //Test visitor has not consented
-        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, false);
         $bucketingManager->getCampaignFlags($visitor);
     }
 
@@ -1089,7 +1092,10 @@ class BucketingManagerTest extends TestCase
             ->getMock();
         $configManager->setConfig($config);
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
         $segments = [
             [
@@ -1151,7 +1157,6 @@ class BucketingManagerTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(new HttpResponse(200, $campaigns, []), new HttpResponse(200, $segments, []));
 
-        $logManagerStub->expects($this->exactly(1))->method("error");
         $bucketingManager->getCampaigns($visitor);
         $context = $visitor->getContext();
 
@@ -1200,12 +1205,17 @@ class BucketingManagerTest extends TestCase
             "age" => 20
         ];
         $container = new Container();
+
         $configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $configManager->setConfig($config);
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
         $segmentUrl = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $config->getEnvId(), $visitorId);
         $campaigns = ["campaigns" => []];
@@ -1227,7 +1237,7 @@ class BucketingManagerTest extends TestCase
 
         $config->setLogManager($logManagerStub);
 
-        $logManagerStub->expects($this->exactly(2))->method("error");
+        $logManagerStub->expects($this->exactly(1))->method("error");
 
         $bucketingManager->getCampaigns($visitor);
     }

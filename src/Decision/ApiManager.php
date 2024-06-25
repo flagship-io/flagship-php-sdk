@@ -44,7 +44,7 @@ class ApiManager extends DecisionManagerAbstract
         }
     }
 
-    public function getCampaigns(VisitorAbstract $visitor): array
+    public function getCampaigns(VisitorAbstract $visitor): array|null
     {
         $postData = [
             "visitorId" => $visitor->getVisitorId(),
@@ -70,9 +70,7 @@ class ApiManager extends DecisionManagerAbstract
 
             $this->setTroubleshootingData($body);
 
-            if (isset($body[FlagshipField::FIELD_CAMPAIGNS])) {
-                return $body[FlagshipField::FIELD_CAMPAIGNS];
-            }
+            return $body[FlagshipField::FIELD_CAMPAIGNS] ?? null;
         } catch (Exception $exception) {
             $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FETCH_ERROR));
             $this->logError($this->getConfig(), $exception->getMessage(), [
@@ -80,7 +78,7 @@ class ApiManager extends DecisionManagerAbstract
             ]);
 
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::GET_CAMPAIGNS_ROUTE_RESPONSE_ERROR)     
+            $troubleshooting->setLabel(TroubleshootingLabel::GET_CAMPAIGNS_ROUTE_RESPONSE_ERROR)
                 ->setHttpRequestBody($postData)
                 ->setHttpRequestHeaders($headers)
                 ->setHttpRequestMethod("POST")
@@ -97,8 +95,8 @@ class ApiManager extends DecisionManagerAbstract
                 ->setAnonymousId($visitor->getAnonymousId())
             ;
             $visitor->sendTroubleshootingHit($troubleshooting);
+            return null;
         }
-        return [];
     }
 
     /**

@@ -192,6 +192,7 @@ class FlagshipConstant
     public const LOG_FORMAT_RESPONSE_BODY = 'RESPONSE_BODY';
     public const LOG_FORMAT_RESPONSE_STATUS = 'RESPONSE_STATUS';
     public const LOG_FORMAT_DURATION = 'DURATION';
-
     public const ANALYTIC_HIT_ALLOCATION = 1;
+    public const FLAGSHIP_VISITOR_ALREADY_AUTHENTICATE =
+        "Visitor is already authenticated";
 }

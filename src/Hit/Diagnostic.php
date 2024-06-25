@@ -547,10 +547,10 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param FSSdkStatus $sdkStatus
+     * @param ?FSSdkStatus $sdkStatus
      * @return Diagnostic
      */
-    public function setSdkStatus(FSSdkStatus $sdkStatus): static
+    public function setSdkStatus(?FSSdkStatus $sdkStatus): static
     {
         $this->sdkStatus = $sdkStatus;
         return $this;
@@ -637,10 +637,10 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkConfigBucketingUrl
+     * @param ?string $sdkConfigBucketingUrl
      * @return Diagnostic
      */
-    public function setSdkConfigBucketingUrl(string $sdkConfigBucketingUrl): static
+    public function setSdkConfigBucketingUrl(?string $sdkConfigBucketingUrl): static
     {
         $this->sdkConfigBucketingUrl = $sdkConfigBucketingUrl;
         return $this;
@@ -655,10 +655,10 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param string $sdkConfigFetchThirdPartyData
+     * @param ?string $sdkConfigFetchThirdPartyData
      * @return Diagnostic
      */
-    public function setSdkConfigFetchThirdPartyData(string $sdkConfigFetchThirdPartyData): static
+    public function setSdkConfigFetchThirdPartyData(?string $sdkConfigFetchThirdPartyData): static
     {
         $this->sdkConfigFetchThirdPartyData = $sdkConfigFetchThirdPartyData;
         return $this;

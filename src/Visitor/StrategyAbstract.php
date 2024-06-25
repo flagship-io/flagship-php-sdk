@@ -70,7 +70,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         $this->visitor = $visitor;
     }
 
-    public function getFlagshipInstanceId(): string
+    public function getFlagshipInstanceId(): ?string
     {
         return $this->flagshipInstanceId;
     }

@@ -13,7 +13,7 @@ class HttpClientTest extends TestCase
     public function testConstructorFailed()
     {
         Curl::$extension = false;
-        $this->setExpectedException('Exception', FlagshipConstant::CURL_LIBRARY_IS_NOT_LOADED);
+        $this->expectException('Exception', FlagshipConstant::CURL_LIBRARY_IS_NOT_LOADED);
         $client = new HttpClient();
     }
 
@@ -50,10 +50,10 @@ class HttpClientTest extends TestCase
         $urlBuild = $buildMethod->invokeArgs(
             $client,
             [$urlOriginal,
-            [
-                $visitoKey => $visitorid,
-                $versionSDkKey => $versionSDkValue
-            ]
+                [
+                    $visitoKey => $visitorid,
+                    $versionSDkKey => $versionSDkValue
+                ]
             ]
         );
         $this->assertEquals($urlExpected, $urlBuild);
@@ -70,13 +70,14 @@ class HttpClientTest extends TestCase
         Curl::$response = '"Test-response"';
         Curl::$curlErrorCode = 0;
         Curl::$curlHttpCodeInfo = 204;
-
+        Curl::$curlLastModifies = 1651479244; //2022-05-02 08:14:04
 
         $response = $client->post($url, [], []);
 
         $this->assertInstanceOf('Flagship\Model\HttpResponse', $response);
         $this->assertSame(json_decode(Curl::$response), $response->getBody());
         $this->assertSame(Curl::$curlHttpCodeInfo, $response->getStatusCode());
+        $this->assertSame("2022-05-02 08:14:04", $response->getHeaders()["last-modified"]);
     }
 
     public function testPostFailed()
@@ -86,7 +87,7 @@ class HttpClientTest extends TestCase
         Curl::$response = '{"message": "Forbidden"}';
         Curl::$curlErrorCode = 0;
         Curl::$curlHttpCodeInfo = 403;
-        $this->setExpectedException('Exception');
+        $this->expectException('Exception');
         $response = $client->post($url, [], []);
     }
     public function testGet()
@@ -96,12 +97,10 @@ class HttpClientTest extends TestCase
         Curl::$response = '"Test-response"';
         Curl::$curlErrorCode = 0;
         Curl::$curlHttpCodeInfo = 204;
-        Curl::$curlLastModifies = 1630935806;
 
         $response = $client->get($url, []);
         $this->assertInstanceOf('Flagship\Model\HttpResponse', $response);
         $this->assertSame(json_decode(Curl::$response), $response->getBody());
         $this->assertSame(Curl::$curlHttpCodeInfo, $response->getStatusCode());
-        $this->assertSame("2021-09-06 13:43:26", $response->getHeaders()['last-modified']);
     }
 }

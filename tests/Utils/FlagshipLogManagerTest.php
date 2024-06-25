@@ -9,9 +9,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Flagship\Traits\ErrorLog;
 
-class FlagshipLogManager8Test extends TestCase
+class FlagshipLogManagerTest extends TestCase
 {
-    public function contextDataProvider()
+    public function contextDataProvider(): array
     {
         return
             [
@@ -20,7 +20,7 @@ class FlagshipLogManager8Test extends TestCase
                 'contextString' => '[process => testError, context2 => value 2]' ];
     }
 
-    public function getMessageError($formatDate, $level, $message, $tag)
+    public function getMessageError($formatDate, $level, $message, $tag): string
     {
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         return "[$formatDate] [$flagshipSdk] [$level] {$tag} $message";

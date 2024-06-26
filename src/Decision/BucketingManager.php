@@ -23,7 +23,6 @@ class BucketingManager extends DecisionManagerAbstract
     public const NB_MIN_CONTEXT_KEYS = 4;
     public const INVALID_BUCKETING_FILE_URL = "Invalid bucketing file url";
     public const GET_THIRD_PARTY_SEGMENT = 'GET_THIRD_PARTY_SEGMENT';
-
     public const THIRD_PARTY_SEGMENT = 'THIRD_PARTY_SEGMENT';
     public const PARTNER = "partner";
     public const SEGMENT = "segment";
@@ -153,6 +152,7 @@ class BucketingManager extends DecisionManagerAbstract
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE)
                 ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+                ->setVisitorId($this->getFlagshipInstanceId())
                 ->setTraffic(0)
                 ->setLogLevel(LogLevel::INFO)
                 ->setConfig($this->getConfig())
@@ -171,6 +171,7 @@ class BucketingManager extends DecisionManagerAbstract
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR)
                 ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+                ->setVisitorId($this->getFlagshipInstanceId())
                 ->setTraffic(0)
                 ->setLogLevel(LogLevel::ERROR)
                 ->setConfig($this->getConfig())

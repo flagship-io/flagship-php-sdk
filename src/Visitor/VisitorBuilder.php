@@ -24,9 +24,9 @@ class VisitorBuilder
      */
     private array $context;
     /**
-     * @var string
+     * @var ?string
      */
-    private string $visitorId;
+    private ?string $visitorId;
     /**
      * @var ConfigManager
      */
@@ -49,14 +49,14 @@ class VisitorBuilder
 
 
     /**
-     * @param string $visitorId
+     * @param ?string $visitorId
      * @param bool $hasConsented
      * @param ConfigManager $configManager
      * @param ContainerInterface $dependencyIContainer
      * @param string $flagshipInstance
      */
     private function __construct(
-        string $visitorId,
+        ?string $visitorId,
         bool $hasConsented,
         ConfigManager $configManager,
         ContainerInterface $dependencyIContainer,
@@ -74,7 +74,7 @@ class VisitorBuilder
     /**
      * Create a new visitor builder.
      *
-     * @param string $visitorId The visitor identifier.
+     * @param ?string $visitorId The visitor identifier.
      * @param bool $hasConsented Set to true when the visitor has consented, false otherwise.
      * @param ConfigManager $configManager The configuration manager.
      * @param ContainerInterface $container The dependency injection container.
@@ -82,7 +82,7 @@ class VisitorBuilder
      * @return VisitorBuilder
      */
     public static function builder(
-        string $visitorId,
+        ?string $visitorId,
         bool $hasConsented,
         ConfigManager $configManager,
         ContainerInterface $container,
@@ -106,7 +106,8 @@ class VisitorBuilder
     /**
      * Specify visitor initial context key / values used for targeting.
      * Context key must be String, and value type must be one of the following : Number, Boolean, String.
-     * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
+     * @param array<string, string|int|float|null|bool> $context : visitor context.
+     * e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return VisitorBuilder
      */
     public function setContext(array $context): static

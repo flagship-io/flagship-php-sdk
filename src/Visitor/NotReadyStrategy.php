@@ -41,7 +41,7 @@ class NotReadyStrategy extends DefaultStrategy
         float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $userExposed = true
-    ): float|array|bool|int|string {
+    ): float|array|bool|int|string|null {
         $this->log(__FUNCTION__);
         return $defaultValue;
     }

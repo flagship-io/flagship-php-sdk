@@ -4,6 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\HitAbstract;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Model\FlagDTO;
 
 /**
@@ -30,6 +31,16 @@ class NoConsentStrategy extends DefaultStrategy
         bool $hasGetValueBeenCalled = false
     ): void {
         $this->log(__FUNCTION__);
+    }
+
+    public function sendTroubleshootingHit(Troubleshooting $hit): void
+    {
+       //
+    }
+
+    public function sendConsentHitTroubleshooting(): void
+    {
+        //
     }
 
     /**

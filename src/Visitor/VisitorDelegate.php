@@ -27,7 +27,7 @@ class VisitorDelegate extends VisitorAbstract
      *
      * @param ContainerInterface $dependencyIContainer
      * @param ConfigManager      $configManager
-     * @param string $visitorId             visitor unique identifier.
+     * @param ?string $visitorId             visitor unique identifier.
      * @param boolean $isAuthenticated
      * @param array              $context     visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
      * @param boolean $hasConsented
@@ -37,7 +37,7 @@ class VisitorDelegate extends VisitorAbstract
     public function __construct(
         ContainerInterface $dependencyIContainer,
         ConfigManager $configManager,
-        string $visitorId,
+        ?string $visitorId,
         bool $isAuthenticated = false,
         array $context = [],
         bool $hasConsented = false,
@@ -79,7 +79,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function updateContext(string $key, float|bool|int|string $value): void
+    public function updateContext(string $key, float|bool|int|string|null $value): void
     {
         $this->getStrategy()->updateContext($key, $value);
     }
@@ -154,7 +154,7 @@ class VisitorDelegate extends VisitorAbstract
         float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $userExposed = true
-    ): float|array|bool|int|string {
+    ): float|array|bool|int|string|null {
         return $this->getStrategy()->getFlagValue($key, $defaultValue, $flag, $userExposed);
     }
 

@@ -32,6 +32,7 @@ class BucketingManagerTest extends TestCase
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setFlagshipInstanceId("flagship_instance_id");
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
         $visitorContext = [
@@ -114,6 +115,7 @@ class BucketingManagerTest extends TestCase
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setFlagshipInstanceId("flagship_instance_id");
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
         $visitorContext = [
@@ -221,6 +223,7 @@ class BucketingManagerTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setFlagshipInstanceId("flagship_instance_id");
 
         $bucketingManager->setTrackingManager($trackingManagerMock);
 
@@ -1079,6 +1082,7 @@ class BucketingManagerTest extends TestCase
             ->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setFlagshipInstanceId("instance_id");
 
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
@@ -1199,6 +1203,7 @@ class BucketingManagerTest extends TestCase
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
         $bucketingManager->setTrackingManager($trackingManagerMock);
+        $bucketingManager->setFlagshipInstanceId("instance_id");
 
         $visitorId = "visitor_1";
         $visitorContext = [

@@ -7,6 +7,7 @@ use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Hit\Page;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -183,5 +184,8 @@ class NoConsentStrategyTest extends TestCase
 
         // test cacheVisitor
         $noConsentStrategy->cacheVisitor();
+
+        $noConsentStrategy->sendTroubleshootingHit(new Troubleshooting("test"));
+        $noConsentStrategy->sendConsentHitTroubleshooting();
     }
 }

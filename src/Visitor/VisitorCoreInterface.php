@@ -22,7 +22,7 @@ interface VisitorCoreInterface
      * @param bool|string|numeric $value : context value.
      * @return void
      */
-    public function updateContext(string $key, float|bool|int|string $value): void;
+    public function updateContext(string $key, float|bool|int|string|null $value): void;
 
     /**
      * Update the visitor context values, matching the given keys, used for targeting.

@@ -70,7 +70,7 @@ class DefaultStrategy extends StrategyAbstract
      * @param bool|string|numeric $value : context value.
      * @return void
      */
-    protected function updateContextKeyValue(string $key, float|bool|int|string $value): void
+    protected function updateContextKeyValue(string $key, mixed $value): void
     {
         if (!$this->isKeyValid($key) || !$this->isValueValid($value)) {
             $this->logError(
@@ -115,7 +115,7 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function updateContext(string $key, float|bool|int|string $value): void
+    public function updateContext(string $key, float|bool|int|string|null $value): void
     {
         $this->updateContextKeyValue($key, $value);
         $this->fetchStatusUpdateContext();
@@ -590,16 +590,16 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @param string $key
      * @param float|array|bool|int|string $defaultValue
-     * @param  FlagDTO|null $flag
+     * @param FlagDTO|null $flag
      * @param boolean $userExposed
-     * @return array|boolean|float|integer|string
+     * @return float|array|bool|int|string|null
      */
     public function getFlagValue(
         string $key,
         float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $userExposed = true
-    ): float|array|bool|int|string {
+    ): float|array|bool|int|string|null {
         if (!$flag) {
             $this->logInfoSprintf(
                 $this->getConfig(),

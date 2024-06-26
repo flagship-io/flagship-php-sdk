@@ -113,7 +113,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function updateContext(string $key, float|bool|int|string $value): void
+    public function updateContext(string $key, float|bool|int|string|null $value): void
     {
         $this->getVisitorDelegate()->updateContext($key, $value);
     }

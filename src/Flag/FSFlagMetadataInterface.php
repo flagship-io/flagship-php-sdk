@@ -12,9 +12,9 @@ interface FSFlagMetadataInterface extends JsonSerializable
     public function getCampaignId(): string;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getCampaignName(): string;
+    public function getCampaignName(): ?string;
 
     /**
      * @return string
@@ -22,9 +22,9 @@ interface FSFlagMetadataInterface extends JsonSerializable
     public function getVariationGroupId(): string;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getVariationGroupName(): string;
+    public function getVariationGroupName(): ?string;
 
     /**
      * @return string
@@ -32,9 +32,9 @@ interface FSFlagMetadataInterface extends JsonSerializable
     public function getVariationId(): string;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getVariationName(): string;
+    public function getVariationName(): ?string;
 
     /**
      * @return bool
@@ -47,7 +47,7 @@ interface FSFlagMetadataInterface extends JsonSerializable
     public function getCampaignType(): string;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getSlug(): string;
+    public function getSlug(): ?string;
 }

@@ -69,7 +69,7 @@ class FSFlag implements FSFlagInterface
     public function getValue(
         float|array|bool|int|string|null $defaultValue,
         bool $visitorExposed = true
-    ): float|array|bool|int|string {
+    ): float|array|bool|int|string|null {
         $flagDTO = $this->findFlagDTO($this->key);
         $this->defaultValue = $defaultValue;
         $this->hasGetValueBeenCalled = true;

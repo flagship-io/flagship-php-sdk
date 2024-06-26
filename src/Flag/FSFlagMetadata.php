@@ -161,9 +161,9 @@ class FSFlagMetadata implements FSFlagMetadataInterface
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getSlug(): string
+    public function getSlug(): ?string
     {
         return $this->slug;
     }

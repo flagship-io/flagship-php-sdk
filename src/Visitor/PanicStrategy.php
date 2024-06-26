@@ -35,7 +35,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function updateContext(string $key, float|bool|int|string $value): void
+    public function updateContext(string $key, float|bool|int|string|null $value): void
     {
         $this->log(__FUNCTION__);
     }
@@ -72,7 +72,7 @@ class PanicStrategy extends DefaultStrategy
         float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $userExposed = true
-    ): float|int|bool|array|string {
+    ): float|int|bool|array|string|null {
         $this->log(__FUNCTION__);
         return $defaultValue;
     }

@@ -28,14 +28,14 @@ interface VisitorFlagInterface
      * @param array|bool|string|numeric $defaultValue
      * @param FlagDTO|null $flag
      * @param bool $userExposed
-     * @return string|numeric|bool|array
+     * @return float|array|bool|int|string|null
      */
     public function getFlagValue(
         string $key,
         float|array|bool|int|string|null $defaultValue,
         FlagDTO $flag = null,
         bool $userExposed = true
-    ): float|array|bool|int|string;
+    ): float|array|bool|int|string|null;
 
     /**
      * @param string $key

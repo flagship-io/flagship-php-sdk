@@ -26,7 +26,7 @@ class PanicStrategy extends DefaultStrategy
             $this->getVisitor()->getConfig(),
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
-                FSSdkStatus::SDK_PANIC
+                FSSdkStatus::SDK_PANIC->name
             ),
             [FlagshipConstant::TAG => __FUNCTION__]
         );
@@ -133,7 +133,7 @@ class PanicStrategy extends DefaultStrategy
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FSSdkStatus::SDK_PANIC
+                FSSdkStatus::SDK_PANIC->name
             ),
             [FlagshipConstant::TAG => $functionName]
         );

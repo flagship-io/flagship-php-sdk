@@ -48,20 +48,19 @@ class VisitorBuilder
     private $onFetchFlagsStatusChanged;
 
 
-
     /**
      * @param string $visitorId
      * @param bool $hasConsented
      * @param ConfigManager $configManager
      * @param ContainerInterface $dependencyIContainer
-     * @param string|null $flagshipInstance
+     * @param string $flagshipInstance
      */
     private function __construct(
         string $visitorId,
         bool $hasConsented,
         ConfigManager $configManager,
         ContainerInterface $dependencyIContainer,
-        ?string $flagshipInstance
+        string $flagshipInstance
     ) {
         $this->visitorId = $visitorId;
         $this->hasConsented = $hasConsented;
@@ -79,7 +78,7 @@ class VisitorBuilder
      * @param bool $hasConsented Set to true when the visitor has consented, false otherwise.
      * @param ConfigManager $configManager The configuration manager.
      * @param ContainerInterface $container The dependency injection container.
- * @param string|null $flagshipInstance The Flagship instance identifier.
+     * @param string $flagshipInstance The Flagship instance identifier.
      * @return VisitorBuilder
      */
     public static function builder(
@@ -87,7 +86,7 @@ class VisitorBuilder
         bool $hasConsented,
         ConfigManager $configManager,
         ContainerInterface $container,
-        ?string $flagshipInstance
+        string $flagshipInstance
     ): VisitorBuilder {
         return new VisitorBuilder($visitorId, $hasConsented, $configManager, $container, $flagshipInstance);
     }

@@ -51,7 +51,7 @@ class VisitorDelegate extends VisitorAbstract
         $this->setConfig($configManager->getConfig());
         $this->setVisitorId($visitorId ?: $this->newGuid());
 
-        $this->setContext($context);
+        $this->initialContext($context);
         $this->setConfigManager($configManager);
         $this->loadPredefinedContext();
 

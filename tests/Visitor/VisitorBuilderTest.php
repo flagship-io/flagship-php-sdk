@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flagship\Visitor;
 
 use Flagship\Enum\FSFetchReason;
+use Flagship\Utils\Container;
 use PHPUnit\Framework\TestCase;
 use Flagship\Enum\FSFetchStatus;
 use Flagship\Utils\ConfigManager;
@@ -14,52 +17,28 @@ class VisitorBuilderTest extends TestCase
 {
     public function testBuilder()
     {
-        $containerGetMethod = function () {
-            $args = func_get_args();
-            $params = $args[1];
-            switch ($args[0]) {
-                case 'Flagship\Visitor\NotReadyStrategy':
-                    $returnValue = new NotReadyStrategy($params[0]);
-                    break;
-                case 'Flagship\Visitor\VisitorDelegate':
-                    $returnValue = new VisitorDelegate(
-                        $params[0],
-                        $params[1],
-                        $params[2],
-                        $params[3],
-                        $params [4],
-                        $params[5]
-                    );
-                    break;
-                case 'Flagship\Visitor\Visitor':
-                    $returnValue = new Visitor($args[1][0]);
-                    break;
-                default:
-                    $returnValue = null;
-            }
-            return $returnValue;
-        };
 
         $trackerManager = $this->getMockBuilder('Flagship\Api\TrackingManager')
-            ->setMethods(['addHit'])
+            ->onlyMethods(['addHit'])
             ->disableOriginalConstructor()->getMock();
 
-        $containerMock = $this->getMockBuilder(
-            'Flagship\Utils\Container'
-        )->setMethods(['get'])->disableOriginalConstructor()->getMock();
-
-        $containerMock->method('get')
-            ->will($this->returnCallback($containerGetMethod));
+        $container = new Container();
 
         $visitorId = "visitorId";
         $hasConsented = true;
-        $configManager = new ConfigManager();
+
         $config = new DecisionApiConfig();
+        $decisionManager = $this->getMockBuilder('Flagship\Decision\ApiManager')
+            ->disableOriginalConstructor()->getMock();
+        $configManager = new ConfigManager($config, $decisionManager, $trackerManager);
 
-        $configManager->setConfig($config);
-        $configManager->setTrackingManager($trackerManager);
-
-        $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $containerMock, null)->build();
+        $visitor = VisitorBuilder::builder(
+            $visitorId,
+            $hasConsented,
+            $configManager,
+            $container,
+            "instanceId"
+        )->build();
 
         $this->assertEquals($visitorId, $visitor->getVisitorId());
         $this->assertTrue($visitor->hasConsented());
@@ -79,7 +58,7 @@ class VisitorBuilderTest extends TestCase
             $this->assertSame($fetchFlagsStatus->getReason(), FSFetchReason::VISITOR_CREATED);
         };
 
-        $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $containerMock, null)
+        $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $container, "instanceId")
             ->setIsAuthenticated(true)
             ->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged)
             ->setContext($context)->build();
@@ -87,6 +66,5 @@ class VisitorBuilderTest extends TestCase
         $this->assertSame($context, $visitor->getContext());
         $this->assertTrue($visitor->hasConsented());
         $this->assertNotNull($visitor->getAnonymousId());
-        
     }
 }

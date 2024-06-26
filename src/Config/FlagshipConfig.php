@@ -44,7 +44,7 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @var ?LoggerInterface
      */
-    private ?LoggerInterface $logManager;
+    private ?LoggerInterface $logManager = null;
     /**
      * @var LogLevel
      */
@@ -92,7 +92,6 @@ abstract class FlagshipConfig implements JsonSerializable
         $this->apiKey = $apiKey;
         $this->cacheStrategy = CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE;
         $this->setDisableDeveloperUsageTracking(false);
-        $this->logManager = null;
     }
 
     /**
@@ -253,17 +252,7 @@ abstract class FlagshipConfig implements JsonSerializable
      */
     public function setOnSdkStatusChanged(callable $onSdkStatusChanged): static
     {
-        if (is_callable($onSdkStatusChanged)) {
-            $this->onSdkStatusChanged = $onSdkStatusChanged;
-        } else {
-            $this->logError(
-                $this,
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($onSdkStatusChanged)),
-                [
-                    FlagshipConstant::TAG => __FUNCTION__
-                ]
-            );
-        }
+        $this->onSdkStatusChanged = $onSdkStatusChanged;
         return $this;
     }
 
@@ -318,18 +307,7 @@ abstract class FlagshipConfig implements JsonSerializable
      */
     public function setOnVisitorExposed(callable $onVisitorExposed): static
     {
-        if (is_callable($onVisitorExposed)) {
-            $this->onVisitorExposed = $onVisitorExposed;
-        } else {
-            $this->logError(
-                $this,
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($onVisitorExposed)),
-                [
-                    FlagshipConstant::TAG => __FUNCTION__
-                ]
-            );
-        }
-
+        $this->onVisitorExposed = $onVisitorExposed;
         return $this;
     }
 

@@ -105,10 +105,10 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     }
 
     /**
-     * @param TroubleshootingData $troubleshootingData
+     * @param ?TroubleshootingData $troubleshootingData
      * @return void
      */
-    public function setTroubleshootingData(TroubleshootingData $troubleshootingData): void
+    public function setTroubleshootingData(?TroubleshootingData $troubleshootingData): void
     {
         $this->troubleshootingData = $troubleshootingData;
     }

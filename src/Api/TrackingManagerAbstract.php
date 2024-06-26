@@ -215,7 +215,6 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
 
             $this->getStrategy()->flushHits($hitKeysToRemove);
         } catch (Exception $exception) {
-            var_dump($exception->getMessage());
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::PROCESS_CACHE,

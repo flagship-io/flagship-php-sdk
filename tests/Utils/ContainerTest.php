@@ -7,6 +7,7 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Decision\DecisionManagerAbstract;
+use Flagship\Flag\FSFlagMetadata;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -37,8 +38,6 @@ class ContainerTest extends TestCase
         $instanceAlias2 = $container->get(FlagshipConfig::class);
         $this->assertInstanceOf(FlagshipConfig::class, $instanceAlias2);
 
-
-
         $alias = DecisionManagerAbstract::class;
         $className = ApiManager::class;
         $container->bind($alias, $className);
@@ -55,14 +54,30 @@ class ContainerTest extends TestCase
         $container->get('NotExist');
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetWithDefaultArgs()
     {
-        $className = 'Flagship\Config\DecisionApiConfig';
+        $className = DecisionApiConfig::class;
         $container = new Container();
         $instanceAlias = $container->get($className);
         $this->assertInstanceOf($className, $instanceAlias);
         $this->assertNull($instanceAlias->getEnvId());
         $this->assertNull($instanceAlias->getApiKey());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetWithoutDefaultArgs()
+    {
+        $className = FSFlagMetadata::class;
+        $container = new Container();
+        $instanceAlias = $container->get($className);
+        $this->assertInstanceOf($className, $instanceAlias);
+
+        $this->assertEmpty($instanceAlias->getCampaignId());
     }
 
     /**

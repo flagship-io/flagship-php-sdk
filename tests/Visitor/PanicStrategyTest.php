@@ -7,7 +7,6 @@ use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Enum\FSSdkStatus;
-use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
@@ -54,22 +53,19 @@ class PanicStrategyTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $logMessageBuild = function ($functionName) {
-            return [sprintf(
+            return sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FSSdkStatus::getStatusName(FSSdkStatus::SDK_PANIC)
-            ),
-            [FlagshipConstant::TAG => $functionName]];
+                FSSdkStatus::SDK_PANIC->name
+            );
         };
 
-        $logMessageBuildConsent = function ($functionName) {
-            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return [
+        $logMessageBuildConsent = function () {
+            return
                 sprintf(
                     FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
-                    FSSdkStatus::getStatusName(FSSdkStatus::SDK_PANIC)
-                ),
-                [FlagshipConstant::TAG => $functionName]];
+                    FSSdkStatus::SDK_PANIC->name,
+                );
         };
 
 
@@ -79,24 +75,34 @@ class PanicStrategyTest extends TestCase
                 new HttpResponse(500, [])
             );
 
-        $configManager = (new ConfigManager())->setConfig($config);
-
         $decisionManager = new ApiManager($httpClientMock, $config);
 
-        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
+        $configManager = new ConfigManager($config, $decisionManager, $trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
         $logManagerStub->expects($this->exactly(8))->method('info')
-            ->withConsecutive(
-                $logMessageBuild('updateContext'),
-                $logMessageBuild('updateContextCollection'),
-                $logMessageBuild('clearContext'),
-                $logMessageBuild('sendHit'),
-                $logMessageBuildConsent('setConsent'),
-                $logMessageBuild('getFlagValue'),
-                $logMessageBuild('visitorExposed'),
-                $logMessageBuild('getFlagMetadata')
+            ->with(
+                $this->logicalOr(
+                    $logMessageBuild('updateContext'),
+                    $logMessageBuild('updateContextCollection'),
+                    $logMessageBuild('clearContext'),
+                    $logMessageBuild('sendHit'),
+                    $logMessageBuildConsent(),
+                    $logMessageBuild('getFlagValue'),
+                    $logMessageBuild('visitorExposed'),
+                    $logMessageBuild('getFlagMetadata')
+                ),
+                $this->logicalOr(
+                    [FlagshipConstant::TAG => 'updateContext'],
+                    [FlagshipConstant::TAG => 'updateContextCollection'],
+                    [FlagshipConstant::TAG => 'clearContext'],
+                    [FlagshipConstant::TAG => 'sendHit'],
+                    [FlagshipConstant::TAG => 'setConsent'],
+                    [FlagshipConstant::TAG => 'getFlagValue'],
+                    [FlagshipConstant::TAG => 'visitorExposed'],
+                    [FlagshipConstant::TAG => 'getFlagMetadata']
+                )
             );
 
         $panicStrategy = new PanicStrategy($visitor);
@@ -121,13 +127,13 @@ class PanicStrategyTest extends TestCase
 
         //Test getFlagValue
         $value = $panicStrategy->getFlagValue('key', true);
-        $this->assertEquals(true, $value);
+        $this->assertTrue($value);
 
         //Test userExposed
-        $panicStrategy->visitorExposed('key', true, null);
+        $panicStrategy->visitorExposed('key', true);
 
         //Test getFlagMetadata
-        $panicStrategy->getFlagMetadata('key', null);
+        $panicStrategy->getFlagMetadata('key');
 
         $campaignsData = $this->campaigns();
         $assignmentsHistory = [];

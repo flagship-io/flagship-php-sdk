@@ -127,12 +127,7 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function updateContextCollection(array $context): void
     {
-        if (count($context) == 0) {
-            return;
-        }
-        foreach ($context as $itemKey => $item) {
-            $this->updateContextKeyValue($itemKey, $item);
-        }
+        $this->initialContext($context);
         $this->fetchStatusUpdateContext();
     }
 

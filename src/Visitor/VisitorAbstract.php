@@ -334,6 +334,12 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         $this->updateContextCollection($context);
     }
 
+    public function initialContext(array $context): void
+    {
+        $this->context = [];
+        $this->getStrategy()->initialContext($context);
+    }
+
 
     /**
      * @return FlagshipConfig

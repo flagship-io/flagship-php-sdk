@@ -25,23 +25,25 @@ class ApiManager extends DecisionManagerAbstract
     /**
      * @throws Exception
      */
-    protected function setTroubleshootingData(array $body): void
+    protected function setTroubleshootingData(?array $body): void
     {
         $this->troubleshootingData = null;
         if (
-            isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING])
+            $body === null || !isset($body[FlagshipField::EXTRAS]) ||
+            !isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS])
         ) {
-            $troubleshooting = $body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS]
-            [FlagshipField::TROUBLESHOOTING];
-            $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
-            $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
-            $troubleshootingData = new TroubleshootingData();
-            $troubleshootingData->setStartDate($startDate)
-                ->setEndDate($endDate)
-                ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
-                ->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
-            $this->troubleshootingData = $troubleshootingData;
+            return;
         }
+        $troubleshooting = $body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS]
+        [FlagshipField::TROUBLESHOOTING];
+        $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
+        $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
+        $troubleshootingData = new TroubleshootingData();
+        $troubleshootingData->setStartDate($startDate)
+            ->setEndDate($endDate)
+            ->setTimezone($troubleshooting[FlagshipField::TIMEZONE])
+            ->setTraffic($troubleshooting[FlagshipField::TRAFFIC]);
+        $this->troubleshootingData = $troubleshootingData;
     }
 
     public function getCampaigns(VisitorAbstract $visitor): array|null
@@ -92,8 +94,7 @@ class ApiManager extends DecisionManagerAbstract
                 ->setTraffic(100)
                 ->setConfig($this->getConfig())
                 ->setVisitorId($visitor->getVisitorId())
-                ->setAnonymousId($visitor->getAnonymousId())
-            ;
+                ->setAnonymousId($visitor->getAnonymousId());
             $visitor->sendTroubleshootingHit($troubleshooting);
             return null;
         }

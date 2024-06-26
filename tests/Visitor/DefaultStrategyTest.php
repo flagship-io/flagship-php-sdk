@@ -522,10 +522,10 @@ class DefaultStrategyTest extends TestCase
             ]
         ];
 
-        $httpClientMock->expects($this->exactly(2))->method("post")
+        $httpClientMock->expects($this->exactly(3))->method("post")
             ->willReturn(new HttpResponse(200, $httpResponseBody));
 
-        $trackingManagerMock->expects($this->exactly(2))->method("setTroubleshootingData")
+        $trackingManagerMock->expects($this->exactly(3))->method("setTroubleshootingData")
             ->with($this->callback(function ($param) use ($troubleshootingData) {
                 $startDate = new DateTime($troubleshootingData['startDate']);
                 $endDate = new DateTime($troubleshootingData['endDate']);
@@ -535,16 +535,14 @@ class DefaultStrategyTest extends TestCase
                     $param->getEndDate()->getTimestamp() === $endDate->getTimestamp();
             }));
 
-        $matcher = $this->exactly(4);
+        $matcher = $this->exactly(6);
         $trackingManagerMock->expects($matcher)
             ->method("addTroubleshootingHit")
             ->with(
                 $this->logicalOr(
                     $this->callback(function ($param) {
-                        return $param->getLabel() === TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS;
-                    }),
-                    $this->callback(function ($param) {
-                        return $param->getLabel() === TroubleshootingLabel::VISITOR_SEND_HIT;
+                        return $param->getLabel() === TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS ||
+                            $param->getLabel() === TroubleshootingLabel::VISITOR_SEND_HIT;
                     })
                 )
             );
@@ -574,6 +572,26 @@ class DefaultStrategyTest extends TestCase
         //Test send consent Troubleshooting
 
         $defaultStrategyMock->setConsent(true);
+
+        $config = new BucketingConfig('envId', 'apiKey');
+
+        $configManager = new ConfigManager($config, $decisionManager, $trackingManagerMock);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
+
+        $defaultStrategyMock = $this->getMockForAbstractClass(
+            "Flagship\Visitor\DefaultStrategy",
+            [$visitor],
+            "",
+            true,
+            false,
+            true,
+            ["sendSdkConfigAnalyticHit"]
+        );
+
+        $defaultStrategyMock->setMurmurHash(new MurmurHash());
+
+        $defaultStrategyMock->fetchFlags();
     }
 
 
@@ -911,8 +929,6 @@ class DefaultStrategyTest extends TestCase
             ->setVisitorId($visitor->getVisitorId())
             ->setConfig($config);
 
-        $functionName = FlagshipConstant::FLAG_VALUE;
-
         $trackerManagerStub->expects($this->exactly(4))
             ->method('activateFlag')
             ->with($activate);
@@ -1027,7 +1043,7 @@ class DefaultStrategyTest extends TestCase
         $this->assertEquals($metadata, $metadataValue);
 
         //Test flag null
-        $metadataValue = $defaultStrategy->getFlagMetadata($key, null);
+        $metadataValue = $defaultStrategy->getFlagMetadata($key);
         $this->assertEquals(FSFlagMetadata::getEmpty(), $metadataValue);
     }
 
@@ -1364,7 +1380,15 @@ class DefaultStrategyTest extends TestCase
 
         $VisitorCacheImplementationMock->expects($this->exactly(3))
             ->method("cacheVisitor")
-            ->withConsecutive([$visitorId, $visitorCache], [$visitorId, $visitorCache2])
+            ->with(
+                $this->logicalOr(
+                    $visitorId
+                ),
+                $this->logicalOr(
+                    $visitorCache,
+                    $visitorCache2
+                )
+            )
             ->willReturnOnConsecutiveCalls(null, null, $this->throwException($exception));
 
         $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
@@ -1377,11 +1401,9 @@ class DefaultStrategyTest extends TestCase
         $visitor->fetchFlags();
 
         $logManagerStub->expects($this->exactly(1))->method('error')
-            ->withConsecutive(
-                [
-                    $exception->getMessage(),
-                    [FlagshipConstant::TAG => $functionName]
-                ]
+            ->with(
+                $exception->getMessage(),
+                [FlagshipConstant::TAG => $functionName]
             );
 
         $visitor->fetchFlags();
@@ -1449,7 +1471,7 @@ class DefaultStrategyTest extends TestCase
 
         $VisitorCacheImplementationMock->expects($this->exactly(2))
             ->method("flushVisitor")
-            ->withConsecutive([$visitorId])
+            ->with($visitorId)
             ->willReturnOnConsecutiveCalls(null, $this->throwException($exception));
 
         $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
@@ -1462,13 +1484,12 @@ class DefaultStrategyTest extends TestCase
         $functionName = "flushVisitor";
 
         $logManagerStub->expects($this->exactly(1))->method('error')
-            ->withConsecutive(
-                [
-                    $exception->getMessage(),
-                    [FlagshipConstant::TAG => $functionName]
-                ]
+            ->with(
+                $exception->getMessage(),
+                [FlagshipConstant::TAG => $functionName]
             );
-        $defaultStrategy->setConsent(false); // will throw exception
+
+        $defaultStrategy->setConsent(false);
     }
 
 
@@ -1653,8 +1674,6 @@ class DefaultStrategyTest extends TestCase
             ->setFlagshipInstanceId($flagshipInstanceId)
             ->setConfig($config)
             ->setVisitorId($flagshipInstanceId);
-
-        $uniqueId = $visitor->getVisitorId() . "2024-01-29";
 
         $trackingManagerMock->expects($this->once())->method("addUsageHit")->with($analytic);
 

@@ -63,6 +63,8 @@ class EventTest extends TestCase
         $event->setValue($eventValue);
         $eventArray[FlagshipConstant::EVENT_VALUE_API_ITEM] = $eventValue;
 
+        $event->setValue(-1.0);
+
         $this->assertSame($eventArray, $event->toApiKeys());
 
         $anonymousId = "anonymousId";

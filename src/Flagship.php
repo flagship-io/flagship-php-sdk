@@ -50,9 +50,9 @@ class Flagship
     private ?FlagshipConfig $config;
 
     /**
-     * @var ConfigManager
+     * @var ?ConfigManager
      */
-    private ConfigManager $configManager;
+    private ?ConfigManager $configManager = null;
     /**
      * @var FSSdkStatus
      */
@@ -116,8 +116,6 @@ class Flagship
 
             $flagship->setConfig($config);
 
-
-
             if (!$config->getLogManager()) {
                 $logManager = $container->get(LoggerInterface::class);
                 $config->setLogManager($logManager);
@@ -144,7 +142,7 @@ class Flagship
                 [$config, $httpClient, $flagship->flagshipInstanceId]
             );
 
-            $configManager = $container->get(ConfigManager::class, [$config, $decisionManager, $trackingManager]);
+            $configManager = $container->get(ConfigManager::class, [$config, $decisionManager, $trackingManager], true);
 
             $decisionManager->setTrackingManager($trackingManager);
 
@@ -201,9 +199,9 @@ class Flagship
     }
 
     /**
-     * @return ConfigManager
+     * @return ?ConfigManager
      */
-    protected function getConfigManager(): ConfigManager
+    protected function getConfigManager(): ?ConfigManager
     {
         return $this->configManager;
     }
@@ -282,10 +280,7 @@ class Flagship
     public static function close(): void
     {
         $instance = self::getInstance();
-        if (!$instance->getConfigManager()) {
-            return;
-        }
-        $instance->getConfigManager()->getTrackingManager()->sendBatch();
+        $instance->getConfigManager()?->getTrackingManager()?->sendBatch();
     }
 
     /**

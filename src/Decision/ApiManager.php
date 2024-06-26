@@ -30,7 +30,8 @@ class ApiManager extends DecisionManagerAbstract
         $this->troubleshootingData = null;
         if (
             $body === null || !isset($body[FlagshipField::EXTRAS]) ||
-            !isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS])
+            !isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS]) ||
+            !isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING])
         ) {
             return;
         }

@@ -15,7 +15,7 @@ services:
   app-8:
     build:
       context: ../.
-      dockerfile: ./dockers/Dockerfile-8
+      dockerfile: ./dockers/Dockerfile
     image: flagship-io/flagship-php-sdk:php-8
     container_name: app-8
     tty: true

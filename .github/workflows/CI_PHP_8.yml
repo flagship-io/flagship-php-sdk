@@ -2,9 +2,9 @@ name: CI PHP 8
 
 on:
   push:
-    branches: [ main, feature/sdk_v2]
+    branches: [ main ]
   pull_request:
-    branches: [ main, feature/sdk_v2 ]
+    branches: [ main ]
 
 jobs:
   build:

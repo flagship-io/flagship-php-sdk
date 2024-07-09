@@ -45,7 +45,7 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Run test suite
-      run: composer run-script test -- -c phpunit.8.xml
+      run: composer run-script test
 
     - name: Run functional test
       run: php tests/TestFunctional.php

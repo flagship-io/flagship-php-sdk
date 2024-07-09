@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Flagship\Config\DecisionApiConfig;
@@ -20,8 +22,8 @@ $visitor = Flagship::newVisitor("visitor-1", true)
 $visitor->fetchFlags();
 
 $defaultValue = 'default-value';
-$flag = $visitor->getFlag('ci_flag_1', $defaultValue);
-$flagValue = $flag->getValue(false);
+$flag = $visitor->getFlag('ci_flag_1', );
+$flagValue = $flag->getValue($defaultValue);
 
 TestCase::assertSame($defaultValue, $flagValue);
 TestCase::assertSame('Test-campaign ab', $flag->getMetadata()->getCampaignName());
@@ -33,8 +35,8 @@ $visitor = Flagship::newVisitor("visitor-2", true)
 
 $visitor->fetchFlags();
 
-$flag = $visitor->getFlag('ci_flag_1', $defaultValue);
-$flagValue = $flag->getValue(false);
+$flag = $visitor->getFlag('ci_flag_1');
+$flagValue = $flag->getValue($defaultValue);
 
 TestCase::assertSame("flag-1-value-1", $flagValue);
 TestCase::assertSame('Test-campaign ab', $flag->getMetadata()->getCampaignName());
@@ -46,10 +48,10 @@ $visitor = Flagship::newVisitor("visitor-6", true)
 
 $visitor->fetchFlags();
 
-$flag = $visitor->getFlag('ci_flag_1', $defaultValue);
-$flagValue = $flag->getValue(false);
+$flag = $visitor->getFlag('ci_flag_1');
+$flagValue = $flag->getValue($defaultValue);
 
 TestCase::assertSame($defaultValue, $flagValue);
-TestCase::assertSame(null, $flag->getMetadata()->getCampaignName());
+TestCase::assertSame("", $flag->getMetadata()->getCampaignName());
 
 Flagship::close();

@@ -2,12 +2,15 @@
 
 namespace Flagship\Api;
 
+use DateTime;
+use Exception;
 use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitCacheFields;
 use Flagship\Hit\Activate;
+use Flagship\Hit\HitAbstract;
 use Flagship\Hit\UsageHit;
 use Flagship\Hit\Event;
 use Flagship\Hit\Item;
@@ -26,7 +29,7 @@ class TrackingManagerTest extends TestCase
 {
     use BuildApiTrait;
 
-    const PSR_LOG_INTERFACE = 'Psr\Log\LoggerInterface';
+    public const PSR_LOG_INTERFACE = 'Psr\Log\LoggerInterface';
 
     public function testConstruct()
     {
@@ -44,7 +47,7 @@ class TrackingManagerTest extends TestCase
         $httpClient = new HttpClient();
         $trackingManager = new TrackingManager($config, $httpClient);
         $strategy = $trackingManager->initStrategy();
-        $this->assertInstanceOf("Flagship\Api\NoBatchingContinuousCachingStrategy", $strategy);
+        $this->assertInstanceOf("Flagship\Api\BatchingOnFailedCachingStrategy", $strategy);
 
         $config->setCacheStrategy(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE);
         $strategy = $trackingManager->initStrategy();
@@ -181,6 +184,9 @@ class TrackingManagerTest extends TestCase
         $transaction = new Transaction("transId", "aff");
         $transaction->setVisitorId($visitorId)->setConfig($config)->setKey("$visitorId:key7");
 
+        /**
+         * @var $hits HitAbstract[]
+         */
         $hits = [$event, $item, $page, $screen, $segment, $activate, $transaction];
         $data = [];
 
@@ -190,7 +196,7 @@ class TrackingManagerTest extends TestCase
                 HitCacheFields::DATA => [
                     HitCacheFields::VISITOR_ID => $hit->getVisitorId(),
                     HitCacheFields::ANONYMOUS_ID => $hit->getAnonymousId(),
-                    HitCacheFields::TYPE => $hit->getType(),
+                    HitCacheFields::TYPE => $hit->getType()->value,
                     HitCacheFields::CONTENT => $hit->toArray(),
                     HitCacheFields::TIME => \round(microtime(true) * 1000)
                 ]
@@ -203,9 +209,9 @@ class TrackingManagerTest extends TestCase
             HitCacheFields::DATA => [
                 HitCacheFields::VISITOR_ID => $page->getVisitorId(),
                 HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
-                HitCacheFields::TYPE => $page->getType(),
+                HitCacheFields::TYPE => $page->getType()->value,
                 HitCacheFields::CONTENT => $page->toArray(),
-                HitCacheFields::TIME => (new \DateTime("2020/01/01"))->format("Uv")
+                HitCacheFields::TIME => (new DateTime("2020/01/01"))->format("Uv")
             ]
         ];
 
@@ -235,14 +241,6 @@ class TrackingManagerTest extends TestCase
             ->method("lookupHits")
             ->willReturnOnConsecutiveCalls($data, []);
 
-        $trackingManager->expects($this->exactly(2))
-            ->method("logDebugSprintf")
-            ->withConsecutive(
-                [ $config,
-                FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_CACHE_LOADED,
-                [$data]]
-            );
 
         Round::$returnValue = \round(microtime(true) * 1000);
 
@@ -274,7 +272,7 @@ class TrackingManagerTest extends TestCase
 
         $config->setHitCacheImplementation($hitCacheImplementationMock);
 
-        $exception = new \Exception("error");
+        $exception = new Exception("error");
 
         $hitCacheImplementationMock->expects($this->exactly(1))
             ->method("lookupHits")

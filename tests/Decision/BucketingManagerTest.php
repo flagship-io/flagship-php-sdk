@@ -16,8 +16,9 @@ use Flagship\Utils\MurmurHash;
 use Flagship\Utils\Utils;
 use Flagship\Visitor\DefaultStrategy;
 use Flagship\Visitor\VisitorDelegate;
-use Flagship\Visitor\VisitorStrategyAbstract;
+use Flagship\Visitor\StrategyAbstract;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 class BucketingManagerTest extends TestCase
 {
@@ -31,16 +32,22 @@ class BucketingManagerTest extends TestCase
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setFlagshipInstanceId("flagship_instance_id");
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
         $visitorContext = [
             "age" => 20
         ];
         $container = new Container();
-        $configManager = new ConfigManager();
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $configManager->setConfig($config);
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $httpClientMock->expects($this->exactly(6))
@@ -56,45 +63,48 @@ class BucketingManagerTest extends TestCase
             );
 
         //Test File not exist
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+        $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test Panic Mode
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+        $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test campaign property
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+        $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
         $this->assertCount(0, $campaigns);
 
         //Test campaign[FIELD_VARIATION_GROUPS]
 
-         $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(0, $campaigns);
 
          //
 
-         $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(0, $campaigns);
 
          //
-         $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(6, $campaigns);
 
          //test invalid bucketing file url
 
-         $config->setBucketingUrl("");
-         $campaigns = $bucketingManager->getCampaignModifications($visitor);
+         $config->setSyncAgentUrl("");
+         $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
          $this->assertCount(0, $campaigns);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetTroubleshootingData()
     {
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
@@ -105,16 +115,21 @@ class BucketingManagerTest extends TestCase
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setFlagshipInstanceId("flagship_instance_id");
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
         $visitorContext = [
             "age" => 20
         ];
         $container = new Container();
-        $configManager = new ConfigManager();
-        $configManager->setConfig($config);
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $bucketingContent = json_decode($bucketingFile, true);
@@ -142,7 +157,7 @@ class BucketingManagerTest extends TestCase
                 new HttpResponse(204, $bucketingContent)
             );
 
-        $campaigns = $bucketingManager->getCampaignModifications($visitor);
+        $bucketingManager->getCampaignFlags($visitor);
 
         $troubleshootingData = $bucketingManager->getTroubleshootingData();
         $this->assertSame($troubleshooting['traffic'], $troubleshootingData->getTraffic());
@@ -180,7 +195,7 @@ class BucketingManagerTest extends TestCase
 
         $containerMock = $this->getMockBuilder(
             'Flagship\Utils\Container'
-        )->setMethods(['get'])->disableOriginalConstructor()->getMock();
+        )->onlyMethods(['get'])->disableOriginalConstructor()->getMock();
 
         $containerGetMethod = function ($arg1, $arg2) {
 
@@ -208,33 +223,38 @@ class BucketingManagerTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setFlagshipInstanceId("flagship_instance_id");
 
         $bucketingManager->setTrackingManager($trackingManagerMock);
 
-        $configManager = new ConfigManager();
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
-        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$containerMock, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
-        $httpClientMock->expects($this->exactly(3))
+        $httpClientMock->expects($this->exactly(2))
             ->method('get')
             ->willReturn(
                 new HttpResponse(204, json_decode('{"campaigns":[{}]}', true))
             );
 
-        $trackerManager->expects($this->exactly(3))->method("addHit");
+        $visitor->expects($this->exactly(1))->method("sendHit");
 
-        $bucketingManager->getCampaignModifications($visitor);
+        $bucketingManager->getCampaignFlags($visitor);
 
         //Test empty context
+        $visitor->clearContext();
         $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, [], true);
-        $bucketingManager->getCampaignModifications($visitor);
-
-        //Test visitor has not consented
-        $visitor = new VisitorDelegate($containerMock, $configManager, $visitorId, false, $visitorContext, false);
-        $bucketingManager->getCampaignModifications($visitor);
-
+        $bucketingManager->getCampaignFlags($visitor);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetVariation()
     {
         $bucketingUrl  = "http:127.0.0.1:3000";
@@ -244,18 +264,20 @@ class BucketingManagerTest extends TestCase
         $visitorId = "123456";
 
         $container = new Container();
-        $configManager = new ConfigManager();
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, [], true);
 
-        $getVariationMethod = Utils::getMethod($bucketingManager, "getVariation");
+        $getVariationMethod = Utils::getMethod(BucketingManager::class, "getVariation");
 
-        //Test key Id  in variationGroup
+        //Test key id  in variationGroup
         $variationGroups = [];
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
         $this->assertCount(0, $variation);
 
-        //Test key Id  in variationGroup
+        //Test key id  in variationGroup
         $variations = [
             [
                 "id" => "c20j8bk3fk9hdphqtd30",
@@ -313,7 +335,7 @@ class BucketingManagerTest extends TestCase
         $realloCvariations = [
             [
                 "id" => "c20j8bk3fk9hdphqtd30",
-                "name"=>"variation1",
+                "name" => "variation1",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [
@@ -325,7 +347,7 @@ class BucketingManagerTest extends TestCase
             ],
             [
                 "id" => "c20j8bk3fk9hdphqtd3g",
-                "name"=>"variation2",
+                "name" => "variation2",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [
@@ -336,7 +358,7 @@ class BucketingManagerTest extends TestCase
             ],
             [
                 "id" => "c20j9lgbcahhf2mvhbf0",
-                "name"=>"variation2",
+                "name" => "variation2",
                 "modifications" => [
                     "type" => "HTML",
                     "value" => [
@@ -354,9 +376,9 @@ class BucketingManagerTest extends TestCase
         ];
         $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
             ]
         ];
 
@@ -397,13 +419,7 @@ class BucketingManagerTest extends TestCase
             FlagshipField::FIELD_ID => "9273BKSDJtoto",
             FlagshipField::FIELD_VARIATIONS => $reallovariations
         ];
-        $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
-        $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
-            ]
-        ];
+
 
         $visitor->visitorCache = $visitorCache;
 
@@ -412,6 +428,9 @@ class BucketingManagerTest extends TestCase
         $this->assertCount(0, $variation);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testIsMatchTargeting()
     {
         $bucketingUrl  = "http:127.0.0.1:3000";
@@ -423,11 +442,13 @@ class BucketingManagerTest extends TestCase
             "age" => 20
         ];
         $container = new Container();
-        $configManager = new ConfigManager();
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        $isMatchTargetingMethod = Utils::getMethod($bucketingManager, "isMatchTargeting");
+        $isMatchTargetingMethod = Utils::getMethod(BucketingManager::class, "isMatchTargeting");
 
         $variationGroup = [];
 
@@ -542,12 +563,6 @@ class BucketingManagerTest extends TestCase
 
         //Test Many targetingGroups with all false
 
-        $targetings2 = [
-            "key" => "age",
-            "operator" => "EQUALS",
-            'value' => 22
-        ];
-
         $variationGroup = [
             FlagshipField::FIELD_TARGETING => [
                 FlagshipField::FIELD_TARGETING_GROUPS => [
@@ -574,6 +589,9 @@ class BucketingManagerTest extends TestCase
         $this->assertFalse($output);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testCheckAndTargeting()
     {
         $bucketingUrl  = "http:127.0.0.1:3000";
@@ -585,11 +603,13 @@ class BucketingManagerTest extends TestCase
             "age" => 20
         ];
         $container = new Container();
-        $configManager = new ConfigManager();
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        $checkAndTargetingMethod = Utils::getMethod($bucketingManager, "checkAndTargeting");
+        $checkAndTargetingMethod = Utils::getMethod(BucketingManager::class, "checkAndTargeting");
 
         //test key = fs_all_users
         $targetingAllUsers = [
@@ -707,22 +727,22 @@ class BucketingManagerTest extends TestCase
         $this->assertFalse($output);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testOperator()
     {
         $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
-        $visitorId = "visitor_3";
-        $visitorContext = [
-//            "isPHP" => true
-            "age" => 20
-        ];
-        $container = new Container();
-        $configManager = new ConfigManager();
+
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $configManager->setConfig($config);
 
-        $testOperatorMethod = Utils::getMethod($bucketingManager, "testOperator");
+        $testOperatorMethod = Utils::getMethod(BucketingManager::class, "testOperator");
 
         /*Test EQUALS*/
 
@@ -733,18 +753,18 @@ class BucketingManagerTest extends TestCase
         $this->assertFalse($output);
 
         //Test different type
-        $contextValue = 5;
+
         $targetingValue = "5";
         $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test same type
-        $contextValue = 5;
+
         $targetingValue = 5;
         $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
-        $contextValue = 5;
+
         $targetingValue = [5,1,2,3];
         $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
@@ -752,29 +772,28 @@ class BucketingManagerTest extends TestCase
         /* Test NOT_EQUALS */
 
         //Test different values
-        $contextValue = 5;
+
         $targetingValue = 6;
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
-        $contextValue = 5;
+
         $targetingValue = [6,1,2,3];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test different type
-        $contextValue = 5;
+
         $targetingValue = "5";
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test same type
-        $contextValue = 5;
+
         $targetingValue = 5;
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
-        $contextValue = 5;
         $targetingValue = [1,2,3,5,6];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertFalse($output);
@@ -782,13 +801,13 @@ class BucketingManagerTest extends TestCase
         /* Test CONTAINS */
 
         //Test contextValue not contains targetingValue
-        $contextValue = 5;
+
         $targetingValue = [8, 7, 4, 1];
         $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue contains targetingValue
-        $contextValue = 5;
+
         $targetingValue = [8, 7, 5, 1];
         $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
         $this->assertTrue($output);
@@ -800,13 +819,13 @@ class BucketingManagerTest extends TestCase
         $this->assertTrue($output);
 
         //Test contextValue contains targetingValue
-        $contextValue = "nopq_hij";
+
         $targetingValue = "hij";
         $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue contains targetingValue
-        $contextValue = "nopq_hij";
+
         $targetingValue = "hidf";
         $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
         $this->assertFalse($output);
@@ -820,7 +839,7 @@ class BucketingManagerTest extends TestCase
         $this->assertTrue($output);
 
         //Test contextValue contains targetingValue
-        $contextValue = 5;
+
         $targetingValue = [8, 7, 5, 1];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_CONTAINS', $contextValue, $targetingValue);
         $this->assertFalse($output);
@@ -840,7 +859,7 @@ class BucketingManagerTest extends TestCase
         $this->assertFalse($output);
 
         //Test contextValue not GREATER_THAN targetingValue
-        $contextValue = 5;
+
         $targetingValue = 5;
         $output = $testOperatorMethod->invoke($bucketingManager, 'GREATER_THAN', $contextValue, $targetingValue);
         $this->assertFalse($output);
@@ -878,7 +897,7 @@ class BucketingManagerTest extends TestCase
         $this->assertTrue($output);
 
         //Test contextValue not GREATER_THAN targetingValue
-        $contextValue = 5;
+
         $targetingValue = 5;
         $output = $testOperatorMethod->invoke($bucketingManager, 'LOWER_THAN', $contextValue, $targetingValue);
         $this->assertFalse($output);
@@ -921,7 +940,7 @@ class BucketingManagerTest extends TestCase
         $this->assertTrue($output);
 
         //Test contextValue EQUALS targetingValue
-        $contextValue = 8;
+
         $targetingValue = 8;
         $output = $testOperatorMethod->invoke(
             $bucketingManager,
@@ -933,7 +952,6 @@ class BucketingManagerTest extends TestCase
 
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 7;
-        $targetingValue = 8;
         $output = $testOperatorMethod->invoke(
             $bucketingManager,
             'GREATER_THAN_OR_EQUALS',
@@ -967,7 +985,7 @@ class BucketingManagerTest extends TestCase
         $this->assertFalse($output);
 
         //Test contextValue EQUALS targetingValue
-        $contextValue = 8;
+
         $targetingValue = 8;
         $output = $testOperatorMethod->invoke(
             $bucketingManager,
@@ -979,7 +997,6 @@ class BucketingManagerTest extends TestCase
 
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 7;
-        $targetingValue = 8;
         $output = $testOperatorMethod->invoke(
             $bucketingManager,
             'LOWER_THAN_OR_EQUALS',
@@ -1008,7 +1025,7 @@ class BucketingManagerTest extends TestCase
         $this->assertTrue($output);
 
         //Test contextValue not STARTS_WITH targetingValue
-        $contextValue = "abcd";
+
         $targetingValue = "bc";
         $output = $testOperatorMethod->invoke($bucketingManager, 'STARTS_WITH', $contextValue, $targetingValue);
         $this->assertFalse($output);
@@ -1016,20 +1033,19 @@ class BucketingManagerTest extends TestCase
         /* Test ENDS_WITH */
 
         //Test contextValue ENDS_WITH targetingValue
-        $contextValue = "abcd";
+
         $targetingValue = "d";
         $output = $testOperatorMethod->invoke($bucketingManager, 'ENDS_WITH', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue not ENDS_WITH targetingValue
-        $contextValue = "abcd";
+
         $targetingValue = "ab";
         $output = $testOperatorMethod->invoke($bucketingManager, 'ENDS_WITH', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test Any operator else
-        $contextValue = "abcd";
-        $targetingValue = "ab";
+
         $output = $testOperatorMethod->invoke($bucketingManager, 'ANY', $contextValue, $targetingValue);
         $this->assertFalse($output);
     }
@@ -1066,6 +1082,7 @@ class BucketingManagerTest extends TestCase
             ->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
+        $bucketingManager->setFlagshipInstanceId("instance_id");
 
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
@@ -1074,10 +1091,15 @@ class BucketingManagerTest extends TestCase
         ];
 
         $container = new Container();
-        $configManager = new ConfigManager();
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $configManager->setConfig($config);
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
         $segments = [
             [
@@ -1129,10 +1151,16 @@ class BucketingManagerTest extends TestCase
 
         $matcher = $this->exactly(2);
         $httpClientMock->expects($matcher)
-            ->method("get")->withConsecutive([$bucketingUrl, []], [$segmentUrl, []])
+            ->method("get")
+            ->with(
+                $this->logicalOr(
+                    $this->equalTo($bucketingUrl),
+                    $this->equalTo($segmentUrl)
+                ),
+                $this->equalTo([])
+            )
             ->willReturnOnConsecutiveCalls(new HttpResponse(200, $campaigns, []), new HttpResponse(200, $segments, []));
 
-        $logManagerStub->expects($this->exactly(1))->method("error");
         $bucketingManager->getCampaigns($visitor);
         $context = $visitor->getContext();
 
@@ -1175,23 +1203,38 @@ class BucketingManagerTest extends TestCase
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
         $bucketingManager->setTrackingManager($trackingManagerMock);
+        $bucketingManager->setFlagshipInstanceId("instance_id");
 
         $visitorId = "visitor_1";
         $visitorContext = [
             "age" => 20
         ];
         $container = new Container();
-        $configManager = new ConfigManager();
+
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $configManager->setConfig($config);
 
-        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit"])
+            ->getMock();
 
         $segmentUrl = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $config->getEnvId(), $visitorId);
         $campaigns = ["campaigns" => []];
 
         $matcher = $this->exactly(2);
         $httpClientMock->expects($matcher)
-            ->method("get")->withConsecutive([$bucketingUrl, []], [$segmentUrl, []])
+            ->method("get")
+            ->with(
+                $this->logicalOr(
+                    $this->equalTo($bucketingUrl),
+                    $this->equalTo($segmentUrl)
+                ),
+                $this->equalTo([])
+            )
             ->willReturnOnConsecutiveCalls(
                 new HttpResponse(200, $campaigns, []),
                 $this->throwException(new Exception("error"))
@@ -1199,7 +1242,7 @@ class BucketingManagerTest extends TestCase
 
         $config->setLogManager($logManagerStub);
 
-        $logManagerStub->expects($this->exactly(2))->method("error");
+        $logManagerStub->expects($this->exactly(1))->method("error");
 
         $bucketingManager->getCampaigns($visitor);
     }

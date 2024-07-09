@@ -1,8 +1,0 @@
-{
-  "envId" : "",
-  "apiKey" : "",
-  "pollingInterval": 2000,
-  "timeout": 2000,
-  "logLevel": 9,
-  "bucketingDirectory": "flagship"
-}

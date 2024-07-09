@@ -2,6 +2,7 @@
 
 namespace Flagship\Api;
 
+use Exception;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\FlagshipConstant;
@@ -30,29 +31,32 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     /**
      * @var HttpClientInterface
      */
-    protected $httpClient;
+    protected HttpClientInterface $httpClient;
 
     /**
      * @var FlagshipConfig
      */
-    protected $config;
+    protected FlagshipConfig $config;
 
     /**
      * @var BatchingCachingStrategyAbstract
      */
-    protected $strategy;
+    protected BatchingCachingStrategyAbstract $strategy;
 
-    protected $flagshipInstanceId;
+    protected ?string $flagshipInstanceId = null;
 
     /**
      * ApiManager constructor.
      *
      * @param FlagshipConfig $config
      * @param HttpClientInterface $httpClient
-     * @param null $flagshipInstanceId
+     * @param string|null $flagshipInstanceId
      */
-    public function __construct(FlagshipConfig $config, HttpClientInterface $httpClient, $flagshipInstanceId = null)
-    {
+    public function __construct(
+        FlagshipConfig $config,
+        HttpClientInterface $httpClient,
+        ?string $flagshipInstanceId = null
+    ) {
         $this->flagshipInstanceId = $flagshipInstanceId;
         $this->httpClient = $httpClient;
         $this->config = $config;
@@ -63,7 +67,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     /**
      * @return HttpClientInterface
      */
-    public function getHttpClient()
+    public function getHttpClient(): HttpClientInterface
     {
         return $this->httpClient;
     }
@@ -71,7 +75,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     /**
      * @return FlagshipConfig
      */
-    public function getConfig()
+    public function getConfig(): FlagshipConfig
     {
         return $this->config;
     }
@@ -79,54 +83,48 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
     /**
      * @return BatchingCachingStrategyAbstract
      */
-    public function getStrategy()
+    public function getStrategy(): BatchingCachingStrategyAbstract
     {
         return $this->strategy;
     }
 
     /**
-     * @return TroubleshootingData
+     * @return TroubleshootingData|null
      */
-    public function getTroubleshootingData()
+    public function getTroubleshootingData(): ?TroubleshootingData
     {
         return $this->getStrategy()->getTroubleshootingData();
     }
 
     /**
-     * @param TroubleshootingData $troubleshootingData
-     * @return TrackingManagerAbstract
+     * @param ?TroubleshootingData $troubleshootingData
+     * @return void
      */
-    public function setTroubleshootingData($troubleshootingData)
+    public function setTroubleshootingData(?TroubleshootingData $troubleshootingData): void
     {
         $this->getStrategy()->setTroubleshootingData($troubleshootingData);
-        return $this;
     }
 
     /**
      * @return BatchingCachingStrategyAbstract
      */
-    public function initStrategy()
+    public function initStrategy(): BatchingCachingStrategyAbstract
     {
-        switch ($this->config->getCacheStrategy()) {
-            case CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE:
-                $strategy = new NoBatchingContinuousCachingStrategy(
-                    $this->config,
-                    $this->httpClient,
-                    $this->flagshipInstanceId
-                );
-                break;
-            default:
-                $strategy = new BatchingOnFailedCachingStrategy(
-                    $this->config,
-                    $this->httpClient,
-                    $this->flagshipInstanceId
-                );
-                break;
-        }
-        return $strategy;
+        return match ($this->config->getCacheStrategy()) {
+            CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE => new NoBatchingContinuousCachingStrategy(
+                $this->config,
+                $this->httpClient,
+                $this->flagshipInstanceId
+            ),
+            default => new BatchingOnFailedCachingStrategy(
+                $this->config,
+                $this->httpClient,
+                $this->flagshipInstanceId
+            ),
+        };
     }
 
-    protected function checkLookupHitData(array $item)
+    protected function checkLookupHitData(array $item): bool
     {
         if (
             isset($item[HitCacheFields::DATA][HitCacheFields::CONTENT]) &&
@@ -144,12 +142,12 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
         return  false;
     }
 
-    protected function checkHitTime($time)
+    protected function checkHitTime($time): bool
     {
         $now = round(microtime(true) * 1000);
         return ($now - $time) >= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
     }
-    public function lookupHits()
+    public function lookupHits(): void
     {
         try {
             $hitCacheImplementation = $this->config->getHitCacheImplementation();
@@ -184,27 +182,27 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                 $content = $item[HitCacheFields::DATA][HitCacheFields::CONTENT];
 
                 switch ($type) {
-                    case HitType::EVENT:
+                    case HitType::EVENT->value:
                         $hit = HitAbstract::hydrate(Event::getClassName(), $content);
                         break;
-                    case HitType::ITEM:
+                    case HitType::ITEM->value:
                         $hit = HitAbstract::hydrate(Item::getClassName(), $content);
                         break;
-                    case HitType::PAGE_VIEW:
+                    case HitType::PAGE_VIEW->value:
                         $hit = HitAbstract::hydrate(Page::getClassName(), $content);
                         break;
-                    case HitType::SCREEN_VIEW:
+                    case HitType::SCREEN_VIEW->value:
                         $hit = HitAbstract::hydrate(Screen::getClassName(), $content);
                         break;
-                    case HitType::SEGMENT:
+                    case HitType::SEGMENT->value:
                         $hit = HitAbstract::hydrate(Segment::getClassName(), $content);
                         break;
-                    case HitType::ACTIVATE:
+                    case HitType::ACTIVATE->value:
                         $hit = HitAbstract::hydrate(Activate::getClassName(), $content);
                         $hit->setConfig($this->config);
                         $this->getStrategy()->hydrateActivatePoolQueue($hit->getKey(), $hit);
                         continue 2;
-                    case HitType::TRANSACTION:
+                    case HitType::TRANSACTION->value:
                         $hit = HitAbstract::hydrate(Transaction::getClassName(), $content);
                         break;
                     default:
@@ -216,7 +214,7 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
             }
 
             $this->getStrategy()->flushHits($hitKeysToRemove);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logErrorSprintf(
                 $this->config,
                 FlagshipConstant::PROCESS_CACHE,

@@ -11,21 +11,31 @@ class ConfigManager
     /**
      * @var FlagshipConfig
      */
-    private $config;
+    private FlagshipConfig $config;
     /**
      * @var DecisionManagerAbstract
      */
-    private $decisionManager;
+    private DecisionManagerAbstract $decisionManager;
 
     /**
      * @var TrackingManagerAbstract
      */
-    private $trackingManager;
+    private TrackingManagerAbstract $trackingManager;
+
+    public function __construct(
+        FlagshipConfig $config,
+        DecisionManagerAbstract $decisionManager,
+        TrackingManagerAbstract $trackingManager
+    ) {
+        $this->config = $config;
+        $this->decisionManager = $decisionManager;
+        $this->trackingManager = $trackingManager;
+    }
 
     /**
      * @return FlagshipConfig
      */
-    public function getConfig()
+    public function getConfig(): FlagshipConfig
     {
         return $this->config;
     }
@@ -34,7 +44,7 @@ class ConfigManager
      * @param FlagshipConfig $config
      * @return ConfigManager
      */
-    public function setConfig($config)
+    public function setConfig(FlagshipConfig $config): static
     {
         $this->config = $config;
         return $this;
@@ -43,7 +53,7 @@ class ConfigManager
     /**
      * @return DecisionManagerAbstract
      */
-    public function getDecisionManager()
+    public function getDecisionManager(): DecisionManagerAbstract
     {
         return $this->decisionManager;
     }
@@ -52,7 +62,7 @@ class ConfigManager
      * @param DecisionManagerAbstract $decisionManager
      * @return ConfigManager
      */
-    public function setDecisionManager(DecisionManagerAbstract $decisionManager)
+    public function setDecisionManager(DecisionManagerAbstract $decisionManager): static
     {
         $this->decisionManager = $decisionManager;
         return $this;
@@ -61,7 +71,7 @@ class ConfigManager
     /**
      * @return TrackingManagerAbstract
      */
-    public function getTrackingManager()
+    public function getTrackingManager(): TrackingManagerAbstract
     {
         return $this->trackingManager;
     }
@@ -70,7 +80,7 @@ class ConfigManager
      * @param TrackingManagerAbstract $trackerManager
      * @return ConfigManager
      */
-    public function setTrackingManager(TrackingManagerAbstract $trackerManager)
+    public function setTrackingManager(TrackingManagerAbstract $trackerManager): static
     {
         $this->trackingManager = $trackerManager;
         return $this;

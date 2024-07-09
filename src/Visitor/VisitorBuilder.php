@@ -13,59 +13,82 @@ class VisitorBuilder
     /**
      * @var bool
      */
-    private $isAuthenticated;
+    private bool $isAuthenticated;
     /**
      * @var bool
      */
-    private $hasConsented;
+    private bool $hasConsented;
 
     /**
      * @var array
      */
-    private $context;
+    private array $context;
     /**
-     * @var string
+     * @var ?string
      */
-    private $visitorId;
+    private ?string $visitorId;
     /**
      * @var ConfigManager
      */
-    private $configManager;
+    private ConfigManager $configManager;
     /**
      * @var ContainerInterface
      */
-    private $dependencyIContainer;
+    private ContainerInterface $dependencyIContainer;
 
     /**
      * @var string
      */
-    private $flagshipInstance;
+    private string $flagshipInstance;
+
 
     /**
-     * @param string $visitorId : visitor unique identifier.
+     * @var callable
+     */
+    private $onFetchFlagsStatusChanged;
+
+
+    /**
+     * @param ?string $visitorId
+     * @param bool $hasConsented
      * @param ConfigManager $configManager
      * @param ContainerInterface $dependencyIContainer
+     * @param string $flagshipInstance
      */
-    private function __construct($visitorId, $configManager, $dependencyIContainer, $flagshipInstance = null)
-    {
+    private function __construct(
+        ?string $visitorId,
+        bool $hasConsented,
+        ConfigManager $configManager,
+        ContainerInterface $dependencyIContainer,
+        string $flagshipInstance
+    ) {
         $this->visitorId = $visitorId;
+        $this->hasConsented = $hasConsented;
         $this->configManager = $configManager;
-        $this->dependencyIContainer =  $dependencyIContainer;
-        $this->isAuthenticated =  false;
+        $this->dependencyIContainer = $dependencyIContainer;
+        $this->isAuthenticated = false;
         $this->context = [];
-        $this->hasConsented = true;
         $this->flagshipInstance = $flagshipInstance;
     }
 
     /**
-     * @param $visitorId
-     * @param $configManager
-     * @param $container
+     * Create a new visitor builder.
+     *
+     * @param ?string $visitorId The visitor identifier.
+     * @param bool $hasConsented Set to true when the visitor has consented, false otherwise.
+     * @param ConfigManager $configManager The configuration manager.
+     * @param ContainerInterface $container The dependency injection container.
+     * @param string $flagshipInstance The Flagship instance identifier.
      * @return VisitorBuilder
      */
-    public static function builder($visitorId, $configManager, $container, $flagshipInstance = null)
-    {
-        return new VisitorBuilder($visitorId, $configManager, $container, $flagshipInstance);
+    public static function builder(
+        ?string $visitorId,
+        bool $hasConsented,
+        ConfigManager $configManager,
+        ContainerInterface $container,
+        string $flagshipInstance
+    ): VisitorBuilder {
+        return new VisitorBuilder($visitorId, $hasConsented, $configManager, $container, $flagshipInstance);
     }
 
     /**
@@ -74,35 +97,35 @@ class VisitorBuilder
      * @param bool $isAuthenticated true for an authenticated visitor, false for an anonymous visitor.
      * @return VisitorBuilder
      */
-    public function isAuthenticated($isAuthenticated)
+    public function setIsAuthenticated(bool $isAuthenticated): static
     {
         $this->isAuthenticated = $isAuthenticated;
         return $this;
     }
 
     /**
-     * Specify if the visitor has consented for personal data usage.
-     * When false some features will be deactivated,
-     * cache will be deactivated and cleared.
-     *
-     * @param bool $hasConsented Set to true when the visitor has consented, false otherwise.
+     * Specify visitor initial context key / values used for targeting.
+     * Context key must be String, and value type must be one of the following : Number, Boolean, String.
+     * @param array<string, string|int|float|null|bool> $context : visitor context.
+     * e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
      * @return VisitorBuilder
      */
-    public function hasConsented($hasConsented)
+    public function setContext(array $context): static
     {
-        $this->hasConsented = $hasConsented;
+        $this->context = $context;
         return $this;
     }
 
     /**
-     * Specify visitor initial context key / values used for targeting.
-     * Context key must be String, and value type must be one of the following : Number, Boolean, String.
-     * @param array $context : visitor context. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"].
+     * Specify a callback function to be called when the status of the fetchFlags method changes.
+     * The callback function should have the following signature:
+     * function(FetchFlagsStatusInterface $fetchFlagsStatus): void
+     * @param callable $onFetchFlagsStatusChanged
      * @return VisitorBuilder
      */
-    public function withContext(array $context)
+    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged): static
     {
-        $this->context = $context;
+        $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
         return $this;
     }
 
@@ -110,19 +133,21 @@ class VisitorBuilder
      * Create a new visitor.
      * @return VisitorInterface
      */
-    public function build()
+    public function build(): VisitorInterface
     {
-        $visitorDelegate = $this->dependencyIContainer->get('Flagship\Visitor\VisitorDelegate', [
+        $visitorDelegate = $this->dependencyIContainer->get(VisitorDelegate::class, [
             $this->dependencyIContainer,
             $this->configManager,
             $this->visitorId,
             $this->isAuthenticated,
             $this->context,
             $this->hasConsented,
+            $this->flagshipInstance,
+            $this->onFetchFlagsStatusChanged
         ], true);
 
         $visitorDelegate->setFlagshipInstanceId($this->flagshipInstance);
 
-        return $this->dependencyIContainer->get('Flagship\Visitor\Visitor', [$visitorDelegate], true);
+        return $this->dependencyIContainer->get(Visitor::class, [$visitorDelegate], true);
     }
 }

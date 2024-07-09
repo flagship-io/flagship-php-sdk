@@ -4,11 +4,11 @@ namespace Flagship\Enum;
 
 class HitCacheFields
 {
-    const VERSION = 'version';
-    const DATA = 'data';
-    const VISITOR_ID = 'visitorId';
-    const ANONYMOUS_ID = 'anonymousId';
-    const TYPE = 'type';
-    const CONTENT = 'content';
-    const TIME = 'time';
+    public const VERSION = 'version';
+    public const DATA = 'data';
+    public const VISITOR_ID = 'visitorId';
+    public const ANONYMOUS_ID = 'anonymousId';
+    public const TYPE = 'type';
+    public const CONTENT = 'content';
+    public const TIME = 'time';
 }

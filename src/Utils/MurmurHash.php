@@ -9,7 +9,7 @@ class MurmurHash
      * @param mixed $constant
      * @return int
      */
-    private function multiply($k1, $constant)
+    private function multiply(mixed $k1, mixed $constant): int
     {
         return ((($k1 & 0xffff) * $constant) +
                 ((($k1 >= 0 ? $k1 >> 16 :
@@ -20,7 +20,7 @@ class MurmurHash
      * @param mixed $k1
      * @return int
      */
-    private function rotateLeft($k1)
+    private function rotateLeft(mixed $k1): int
     {
         return $k1 << 15 | ($k1 >= 0 ? $k1 >> 17 : (($k1 & 0x7fffffff) >> 17) | 0x4000);
     }
@@ -31,7 +31,7 @@ class MurmurHash
      * @param mixed $constant
      * @return int
      */
-    private function rotateRight($value, $numberDecalBit, $constant)
+    private function rotateRight(mixed $value, mixed $numberDecalBit, mixed $constant): int
     {
         return $value >= 0 ? $value >> $numberDecalBit : (($value & 0x7fffffff) >> $numberDecalBit) | $constant;
     }
@@ -39,7 +39,7 @@ class MurmurHash
      * @param string $source
      * @return int
      */
-    public function murmurHash3Int32($source)
+    public function murmurHash3Int32(string $source): int
     {
         $seed = 0;
         $source = array_values(unpack('C*', $source));

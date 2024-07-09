@@ -11,26 +11,27 @@ use Flagship\Traits\ErrorLog;
 
 class FlagshipLogManagerTest extends TestCase
 {
-    public function contextDataProvider()
+    public function contextDataProvider(): array
     {
         return
-                [
-                    'flagshipSdk' => FlagshipConstant::FLAGSHIP_SDK,
-                    'context' => ['process' => 'testError', 'context2' => 'value 2'],
-                    'contextString' => '[process => testError, context2 => value 2]' ];
+            [
+                'flagshipSdk' => FlagshipConstant::FLAGSHIP_SDK,
+                'context' => ['process' => 'testError', 'context2' => 'value 2'],
+                'contextString' => '[process => testError, context2 => value 2]' ];
     }
 
-    public function getMessageError($formatDate, $level, $message, $tag)
+    public function getMessageError($formatDate, $level, $message, $tag): string
     {
         $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
         return "[$formatDate] [$flagshipSdk] [$level] {$tag} $message";
     }
+
     public function testError()
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())
@@ -48,8 +49,8 @@ class FlagshipLogManagerTest extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test info';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())
@@ -65,8 +66,8 @@ class FlagshipLogManagerTest extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())
@@ -82,8 +83,8 @@ class FlagshipLogManagerTest extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())
@@ -100,8 +101,8 @@ class FlagshipLogManagerTest extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())
@@ -118,8 +119,8 @@ class FlagshipLogManagerTest extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())
@@ -135,8 +136,8 @@ class FlagshipLogManagerTest extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Error';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())
@@ -152,8 +153,8 @@ class FlagshipLogManagerTest extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Notice';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())
@@ -170,8 +171,8 @@ class FlagshipLogManagerTest extends TestCase
     {
         $data = $this->contextDataProvider();
         $message = 'Test Debug';
-        $logManager = $this->getMockBuilder("Flagship\Utils\FlagshipLogManager")
-            ->setMethods(["getDateTime"])
+        $logManager = $this->getMockBuilder(FlagshipLogManager8::class)
+            ->onlyMethods(["getDateTime"])
             ->getMock();
         $formatDate = "2023-02-15 11:08:10.455";
         $logManager->expects($this->once())

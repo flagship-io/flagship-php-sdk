@@ -2,7 +2,7 @@
 
 namespace Flagship\Model;
 
-use Flagship\Flag\FlagMetadata;
+use Flagship\Flag\FSFlagMetadata;
 use PHPUnit\Framework\TestCase;
 
 class ExposedFlagTest extends TestCase
@@ -12,7 +12,7 @@ class ExposedFlagTest extends TestCase
         $key = "key";
         $flagValue = "value";
         $flagDefaultValue = "defaultValue";
-        $flagMetadata = new FlagMetadata(
+        $flagMetadata = new FSFlagMetadata(
             "campaignId",
             "VarGrId",
             "varId",

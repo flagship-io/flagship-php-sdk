@@ -5,7 +5,7 @@ namespace Flagship\Decision;
 use Flagship\Api\TrackingManagerInterface;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Model\FlagDTO;
 use Flagship\Model\TroubleshootingData;
 use Flagship\Traits\BuildApiTrait;
@@ -23,11 +23,11 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @var bool
      */
-    protected $isPanicMode = false;
+    protected bool $isPanicMode = false;
     /**
      * @var HttpClientInterface
      */
-    protected $httpClient;
+    protected HttpClientInterface $httpClient;
     /**
      * @var callable
      */
@@ -36,21 +36,21 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @var FlagshipConfig
      */
-    protected $config;
+    protected FlagshipConfig $config;
 
     /**
-     * @var TroubleshootingData
+     * @var ?TroubleshootingData
      */
-    protected $troubleshootingData;
+    protected ?TroubleshootingData $troubleshootingData = null;
 
     /**
      * @var TrackingManagerInterface
      */
-    protected $trackingManager;
+    protected TrackingManagerInterface $trackingManager;
     /**
-     * @var string
+     * @var ?string
      */
-    protected $flagshipInstanceId;
+    protected ?string $flagshipInstanceId = null;
 
     /**
      * ApiManager constructor.
@@ -67,7 +67,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return TrackingManagerInterface
      */
-    public function getTrackingManager()
+    public function getTrackingManager(): TrackingManagerInterface
     {
         return $this->trackingManager;
     }
@@ -76,25 +76,25 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param TrackingManagerInterface $trackingManager
      * @return DecisionManagerAbstract
      */
-    public function setTrackingManager($trackingManager)
+    public function setTrackingManager(TrackingManagerInterface $trackingManager): static
     {
         $this->trackingManager = $trackingManager;
         return $this;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getFlagshipInstanceId()
+    public function getFlagshipInstanceId(): ?string
     {
         return $this->flagshipInstanceId;
     }
 
     /**
-     * @param string $flagshipInstanceId
+     * @param ?string $flagshipInstanceId
      * @return DecisionManagerAbstract
      */
-    public function setFlagshipInstanceId($flagshipInstanceId)
+    public function setFlagshipInstanceId(?string $flagshipInstanceId): static
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
@@ -102,7 +102,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return HttpClientInterface
      */
-    public function getHttpClient()
+    public function getHttpClient(): HttpClientInterface
     {
         return $this->httpClient;
     }
@@ -110,7 +110,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return bool
      */
-    public function getIsPanicMode()
+    public function getIsPanicMode(): bool
     {
         return $this->isPanicMode;
     }
@@ -119,9 +119,9 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param bool $isPanicMode
      * @return DecisionManagerAbstract
      */
-    public function setIsPanicMode($isPanicMode)
+    public function setIsPanicMode(bool $isPanicMode): static
     {
-        $status = $isPanicMode ? FlagshipStatus::READY_PANIC_ON : FlagshipStatus::READY;
+        $status = $isPanicMode ? FSSdkStatus::SDK_PANIC : FSSdkStatus::SDK_INITIALIZED;
         $this->updateFlagshipStatus($status);
 
         $this->isPanicMode = $isPanicMode;
@@ -133,7 +133,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param callable $statusChangedCallback callback
      * @return DecisionManagerAbstract
      */
-    public function setStatusChangedCallback($statusChangedCallback)
+    public function setStatusChangedCallback(callable $statusChangedCallback): static
     {
         if (is_callable($statusChangedCallback)) {
             $this->statusChangedCallback = $statusChangedCallback;
@@ -144,7 +144,7 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     /**
      * @return FlagshipConfig
      */
-    public function getConfig()
+    public function getConfig(): FlagshipConfig
     {
         return $this->config;
     }
@@ -153,17 +153,17 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
      * @param FlagshipConfig $config
      * @return DecisionManagerAbstract
      */
-    public function setConfig($config)
+    public function setConfig(FlagshipConfig $config): static
     {
         $this->config = $config;
         return $this;
     }
 
     /**
-     * @param $newStatus
+     * @param FSSdkStatus $newStatus
      * @return void
      */
-    protected function updateFlagshipStatus($newStatus)
+    protected function updateFlagshipStatus(FSSdkStatus $newStatus): void
     {
         $callable = $this->statusChangedCallback;
         if ($callable) {
@@ -172,30 +172,30 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
     }
 
     /**
-     * @param  FlagDTO[] $modifications
-     * @param  $key
+     * @param FlagDTO[] $flags
+     * @param string $key
      * @return FlagDTO|null
      */
-    protected function checkModificationKeyExist(array $modifications, $key)
+    protected function checkFlagKeyExist(array $flags, string $key): ?FlagDTO
     {
-        foreach ($modifications as $modification) {
-            if ($modification->getKey() === $key) {
-                return $modification;
+        foreach ($flags as $flag) {
+            if ($flag->getKey() === $key) {
+                return $flag;
             }
         }
         return null;
     }
 
     /**
-     * Return an array of Modification from all campaigns
+     * Return an array of flags from all campaigns
      *
      * @param  $campaigns
-     * @return FlagDTO[] Return an array of Modification
+     * @return FlagDTO[] Return an array of flags
      */
-    public function getModifications($campaigns)
+    public function getFlagsData($campaigns): array
     {
 
-        $modifications = [];
+        $flags = [];
         foreach ($campaigns as $campaign) {
             if (
                 !isset($campaign[FlagshipField::FIELD_VARIATION])
@@ -206,107 +206,107 @@ abstract class DecisionManagerAbstract implements DecisionManagerInterface
                 continue;
             }
 
-            $modificationValues = $campaign[FlagshipField::FIELD_VARIATION]
+            $flagsValue = $campaign[FlagshipField::FIELD_VARIATION]
             [FlagshipField::FIELD_MODIFICATIONS][FlagshipField::FIELD_VALUE];
 
-            $modifications = $this->getModificationValues($modificationValues, $campaign, $modifications);
+            $flags = $this->getFlagsValue($flagsValue, $campaign, $flags);
         }
-        return $modifications;
+        return $flags;
     }
 
     /**
      * Return modification of a campaign
      *
-     * @param  array $modificationValues
-     * @param  $campaign
-     * @param  array $modifications
+     * @param array $flagsValue
+     * @param array $campaign
+     * @param array $flagsDTO
      * @return array
      */
-    protected function getModificationValues(array $modificationValues, $campaign, $modifications)
+    protected function getFlagsValue(array $flagsValue, array $campaign, array $flagsDTO): array
     {
-        $localModifications = [];
-        foreach ($modificationValues as $key => $modificationValue) {
+        $localFlags = [];
+        foreach ($flagsValue as $key => $flagValue) {
             if (!$this->isKeyValid($key)) {
                 continue;
             }
 
             //check if the key is already used
-            $modification = $this->checkModificationKeyExist($modifications, $key);
+            $flagDTO = $this->checkFlagKeyExist($flagsDTO, $key);
             $isKeyUsed = true;
 
-            if (is_null($modification)) {
-                $modification = new FlagDTO();
+            if (is_null($flagDTO)) {
+                $flagDTO = new FlagDTO();
                 $isKeyUsed = false;
             }
 
-            $modification->setKey($key);
-            $modification->setValue($modificationValue);
+            $flagDTO->setKey($key);
+            $flagDTO->setValue($flagValue);
 
             if (isset($campaign[FlagshipField::FIELD_ID])) {
-                $modification->setCampaignId($campaign[FlagshipField::FIELD_ID]);
+                $flagDTO->setCampaignId($campaign[FlagshipField::FIELD_ID]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_CAMPAIGNS_NAME])) {
-                $modification->setCampaignName($campaign[FlagshipField::FIELD_CAMPAIGNS_NAME]);
+                $flagDTO->setCampaignName($campaign[FlagshipField::FIELD_CAMPAIGNS_NAME]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE])) {
-                $modification->setCampaignType($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]);
+                $flagDTO->setCampaignType($campaign[FlagshipField::FIELD_CAMPAIGN_TYPE]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID])) {
-                $modification->setVariationGroupId($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]);
+                $flagDTO->setVariationGroupId($campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION_GROUP_NAME])) {
-                $modification->setVariationGroupName($campaign[FlagshipField::FIELD_VARIATION_GROUP_NAME]);
+                $flagDTO->setVariationGroupName($campaign[FlagshipField::FIELD_VARIATION_GROUP_NAME]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_ID])) {
-                $modification->setVariationId(
+                $flagDTO->setVariationId(
                     $campaign[FlagshipField::FIELD_VARIATION]
                     [FlagshipField::FIELD_ID]
                 );
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE])) {
-                $modification->setVariationName($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE]);
+                $flagDTO->setVariationName($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_NANE]);
             }
 
             if (isset($campaign[FlagshipField::FIELD_VARIATION][FlagshipField::FIELD_REFERENCE])) {
-                $modification->setIsReference(
+                $flagDTO->setIsReference(
                     $campaign[FlagshipField::FIELD_VARIATION]
                     [FlagshipField::FIELD_REFERENCE]
                 );
             }
 
             if (isset($campaign[FlagshipField::FIELD_SLUG])) {
-                $modification->setSlug($campaign[FlagshipField::FIELD_SLUG]);
+                $flagDTO->setSlug($campaign[FlagshipField::FIELD_SLUG]);
             }
 
             if (!$isKeyUsed) {
-                $localModifications[] = $modification;
+                $localFlags[] = $flagDTO;
             }
         }
-        return array_merge($modifications, $localModifications);
+        return array_merge($flagsDTO, $localFlags);
     }
 
     /**
      * @param VisitorAbstract $visitor
-     * @return array
+     * @return array|null
      */
-    abstract public function getCampaigns(VisitorAbstract $visitor);
+    abstract public function getCampaigns(VisitorAbstract $visitor): array|null;
 
     /**
      * @inheritDoc
      */
-    public function getCampaignModifications(VisitorAbstract $visitor)
+    public function getCampaignFlags(VisitorAbstract $visitor): array
     {
         $campaigns = $this->getCampaigns($visitor);
-        return $this->getModifications($campaigns);
+        return $this->getFlagsData($campaigns);
     }
 
-    public function getTroubleshootingData()
+    public function getTroubleshootingData(): ?TroubleshootingData
     {
         return $this->troubleshootingData;
     }

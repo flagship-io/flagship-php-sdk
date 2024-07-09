@@ -3,8 +3,10 @@
 namespace Flagship\Visitor;
 
 use Flagship\Config\FlagshipConfig;
+use Flagship\Flag\FSFlagCollectionInterface;
+use Flagship\Flag\FSFlagInterface;
 use Flagship\Hit\HitAbstract;
-use Flagship\Model\FlagDTO;
+use Flagship\Model\FetchFlagsStatusInterface;
 use Flagship\Traits\LogTrait;
 use JsonSerializable;
 
@@ -15,7 +17,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @var VisitorDelegate
      */
-    private $visitorDelegate;
+    private VisitorDelegate $visitorDelegate;
 
 
     /**
@@ -26,238 +28,177 @@ class Visitor implements VisitorInterface, JsonSerializable
     public function __construct(VisitorDelegate $visitorDelegate)
     {
         $this->visitorDelegate = $visitorDelegate;
-    } //end __construct()
+    }
 
 
     /**
      * @return VisitorDelegate
      */
-    private function getVisitorDelegate()
+    private function getVisitorDelegate(): VisitorDelegate
     {
         return $this->visitorDelegate;
-    } //end getVisitorDelegate()
+    }
 
 
     /**
      *
      * @return FlagshipConfig
      */
-    public function getConfig()
+    public function getConfig(): FlagshipConfig
     {
         return $this->getVisitorDelegate()->getConfig();
-    } //end getConfig()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function getVisitorId()
+    public function getVisitorId(): string
     {
         return $this->getVisitorDelegate()->getVisitorId();
-    } //end getVisitorId()
+    }
 
 
-    /**
-     * Set visitor unique identifier
-     *
-     * @param  string $visitorId
-     * @return Visitor
-     */
-    public function setVisitorId($visitorId)
+    public function setVisitorId($visitorId): static
     {
         $this->getVisitorDelegate()->setVisitorId($visitorId);
         return $this;
-    } //end setVisitorId()
+    }
 
 
     /**
-     * Return True if the visitor has consented for private data usage, otherwise return False.
-     *
-     * @return boolean
+     *@inheritDoc
      */
-    public function hasConsented()
+    public function hasConsented(): bool
     {
         return $this->getVisitorDelegate()->hasConsented();
-    } //end hasConsented()
+    }
 
 
     /**
-     * Set if visitor has consented for private data usage.
-     *
-     * @param  boolean $hasConsented True if the visitor has consented false otherwise.
-     * @return $this
+     * @inheritDoc
      */
-    public function setConsent($hasConsented)
+    public function setConsent(bool $hasConsented): void
     {
         $this->getVisitorDelegate()->setConsent($hasConsented);
-        return $this;
-    } //end setConsent()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function getContext()
+    public function getContext(): array
     {
         return $this->getVisitorDelegate()->getContext();
-    } //end getContext()
+    }
 
 
     /**
-     * Clear the current context and set a new context value
-     *
-     * @param  array $context : collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
-     * @return Visitor
+     * @inheritDoc
      */
-    public function setContext($context)
+    public function setContext(array $context): void
     {
         $this->getVisitorDelegate()->setContext($context);
-        return $this;
-    } //end setContext()
-
+    }
 
     /**
      * @inheritDoc
      */
-    public function getAnonymousId()
+    public function getAnonymousId(): ?string
     {
         return $this->getVisitorDelegate()->getAnonymousId();
-    } //end getAnonymousId()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function updateContext($key, $value)
+    public function updateContext(string $key, float|bool|int|string|null $value): void
     {
         $this->getVisitorDelegate()->updateContext($key, $value);
-    } //end updateContext()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function updateContextCollection(array $context)
+    public function updateContextCollection(array $context): void
     {
         $this->getVisitorDelegate()->updateContextCollection($context);
-    } //end updateContextCollection()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function clearContext()
+    public function clearContext(): void
     {
         $this->getVisitorDelegate()->clearContext();
-    } //end clearContext()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function authenticate($visitorId)
+    public function authenticate(string $visitorId): void
     {
         $this->getVisitorDelegate()->authenticate($visitorId);
-    } //end authenticate()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function unauthenticate()
+    public function unauthenticate(): void
     {
         $this->getVisitorDelegate()->unauthenticate();
-    } //end unauthenticate()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function getModification($key, $defaultValue, $activate = false)
-    {
-        return $this->getVisitorDelegate()->getModification($key, $defaultValue, $activate);
-    } //end getModification()
-
-
-    /**
-     * @inheritDoc
-     */
-    public function getModificationInfo($key)
-    {
-        return $this->getVisitorDelegate()->getModificationInfo($key);
-    } //end getModificationInfo()
-
-
-    /**
-     * @inheritDoc
-     */
-    public function synchronizeModifications()
-    {
-        $this->getVisitorDelegate()->synchronizeModifications();
-    } //end synchronizeModifications()
-
-
-    /**
-     * @inheritDoc
-     */
-    public function activateModification($key)
-    {
-        $this->getVisitorDelegate()->activateModification($key);
-    } //end activateModification()
-
-
-    /**
-     * @inheritDoc
-     */
-    public function sendHit(HitAbstract $hit)
+    public function sendHit(HitAbstract $hit): void
     {
         $this->getVisitorDelegate()->sendHit($hit);
-    } //end sendHit()
+    }
 
-
-    /**
-     * @inheritDoc
-     * @return     mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getVisitorDelegate()->jsonSerialize();
-    } //end jsonSerialize()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function getModifications()
-    {
-        return $this->getVisitorDelegate()->getModifications();
-    } //end getModifications()
-
-
-    /**
-     * @inheritDoc
-     */
-    public function fetchFlags()
+    public function fetchFlags(): void
     {
         $this->visitorDelegate->fetchFlags();
-    } //end fetchFlags()
+    }
 
 
     /**
      * @inheritDoc
      */
-    public function getFlag($key, $defaultValue)
+    public function getFlag(string $key): FSFlagInterface
     {
-        return $this->visitorDelegate->getFlag($key, $defaultValue);
-    } //end getFlag()
-
+        return $this->visitorDelegate->getFlag($key);
+    }
 
     /**
      * @inheritDoc
      */
-    public function getFlagsDTO()
+    public function getFlags(): FSFlagCollectionInterface
     {
-        return $this->visitorDelegate->getFlagsDTO();
-    } //end getFlagsDTO()
-}//end class
+        return $this->visitorDelegate->getFlags();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFetchStatus(): FetchFlagsStatusInterface
+    {
+        return $this->visitorDelegate->getFetchStatus();
+    }
+}

@@ -4,6 +4,7 @@ namespace Flagship\Hit;
 
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Enum\HitType;
 use Flagship\Traits\BuildApiTrait;
 use Flagship\Traits\Helper;
 use Flagship\Traits\LogTrait;
@@ -26,139 +27,86 @@ abstract class HitAbstract
     /**
      * @var string
      */
-    protected $visitorId;
+    protected string $visitorId;
 
     /**
      * @var string
      */
-    protected $ds;
+    protected string $ds;
 
     /**
-     * @var string
-     * @see \Flagship\Enum\HitType
+     * @var HitType
      */
-    protected $type;
+    protected HitType $type;
 
     /**
-     * @var FlagshipConfig
+     * @var ?FlagshipConfig
      */
-    protected $config;
+    protected ?FlagshipConfig $config = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $anonymousId;
+    protected ?string $anonymousId = null;
 
     /**
      * The User IP address
-     * @var string
+     * @var string|null
      */
-    protected $userIP;
+    protected ?string $userIP = null;
+
+    /**
+     * @var string|null
+     */
+    protected ?string $screenResolution = null;
+
+    /**
+     * @var string|null
+     */
+    protected ?string $locale = null;
+
+    /**
+     * @var numeric|string|null
+     */
+    protected string|int|float|null $sessionNumber = null;
 
     /**
      * @var string
      */
-    protected $screenResolution;
-
-    /**
-     * @var string
-     */
-    protected $locale;
-
-    /**
-     * @var numeric
-     */
-    protected $sessionNumber;
-
-    /**
-     * @var string
-     */
-    protected $key;
+    protected string $key;
 
     /**
      * @var int
      */
-    protected $createdAt;
+    protected int $createdAt;
 
     /**
      * @var bool
      */
-    protected $isFromCache;
+    protected bool $isFromCache;
 
     /**
      * HitAbstract constructor.
      *
-     * @param string $type  Hit type
-     *<code>
-     *Flagship\Enum\HitType::EVENT,
-     *Flagship\Enum\HitType::ITEM,
-     *Flagship\Enum\HitType::PAGEVIEW,
-     *Flagship\Enum\HitType::TRANSACTION
-     *</code>
+     * @param HitType $type  Hit type
      */
-    public function __construct($type)
+    public function __construct(HitType $type)
     {
-        $this->type = $type;
+        $this->setType($type);
         $this->ds = FlagshipConstant::SDK_APP;
         $this->createdAt =  $this->getNow();
+        $this->anonymousId = null;
         $this->isFromCache = false;
-    }
-
-    /**
-     * @param  mixed  $value
-     * @param  string $itemName
-     * @return bool
-     */
-    protected function isNoEmptyString($value, $itemName)
-    {
-        if (empty($value) || !is_string($value)) {
-            $this->logError(
-                $this->config,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'string')
-            );
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @param  mixed  $value
-     * @param  string $itemName
-     * @return bool
-     */
-    protected function isNumeric($value, $itemName)
-    {
-        if (!is_numeric($value)) {
-            $this->logError(
-                $this->config,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
-            );
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @param  mixed  $value
-     * @param  string $itemName
-     * @return bool
-     */
-    protected function isInteger($value, $itemName)
-    {
-        if (!is_int($value)) {
-            $this->logError(
-                $this->config,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'integer')
-            );
-            return false;
-        }
-        return true;
+        $this->userIP = null;
+        $this->screenResolution = null;
+        $this->locale = null;
+        $this->sessionNumber = null;
     }
 
     /**
      * @return string
      */
-    public function getVisitorId()
+    public function getVisitorId(): string
     {
         return $this->visitorId;
     }
@@ -166,10 +114,10 @@ abstract class HitAbstract
     /**
      * Specifies visitor unique identifier provided by developer at visitor creation
      *
-     * @param  string $visitorId
+     * @param string $visitorId
      * @return HitAbstract
      */
-    public function setVisitorId($visitorId)
+    public function setVisitorId(string $visitorId): static
     {
         $this->visitorId = $visitorId;
         return $this;
@@ -178,16 +126,16 @@ abstract class HitAbstract
     /**
      * @return string
      */
-    public function getDs()
+    public function getDs(): string
     {
         return $this->ds;
     }
 
     /**
-     * @param  string $ds
+     * @param string $ds
      * @return HitAbstract
      */
-    public function setDs($ds)
+    public function setDs(string $ds): static
     {
         $this->ds = $ds;
         return $this;
@@ -196,18 +144,23 @@ abstract class HitAbstract
     /**
      * Hit Type
      *
-     * @see    \Flagship\Enum\HitType
-     * @return string
+     * @return HitType
      */
-    public function getType()
+    public function getType(): HitType
     {
         return $this->type;
     }
 
+    protected function setType(HitType $type): static
+    {
+         $this->type = $type;
+         return $this;
+    }
+
     /**
-     * @return FlagshipConfig
+     * @return ?FlagshipConfig
      */
-    public function getConfig()
+    public function getConfig(): ?FlagshipConfig
     {
         return $this->config;
     }
@@ -216,25 +169,25 @@ abstract class HitAbstract
      * @param FlagshipConfig $config
      * @return HitAbstract
      */
-    public function setConfig($config)
+    public function setConfig(FlagshipConfig $config): static
     {
         $this->config = $config;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAnonymousId()
+    public function getAnonymousId(): ?string
     {
         return $this->anonymousId;
     }
 
     /**
-     * @param string $anonymousId
+     * @param string|null $anonymousId
      * @return HitAbstract
      */
-    public function setAnonymousId($anonymousId)
+    public function setAnonymousId(?string $anonymousId): static
     {
         $this->anonymousId = $anonymousId;
         return $this;
@@ -242,19 +195,19 @@ abstract class HitAbstract
 
     /**
      * The User IP address
-     * @return string
+     * @return string|null
      */
-    public function getUserIP()
+    public function getUserIP(): ?string
     {
         return $this->userIP;
     }
 
     /**
      * Define the User IP address
-     * @param string $userIP
+     * @param string|null $userIP
      * @return HitAbstract
      */
-    public function setUserIP($userIP)
+    public function setUserIP(?string $userIP): static
     {
         $this->userIP = $userIP;
         return $this;
@@ -262,19 +215,19 @@ abstract class HitAbstract
 
     /**
      * Screen Resolution.
-     * @return string
+     * @return string|null
      */
-    public function getScreenResolution()
+    public function getScreenResolution(): ?string
     {
         return $this->screenResolution;
     }
 
     /**
      * Screen Resolution
-     * @param string $screenResolution
+     * @param string|null $screenResolution
      * @return HitAbstract
      */
-    public function setScreenResolution($screenResolution)
+    public function setScreenResolution(?string $screenResolution): static
     {
         $this->screenResolution = $screenResolution;
         return $this;
@@ -282,19 +235,19 @@ abstract class HitAbstract
 
     /**
      * User language
-     * @return string
+     * @return string|null
      */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
 
     /**
      * Define User language
-     * @param string $locale
+     * @param string|null $locale
      * @return HitAbstract
      */
-    public function setLocale($locale)
+    public function setLocale(?string $locale): static
     {
         $this->locale = $locale;
         return $this;
@@ -302,19 +255,19 @@ abstract class HitAbstract
 
     /**
      * Session number. Number of sessions the current visitor has logged, including the current session
-     * @return float|int|string
+     * @return float|int|string|null
      */
-    public function getSessionNumber()
+    public function getSessionNumber(): float|int|string|null
     {
         return $this->sessionNumber;
     }
 
     /**
      * Define Session number. Number of sessions the current visitor has logged, including the current session
-     * @param float|int|string $sessionNumber
+     * @param float|int|string|null $sessionNumber
      * @return HitAbstract
      */
-    public function setSessionNumber($sessionNumber)
+    public function setSessionNumber(float|int|string|null $sessionNumber): static
     {
         $this->sessionNumber = $sessionNumber;
         return $this;
@@ -323,7 +276,7 @@ abstract class HitAbstract
     /**
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -332,7 +285,7 @@ abstract class HitAbstract
      * @param string $key
      * @return HitAbstract
      */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         $this->key = $key;
         return $this;
@@ -341,16 +294,16 @@ abstract class HitAbstract
     /**
      * @return int
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): int
     {
         return $this->createdAt;
     }
 
     /**
-     * @param string $createdAt
+     * @param int $createdAt
      * @return HitAbstract
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(int $createdAt): static
     {
         $this->createdAt = $createdAt;
         return $this;
@@ -359,7 +312,7 @@ abstract class HitAbstract
     /**
      * @return bool
      */
-    public function getIsFromCache()
+    public function getIsFromCache(): bool
     {
         return $this->isFromCache;
     }
@@ -368,7 +321,7 @@ abstract class HitAbstract
      * @param bool $isFromCache
      * @return HitAbstract
      */
-    protected function setIsFromCache($isFromCache)
+    protected function setIsFromCache(bool $isFromCache): static
     {
         $this->isFromCache = $isFromCache;
         return $this;
@@ -379,13 +332,13 @@ abstract class HitAbstract
      *
      * @return array
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $data = [
             FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId ?: $this->anonymousId,
             FlagshipConstant::DS_API_ITEM => $this->getDs(),
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-            FlagshipConstant::T_API_ITEM => $this->getType(),
+            FlagshipConstant::T_API_ITEM => $this->getType()->value,
             FlagshipConstant::CUSTOMER_UID => null,
             FlagshipConstant::QT_API_ITEM => $this->getNow() - $this->createdAt,
         ];
@@ -419,13 +372,16 @@ abstract class HitAbstract
      * @return object
      * @throws ReflectionException
      */
-    public static function hydrate($class, $data)
+    public static function hydrate($class, $data): object
     {
         $reflector = new ReflectionClass($class);
         $objet = $reflector->newInstanceWithoutConstructor();
         foreach ($data as $key => $value) {
             $method = 'set' . ucwords($key);
             if (is_callable(array($objet, $method))) {
+                if ($key === "type") {
+                    $value = HitType::from($value);
+                }
                 $objet->$method($value);
             }
         }
@@ -436,7 +392,7 @@ abstract class HitAbstract
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $reflector = new ReflectionObject($this);
         $properties = $reflector->getProperties();
@@ -447,6 +403,9 @@ abstract class HitAbstract
             }
             $property->setAccessible(true);
             $value = $property->getValue($this);
+            if ($value instanceof HitType) {
+                $value = $value->value;
+            }
             $outArray[$property->getName()] = $value;
         }
         return $outArray;
@@ -458,7 +417,7 @@ abstract class HitAbstract
      *
      * @return bool
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return $this->getVisitorId() && $this->getDs() && $this->getConfig() &&
             $this->getConfig()->getEnvId() && $this->getType();
@@ -469,5 +428,5 @@ abstract class HitAbstract
      *
      * @return string
      */
-    abstract public function getErrorMessage();
+    abstract public function getErrorMessage(): string;
 }

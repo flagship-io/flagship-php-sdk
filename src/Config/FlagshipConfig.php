@@ -2,16 +2,19 @@
 
 namespace Flagship\Config;
 
+use JsonSerializable;
+use Flagship\Enum\LogLevel;
+use Psr\Log\LoggerInterface;
+use Flagship\Enum\FSSdkStatus;
+use Flagship\Enum\DecisionMode;
+use Flagship\Model\ExposedFlag;
+use Flagship\Enum\CacheStrategy;
+use Flagship\Enum\FlagshipField;
+use Flagship\Model\ExposedVisitor;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Traits\ValidatorTrait;
 use Flagship\Cache\IHitCacheImplementation;
 use Flagship\Cache\IVisitorCacheImplementation;
-use Flagship\Enum\CacheStrategy;
-use Flagship\Enum\DecisionMode;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipField;
-use Flagship\Enum\LogLevel;
-use Flagship\Traits\ValidatorTrait;
-use JsonSerializable;
-use Psr\Log\LoggerInterface;
 
 /**
  * Flagship SDK configuration class to provide at initialization.
@@ -23,78 +26,78 @@ abstract class FlagshipConfig implements JsonSerializable
     use ValidatorTrait;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $envId;
+    private ?string $envId;
     /**
-     * @var string
+     * @var ?string
      */
-    private $apiKey;
+    private ?string $apiKey;
     /**
-     * @var int
+     * @var DecisionMode
      */
-    private $decisionMode = DecisionMode::DECISION_API;
-    /**
-     * @var int
-     */
-    private $timeout = FlagshipConstant::REQUEST_TIME_OUT;
-    /**
-     * @var LoggerInterface
-     */
-    private $logManager;
+    private DecisionMode $decisionMode = DecisionMode::DECISION_API;
     /**
      * @var int
      */
-    private $logLevel = LogLevel::ALL;
-
+    private int $timeout = FlagshipConstant::REQUEST_TIME_OUT;
     /**
-     * @var callable
+     * @var ?LoggerInterface
      */
-    private $statusChangedCallback;
-
+    private ?LoggerInterface $logManager = null;
     /**
-     * @var IVisitorCacheImplementation
+     * @var LogLevel
      */
-    private $visitorCacheImplementation;
+    private LogLevel $logLevel = LogLevel::ALL;
 
     /**
-     * @var IHitCacheImplementation
+     * @var (callable(FSSdkStatus $status): void) | null
      */
-    private $hitCacheImplementation;
+    private $onSdkStatusChanged;
 
     /**
-     * @var int
+     * @var ?IVisitorCacheImplementation
      */
-    protected $cacheStrategy;
+    private ?IVisitorCacheImplementation $visitorCacheImplementation = null;
 
     /**
-     * @var callable
+     * @var ?IHitCacheImplementation
+     */
+    private ?IHitCacheImplementation $hitCacheImplementation = null;
+
+    /**
+     * @var CacheStrategy
+     */
+    protected CacheStrategy $cacheStrategy;
+
+    /**
+     * @var (callable(ExposedVisitor $exposedUser, ExposedFlag $exposedFlag): void) | null
      */
     protected $onVisitorExposed;
 
     /**
      * @var boolean
      */
-    protected $disableDeveloperUsageTracking;
+    protected bool $disableDeveloperUsageTracking;
 
     /**
      * Create a new FlagshipConfig configuration.
      *
-     * @param string $envId  Environment id provided by Flagship.
-     * @param string $apiKey  Secure api key provided by Flagship.
+     * @param string|null $envId  Environment id provided by Flagship.
+     * @param string|null $apiKey  Secure api key provided by Flagship.
      */
-    public function __construct($envId = null, $apiKey = null)
+    public function __construct(string $envId = null, string $apiKey = null)
     {
         $this->envId = $envId;
         $this->apiKey = $apiKey;
-        $this->cacheStrategy = CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE;
+        $this->cacheStrategy = CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE;
         $this->setDisableDeveloperUsageTracking(false);
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEnvId()
+    public function getEnvId(): ?string
     {
         return $this->envId;
     }
@@ -105,16 +108,16 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param string $envId environment id.
      * @return $this
      */
-    public function setEnvId($envId)
+    public function setEnvId(string $envId): static
     {
         $this->envId = $envId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getApiKey()
+    public function getApiKey(): ?string
     {
         return $this->apiKey;
     }
@@ -125,16 +128,16 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param string $apiKey secure api key.
      * @return $this
      */
-    public function setApiKey($apiKey)
+    public function setApiKey(string $apiKey): static
     {
         $this->apiKey = $apiKey;
         return $this;
     }
 
     /**
-     * @return int
+     * @return DecisionMode
      */
-    public function getDecisionMode()
+    public function getDecisionMode(): DecisionMode
     {
         return $this->decisionMode;
     }
@@ -142,22 +145,19 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * Specify the SDK running mode.
      *
-     * @param int $decisionMode decision mode value e.g DecisionMode::DECISION_API
-     * @see DecisionMode Enum Decision mode
+     * @param DecisionMode $decisionMode decision mode value e.g DecisionMode::DECISION_API
      * @return $this
      */
-    protected function setDecisionMode($decisionMode)
+    protected function setDecisionMode(DecisionMode $decisionMode): static
     {
-        if (DecisionMode::isDecisionMode($decisionMode)) {
-            $this->decisionMode = $decisionMode;
-        }
+        $this->decisionMode = $decisionMode;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getTimeout()
+    public function getTimeout(): int
     {
         return $this->timeout * 1000;
     }
@@ -168,20 +168,20 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param int $timeout Milliseconds for connect and read timeouts. Default is 2000ms.
      * @return $this
      */
-    public function setTimeout($timeout)
+    public function setTimeout(int $timeout): static
     {
-        if (is_numeric($timeout) && $timeout > 0) {
-            $this->timeout = $timeout / 1000;
-        } else {
+        if ($timeout <= 0) {
             $this->logError($this, FlagshipConstant::TIMEOUT_TYPE_ERROR);
+            return $this;
         }
+        $this->timeout = $timeout / 1000;
         return $this;
     }
 
     /**
-     * @return LoggerInterface
+     * @return ?LoggerInterface
      */
-    public function getLogManager()
+    public function getLogManager(): ?LoggerInterface
     {
         return $this->logManager;
     }
@@ -192,89 +192,74 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param LoggerInterface $logManager custom implementation of LogManager.
      * @return $this
      */
-    public function setLogManager(LoggerInterface $logManager)
+    public function setLogManager(LoggerInterface $logManager): static
     {
         $this->logManager = $logManager;
         return $this;
     }
 
     /**
-     * @return int
+     * @return LogLevel
      */
-    public function getLogLevel()
+    public function getLogLevel(): LogLevel
     {
         return $this->logLevel;
     }
 
     /**
      * Set the maximum log level to display
-     * @see LogLevel Loglevel enum list
-     * @param int $logLevel
+     * @param LogLevel $logLevel
      * @return $this
      */
-    public function setLogLevel($logLevel)
+    public function setLogLevel(LogLevel $logLevel): static
     {
-        if (!is_int($logLevel) || $logLevel < LogLevel::NONE || $logLevel > LogLevel::ALL) {
-            $this->logError($this, FlagshipConstant::LOG_LEVEL_ERROR);
-            return $this;
-        }
         $this->logLevel = $logLevel;
         return $this;
     }
 
     /**
      * Return the strategy uses for hit caching with tracking manager
-     * @return int
+     * @return CacheStrategy
      */
-    public function getCacheStrategy()
+    public function getCacheStrategy(): CacheStrategy
     {
         return $this->cacheStrategy;
     }
 
     /**
      * Define the strategy that will be used for hit caching with tracking manager
-     * @param int $cacheStrategy
+     * @param CacheStrategy $cacheStrategy
      * @return FlagshipConfig
      */
-    public function setCacheStrategy($cacheStrategy)
+    public function setCacheStrategy(CacheStrategy $cacheStrategy): static
     {
         $this->cacheStrategy = $cacheStrategy;
         return $this;
     }
 
     /**
-     * @return callable
+     * @return (callable(FSSdkStatus $status): void)|null
      */
-    public function getStatusChangedCallback()
+    public function getOnSdkStatusChanged(): ?callable
     {
-        return $this->statusChangedCallback;
+        return $this->onSdkStatusChanged;
     }
 
     /**
      * Define a callable in order to get callback when the SDK status has changed.
-     * @param callable $statusChangedCallback callback
+     * @param callable(FSSdkStatus $status): void $onSdkStatusChanged
      * @return $this
      */
-    public function setStatusChangedCallback($statusChangedCallback)
+    public function setOnSdkStatusChanged(callable $onSdkStatusChanged): static
     {
-        if (is_callable($statusChangedCallback)) {
-            $this->statusChangedCallback = $statusChangedCallback;
-        } else {
-            $this->logError(
-                $this,
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($statusChangedCallback)),
-                [
-                    FlagshipConstant::TAG => __FUNCTION__
-                ]
-            );
-        }
+        $this->onSdkStatusChanged = $onSdkStatusChanged;
         return $this;
     }
 
     /**
-     * @return IVisitorCacheImplementation
+     * @return ?IVisitorCacheImplementation
      */
-    public function getVisitorCacheImplementation()
+    public function getVisitorCacheImplementation(): ?IVisitorCacheImplementation
     {
         return $this->visitorCacheImplementation;
     }
@@ -284,63 +269,52 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param IVisitorCacheImplementation $visitorCacheImplementation
      * @return FlagshipConfig
      */
-    public function setVisitorCacheImplementation(IVisitorCacheImplementation $visitorCacheImplementation)
+    public function setVisitorCacheImplementation(IVisitorCacheImplementation $visitorCacheImplementation): static
     {
         $this->visitorCacheImplementation = $visitorCacheImplementation;
         return $this;
     }
 
     /**
-     * @return IHitCacheImplementation
+     * @return ?IHitCacheImplementation
      */
-    public function getHitCacheImplementation()
+    public function getHitCacheImplementation(): ?IHitCacheImplementation
     {
         return $this->hitCacheImplementation;
     }
 
     /**
-     * @param IHitCacheImplementation $hitCacheImplementation
+     * @param ?IHitCacheImplementation $hitCacheImplementation
      * @return FlagshipConfig
      */
-    public function setHitCacheImplementation($hitCacheImplementation)
+    public function setHitCacheImplementation(?IHitCacheImplementation $hitCacheImplementation): static
     {
         $this->hitCacheImplementation = $hitCacheImplementation;
         return $this;
     }
 
     /**
-     * @return callable
+     * @return callable(ExposedVisitor $exposedUser, ExposedFlag $exposedFlag): void|null
      */
-    public function getOnVisitorExposed()
+    public function getOnVisitorExposed(): ?callable
     {
         return $this->onVisitorExposed;
     }
 
     /**
-     * @param callable $onVisitorExposed
+     * @param callable(ExposedVisitor $exposedUser, ExposedFlag $exposedFlag): void $onVisitorExposed
      * @return FlagshipConfig
      */
-    public function setOnVisitorExposed($onVisitorExposed)
+    public function setOnVisitorExposed(callable $onVisitorExposed): static
     {
-        if (is_callable($onVisitorExposed)) {
-            $this->onVisitorExposed = $onVisitorExposed;
-        } else {
-            $this->logError(
-                $this,
-                sprintf(FlagshipConstant::IS_NOT_CALLABLE_ERROR, json_encode($onVisitorExposed)),
-                [
-                    FlagshipConstant::TAG => __FUNCTION__
-                ]
-            );
-        }
-
+        $this->onVisitorExposed = $onVisitorExposed;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function disableDeveloperUsageTracking()
+    public function disableDeveloperUsageTracking(): bool
     {
         return $this->disableDeveloperUsageTracking;
     }
@@ -349,7 +323,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param bool $disableDeveloperUsageTracking
      * @return FlagshipConfig
      */
-    public function setDisableDeveloperUsageTracking($disableDeveloperUsageTracking)
+    public function setDisableDeveloperUsageTracking(bool $disableDeveloperUsageTracking): static
     {
         $this->disableDeveloperUsageTracking = $disableDeveloperUsageTracking;
         return $this;
@@ -357,10 +331,8 @@ abstract class FlagshipConfig implements JsonSerializable
 
     /**
      * @inheritDoc
-     * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             FlagshipField::FIELD_ENVIRONMENT_ID => $this->getEnvId(),
@@ -370,12 +342,12 @@ abstract class FlagshipConfig implements JsonSerializable
         ];
     }
 
-    public static function bucketing($bucketingUrl)
+    public static function bucketing(string $bucketingUrl): BucketingConfig
     {
         return new BucketingConfig($bucketingUrl);
     }
 
-    public static function decisionApi()
+    public static function decisionApi(): DecisionApiConfig
     {
         return new DecisionApiConfig();
     }

@@ -11,14 +11,14 @@
   ],
   "license": "Apache-2.0",
   "require": {
-    "php": ">=5.4",
+    "php": ">=8.1",
     "ext-curl": "*",
     "ext-json": "*",
-    "psr/log": "^1|^2|^3"
+    "psr/log": "^3.0"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "^3.6",
-    "phpunit/phpunit": "9.6"
+    "squizlabs/php_codesniffer": "^3.10",
+    "phpunit/phpunit": "^9.6"
   },
   "autoload": {
     "psr-4": {

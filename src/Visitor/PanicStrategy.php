@@ -3,8 +3,8 @@
 namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Enum\FSSdkStatus;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 use Flagship\Traits\LogTrait;
@@ -19,14 +19,14 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function setConsent($hasConsented)
+    public function setConsent(bool $hasConsented): void
     {
         $this->visitor->hasConsented = $hasConsented;
         $this->logInfo(
             $this->getVisitor()->getConfig(),
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
-                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
+                FSSdkStatus::SDK_PANIC->name
             ),
             [FlagshipConstant::TAG => __FUNCTION__]
         );
@@ -35,7 +35,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function updateContext($key, $value)
+    public function updateContext(string $key, float|bool|int|string|null $value): void
     {
         $this->log(__FUNCTION__);
     }
@@ -43,7 +43,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function updateContextCollection(array $context)
+    public function updateContextCollection(array $context): void
     {
         $this->log(__FUNCTION__);
     }
@@ -51,7 +51,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function clearContext()
+    public function clearContext(): void
     {
         $this->log(__FUNCTION__);
     }
@@ -59,25 +59,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getModification($key, $defaultValue, $activate = false)
-    {
-        $this->log(__FUNCTION__);
-        return $defaultValue;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getModificationInfo($key)
-    {
-        $this->log(__FUNCTION__);
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function activateModification($key)
+    public function sendHit(HitAbstract $hit): void
     {
         $this->log(__FUNCTION__);
     }
@@ -85,16 +67,12 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function sendHit(HitAbstract $hit)
-    {
-        $this->log(__FUNCTION__);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
-    {
+    public function getFlagValue(
+        string $key,
+        float|array|bool|int|string|null $defaultValue,
+        FlagDTO $flag = null,
+        bool $userExposed = true
+    ): float|int|bool|array|string|null {
         $this->log(__FUNCTION__);
         return $defaultValue;
     }
@@ -102,24 +80,28 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null)
-    {
+    public function visitorExposed(
+        $key,
+        float|array|bool|int|string|null $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): void {
         $this->log(__FUNCTION__);
     }
 
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
     {
         $this->log(__FUNCTION__);
-        return FlagMetadata::getEmpty();
+        return FSFlagMetadata::getEmpty();
     }
 
     /**
      * @inheritDoc
      */
-    public function lookupVisitor()
+    public function lookupVisitor(): void
     {
         //
     }
@@ -127,7 +109,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function cacheVisitor()
+    public function cacheVisitor(): void
     {
         //
     }
@@ -135,7 +117,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor): array
     {
         return [];
     }
@@ -144,14 +126,14 @@ class PanicStrategy extends DefaultStrategy
      * @param string $functionName
      * @return void
      */
-    private function log($functionName)
+    private function log(string $functionName): void
     {
         $this->logInfo(
             $this->getVisitor()->getConfig(),
             sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
+                FSSdkStatus::SDK_PANIC->name
             ),
             [FlagshipConstant::TAG => $functionName]
         );

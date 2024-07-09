@@ -13,75 +13,67 @@ use Flagship\Enum\HitType;
  */
 class Event extends HitAbstract
 {
-    const ERROR_MESSAGE  = 'event category and event action are required';
-    const CATEGORY_ERROR =
+    public const ERROR_MESSAGE  = 'event category and event action are required';
+    public const CATEGORY_ERROR =
         "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
-    const VALUE_FIELD_ERROR = 'value must be an integer and be >= 0';
+    public const VALUE_FIELD_ERROR = 'value must be an integer and be >= 0';
 
-    public static function getClassName()
+    public static function getClassName(): string
     {
         return __CLASS__;
     }
 
     /**
-     * @var string
+     * @var EventCategory
      */
-    private $category = null;
+    private EventCategory $category;
 
     /**
      * @var string
      */
-    private $action = null;
+    private string $action;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $label;
+    private ?string $label = null;
 
     /**
-     * @var float
+     * @var float|null
      */
-    private $value;
+    private ?float $value = null;
 
     /**
      * Event constructor.
      *
-     * @param string $category : Action Tracking or User Engagement. @see Flagship\Enum\EventCategory
-     * @param string $action   : Event name that will also serve as the KPI
+     * @param EventCategory $category : Action Tracking or User Engagement.
+     * @param string $action : Event name that will also serve as the KPI
      *                         that you will have inside your reporting.
      */
-    public function __construct($category, $action)
+    public function __construct(EventCategory $category, string $action)
     {
         parent::__construct(HitType::EVENT);
-        $this->setCategory($category)
-            ->setAction($action);
+        $this->category = $category;
+        $this->action = $action;
     }
 
     /**
      * Action Tracking or User Engagement.
      *
-     * @return string
+     * @return EventCategory
      */
-    public function getCategory()
+    public function getCategory(): EventCategory
     {
         return $this->category;
     }
 
     /**
      * Specify Action Tracking or User Engagement.
-     * @see \Flagship\Enum\EventCategory
-     * @param  string $category
+     * @param  EventCategory $category
      * @return Event
      */
-    public function setCategory($category)
+    public function setCategory(EventCategory $category): static
     {
-        if ($category !== EventCategory::ACTION_TRACKING && $category !== EventCategory::USER_ENGAGEMENT) {
-            $this->logError(
-                $this->getConfig(),
-                sprintf(self::CATEGORY_ERROR, 'category')
-            );
-            return $this;
-        }
         $this->category = $category;
         return $this;
     }
@@ -91,7 +83,7 @@ class Event extends HitAbstract
      *
      * @return string
      */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->action;
     }
@@ -100,14 +92,11 @@ class Event extends HitAbstract
      * Specify Event name that will also serve as the KPI
      * that you will have inside your reporting
      *
-     * @param  string $action : Event name.
+     * @param string $action : Event name.
      * @return Event
      */
-    public function setAction($action)
+    public function setAction(string $action): static
     {
-        if (!$this->isNoEmptyString($action, 'action')) {
-            return $this;
-        }
         $this->action = $action;
         return $this;
     }
@@ -115,9 +104,9 @@ class Event extends HitAbstract
     /**
      * Additional description of event.
      *
-     * @return string
+     * @return string|null
      */
-    public function getLabel()
+    public function getLabel(): ?string
     {
         return $this->label;
     }
@@ -125,14 +114,11 @@ class Event extends HitAbstract
     /**
      * Specify additional description of event.
      *
-     * @param  string $label : event label.
+     * @param ?string $label : event label.
      * @return Event
      */
-    public function setLabel($label)
+    public function setLabel(?string $label): static
     {
-        if (!$this->isNoEmptyString($label, 'eventLabel')) {
-            return $this;
-        }
         $this->label = $label;
         return $this;
     }
@@ -140,9 +126,9 @@ class Event extends HitAbstract
     /**
      * Monetary value associated with an event
      *
-     * @return float
+     * @return float|null
      */
-    public function getValue()
+    public function getValue(): ?float
     {
         return $this->value;
     }
@@ -152,12 +138,12 @@ class Event extends HitAbstract
      *      (e.g. you earn 10 to 100 euros depending on the quality of lead generated).
      *      NOTE: this value must be non-negative.
      *
-     * @param  float $value : event value
+     * @param float|null $value : event value
      * @return Event
      */
-    public function setValue($value)
+    public function setValue(?float $value): static
     {
-        if (!is_int($value) ||  $value < 0) {
+        if (is_numeric($value) && $value < 0) {
             $this->logError(
                 $this->config,
                 self::VALUE_FIELD_ERROR,
@@ -174,7 +160,7 @@ class Event extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::EVENT_CATEGORY_API_ITEM] = $this->getCategory();
@@ -194,7 +180,7 @@ class Event extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return parent::isReady() && $this->getCategory() && $this->getAction();
     }
@@ -202,7 +188,7 @@ class Event extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return self::ERROR_MESSAGE;
     }

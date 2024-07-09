@@ -9,7 +9,7 @@ trait HasSameTypeTrait
      * @param mixed $defaultValue
      * @return bool
      */
-    protected function hasSameType($flagValue, $defaultValue)
+    protected function hasSameType(mixed $flagValue, mixed $defaultValue): bool
     {
         return gettype($flagValue) === getType($defaultValue);
     }

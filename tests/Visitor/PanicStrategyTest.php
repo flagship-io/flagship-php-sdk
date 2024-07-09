@@ -6,8 +6,7 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FlagshipStatus;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Hit\Page;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
@@ -54,53 +53,56 @@ class PanicStrategyTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $logMessageBuild = function ($functionName) {
-            return [sprintf(
+            return sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
-            ),
-            [FlagshipConstant::TAG => $functionName]];
+                FSSdkStatus::SDK_PANIC->name
+            );
         };
 
-        $logMessageBuildConsent = function ($functionName) {
-            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return [
+        $logMessageBuildConsent = function () {
+            return
                 sprintf(
                     FlagshipConstant::METHOD_DEACTIVATED_SEND_CONSENT_ERROR,
-                    FlagshipStatus::getStatusName(FlagshipStatus::READY_PANIC_ON)
-                ),
-                [FlagshipConstant::TAG => $functionName]];
+                    FSSdkStatus::SDK_PANIC->name,
+                );
         };
 
 
 
-        $httpClientMock->expects($this->exactly(2))->method("post")
+        $httpClientMock->expects($this->exactly(1))->method("post")
             ->willReturnOnConsecutiveCalls(
-                new HttpResponse(200, $this->campaigns()),
                 new HttpResponse(500, [])
             );
 
-        $configManager = (new ConfigManager())->setConfig($config);
-
         $decisionManager = new ApiManager($httpClientMock, $config);
 
-        $configManager->setDecisionManager($decisionManager)->setTrackingManager($trackerManager);
+        $configManager = new ConfigManager($config, $decisionManager, $trackerManager);
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
-        $logManagerStub->expects($this->exactly(11))->method('info')
-            ->withConsecutive(
-                $logMessageBuild('updateContext'),
-                $logMessageBuild('updateContextCollection'),
-                $logMessageBuild('clearContext'),
-                $logMessageBuild('getModification'),
-                $logMessageBuild('getModificationInfo'),
-                $logMessageBuild('activateModification'),
-                $logMessageBuild('sendHit'),
-                $logMessageBuildConsent('setConsent'),
-                $logMessageBuild('getFlagValue'),
-                $logMessageBuild('visitorExposed'),
-                $logMessageBuild('getFlagMetadata')
+        $logManagerStub->expects($this->exactly(8))->method('info')
+            ->with(
+                $this->logicalOr(
+                    $logMessageBuild('updateContext'),
+                    $logMessageBuild('updateContextCollection'),
+                    $logMessageBuild('clearContext'),
+                    $logMessageBuild('sendHit'),
+                    $logMessageBuildConsent(),
+                    $logMessageBuild('getFlagValue'),
+                    $logMessageBuild('visitorExposed'),
+                    $logMessageBuild('getFlagMetadata')
+                ),
+                $this->logicalOr(
+                    [FlagshipConstant::TAG => 'updateContext'],
+                    [FlagshipConstant::TAG => 'updateContextCollection'],
+                    [FlagshipConstant::TAG => 'clearContext'],
+                    [FlagshipConstant::TAG => 'sendHit'],
+                    [FlagshipConstant::TAG => 'setConsent'],
+                    [FlagshipConstant::TAG => 'getFlagValue'],
+                    [FlagshipConstant::TAG => 'visitorExposed'],
+                    [FlagshipConstant::TAG => 'getFlagMetadata']
+                )
             );
 
         $panicStrategy = new PanicStrategy($visitor);
@@ -116,22 +118,6 @@ class PanicStrategyTest extends TestCase
         //Test clearContext
         $panicStrategy->clearContext();
 
-        //Test synchronizedModifications
-        $panicStrategy->synchronizeModifications();
-
-        //Test getModification
-        $defaultValue = "defaultValue";
-        $valueOutput = $panicStrategy->getModification('key', $defaultValue);
-
-        $this->assertSame($valueOutput, $defaultValue);
-
-        //Test getModificationInfo
-        $valueOutput = $panicStrategy->getModificationInfo('key');
-        $this->assertNull($valueOutput);
-
-        //Test activateModification
-        $panicStrategy->activateModification('key');
-
         //Test sendHit
         $panicStrategy->sendHit(new Page('http://localhost'));
 
@@ -141,13 +127,13 @@ class PanicStrategyTest extends TestCase
 
         //Test getFlagValue
         $value = $panicStrategy->getFlagValue('key', true);
-        $this->assertEquals(true, $value);
+        $this->assertTrue($value);
 
         //Test userExposed
-        $panicStrategy->visitorExposed('key', true, null);
+        $panicStrategy->visitorExposed('key', true);
 
         //Test getFlagMetadata
-        $panicStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);
+        $panicStrategy->getFlagMetadata('key');
 
         $campaignsData = $this->campaigns();
         $assignmentsHistory = [];
@@ -163,20 +149,20 @@ class PanicStrategyTest extends TestCase
                 FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
                 FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
                 FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                VisitorStrategyAbstract::ACTIVATED => false,
-                VisitorStrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
+                StrategyAbstract::ACTIVATED => false,
+                StrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
             ];
         }
 
         $visitorCache = [
-            VisitorStrategyAbstract::VERSION => 1,
-            VisitorStrategyAbstract::DATA => [
-                VisitorStrategyAbstract::VISITOR_ID => $visitor->getVisitorId(),
-                VisitorStrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
-                VisitorStrategyAbstract::CONSENT => $visitor->hasConsented(),
-                VisitorStrategyAbstract::CONTEXT => $visitor->getContext(),
-                VisitorStrategyAbstract::CAMPAIGNS => $campaigns,
-                VisitorStrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitor->getVisitorId(),
+                StrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => $campaigns,
+                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
             ]
         ];
 

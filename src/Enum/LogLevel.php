@@ -2,62 +2,55 @@
 
 namespace Flagship\Enum;
 
-class LogLevel
+enum LogLevel: int
 {
     /**
-     * NONE = 0: Logging will be disabled.
+     * Logging will be disabled.
      */
-    const NONE      = 0;
-    /**
-     * EMERGENCY = 1: Only emergencies will be logged.
-     */
-    const EMERGENCY = 1;
-    /**
-     * ALERT = 2: Only alerts and above will be logged.
-     */
-    const ALERT = 2;
-    /**
-     * CRITICAL = 3: Only critical and above will be logged.
-     */
-    const CRITICAL = 3;
-    /**
-     * ERROR = 4: Only errors and above will be logged.
-     */
-    const ERROR = 4;
-    /**
-     * WARNING = 5: Only warnings and above will be logged.
-     */
-    const WARNING = 5;
-    /**
-     * NOTICE = 6: Only notices and above will be logged.
-     */
-    const NOTICE  = 6;
-    /**
-     * INFO = 7: Only info logs and above will be logged.
-     */
-    const INFO = 7;
-    /**
-     * DEBUG = 8: Only debug logs and above will be logged.
-     */
-    const DEBUG = 8;
+    case NONE = 0;
 
     /**
-     * ALL = 9: All logs will be logged.
+     * Only emergencies will be logged.
      */
-    const ALL = 9;
-
-    private static $logLevelName = ["NONE", "EMERGENCY", "ALERT", "CRITICAL", "ERROR",
-        "WARNING", "NOTICE", "INFO", "DEBUG", "ALL"];
+    case EMERGENCY = 1;
 
     /**
-     * @param int $loglevel
-     * @return string
+     * Only alerts and above will be logged.
      */
-    public static function getLogName($loglevel)
-    {
-        if (!is_int($loglevel) || $loglevel < 0 || $loglevel > 9) {
-            return "";
-        }
-        return self::$logLevelName[$loglevel];
-    }
+    case ALERT = 2;
+
+    /**
+     * Only critical and above will be logged.
+     */
+    case CRITICAL = 3;
+
+    /**
+     * Only errors and above will be logged.
+     */
+    case ERROR = 4;
+
+    /**
+     * Only warnings and above will be logged.
+     */
+    case WARNING = 5;
+
+    /**
+     * Only notices and above will be logged.
+     */
+    case NOTICE = 6;
+
+    /**
+     * Only info logs and above will be logged.
+     */
+    case INFO = 7;
+
+    /**
+     * Only debug logs and above will be logged.
+     */
+    case DEBUG = 8;
+
+    /**
+     * All logs will be logged.
+     */
+    case ALL = 9;
 }

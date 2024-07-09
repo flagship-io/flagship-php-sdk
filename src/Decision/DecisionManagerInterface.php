@@ -3,29 +3,30 @@
 namespace Flagship\Decision;
 
 use Flagship\Model\FlagDTO;
+use Flagship\Model\TroubleshootingData;
 use Flagship\Visitor\VisitorAbstract;
 
 interface DecisionManagerInterface
 {
     /**
-     * This function fetch campaigns modifications from the server according to the visitor context and
-     * Return an array of Modification from all campaigns
+     * This function fetch campaigns flags from the server according to the visitor context and
+     * Return an array of flags from all campaigns
      * @param VisitorAbstract $visitor
      * @return FlagDTO[]
      */
-    public function getCampaignModifications(VisitorAbstract $visitor);
+    public function getCampaignFlags(VisitorAbstract $visitor): array;
 
     /**
      * @param VisitorAbstract $visitor
-     * @return array
+     * @return array|null
      */
-    public function getCampaigns(VisitorAbstract $visitor);
+    public function getCampaigns(VisitorAbstract $visitor): array|null;
 
     /**
      * @param $campaigns
      * @return FlagDTO[]
      */
-    public function getModifications($campaigns);
+    public function getFlagsData($campaigns): array;
 
-    public function getTroubleshootingData();
+    public function getTroubleshootingData(): ?TroubleshootingData;
 }

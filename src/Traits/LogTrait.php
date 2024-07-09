@@ -12,7 +12,7 @@ trait LogTrait
      * @param array $args
      * @return array
      */
-    protected function formatArgs($args = [])
+    protected function formatArgs($args = []): array
     {
         $formatArgs = [];
         foreach ($args as $arg) {
@@ -31,9 +31,9 @@ trait LogTrait
      * @param array $args
      * @return void
      */
-    protected function logDebugSprintf(FlagshipConfig $config, $tag, $message, $args = [])
+    protected function logDebugSprintf(FlagshipConfig $config, string $tag, string $message, array $args = []): void
     {
-        if ($config->getLogLevel() < LogLevel::DEBUG || is_null($config->getLogManager())) {
+        if ($config->getLogLevel()->value < LogLevel::DEBUG->value || is_null($config->getLogManager())) {
             return;
         }
         $customMessage = vsprintf($message, $this->formatArgs($args));
@@ -46,9 +46,9 @@ trait LogTrait
      * @param array $context
      *@return void
      */
-    protected function logDebug($config, $message, $context = [])
+    protected function logDebug(FlagshipConfig $config, string $message, array $context = []): void
     {
-        if (!$config || $config->getLogLevel() < LogLevel::DEBUG || is_null($config->getLogManager())) {
+        if ($config->getLogLevel()->value < LogLevel::DEBUG->value || is_null($config->getLogManager())) {
             return;
         }
         $config->getLogManager()->debug($message, $context);
@@ -61,9 +61,9 @@ trait LogTrait
      * @param array ...$args
      * @return void
      */
-    protected function logErrorSprintf(FlagshipConfig $config, $tag, $message, $args = [])
+    protected function logErrorSprintf(FlagshipConfig $config, string $tag, string $message, array $args = []): void
     {
-        if ($config->getLogLevel() < LogLevel::ERROR || is_null($config->getLogManager())) {
+        if ($config->getLogLevel()->value < LogLevel::ERROR->value || is_null($config->getLogManager())) {
             return;
         }
         $customMessage = vsprintf($message, $this->formatArgs($args));
@@ -75,9 +75,9 @@ trait LogTrait
      * @param array $context
      * @return void
      */
-    protected function logError($config, $message, $context = [])
+    protected function logError(FlagshipConfig $config, string $message, array $context = []): void
     {
-        if (!$config || $config->getLogLevel() < LogLevel::ERROR || is_null($config->getLogManager())) {
+        if ($config->getLogLevel()->value < LogLevel::ERROR->value || is_null($config->getLogManager())) {
             return;
         }
         $config->getLogManager()->error($message, $context);
@@ -90,9 +90,9 @@ trait LogTrait
      * @param array $args
      * @return void
      */
-    protected function logInfoSprintf(FlagshipConfig $config, $tag, $message, $args = [])
+    protected function logInfoSprintf(FlagshipConfig $config, string $tag, string $message, array $args = []): void
     {
-        if ($config->getLogLevel() < LogLevel::INFO || is_null($config->getLogManager())) {
+        if ($config->getLogLevel()->value < LogLevel::INFO->value || is_null($config->getLogManager())) {
             return;
         }
         $customMessage = vsprintf($message, $this->formatArgs($args));
@@ -104,9 +104,9 @@ trait LogTrait
      * @param array $context
      * @return void
      */
-    protected function logInfo($config, $message, $context = [])
+    protected function logInfo(FlagshipConfig $config, string $message, array $context = []): void
     {
-        if (!$config || $config->getLogLevel() < LogLevel::INFO || is_null($config->getLogManager())) {
+        if ($config->getLogLevel()->value < LogLevel::INFO->value || is_null($config->getLogManager())) {
             return;
         }
         $config->getLogManager()->info($message, $context);
@@ -119,9 +119,9 @@ trait LogTrait
      * @param array $args
      * @return void
      */
-    protected function logWarningSprintf(FlagshipConfig $config, $tag, $message, $args = [])
+    protected function logWarningSprintf(FlagshipConfig $config, string $tag, string $message, array $args = []): void
     {
-        if ($config->getLogLevel() < LogLevel::WARNING || is_null($config->getLogManager())) {
+        if ($config->getLogLevel()->value < LogLevel::WARNING->value || is_null($config->getLogManager())) {
             return;
         }
         $customMessage = vsprintf($message, $this->formatArgs($args));
@@ -134,9 +134,9 @@ trait LogTrait
      * @param array $context
      * @return void
      */
-    protected function logWarning($config, $message, $context = [])
+    protected function logWarning(FlagshipConfig $config, string $message, array $context = []): void
     {
-        if (!$config || $config->getLogLevel() < LogLevel::WARNING || is_null($config->getLogManager())) {
+        if ($config->getLogLevel()->value < LogLevel::WARNING->value || is_null($config->getLogManager())) {
             return;
         }
         $config->getLogManager()->warning($message, $context);
@@ -148,8 +148,9 @@ trait LogTrait
      * @param array $requestBody
      * @param array $headers
      * @param string $duration
-     * @param string $responseHeader
-     * @param string $responseBody
+     * @param null $responseHeader
+     * @param null $responseBody
+     * @param null $responseStatus
      * @return array
      */
     protected function getLogFormat(
@@ -161,7 +162,7 @@ trait LogTrait
         $responseHeader = null,
         $responseBody = null,
         $responseStatus = null
-    ) {
+    ): array {
         $format = [];
         if ($message) {
             $format[FlagshipConstant::LOG_FORMAT_MESSAGE] = $message;

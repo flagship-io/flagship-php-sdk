@@ -11,22 +11,13 @@ class ConfigManagerTest extends TestCase
 {
     public function testInstance()
     {
-        $configManager = new ConfigManager();
-
-        $this->assertNull($configManager->getConfig());
-        $this->assertNull($configManager->getTrackingManager());
-        $this->assertNull($configManager->getDecisionManager());
-
         $config =  new DecisionApiConfig();
-        $configManager->setConfig($config);
-        $this->assertSame($config, $configManager->getConfig());
-
         $decisionManager =  new ApiManager(new HttpClient(), $config);
-        $configManager->setDecisionManager($decisionManager);
-        $this->assertSame($decisionManager, $configManager->getDecisionManager());
-
         $trackingManager = new TrackingManager($config, new HttpClient());
-        $configManager->setTrackingManager($trackingManager);
+        $configManager = new ConfigManager($config, $decisionManager, $trackingManager);
+
+        $this->assertSame($config, $configManager->getConfig());
+        $this->assertSame($decisionManager, $configManager->getDecisionManager());
         $this->assertSame($trackingManager, $configManager->getTrackingManager());
     }
 }

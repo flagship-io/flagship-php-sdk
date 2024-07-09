@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flagship\Hit;
 
 use Flagship\Config\DecisionApiConfig;
@@ -25,16 +27,13 @@ class ScreenTest extends TestCase
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::SCREEN_VIEW,
+            FlagshipConstant::T_API_ITEM => HitType::SCREEN_VIEW->value,
             FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0,
+            FlagshipConstant::QT_API_ITEM => 0.0,
             FlagshipConstant::DL_API_ITEM => $screenName
         ];
 
         $this->assertSame($screenArray, $screen->toApiKeys());
-
-        $screen->setScreenName([]);
-        $this->assertSame($screenName, $screen->getScreenName());
     }
 
     public function testIsReady()
@@ -42,23 +41,14 @@ class ScreenTest extends TestCase
         //Test isReady without require HitAbstract fields
         $screenName = "screenName";
         $screen = new Screen($screenName);
+        $screen->setVisitorId('visitorId');
 
         $this->assertFalse($screen->isReady());
 
         //Test with require HitAbstract fields and with null screenName
-        $screenName = null;
-        $screen = new Screen($screenName);
-        $config = new DecisionApiConfig('envId');
-        $screen->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
-
-        $this->assertFalse($screen->isReady());
-
-        //Test isReady Test with require HitAbstract fields and  with empty screenName
         $screenName = "";
         $screen = new Screen($screenName);
-
+        $config = new DecisionApiConfig('envId');
         $screen->setConfig($config)
             ->setVisitorId('visitorId')
             ->setDs(FlagshipConstant::SDK_APP);

@@ -10,24 +10,24 @@ class ExposedVisitor implements ExposedVisitorInterface
     /**
      * @var string
      */
-    private $id;
+    private string $id;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $anonymousId;
+    private ?string $anonymousId;
 
     /**
      * @var array
      */
-    private $context;
+    private array $context;
 
     /**
      * @param string $id
-     * @param string $anonymousId
+     * @param ?string $anonymousId
      * @param array $context
      */
-    public function __construct($id, $anonymousId, array $context)
+    public function __construct(string $id, ?string $anonymousId, array $context)
     {
         $this->id = $id;
         $this->anonymousId = $anonymousId;
@@ -37,15 +37,15 @@ class ExposedVisitor implements ExposedVisitorInterface
     /**
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getAnonymousId()
+    public function getAnonymousId(): ?string
     {
         return $this->anonymousId;
     }
@@ -53,7 +53,7 @@ class ExposedVisitor implements ExposedVisitorInterface
     /**
      * @return array
      */
-    public function getContext()
+    public function getContext(): array
     {
         return $this->context;
     }

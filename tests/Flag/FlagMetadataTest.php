@@ -17,7 +17,7 @@ class FlagMetadataTest extends TestCase
         $variationName = "variationName";
         $variationGroupName = "variationGroupName";
         $slug = "slug";
-        $metadata = new FlagMetadata(
+        $metadata = new FSFlagMetadata(
             $campaignId,
             $variationGroupId,
             $variationId,
@@ -41,11 +41,11 @@ class FlagMetadataTest extends TestCase
 
         $metadataJson = json_encode([
             "campaignId" => $campaignId,
-            "campaignName"=> $campaignName,
+            "campaignName" => $campaignName,
             "variationGroupId" => $variationGroupId,
-            "variationGroupName"=> $variationGroupName,
+            "variationGroupName" => $variationGroupName,
             "variationId" => $variationId,
-            "variationName"=> $variationName,
+            "variationName" => $variationName,
             "isReference" => $isReferenceId,
             "campaignType" => $campaignType,
             "slug" => $slug
@@ -56,14 +56,14 @@ class FlagMetadataTest extends TestCase
             "campaignId" => "",
             "campaignName" => "",
             "variationGroupId" => "",
-            "variationGroupName"=>'',
+            "variationGroupName" => '',
             "variationId" => "",
-            "variationName"=>"",
+            "variationName" => "",
             "isReference" => false,
             "campaignType" => "",
-            "slug" => null
+            "slug" => ""
         ]);
 
-        $this->assertJsonStringEqualsJsonString(json_encode(FlagMetadata::getEmpty()), $metadataJson);
+        $this->assertJsonStringEqualsJsonString(json_encode(FSFlagMetadata::getEmpty()), $metadataJson);
     }
 }

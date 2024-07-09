@@ -10,19 +10,19 @@ use Flagship\Model\HttpResponse;
 class HttpClient implements HttpClientInterface
 {
     /**
-     * @var mixed
+     * @var ?array
      */
-    private $curl;
+    private mixed $curl = null;
 
     /**
      * @var array
      */
-    private $options = [];
+    private array $options = [];
 
     /**
      * @var array
      */
-    private $headers = [];
+    private array $headers = [];
 
     /**
      * Construct
@@ -39,7 +39,7 @@ class HttpClient implements HttpClientInterface
     /**
      * @return void
      */
-    private function curlInit()
+    private function curlInit(): void
     {
         $this->curl = curl_init();
         $this->setTimeout();
@@ -55,7 +55,7 @@ class HttpClient implements HttpClientInterface
      *
      * @return boolean
      */
-    public function setOpt($option, $value)
+    public function setOpt($option, $value): bool
     {
         if (!$this->curl) {
             $this->curlInit();
@@ -70,7 +70,7 @@ class HttpClient implements HttpClientInterface
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -79,7 +79,7 @@ class HttpClient implements HttpClientInterface
     /**
      * @inheritDoc
      */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): HttpClientInterface
     {
         foreach ($headers as $key => $value) {
             $key = trim($key);
@@ -98,7 +98,7 @@ class HttpClient implements HttpClientInterface
     /**
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -106,7 +106,7 @@ class HttpClient implements HttpClientInterface
     /**
      * @inheritDoc
      */
-    public function setTimeout($seconds = FlagshipConstant::REQUEST_TIME_OUT)
+    public function setTimeout(int $seconds = FlagshipConstant::REQUEST_TIME_OUT): HttpClientInterface
     {
         $this->setOpt(CURLOPT_TIMEOUT, $seconds);
         $this->setOpt(CURLOPT_CONNECTTIMEOUT, $seconds);
@@ -117,10 +117,10 @@ class HttpClient implements HttpClientInterface
      * Set Url
      *
      * @param  $url
-     * @param  $data
+     * @param string|array $data
      * @return HttpClientInterface
      */
-    private function setUrl($url, $data = '')
+    private function setUrl($url, string|array $data = ''): HttpClientInterface
     {
         $builtUrl = $this->buildUrl($url, $data);
         $this->setOpt(CURLOPT_URL, $builtUrl);
@@ -133,7 +133,7 @@ class HttpClient implements HttpClientInterface
      * @return HttpResponse Returns the value provided by parseResponse.
      * @throws Exception
      */
-    private function exec()
+    private function exec(): HttpResponse
     {
         $rawResponse = curl_exec($this->curl);
         $curlErrorCode = curl_errno($this->curl);
@@ -173,13 +173,13 @@ class HttpClient implements HttpClientInterface
     /**
      * Get
      *
-     * @param $url
+     * @param string $url
      * @param array $params
      *
      * @return HttpResponse value provided by exec.
      * @throws Exception
      */
-    public function get($url, array $params = [])
+    public function get(string $url, array $params = []): HttpResponse
     {
         $this->setUrl($url, $params);
         $this->setOpt(CURLOPT_CUSTOMREQUEST, 'GET');
@@ -188,13 +188,13 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * @param  $url
+     * @param string $url
      * @param  array $query
      * @param  array $data
      * @return HttpResponse
      * @throws Exception
      */
-    public function post($url, array $query = [], array $data = [])
+    public function post(string $url, array $query = [], array $data = []): HttpResponse
     {
         $this->setUrl($url, $query);
         $this->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
@@ -211,12 +211,12 @@ class HttpClient implements HttpClientInterface
      *
      * @return int|string
      */
-    private function getInfo($opt = null)
+    private function getInfo($opt = null): int|string
     {
         return curl_getinfo($this->curl, $opt);
     }
 
-    private function parseResponse($rawResponse)
+    private function parseResponse($rawResponse): mixed
     {
         return json_decode($rawResponse, true);
     }
@@ -225,22 +225,25 @@ class HttpClient implements HttpClientInterface
      * Build Url
      *
      * @access public
-     * @param  $url
-     * @param  $data
+     * @param string $url
+     * @param array|string $data
      *
      * @return string
      */
-    private function buildUrl($url, $data = '')
+    private function buildUrl(string $url, array|string $data = ''): string
     {
-        $queryString = '';
-        if (!empty($data)) {
-            $queryMark = strpos($url, '?') > 0 ? '&' : '?';
-            if (is_string($data)) {
-                $queryString .= $queryMark . $data;
-            } elseif (is_array($data)) {
-                $queryString .= $queryMark . http_build_query($data, '', '&');
-            }
+        if (empty($data)) {
+            return $url;
         }
+
+        $queryMark = str_contains($url, '?') ? '&' : '?';
+
+        $queryString = match (true) {
+            is_string($data) => $queryMark . $data,
+            is_array($data) => $queryMark . http_build_query($data, '', '&'),
+            default => ''
+        };
+
         return $url . $queryString;
     }
 }

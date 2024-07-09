@@ -12,12 +12,12 @@ use Flagship\Enum\HitType;
  */
 class Screen extends HitAbstract
 {
-    const ERROR_MESSAGE = 'Screen name is required';
+    public const ERROR_MESSAGE = 'Screen name is required';
 
     /**
      * @return string
      */
-    public static function getClassName()
+    public static function getClassName(): string
     {
         return __CLASS__;
     }
@@ -25,14 +25,14 @@ class Screen extends HitAbstract
     /**
      * @var string
      */
-    private $screenName = null;
+    private string $screenName;
 
     /**
      * Screen constructor.
      *
      * @param string $screenName : Name of the interface seen.
      */
-    public function __construct($screenName)
+    public function __construct(string $screenName)
     {
         parent::__construct(HitType::SCREEN_VIEW);
 
@@ -44,7 +44,7 @@ class Screen extends HitAbstract
      *
      * @return string
      */
-    public function getScreenName()
+    public function getScreenName(): string
     {
         return $this->screenName;
     }
@@ -52,14 +52,11 @@ class Screen extends HitAbstract
     /**
      * Specify Name of the interface seen.
      *
-     * @param  string $screenName : Interface seen.
+     * @param string $screenName : Interface seen.
      * @return Screen
      */
-    public function setScreenName($screenName)
+    public function setScreenName(string $screenName): static
     {
-        if (!$this->isNoEmptyString($screenName, 'screenName')) {
-            return $this;
-        }
         $this->screenName = $screenName;
         return $this;
     }
@@ -67,7 +64,7 @@ class Screen extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function toApiKeys()
+    public function toApiKeys(): array
     {
         $arrayParent = parent::toApiKeys();
         $arrayParent[FlagshipConstant::DL_API_ITEM] = $this->getScreenName();
@@ -77,7 +74,7 @@ class Screen extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return parent::isReady() && $this->getScreenName();
     }
@@ -85,7 +82,7 @@ class Screen extends HitAbstract
     /**
      * @inheritDoc
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return self::ERROR_MESSAGE;
     }

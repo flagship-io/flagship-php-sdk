@@ -2,15 +2,26 @@
 
 namespace Flagship\Utils;
 
+use Exception;
+use Flagship\Config\DecisionApiConfig;
+use Flagship\Config\FlagshipConfig;
+use Flagship\Decision\ApiManager;
+use Flagship\Decision\DecisionManagerAbstract;
+use Flagship\Flag\FSFlagMetadata;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 class ContainerTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
     public function testGet()
     {
         $container = new Container();
-        $alias = 'Flagship\Utils\HttpClientInterface';
-        $className = 'Flagship\Utils\HttpClient';
+        $alias = HttpClientInterface::class;
+        $className = HttpClient::class;
 
         $container->bind($alias, $className);
 
@@ -20,11 +31,15 @@ class ContainerTest extends TestCase
 
         //Test constructor with default argument
         $container->bind(
-            "Flagship\Config\FlagshipConfig",
-            "Flagship\Config\DecisionApiConfig"
+            FlagshipConfig::class,
+            DecisionApiConfig::class
         );
-        $alias = 'Flagship\Decision\DecisionManagerAbstract';
-        $className = 'Flagship\Decision\ApiManager';
+
+        $instanceAlias2 = $container->get(FlagshipConfig::class);
+        $this->assertInstanceOf(FlagshipConfig::class, $instanceAlias2);
+
+        $alias = DecisionManagerAbstract::class;
+        $className = ApiManager::class;
         $container->bind($alias, $className);
 
         $instanceAlias = $container->get($alias);
@@ -34,14 +49,17 @@ class ContainerTest extends TestCase
         $instanceAlias = $container->get('stdClass');
         $this->assertInstanceOf('stdClass', $instanceAlias);
 
-        $this->setExpectedException('ReflectionException');
+        $this->expectException('ReflectionException');
 
         $container->get('NotExist');
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetWithDefaultArgs()
     {
-        $className = 'Flagship\Config\DecisionApiConfig';
+        $className = DecisionApiConfig::class;
         $container = new Container();
         $instanceAlias = $container->get($className);
         $this->assertInstanceOf($className, $instanceAlias);
@@ -49,16 +67,35 @@ class ContainerTest extends TestCase
         $this->assertNull($instanceAlias->getApiKey());
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetWithoutDefaultArgs()
+    {
+        $className = FSFlagMetadata::class;
+        $container = new Container();
+        $instanceAlias = $container->get($className);
+        $this->assertInstanceOf($className, $instanceAlias);
+
+        $this->assertEmpty($instanceAlias->getCampaignId());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     public function testGetNotInstantiable()
     {
         $container = new Container();
         $alias = 'Flagship\Decision\DecisionManagerAbstract';
 
-        $this->setExpectedException('Exception');
+        $this->expectException('Exception');
 
         $container->get($alias);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetWithCustomArgument()
     {
         //Test constructor with custom argument
@@ -72,6 +109,9 @@ class ContainerTest extends TestCase
         $this->assertSame($apiKey, $instanceAlias->getApiKey());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testFactory()
     {
         $className = 'Flagship\Config\DecisionApiConfig';
@@ -84,6 +124,9 @@ class ContainerTest extends TestCase
         $this->assertSame($apiKey, $instanceAlias->getApiKey());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testBind()
     {
         $container = new Container();
@@ -104,7 +147,7 @@ class ContainerTest extends TestCase
         $this->assertCount(2, $binding);
         $this->assertSame($binding[$alias2], $className2);
 
-        $this->setExpectedException('Exception');
+        $this->expectException('Exception');
 
         $container->bind($alias2, $className2);
     }

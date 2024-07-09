@@ -4,6 +4,7 @@ namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Hit\HitAbstract;
+use Flagship\Hit\Troubleshooting;
 use Flagship\Model\FlagDTO;
 
 /**
@@ -15,7 +16,7 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function activateModification($key)
+    public function sendHit(HitAbstract $hit): void
     {
         $this->log(__FUNCTION__);
     }
@@ -23,23 +24,21 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function sendHit(HitAbstract $hit)
-    {
+    public function visitorExposed(
+        $key,
+        float|array|bool|int|string|null $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): void {
         $this->log(__FUNCTION__);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null)
+    public function sendTroubleshootingHit(Troubleshooting $hit): void
     {
-        $this->log(__FUNCTION__);
+       //
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function lookupVisitor()
+    public function sendConsentHitTroubleshooting(): void
     {
         //
     }
@@ -47,7 +46,7 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function cacheVisitor()
+    public function lookupVisitor(): void
     {
         //
     }
@@ -55,7 +54,15 @@ class NoConsentStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    protected function fetchVisitorCampaigns(VisitorAbstract $visitor)
+    public function cacheVisitor(): void
+    {
+        //
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function fetchVisitorCampaigns(VisitorAbstract $visitor): array
     {
         return [];
     }
@@ -64,7 +71,7 @@ class NoConsentStrategy extends DefaultStrategy
      * @param string $functionName
      * @return void
      */
-    private function log($functionName)
+    private function log(string $functionName): void
     {
         $this->logInfo(
             $this->getVisitor()->getConfig(),

@@ -8,31 +8,33 @@ namespace Flagship\Model;
  */
 class HttpResponse
 {
-    private $statusCode;
-    private $body;
+    private string|int $statusCode;
+    private mixed $body;
     /**
      * @var array
      */
-    private $headers;
+    private array $headers;
 
     /**
      * HttpResponse constructor.
-     * @param $statusCode
-     * @param $body
+     * @param string|int $statusCode
+     * @param mixed $body
      * @param array $headers
      */
-    public function __construct($statusCode, $body, array $headers = [])
-    {
-
+    public function __construct(
+        string|int $statusCode,
+        mixed $body,
+        array $headers = []
+    ) {
         $this->statusCode = $statusCode;
         $this->body = $body;
         $this->headers = $headers;
     }
 
     /**
-     * @return mixed
+     * @return string|int
      */
-    public function getStatusCode()
+    public function getStatusCode(): string|int
     {
         return $this->statusCode;
     }
@@ -41,7 +43,7 @@ class HttpResponse
      * @param  mixed $statusCode
      * @return HttpResponse
      */
-    public function setStatusCode($statusCode)
+    public function setStatusCode(mixed $statusCode): static
     {
         $this->statusCode = $statusCode;
         return $this;
@@ -50,7 +52,7 @@ class HttpResponse
     /**
      * @return mixed
      */
-    public function getBody()
+    public function getBody(): mixed
     {
         return $this->body;
     }
@@ -59,7 +61,7 @@ class HttpResponse
      * @param  mixed $body
      * @return HttpResponse
      */
-    public function setBody($body)
+    public function setBody(mixed $body): static
     {
         $this->body = $body;
         return $this;
@@ -68,7 +70,7 @@ class HttpResponse
     /**
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }

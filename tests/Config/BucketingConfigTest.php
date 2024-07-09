@@ -15,11 +15,11 @@ class BucketingConfigTest extends TestCase
         $config = new BucketingConfig($bucketingUrl);
 
         //Test default value
-        $this->assertSame($bucketingUrl, $config->getBucketingUrl());
+        $this->assertSame($bucketingUrl, $config->getSyncAgentUrl());
 
         $newBucketingUrl = "http:127.0.0.2:3000";
-        $config->setBucketingUrl($newBucketingUrl);
-        $this->assertSame($newBucketingUrl, $config->getBucketingUrl());
+        $config->setSyncAgentUrl($newBucketingUrl);
+        $this->assertSame($newBucketingUrl, $config->getSyncAgentUrl());
     }
 
     public function testJson()

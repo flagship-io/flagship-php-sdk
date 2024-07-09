@@ -3,8 +3,8 @@
 namespace Flagship\Visitor;
 
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Enum\FSSdkStatus;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\HitAbstract;
 use Flagship\Model\FlagDTO;
 use Flagship\Traits\LogTrait;
@@ -20,7 +20,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function synchronizeModifications()
+    public function sendHit(HitAbstract $hit): void
     {
         $this->log(__FUNCTION__);
     }
@@ -28,25 +28,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getModification($key, $defaultValue, $activate = false)
-    {
-        $this->log(__FUNCTION__);
-        return $defaultValue;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getModificationInfo($key)
-    {
-        $this->log(__FUNCTION__);
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function activateModification($key)
+    public function fetchFlags(): void
     {
         $this->log(__FUNCTION__);
     }
@@ -54,24 +36,12 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function sendHit(HitAbstract $hit)
-    {
-        $this->log(__FUNCTION__);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fetchFlags()
-    {
-        $this->log(__FUNCTION__);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
-    {
+    public function getFlagValue(
+        string $key,
+        float|array|bool|int|string|null $defaultValue,
+        FlagDTO $flag = null,
+        bool $userExposed = true
+    ): float|array|bool|int|string|null {
         $this->log(__FUNCTION__);
         return $defaultValue;
     }
@@ -79,24 +49,28 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null)
-    {
+    public function visitorExposed(
+        $key,
+        float|array|bool|int|string|null $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): void {
         $this->log(__FUNCTION__);
     }
 
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
     {
         $this->log(__FUNCTION__);
-        return FlagMetadata::getEmpty();
+        return FSFlagMetadata::getEmpty();
     }
 
     /**
      * @inheritDoc
      */
-    public function lookupVisitor()
+    public function lookupVisitor(): void
     {
         //
     }
@@ -104,7 +78,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function cacheVisitor()
+    public function cacheVisitor(): void
     {
         //
     }
@@ -113,11 +87,15 @@ class NotReadyStrategy extends DefaultStrategy
      * @param string $functionName
      * @return void
      */
-    private function log($functionName)
+    private function log(string $functionName): void
     {
         $this->logError(
             $this->getVisitor()->getConfig(),
-            sprintf(FlagshipConstant::METHOD_DEACTIVATED_ERROR, $functionName, FlagshipStatus::NOT_INITIALIZED),
+            sprintf(
+                FlagshipConstant::METHOD_DEACTIVATED_ERROR,
+                $functionName,
+                FSSdkStatus::SDK_NOT_INITIALIZED->name
+            ),
             [FlagshipConstant::TAG => $functionName]
         );
     }

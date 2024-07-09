@@ -27,7 +27,7 @@ class HitBatchTest extends TestCase
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
             FlagshipConstant::T_API_ITEM => "BATCH",
-            FlagshipConstant::QT_API_ITEM => 0,
+            FlagshipConstant::QT_API_ITEM => 0.0,
             FlagshipConstant::H_API_ITEM => []
         ];
 
@@ -40,6 +40,7 @@ class HitBatchTest extends TestCase
 
         $this->assertSame($data, $batch->toApiKeys());
 
-        $batch->getErrorMessage();
+        $value = $batch->getErrorMessage();
+        $this->assertIsString($value);
     }
 }

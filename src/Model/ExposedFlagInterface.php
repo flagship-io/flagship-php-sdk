@@ -2,7 +2,7 @@
 
 namespace Flagship\Model;
 
-use Flagship\Flag\FlagMetadataInterface;
+use Flagship\Flag\FSFlagMetadataInterface;
 
 interface ExposedFlagInterface
 {
@@ -10,23 +10,23 @@ interface ExposedFlagInterface
      * Return the key of flag
      * @return string
      */
-    public function getKey();
+    public function getKey(): string;
 
     /**
      * Return the value of flag
-     * @return bool|numeric|string|array
+     * @return float|array|bool|int|string|null
      */
-    public function getValue();
+    public function getValue(): float|array|bool|int|string|null;
 
     /**
      * Return the metadata of flag
-     * @return FlagMetadataInterface
+     * @return FSFlagMetadataInterface
      */
-    public function getMetadata();
+    public function getMetadata(): FSFlagMetadataInterface;
 
     /**
      * Return the default value of flag
-     * @return bool|numeric|string|array
+     * @return float|array|bool|int|string|null
      */
-    public function getDefaultValue();
+    public function getDefaultValue(): float|array|bool|int|string|null;
 }

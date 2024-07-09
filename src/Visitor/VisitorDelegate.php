@@ -2,17 +2,23 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Enum\DecisionMode;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipContext;
-use Flagship\Enum\FlagSyncStatus;
-use Flagship\Flag\Flag;
-use Flagship\Flag\FlagMetadata;
-use Flagship\Hit\HitAbstract;
+use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
+use Flagship\Flag\FSFlag;
+use Flagship\Flag\FSFlagCollection;
+use Flagship\Flag\FSFlagCollectionInterface;
+use Flagship\Flag\FSFlagInterface;
 use Flagship\Model\FlagDTO;
-use Flagship\Traits\Guid;
+use Flagship\Hit\HitAbstract;
+use Flagship\Enum\DecisionMode;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Utils\ConfigManager;
+use Flagship\Enum\FlagshipContext;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Model\FetchFlagsStatus;
 use Flagship\Utils\ContainerInterface;
+
+use function PHPUnit\Framework\matches;
 
 class VisitorDelegate extends VisitorAbstract
 {
@@ -21,26 +27,31 @@ class VisitorDelegate extends VisitorAbstract
      *
      * @param ContainerInterface $dependencyIContainer
      * @param ConfigManager      $configManager
-     * @param string             $visitorId             visitor unique identifier.
-     * @param boolean            $isAuthenticated
+     * @param ?string $visitorId             visitor unique identifier.
+     * @param boolean $isAuthenticated
      * @param array              $context     visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
-     * @param boolean            $hasConsented
+     * @param boolean $hasConsented
+     * @param string|null $flagshipInstanceId
+     * @param callable|null $onFetchFlagsStatusChanged
      */
     public function __construct(
         ContainerInterface $dependencyIContainer,
         ConfigManager $configManager,
-        $visitorId,
-        $isAuthenticated = false,
+        ?string $visitorId,
+        bool $isAuthenticated = false,
         array $context = [],
-        $hasConsented = false,
-        $flagshipInstanceId = null
+        bool $hasConsented = false,
+        string $flagshipInstanceId = null,
+        callable $onFetchFlagsStatusChanged = null
     ) {
         parent::__construct();
+        $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
         $this->setFlagshipInstanceId($flagshipInstanceId);
         $this->setDependencyIContainer($dependencyIContainer);
         $this->setConfig($configManager->getConfig());
         $this->setVisitorId($visitorId ?: $this->newGuid());
-        $this->setContext($context);
+
+        $this->initialContext($context);
         $this->setConfigManager($configManager);
         $this->loadPredefinedContext();
 
@@ -51,26 +62,24 @@ class VisitorDelegate extends VisitorAbstract
 
         $this->setConsent($hasConsented);
         $this->getStrategy()->lookupVisitor();
-        $this->setFlagSyncStatus(FlagSyncStatus::CREATED);
+        $this->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::VISITOR_CREATED));
     }
 
     /**
      * @return void
      */
-    private function loadPredefinedContext()
+    private function loadPredefinedContext(): void
     {
-        $defaultContext = [FlagshipContext::OS_NAME => PHP_OS];
-        $this->updateContextCollection($defaultContext);
-
-        $this->context[FlagshipConstant::FS_CLIENT]  = FlagshipConstant::SDK_LANGUAGE;
+        $this->context[FlagshipContext::OS_NAME] = PHP_OS;
+        $this->context[FlagshipConstant::FS_CLIENT] = FlagshipConstant::SDK_LANGUAGE;
         $this->context[FlagshipConstant::FS_VERSION] = FlagshipConstant::SDK_VERSION;
-        $this->context[FlagshipConstant::FS_USERS]   = $this->getVisitorId();
+        $this->context[FlagshipConstant::FS_USERS] = $this->getVisitorId();
     }
 
     /**
      * @inheritDoc
      */
-    public function updateContext($key, $value)
+    public function updateContext(string $key, float|bool|int|string|null $value): void
     {
         $this->getStrategy()->updateContext($key, $value);
     }
@@ -78,7 +87,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function updateContextCollection(array $context)
+    public function updateContextCollection(array $context): void
     {
         $this->getStrategy()->updateContextCollection($context);
     }
@@ -86,7 +95,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function clearContext()
+    public function clearContext(): void
     {
         $this->getStrategy()->clearContext();
         $this->loadPredefinedContext();
@@ -95,16 +104,15 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function authenticate($visitorId)
+    public function authenticate(string $visitorId): void
     {
         $this->getStrategy()->authenticate($visitorId);
     }
 
-
     /**
      * @inheritDoc
      */
-    public function unauthenticate()
+    public function unauthenticate(): void
     {
         $this->getStrategy()->unauthenticate();
     }
@@ -112,50 +120,13 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function getModification($key, $defaultValue, $activate = false)
-    {
-        return $this->getStrategy()->getModification($key, $defaultValue, $activate);
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function getModificationInfo($key)
-    {
-        return $this->getStrategy()->getModificationInfo($key);
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function synchronizeModifications()
-    {
-        $this->getStrategy()->synchronizeModifications();
-        $this->getStrategy()->cacheVisitor();
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function activateModification($key)
-    {
-        $this->getStrategy()->activateModification($key);
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function sendHit(HitAbstract $hit)
+    public function sendHit(HitAbstract $hit): void
     {
         $this->getStrategy()->sendHit($hit);
     }
 
 
-    public function fetchFlags()
+    public function fetchFlags(): void
     {
         $this->getStrategy()->fetchFlags();
         $this->getStrategy()->cacheVisitor();
@@ -165,17 +136,25 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function visitorExposed($key, $defaultValue, FlagDTO $flag = null)
-    {
-        $this->getStrategy()->visitorExposed($key, $defaultValue, $flag);
+    public function visitorExposed(
+        string $key,
+        float|array|bool|int|string|null $defaultValue,
+        FlagDTO $flag = null,
+        bool $hasGetValueBeenCalled = false
+    ): void {
+        $this->getStrategy()->visitorExposed($key, $defaultValue, $flag, $hasGetValueBeenCalled);
     }
 
 
     /**
      * @inheritDoc
      */
-    public function getFlagValue($key, $defaultValue, FlagDTO $flag = null, $userExposed = true)
-    {
+    public function getFlagValue(
+        string $key,
+        float|array|bool|int|string|null $defaultValue,
+        FlagDTO $flag = null,
+        bool $userExposed = true
+    ): float|array|bool|int|string|null {
         return $this->getStrategy()->getFlagValue($key, $defaultValue, $flag, $userExposed);
     }
 
@@ -183,47 +162,69 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata($key, FlagMetadata $metadata, $hasSameType)
+    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
     {
-        return $this->getStrategy()->getFlagMetadata($key, $metadata, $hasSameType);
+        return $this->getStrategy()->getFlagMetadata($key, $flag);
     }
 
     /**
      * @inheritDoc
      */
-    public function getFlag($key, $defaultValue)
+    public function getFlag(string $key): FSFlagInterface
     {
-        if ($this->getFlagSyncStatus() !== FlagSyncStatus::FLAGS_FETCHED) {
+        $fetchFlagsStatus = $this->getFetchStatus();
+        if (
+            $fetchFlagsStatus->getStatus() !== FSFetchStatus::FETCHED &&
+            $fetchFlagsStatus->getStatus() !== FSFetchStatus::FETCHING
+        ) {
             $this->logWarningSprintf(
                 $this->getConfig(),
                 FlagshipConstant::GET_FLAG,
-                $this->flagSyncStatusMessage($this->getFlagSyncStatus()),
+                $this->flagSyncStatusMessage($fetchFlagsStatus->getReason()),
                 [$this->getVisitorId(), $key]
             );
         }
-        return new Flag($key, $this, $defaultValue);
+        return new FSFlag($key, $this);
     }
 
     /**
-     * @param $status string
+     * @inheritDoc
+     */
+    public function getFlags(): FSFlagCollectionInterface
+    {
+        return new FSFlagCollection($this);
+    }
+
+    /**
+     * @param FSFetchReason $status int
      * @return string
      */
-    protected function flagSyncStatusMessage($status)
+    protected function flagSyncStatusMessage(FSFetchReason $status): string
     {
         $message = "";
-        $commonMessage = 'without calling `fetchFlags` method afterwards, the value of the flag `%s` may be outdated';
+        $commonMessage = 'without calling `fetchFlags` method afterwards. 
+        So, the value of the flag `%s` might be outdated';
+
         switch ($status) {
-            case FlagSyncStatus::CREATED:
-                $message = "Visitor `%s` has been created {$commonMessage}`";
+            case FSFetchReason::VISITOR_CREATED:
+                $message = "Visitor `%s` has been created without calling `fetchFlags` method afterwards.
+                 So, the value of the flag `%s` is the default value";
                 break;
-            case FlagSyncStatus::CONTEXT_UPDATED:
-                $message = "Visitor context for visitor `%s` has been updated {$commonMessage}";
+            case FSFetchReason::UPDATE_CONTEXT:
+                $message = "Visitor context for visitor `%s` has been updated $commonMessage";
                 break;
-            case FlagSyncStatus::AUTHENTICATED:
-                $message = "Visitor `%s` has been authenticated {$commonMessage}";
+            case FSFetchReason::AUTHENTICATE:
+                $message = "Visitor `%s` has been authenticated $commonMessage";
                 break;
-            case FlagSyncStatus::UNAUTHENTICATED:
-                $message = "Visitor `%s` has been unauthenticated {$commonMessage}";
+            case FSFetchReason::UNAUTHENTICATE:
+                $message = "Visitor `%s` has been unauthenticated $commonMessage";
+                break;
+            case FSFetchReason::FETCH_ERROR:
+                $message = "An error occurred while fetching flags for visitor `%s`. 
+                So, the value of the flag `%s` might be outdated";
+                break;
+            case FSFetchReason::FLAGS_FETCHED_FROM_CACHE:
+                $message = "Flags for visitor  `%s` have been fetched from cache";
                 break;
         }
         return $message;

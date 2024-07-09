@@ -7,7 +7,7 @@ use Flagship\Config\DecisionApiConfig;
 use Flagship\Enum\CacheStrategy;
 use Flagship\Enum\DecisionMode;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Enum\HitType;
 use Flagship\Enum\LogLevel;
 use Flagship\Enum\TroubleshootingLabel;
@@ -29,7 +29,7 @@ class TroubleshootingTest extends TestCase
         $visitorInstanceId  = "visitorInstanceId";
         $stackOriginName = "stackOriginName";
         $stackOriginVersion = "1";
-        $sdkStatus = FlagshipStatus::READY;
+        $sdkStatus = FSSdkStatus::SDK_INITIALIZED;
         $sdkConfigMode = DecisionMode::DECISION_API;
         $cacheStrategy = CacheStrategy::BATCHING_AND_CACHING_ON_FAILURE;
         $httpRequestUrl = "https://localhost";
@@ -104,7 +104,7 @@ class TroubleshootingTest extends TestCase
             ->setStackOriginVersion($stackOriginVersion)
             ->setSdkStatus($sdkStatus)
             ->setSdkConfigMode($sdkConfigMode)
-            ->setSdkConfigLogLeve($config->getLogLevel())
+            ->setSdkConfigLogLevel($config->getLogLevel())
             ->setSdkConfigCustomLogManager(true)
             ->setSdkConfigCustomCacheManager(true)
             ->setSdkConfigStatusListener(false)
@@ -149,10 +149,10 @@ class TroubleshootingTest extends TestCase
 
         $customVariable = [
             'version' => FlagshipConstant::TROUBLESHOOTING_VERSION,
-            'logLevel' => LogLevel::getLogName(LogLevel::INFO),
+            'logLevel' => LogLevel::INFO->name,
             'envId' => $config->getEnvId(),
             'timeZone' => (new DateTime())->getTimezone()->getName(),
-            'label' => TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS,
+            'label' => TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS->value,
             'stack.type' => FlagshipConstant::SDK,
             'stack.name' => FlagshipConstant::SDK_LANGUAGE,
             'stack.version' => FlagshipConstant::SDK_VERSION,
@@ -162,14 +162,14 @@ class TroubleshootingTest extends TestCase
             'flagshipInstanceId' => $flagshipInstanceId,
             'stack.origin.name' => $stackOriginName,
             'stack.origin.version' => $stackOriginVersion,
-            'sdk.status' => FlagshipStatus::getStatusName($sdkStatus),
-            'sdk.config.logLevel' => LogLevel::getLogName($config->getLogLevel()),
-            'sdk.config.mode' => DecisionMode::getDecisionModeName($sdkConfigMode),
+            'sdk.status' => $sdkStatus->name,
+            'sdk.config.logLevel' => $config->getLogLevel()->name,
+            'sdk.config.mode' => $sdkConfigMode->name,
             'sdk.config.customLogManager' => 'true',
             'sdk.config.customCacheManager' => 'true',
             'sdk.config.custom.StatusListener' => 'false',
             'sdk.config.timeout' => (string) $config->getTimeout(),
-            'sdk.config.trackingManager.strategy' => CacheStrategy::getCacheStrategyName($cacheStrategy),
+            'sdk.config.trackingManager.strategy' => $cacheStrategy->name,
             'sdk.config.bucketingUrl' => $sdkConfigBucketingUrl,
             'sdk.config.fetchThirdPartyData' => 'true',
             'sdk.config.usingOnVisitorExposed' => 'true',
@@ -237,7 +237,7 @@ class TroubleshootingTest extends TestCase
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-            FlagshipConstant::T_API_ITEM => HitType::TROUBLESHOOTING,
+            FlagshipConstant::T_API_ITEM => HitType::TROUBLESHOOTING->value,
             'cv' => $customVariable
         ];
 
@@ -282,10 +282,10 @@ class TroubleshootingTest extends TestCase
 
         $customVariable = [
             'version' => FlagshipConstant::TROUBLESHOOTING_VERSION,
-            'logLevel' => LogLevel::getLogName(LogLevel::INFO),
+            'logLevel' => LogLevel::INFO->name,
             'envId' => $config->getEnvId(),
             'timeZone' => (new DateTime())->getTimezone()->getName(),
-            'label' => TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS,
+            'label' => TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS->value,
             'stack.type' => FlagshipConstant::SDK,
             'stack.name' => FlagshipConstant::SDK_LANGUAGE,
             'stack.version' => FlagshipConstant::SDK_VERSION,
@@ -309,7 +309,7 @@ class TroubleshootingTest extends TestCase
             FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
             FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $config->getEnvId(),
-            FlagshipConstant::T_API_ITEM => HitType::TROUBLESHOOTING,
+            FlagshipConstant::T_API_ITEM => HitType::TROUBLESHOOTING->value,
             'cv' => $customVariable
         ];
 

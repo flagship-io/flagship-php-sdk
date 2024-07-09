@@ -9,27 +9,27 @@ class TroubleshootingData
     /**
      * @var DateTime
      */
-    private $startDate;
+    private DateTime $startDate;
 
     /**
      * @var DateTime
      */
-    private $endDate;
+    private DateTime $endDate;
 
     /**
      * @var numeric
      */
-    private $traffic;
+    private string|int|float $traffic;
 
     /**
      * @var string
      */
-    private $timezone;
+    private string $timezone;
 
     /**
      * @return DateTime
      */
-    public function getStartDate()
+    public function getStartDate(): DateTime
     {
         return $this->startDate;
     }
@@ -38,7 +38,7 @@ class TroubleshootingData
      * @param DateTime $startDate
      * @return TroubleshootingData
      */
-    public function setStartDate(DateTime $startDate)
+    public function setStartDate(DateTime $startDate): static
     {
         $this->startDate = $startDate;
         return $this;
@@ -47,7 +47,7 @@ class TroubleshootingData
     /**
      * @return DateTime
      */
-    public function getEndDate()
+    public function getEndDate(): DateTime
     {
         return $this->endDate;
     }
@@ -56,25 +56,25 @@ class TroubleshootingData
      * @param DateTime $endDate
      * @return TroubleshootingData
      */
-    public function setEndDate(DateTime $endDate)
+    public function setEndDate(DateTime $endDate): static
     {
         $this->endDate = $endDate;
         return $this;
     }
 
     /**
-     * @return float|int|string
+     * @return float|int
      */
-    public function getTraffic()
+    public function getTraffic(): float|int
     {
         return $this->traffic;
     }
 
     /**
-     * @param float|int|string $traffic
+     * @param float|int $traffic
      * @return TroubleshootingData
      */
-    public function setTraffic($traffic)
+    public function setTraffic(float|int $traffic): static
     {
         $this->traffic = $traffic;
         return $this;
@@ -83,7 +83,7 @@ class TroubleshootingData
     /**
      * @return string
      */
-    public function getTimezone()
+    public function getTimezone(): string
     {
         return $this->timezone;
     }
@@ -92,7 +92,7 @@ class TroubleshootingData
      * @param string $timezone
      * @return TroubleshootingData
      */
-    public function setTimezone($timezone)
+    public function setTimezone(string $timezone): static
     {
         $this->timezone = $timezone;
         return $this;

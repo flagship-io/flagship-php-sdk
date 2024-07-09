@@ -3,9 +3,9 @@
 namespace Flagship\Visitor;
 
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Decision\ApiManager;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipStatus;
-use Flagship\Flag\FlagMetadata;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Hit\Page;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -36,32 +36,39 @@ class NotReadyStrategyTest extends TestCase
         $config->setLogManager($logManagerStub);
 
         $logMessageBuild = function ($functionName) {
-            $flagshipSdk = FlagshipConstant::FLAGSHIP_SDK;
-            return [sprintf(
+            return sprintf(
                 FlagshipConstant::METHOD_DEACTIVATED_ERROR,
                 $functionName,
-                FlagshipStatus::NOT_INITIALIZED
-            ),
-                [FlagshipConstant::TAG => $functionName]];
+                FSSdkStatus::SDK_NOT_INITIALIZED->name,
+            );
         };
 
 
+        $decisionManager = $this->getMockBuilder(ApiManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $configManager = (new ConfigManager())->setConfig($config)->setTrackingManager($trackerManager);
+        $configManager = new ConfigManager($config, $decisionManager, $trackerManager);
+
         $visitorId = "visitorId";
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $logManagerStub->expects($this->exactly(9))->method('error')
-            ->withConsecutive(
-                $logMessageBuild('synchronizeModifications'),
-                $logMessageBuild('getModification'),
-                $logMessageBuild('getModificationInfo'),
-                $logMessageBuild('activateModification'),
-                $logMessageBuild('sendHit'),
-                $logMessageBuild('fetchFlags'),
-                $logMessageBuild('getFlagValue'),
-                $logMessageBuild('visitorExposed'),
-                $logMessageBuild('getFlagMetadata')
+        $logManagerStub->expects($this->exactly(5))->method('error')
+            ->with(
+                $this->logicalOr(
+                    $logMessageBuild('sendHit'),
+                    $logMessageBuild('fetchFlags'),
+                    $logMessageBuild('getFlagValue'),
+                    $logMessageBuild('visitorExposed'),
+                    $logMessageBuild('getFlagMetadata')
+                ),
+                $this->logicalOr(
+                    [FlagshipConstant::TAG => 'sendHit'],
+                    [FlagshipConstant::TAG => 'fetchFlags'],
+                    [FlagshipConstant::TAG => 'getFlagValue'],
+                    [FlagshipConstant::TAG => 'visitorExposed'],
+                    [FlagshipConstant::TAG => 'getFlagMetadata']
+                )
             );
 
         $notReadyStrategy = new NotReadyStrategy($visitor);
@@ -98,22 +105,6 @@ class NotReadyStrategyTest extends TestCase
 
         $this->assertCount(0, $visitor->getContext());
 
-        //Test synchronizedModifications
-        $notReadyStrategy->synchronizeModifications();
-
-        //Test getModification
-        $defaultValue = "defaultValue";
-        $valueOutput = $notReadyStrategy->getModification('key', $defaultValue);
-
-        $this->assertSame($defaultValue, $valueOutput);
-
-        //Test getModificationInfo
-        $valueOutput = $notReadyStrategy->getModificationInfo('key');
-        $this->assertNull($valueOutput);
-
-        //Test activateModification
-        $notReadyStrategy->activateModification('key');
-
         //Test sendHit
         $notReadyStrategy->sendHit(new Page('http://localhost'));
 
@@ -122,13 +113,14 @@ class NotReadyStrategyTest extends TestCase
 
         //Test getFlagValue
         $value = $notReadyStrategy->getFlagValue('key', true);
-        $this->assertEquals(true, $value);
+
+        $this->assertTrue($value);
 
         //Test userExposed
-        $notReadyStrategy->visitorExposed('key', true, null);
+        $notReadyStrategy->visitorExposed('key', true);
 
         //Test getFlagMetadata
-        $notReadyStrategy->getFlagMetadata('key', FlagMetadata::getEmpty(), true);
+        $notReadyStrategy->getFlagMetadata('key');
 
         $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
             "Flagship\Cache\IVisitorCacheImplementation",

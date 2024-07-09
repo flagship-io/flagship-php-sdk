@@ -18,32 +18,32 @@ interface HttpClientInterface
      * @param  array $headers : Collection key, value of http header
      * @return HttpClientInterface
      */
-    public function setHeaders(array $headers);
+    public function setHeaders(array $headers): HttpClientInterface;
 
     /**
      * set the Timeout
      *
-     * @param  $seconds
+     * @param int $seconds
      * @return HttpClientInterface
      */
-    public function setTimeout($seconds = FlagshipConstant::REQUEST_TIME_OUT);
+    public function setTimeout(int $seconds = FlagshipConstant::REQUEST_TIME_OUT): HttpClientInterface;
 
     /**
      * send a http get request
      *
-     * @param  $url
+     * @param string $url
      * @param  array $params Collection key, value of http params
      * @return HttpResponse
      */
-    public function get($url, array $params = []);
+    public function get(string $url, array $params = []): HttpResponse;
 
     /**
      * send a http post request
      *
-     * @param  $url
+     * @param string $url
      * @param  array $query Collection key, value of http params
      * @param  array $data   Collection key, value of http post body
      * @return HttpResponse
      */
-    public function post($url, array $query = [], array $data = []);
+    public function post(string $url, array $query = [], array $data = []): HttpResponse;
 }

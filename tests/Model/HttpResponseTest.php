@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flagship\Model;
 
 use PHPUnit\Framework\TestCase;

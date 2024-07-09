@@ -18,14 +18,14 @@ jobs:
         phpunit-versions: ['9']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
     - name: Cache Composer packages
       id: composer-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -51,7 +51,7 @@ jobs:
       run: php tests/TestFunctional.php
     
     - name: Upload coverage report to codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v4
       with:
         files: ./clover.xml
         flags: unittests

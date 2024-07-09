@@ -223,7 +223,7 @@ class VisitorDelegate extends VisitorAbstract
                 $message = "An error occurred while fetching flags for visitor `%s`. 
                 So, the value of the flag `%s` might be outdated";
                 break;
-            case FSFetchReason::READ_FROM_CACHE:
+            case FSFetchReason::FLAGS_FETCHED_FROM_CACHE:
                 $message = "Flags for visitor  `%s` have been fetched from cache";
                 break;
         }

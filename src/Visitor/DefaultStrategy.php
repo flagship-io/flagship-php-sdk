@@ -359,7 +359,7 @@ class DefaultStrategy extends StrategyAbstract
         if (!is_array($campaigns)) {
             $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
             if (count($campaigns)) {
-                $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::READ_FROM_CACHE);
+                $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FLAGS_FETCHED_FROM_CACHE);
             }
         }
 

@@ -37,5 +37,5 @@ enum FSFetchReason: int
     /**
      * Indicates that flags have been fetched from the cache.
      */
-    case READ_FROM_CACHE = 6;
+    case FLAGS_FETCHED_FROM_CACHE = 6;
 }

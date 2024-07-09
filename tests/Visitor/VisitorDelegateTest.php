@@ -394,7 +394,7 @@ class VisitorDelegateTest extends TestCase
         $visitor->getFlag('key1');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FETCH_ERROR));
         $visitor->getFlag('key1');
-        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::READ_FROM_CACHE));
+        $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FLAGS_FETCHED_FROM_CACHE));
         $visitor->getFlag('key1');
         $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
         $visitor->getFlag('key1');

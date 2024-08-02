@@ -1,0 +1,52 @@
+nelmio_api_doc:
+    documentation:
+        openapi: "3.1.0"
+        info:
+            title: "Flagship Demo PHP symfony  Application"
+            version: "1.0.0"
+            description: "This application is a demonstration of how to use Flagship for feature flagging and A/B testing in a PHP symfony application."
+        paths:
+           /item:
+                get:
+                    summary: "Retrieve item details"
+                    parameters:
+                        - in: "query"
+                          name: "isVip"
+                          schema:
+                            type: "string"
+                          required: false
+                          description: "Indicates if the user is a VIP (true/false)"
+                    responses:
+                        200:
+                            description: "Item details"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            item:
+                                                type: "object"
+                                                properties:
+                                                    name: 
+                                                        type: "string"
+                                                    price:
+                                                        type: "number"
+                                            fsEnableDiscount:
+                                                type: "boolean"
+                                            fsAddToCartBtnColor:
+                                                type: "string"
+
+           /add-to-cart:
+                post:
+                    summary: "Add an item to the cart"
+                    responses:
+                        200:
+                            description: "Item added to the cart"
+                            content:
+                                application/json: {}
+            
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            - ^/item
+            - ^/add-to-cart

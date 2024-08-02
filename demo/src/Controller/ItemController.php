@@ -20,7 +20,7 @@ class ItemController extends AbstractController
     {
     }
 
-    #[Route('/item', name: 'item')]
+    #[Route('/item', name: 'item', methods: ['GET'])]
     public function getItem(Request $request): Response
     {
         $isVip = $request->query->get('isVip') === 'true';
@@ -47,7 +47,7 @@ class ItemController extends AbstractController
     public function addToCart()
     {
         $visitor = $this->fsService->createFsVisitor($this->visitorId, []);
-        
+
         // Step 5: Send a hit to track an action
         $eventHit = new Event(EventCategory::ACTION_TRACKING, "add-to-cart-clicked");
 

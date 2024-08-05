@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: symfony_app
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - symfony
+
+  web:
+    image: nginx:alpine
+    container_name: symfony_web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - symfony
+
+networks:
+  symfony:
+    driver: bridge

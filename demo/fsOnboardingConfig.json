@@ -11,7 +11,7 @@
         {
             "fileName": "src/EventListener/FsSdkLifecycleListener.php",
             "order": 1,
-            "description": "The first step is to create an event listener that will be used to start the SDK on the kernel request event and close it on the kernel terminate event",
+            "description": "This application is a demonstration of how to use Flagship for feature flagging and A/B testing in a PHP symfony application. \n The first step is to create an event listener that will be used to start the SDK on the kernel request event and close it on the kernel terminate event",
             "codeRegexPatterns": [
                 "\/\/start lifecycle([\\s\\S]*?)\/\/end lifecycle"
             ],

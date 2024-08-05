@@ -22,13 +22,14 @@ class FsSdkLifecycleListener
         if (!$event->isMainRequest()) {
             return;
         }
-        // Step 1: Start the Flagship SDK by providing the environment ID and API key
+        // Start the Flagship SDK by providing the environment ID and API key
         $this->fsService->startSdk("<ENV_ID>", "<API_KEY>");
     }
 
     #[AsEventListener(event: KernelEvents::TERMINATE)]
     public function onKernelTerminate(): void
     {
+        // Close the Flagship SDK, batch, and send all collected hits
         $this->fsService->closeSdk();                               
     }
 }

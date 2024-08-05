@@ -11,7 +11,7 @@
         {
             "fileName": "src/Service/FsService.php",
             "order": 1,
-            "description": "This service is used to interact with the Flagship API",
+            "description": "The first step is to create a service that will be used to interact with the Flagship SDK API",
             "codeRegexPatterns": [
                 "\/\/start fsService([\\s\\S]*?)\/\/end fsService"
             ],
@@ -19,10 +19,19 @@
         },
         {
             "fileName": "src/EventListener/FsSdkLifecycleListener.php",
-            "order": 1,
-            "description": "This listener is used to start the SDK on kernel request and close it on kernel terminate",
+            "order": 2,
+            "description": "The second step is to create an event listener that will be used to start the SDK on the kernel request event and close it on the kernel terminate event",
             "codeRegexPatterns": [
                 "\/\/start lifecycle([\\s\\S]*?)\/\/end lifecycle"
+            ],
+            "language": "php"
+        },
+        {
+            "fileName": "src/Controller/ItemController.php",
+            "order": 2,
+            "description": "The third step is to use the SDK in a controller to get the variation of a campaign",
+            "codeRegexPatterns": [
+                "\/\/start demo([\\s\\S]*?)\/\/end demo"
             ],
             "language": "php"
         }

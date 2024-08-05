@@ -28,11 +28,13 @@ class ItemController extends AbstractController
     {
         $isVip = $request->query->get('isVip') === 'true';
 
+        // Create a new flagship visitor
         $visitor = $this->fsService->createFsVisitor($this->visitorId, ['fs_is_vip' => $isVip]);
 
+        // Fetch the flags for the visitor
         $visitor->fetchFlags();
 
-        // Step 4: Get the values of the flags for the visitor
+        //Get the values of the flags for the visitor
         $fsEnableDiscount = $visitor->getFlag("fs_enable_discount");
         $fsAddToCartBtnColor = $visitor->getFlag("fs_add_to_cart_btn_color");
 
@@ -51,7 +53,7 @@ class ItemController extends AbstractController
     {
         $visitor = $this->fsService->createFsVisitor($this->visitorId, []);
 
-        // Step 5: Send a hit to track an action
+        // Send a hit to track an action
         $eventHit = new Event(EventCategory::ACTION_TRACKING, "add-to-cart-clicked");
 
         $visitor->sendHit($eventHit);

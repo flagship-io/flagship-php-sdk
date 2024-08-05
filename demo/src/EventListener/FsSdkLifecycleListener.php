@@ -4,6 +4,7 @@
 
 namespace App\EventListener;
 
+use Flagship\Flagship;
 use App\Service\FsService;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -12,7 +13,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 class FsSdkLifecycleListener
 {
 
-    public function __construct(private FsService $fsService)
+    public function __construct()
     {
     }
 
@@ -23,14 +24,14 @@ class FsSdkLifecycleListener
             return;
         }
         // Start the Flagship SDK by providing the environment ID and API key
-        $this->fsService->startSdk("<ENV_ID>", "<API_KEY>");
+        Flagship::start("<ENV_ID>", "<API_KEY>");
     }
 
     #[AsEventListener(event: KernelEvents::TERMINATE)]
     public function onKernelTerminate(): void
     {
         // Close the Flagship SDK, batch, and send all collected hits
-        $this->fsService->closeSdk();                               
+        Flagship::close();
     }
 }
 //end lifecycle

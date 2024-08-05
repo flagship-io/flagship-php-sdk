@@ -7,19 +7,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Flagship\Flagship;
+use Flagship\Hit\Event;
 use App\Service\FsService;
 use Flagship\Enum\EventCategory;
-use Flagship\Hit\Event;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
 class ItemController extends AbstractController
 {
     private $visitorId = 'visitorId';
-    public function __construct(private FsService $fsService)
+    public function __construct()
     {
     }
 
@@ -29,7 +30,7 @@ class ItemController extends AbstractController
         $isVip = $request->query->get('isVip') === 'true';
 
         // Create a new flagship visitor
-        $visitor = $this->fsService->createFsVisitor($this->visitorId, ['fs_is_vip' => $isVip]);
+        $visitor = Flagship::newVisitor($this->visitorId, true)->setContext(['fs_is_vip' => $isVip])->build();
 
         // Fetch the flags for the visitor
         $visitor->fetchFlags();
@@ -51,7 +52,7 @@ class ItemController extends AbstractController
     #[Route('/add-to-cart', name: 'add-to-cart', methods: ['POST'])]
     public function addToCart()
     {
-        $visitor = $this->fsService->createFsVisitor($this->visitorId, []);
+        $visitor = Flagship::newVisitor($this->visitorId, true)->setContext([])->build();
 
         // Send a hit to track an action
         $eventHit = new Event(EventCategory::ACTION_TRACKING, "add-to-cart-clicked");

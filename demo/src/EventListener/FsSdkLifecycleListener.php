@@ -1,4 +1,6 @@
 <?php
+//start lifecycle
+//demo/src/EventListener/FsSdkLifecycleListener.php
 
 namespace App\EventListener;
 
@@ -20,8 +22,8 @@ class FsSdkLifecycleListener
         if (!$event->isMainRequest()) {
             return;
         }
-
-        $this->fsService->startSdk();
+        // Step 1: Start the Flagship SDK by providing the environment ID and API key
+        $this->fsService->startSdk("<ENV_ID>", "<API_KEY>");
     }
 
     #[AsEventListener(event: KernelEvents::TERMINATE)]
@@ -30,3 +32,4 @@ class FsSdkLifecycleListener
         $this->fsService->closeSdk();                               
     }
 }
+//end lifecycle

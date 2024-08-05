@@ -1,0 +1,30 @@
+{
+    "sdkInstallSteps": [
+        {
+            "order": 1,
+            "description": "Install SDK",
+            "rawCode": "composer require flagship-io/flagship-php-sdk",
+            "language": "shell"
+        }
+    ],
+    "sdkUseSteps": [
+        {
+            "fileName": "src/Service/FsService.php",
+            "order": 1,
+            "description": "This service is used to interact with the Flagship API",
+            "codeRegexPatterns": [
+                "\/\/start fsService([\\s\\S]*?)\/\/end fsService"
+            ],
+            "language": "php"
+        },
+        {
+            "fileName": "src/EventListener/FsSdkLifecycleListener.php",
+            "order": 1,
+            "description": "This listener is used to start the SDK on kernel request and close it on kernel terminate",
+            "codeRegexPatterns": [
+                "\/\/start lifecycle([\\s\\S]*?)\/\/end lifecycle"
+            ],
+            "language": "php"
+        }
+    ]
+}

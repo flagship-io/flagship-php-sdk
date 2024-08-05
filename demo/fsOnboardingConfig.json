@@ -1,8 +1,4 @@
 {
-    "demo":{
-        "name": "PHP Symfony",
-        "description": "This application is a demonstration of how to use Flagship for feature flagging and A/B testing in a PHP symfony application."
-    },
     "sdkInstallSteps": [
         {
             "order": 1,

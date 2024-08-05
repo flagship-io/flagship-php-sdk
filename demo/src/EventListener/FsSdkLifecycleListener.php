@@ -5,7 +5,6 @@
 namespace App\EventListener;
 
 use Flagship\Flagship;
-use App\Service\FsService;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;

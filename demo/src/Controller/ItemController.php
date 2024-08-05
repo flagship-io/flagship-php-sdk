@@ -9,7 +9,6 @@ namespace App\Controller;
 
 use Flagship\Flagship;
 use Flagship\Hit\Event;
-use App\Service\FsService;
 use Flagship\Enum\EventCategory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

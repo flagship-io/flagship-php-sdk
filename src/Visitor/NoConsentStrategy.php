@@ -33,6 +33,11 @@ class NoConsentStrategy extends DefaultStrategy
         $this->log(__FUNCTION__);
     }
 
+    protected function activateFlag(FlagDTO $flag, mixed $defaultValue = null): void
+    {
+        //
+    }
+
     public function sendTroubleshootingHit(Troubleshooting $hit): void
     {
        //

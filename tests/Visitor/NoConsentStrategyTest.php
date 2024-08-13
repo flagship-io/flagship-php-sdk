@@ -8,6 +8,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\FlagshipField;
 use Flagship\Hit\Page;
 use Flagship\Hit\Troubleshooting;
+use Flagship\Model\FlagDTO;
 use Flagship\Model\HttpResponse;
 use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
@@ -44,7 +45,7 @@ class NoConsentStrategyTest extends TestCase
             false,
             false,
             true,
-            ["setTroubleshootingData"]
+            ["setTroubleshootingData", 'activateFlag']
         );
 
         $config = new DecisionApiConfig('envId', 'apiKey');
@@ -58,6 +59,8 @@ class NoConsentStrategyTest extends TestCase
                 new HttpResponse(200, $this->campaigns()),
                 new HttpResponse(500, null)
             );
+        
+        $trackerManager->expects($this->exactly(0))->method("activateFlag");
 
         $decisionManager = new ApiManager($httpClientMock, $config);
         $configManager = (new ConfigManager($config, $decisionManager, $trackerManager));
@@ -121,8 +124,13 @@ class NoConsentStrategyTest extends TestCase
         //Test sendHit
         $noConsentStrategy->sendHit(new Page('http://localhost'));
 
+        $flagDto = new FlagDTO();
+        $flagDto->setKey('key');
+        $flagDto->setValue('value');
         //Test userExposed
-        $noConsentStrategy->visitorExposed('key', true);
+        $noConsentStrategy->visitorExposed('key', "default", $flagDto);
+
+        $noConsentStrategy->getFlagValue('key', "default", $flagDto);
 
         $campaignsData = $this->campaigns();
         $assignmentsHistory = [];

@@ -117,6 +117,8 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function updateContext(string $key, float|bool|int|string|null $value): void
     {
+        $this->getVisitor()->setHasContextBeenUpdated(false);
+
         $oldContext = $this->getVisitor()->getContext();
 
         $this->updateContextKeyValue($key, $value);
@@ -138,6 +140,8 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function updateContextCollection(array $context): void
     {
+        $this->getVisitor()->setHasContextBeenUpdated(false);
+        
         $oldContext = $this->getVisitor()->getContext();
 
         $this->initialContext($context);

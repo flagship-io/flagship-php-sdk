@@ -77,9 +77,11 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function sendContext(VisitorAbstract $visitor): void
     {
-        if (count($visitor->getContext()) <= self::NB_MIN_CONTEXT_KEYS || !$visitor->hasConsented()) {
+        if (count($visitor->getContext()) <= self::NB_MIN_CONTEXT_KEYS || !$visitor->hasConsented()|| !$visitor->getHasContextBeenUpdated()) {
             return;
         }
+
+        $visitor->setHasContextBeenUpdated(false);
 
         $segmentHit = new Segment($visitor->getContext());
         $visitor->sendHit($segmentHit);
@@ -151,17 +153,17 @@ class BucketingManager extends DecisionManagerAbstract
 
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE)
-                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-                ->setVisitorId($this->getFlagshipInstanceId())
                 ->setTraffic(0)
                 ->setLogLevel(LogLevel::INFO)
-                ->setConfig($this->getConfig())
                 ->setHttpRequestMethod("GET")
                 ->setHttpRequestUrl($url)
                 ->setHttpResponseBody($response->getBody())
                 ->setHttpResponseHeaders($response->getHeaders())
                 ->setHttpResponseCode($response->getStatusCode())
-                ->setHttpResponseTime($this->getNow() - $now);
+                ->setHttpResponseTime($this->getNow() - $now)
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+                ->setVisitorId($this->getFlagshipInstanceId())
+                ->setConfig($this->getConfig());
             $this->troubleshootingHit = $troubleshooting;
             return $response->getBody();
         } catch (Exception $exception) {
@@ -170,15 +172,16 @@ class BucketingManager extends DecisionManagerAbstract
             ]);
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR)
-                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-                ->setVisitorId($this->getFlagshipInstanceId())
                 ->setTraffic(0)
                 ->setLogLevel(LogLevel::ERROR)
-                ->setConfig($this->getConfig())
                 ->setHttpRequestMethod("GET")
                 ->setHttpRequestUrl($url)
                 ->setHttpResponseBody($exception->getMessage())
-                ->setHttpResponseTime($this->getNow() - $now);
+                ->setHttpResponseTime($this->getNow() - $now)
+                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+                ->setConfig($this->getConfig())
+                ->setVisitorId($this->getFlagshipInstanceId())
+                ;
             $this->troubleshootingHit = $troubleshooting;
         }
         return null;

@@ -8,34 +8,36 @@ require_once __dir__ . '/../Assets/Round.php';
 
 use DateTime;
 use Exception;
-use Flagship\Config\BucketingConfig;
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Decision\ApiManager;
-use Flagship\Enum\EventCategory;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipContext;
-use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FSFetchReason;
-use Flagship\Enum\FSFetchStatus;
-use Flagship\Enum\HitType;
-use Flagship\Enum\LogLevel;
-use Flagship\Enum\TroubleshootingLabel;
-use Flagship\Flag\FSFlagMetadata;
-use Flagship\Hit\Activate;
-use Flagship\Hit\UsageHit;
-use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
+use Flagship\Hit\Event;
 use Flagship\Hit\Screen;
-use Flagship\Hit\Transaction;
+use Flagship\Enum\HitType;
+use Flagship\Hit\Activate;
+use Flagship\Hit\UsageHit;
+use Flagship\Enum\LogLevel;
 use Flagship\Model\FlagDTO;
-use Flagship\Model\HttpResponse;
-use Flagship\Utils\ConfigManager;
+use Psr\Log\LoggerInterface;
+use Flagship\Hit\Transaction;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\MurmurHash;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
+use Flagship\Enum\EventCategory;
+use Flagship\Enum\FlagshipField;
+use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
+use Flagship\Model\HttpResponse;
+use Flagship\Decision\ApiManager;
+use Flagship\Flag\FSFlagMetadata;
+use Flagship\Utils\ConfigManager;
+use Flagship\Enum\FlagshipContext;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\BucketingConfig;
+use Flagship\Config\DecisionApiConfig;
+use Flagship\Enum\TroubleshootingLabel;
+use Flagship\Api\TrackingManagerAbstract;
+use PHPUnit\Framework\MockObject\MockObject;
 
 
 class DefaultStrategyTest extends TestCase
@@ -598,6 +600,9 @@ class DefaultStrategyTest extends TestCase
     public function testSendHit()
     {
         $config = new DecisionApiConfig();
+        /**
+         * @var MockObject|TrackingManagerAbstract $trackerManagerMock
+         */
         $trackerManagerMock = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             [$config, new HttpClient()],
@@ -688,6 +693,53 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame(HitType::ITEM, $item->getType());
     }
 
+    public function testSendHitDeduplication()
+    {
+        $config = new DecisionApiConfig();
+        /**
+         * @var MockObject|TrackingManagerAbstract $trackerManagerMock
+         */
+        $trackerManagerMock = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            [$config, new HttpClient()],
+            '',
+            true,
+            true,
+            true,
+            ['addHit']
+        );
+
+        $envId = "envId";
+        $apiKey = "apiKey";
+        $visitorId = "visitorId";
+
+        $config = new DecisionApiConfig($envId, $apiKey);
+
+        $apiManager = new ApiManager(new HttpClient(), $config);
+        $configManager = new ConfigManager($config, $apiManager, $trackerManagerMock);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, true);
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $now = (new DateTime())->getTimestamp();
+
+        \Flagship\Traits\Round::$returnValue = $now;
+
+        $pageUrl = 'https://locahost';
+        $page = new Page($pageUrl);
+
+        $trackerManagerMock->expects($this->exactly(1))
+            ->method('addHit')
+            ->with(
+                $this->logicalOr($page)
+            );
+
+        $defaultStrategy->sendHit($page);
+
+        //Test deduplication
+        $defaultStrategy->sendHit($page);
+    }
+
     public function testSendHitWithLog()
     {
         $config = new DecisionApiConfig();
@@ -743,6 +795,9 @@ class DefaultStrategyTest extends TestCase
 
     public function testUserExposed()
     {
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -756,7 +811,9 @@ class DefaultStrategyTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
-
+        /**
+         * @var MockObject|TrackingManagerAbstract $trackerManagerStub
+         */
         $trackerManagerStub = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             [$config, new HttpClient()],
@@ -856,6 +913,83 @@ class DefaultStrategyTest extends TestCase
         //Test flag when getValue() has not been called first
         $activate->setFlagDefaultValue($defaultValue);
         $defaultStrategy->visitorExposed($key, $defaultValue, $flagDTO, false);
+    }
+
+    public function testUserExposedDeduplication()
+    {
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+        /**
+         * @var MockObject|TrackingManagerAbstract $trackerManagerStub
+         */
+        $trackerManagerStub = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            [$config, new HttpClient()],
+            '',
+            true,
+            true,
+            true,
+            ['activateFlag']
+        );
+
+        $apiManager = new ApiManager(new HttpClient(), $config);
+
+        $configManager = new ConfigManager($config, $apiManager, $trackerManagerStub);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $key = "key";
+        $flagDTO = new FlagDTO();
+        $flagDTO->setKey($key)
+            ->setCampaignId("campaignId")
+            ->setVariationGroupId("variationGroupId")
+            ->setVariationId("variationId")
+            ->setIsReference(false)
+            ->setCampaignType("campaignType")
+            ->setSlug("slug")
+            ->setCampaignName("campaignName")
+            ->setVariationGroupName("variationGroupName")
+            ->setVariationName("variationName")
+            ->setValue("value");
+        $defaultValue = "default";
+
+        $flagMetadata = new FSFlagMetadata(
+            $flagDTO->getCampaignId(),
+            $flagDTO->getVariationGroupId(),
+            $flagDTO->getVariationId(),
+            $flagDTO->getIsReference(),
+            $flagDTO->getCampaignType(),
+            $flagDTO->getSlug(),
+            $flagDTO->getCampaignName(),
+            $flagDTO->getVariationGroupName(),
+            $flagDTO->getVariationName()
+        );
+
+        $now = (new DateTime())->getTimestamp();
+
+        $activate = new Activate($flagDTO->getVariationGroupId(), $flagDTO->getVariationId());
+        $activate
+            ->setFlagKey($flagDTO->getKey())
+            ->setFlagValue($flagDTO->getValue())
+            ->setFlagDefaultValue($defaultValue)
+            ->setFlagMetadata($flagMetadata)
+            ->setVisitorContext($visitor->getContext())
+            ->setVisitorId($visitor->getVisitorId())
+            ->setCreatedAt($now)
+            ->setConfig($config);
+
+
+        $trackerManagerStub->expects($this->exactly(1))
+            ->method('activateFlag')
+            ->with($activate);
+
+        \Flagship\Traits\Round::$returnValue = $now;
+
+        $defaultStrategy->visitorExposed($key, $defaultValue, $flagDTO, true);
+
+        $defaultStrategy->visitorExposed($key, $defaultValue, $flagDTO, true);
     }
 
     public function testGetFlagValue()

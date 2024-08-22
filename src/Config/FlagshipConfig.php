@@ -81,6 +81,11 @@ abstract class FlagshipConfig implements JsonSerializable
     protected bool $disableDeveloperUsageTracking;
 
     /**
+     * @var int
+     */
+    protected int $hitDeduplicationTime = FlagshipConstant::DEFAULT_DEDUPLICATION_TIME;
+
+    /**
      * Create a new FlagshipConfig configuration.
      *
      * @param string|null $envId  Environment id provided by Flagship.
@@ -326,6 +331,24 @@ abstract class FlagshipConfig implements JsonSerializable
     public function setDisableDeveloperUsageTracking(bool $disableDeveloperUsageTracking): static
     {
         $this->disableDeveloperUsageTracking = $disableDeveloperUsageTracking;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHitDeduplicationTime(): int
+    {
+        return $this->hitDeduplicationTime;
+    }
+
+    /**
+     * @param int $hitDeduplicationTime
+     * @return FlagshipConfig
+     */
+    public function setHitDeduplicationTime(int $hitDeduplicationTime): static
+    {
+        $this->hitDeduplicationTime = $hitDeduplicationTime;
         return $this;
     }
 

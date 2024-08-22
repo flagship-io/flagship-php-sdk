@@ -148,9 +148,9 @@ trait LogTrait
      * @param array $requestBody
      * @param array $headers
      * @param string $duration
-     * @param null $responseHeader
-     * @param null $responseBody
-     * @param null $responseStatus
+     * @param mixed $responseHeader
+     * @param mixed $responseBody
+     * @param mixed $responseStatus
      * @return array
      */
     protected function getLogFormat(

@@ -146,6 +146,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         return $this->getConfigManager()->getDecisionManager();
     }
 
+    abstract protected function updateContextKeyValue(string $key, mixed $value): void;
 
     /**
      * @throws Exception
@@ -316,6 +317,44 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         }
     }
 
+    protected function clearDeDuplicationCache(int $deDuplicationTime)
+    {
+        $deDuplicationCache = $this->getVisitor()->getDeDuplicationCache();
+        $now = $this->getNow();
+        $newDeDuplicationCache = [];
+        foreach ($deDuplicationCache as $key => $value) {
+            if (($now - $value) < $deDuplicationTime) {
+                $newDeDuplicationCache[$key] = $value;
+            }
+        }
+
+        $this->getVisitor()->setDeDuplicationCache($newDeDuplicationCache);
+    }
+
+    protected function isDeDuplicated(string $key, int $deDuplicationTime): bool
+    {
+        if ($deDuplicationTime === 0) return false;
+
+        $deDuplicationCache = $this->getVisitor()->getDeDuplicationCache();
+
+        /**
+         * @var int|null $deDuplicationCacheKey
+         */
+        $deDuplicationCacheKey = $deDuplicationCache[$key] ?? null;
+
+        $now = $this->getNow();
+
+        if ($deDuplicationCacheKey && (($now - $deDuplicationCacheKey) < $deDuplicationTime)) {
+            return true;
+        }
+
+        $deDuplicationCache[$key] = $now;
+        $this->getVisitor()->setDeDuplicationCache($deDuplicationCache);
+        $this->clearDeDuplicationCache($deDuplicationTime);
+
+        return false;
+    }
+
     public function sendTroubleshootingHit(Troubleshooting $hit): void
     {
         $this->getTrackingManager()->addTroubleshootingHit($hit);
@@ -454,4 +493,5 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
             $this->updateContextKeyValue($itemKey, $item);
         }
     }
+
 }

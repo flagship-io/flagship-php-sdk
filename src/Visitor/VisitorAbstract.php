@@ -107,6 +107,8 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     protected FetchFlagsStatusInterface $fetchStatus;
 
+    protected array $deDuplicationCache = [];
+
     /**
      * @return callable
      */
@@ -427,6 +429,16 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function sendTroubleshootingHit(Troubleshooting $hit): void
     {
         $this->getStrategy()->sendTroubleshootingHit($hit);
+    }
+
+    public function getDeDuplicationCache(): array
+    {
+        return $this->deDuplicationCache;
+    }
+
+    public function setDeDuplicationCache(array $deDuplicationCache): void
+    {
+        $this->deDuplicationCache = $deDuplicationCache;
     }
 
     public function jsonSerialize(): mixed

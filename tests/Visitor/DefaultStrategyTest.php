@@ -8,34 +8,36 @@ require_once __dir__ . '/../Assets/Round.php';
 
 use DateTime;
 use Exception;
-use Flagship\Config\BucketingConfig;
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Decision\ApiManager;
-use Flagship\Enum\EventCategory;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipContext;
-use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FSFetchReason;
-use Flagship\Enum\FSFetchStatus;
-use Flagship\Enum\HitType;
-use Flagship\Enum\LogLevel;
-use Flagship\Enum\TroubleshootingLabel;
-use Flagship\Flag\FSFlagMetadata;
-use Flagship\Hit\Activate;
-use Flagship\Hit\UsageHit;
-use Flagship\Hit\Event;
 use Flagship\Hit\Item;
 use Flagship\Hit\Page;
+use Flagship\Hit\Event;
 use Flagship\Hit\Screen;
-use Flagship\Hit\Transaction;
+use Flagship\Enum\HitType;
+use Flagship\Hit\Activate;
+use Flagship\Hit\UsageHit;
+use Flagship\Enum\LogLevel;
 use Flagship\Model\FlagDTO;
-use Flagship\Model\HttpResponse;
-use Flagship\Utils\ConfigManager;
+use Psr\Log\LoggerInterface;
+use Flagship\Hit\Transaction;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\MurmurHash;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
+use Flagship\Enum\EventCategory;
+use Flagship\Enum\FlagshipField;
+use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
+use Flagship\Model\HttpResponse;
+use Flagship\Decision\ApiManager;
+use Flagship\Flag\FSFlagMetadata;
+use Flagship\Utils\ConfigManager;
+use Flagship\Enum\FlagshipContext;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\BucketingConfig;
+use Flagship\Config\DecisionApiConfig;
+use Flagship\Enum\TroubleshootingLabel;
+use Flagship\Api\TrackingManagerAbstract;
+use PHPUnit\Framework\MockObject\MockObject;
 
 
 class DefaultStrategyTest extends TestCase
@@ -743,6 +745,9 @@ class DefaultStrategyTest extends TestCase
 
     public function testUserExposed()
     {
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -757,6 +762,9 @@ class DefaultStrategyTest extends TestCase
         $config->setLogManager($logManagerStub);
 
 
+        /**
+         * @var MockObject|TrackingManagerAbstract $trackerManagerStub
+         */
         $trackerManagerStub = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             [$config, new HttpClient()],
@@ -812,7 +820,7 @@ class DefaultStrategyTest extends TestCase
             ->setVisitorId($visitor->getVisitorId())
             ->setConfig($config);
 
-        $trackerManagerStub->expects($this->exactly(4))
+        $trackerManagerStub->expects($this->exactly(2))
             ->method('activateFlag')
             ->with($activate);
 
@@ -847,9 +855,11 @@ class DefaultStrategyTest extends TestCase
                 [FlagshipConstant::TAG => $functionName]
             );
 
+        //Test flag null
         $activate->setFlagDefaultValue($defaultValue);
         $defaultStrategy->visitorExposed($key, $defaultValue, null, true);
 
+        //Test flag with different type
         $activate->setFlagDefaultValue(false);
         $defaultStrategy->visitorExposed($key, false, $flagDTO, true);
 

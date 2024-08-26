@@ -65,7 +65,7 @@ class FlagshipConstant
     public const USER_EXPOSED_NO_FLAG_ERROR =  "For the visitor '%s', no flags were found with the key '%s'.
      As a result, user exposure will not be sent.";
     public const VISITOR_EXPOSED_VALUE_NOT_CALLED =
-        "Visitor '%s', the flag with the key '%s' has been exposed without calling the `getValue` method first.";
+        "For the visitor `%s`, assuming the getValue() method has not previously been invoked for the flag `%s`. Therefore, the exposure is canceled";
     public const GET_FLAG_MISSING_ERROR =
         "For the visitor '%s', no flags were found with the key '%s'. 
         Therefore, the default value '%s' has been returned.";
@@ -78,8 +78,7 @@ class FlagshipConstant
         "For the visitor '%s', the flag with key '%s' has a different type compared to the default value. 
         Therefore, the default value '%s' has been returned.";
     public const USER_EXPOSED_CAST_ERROR =
-        "For the visitor '%s', the flag with key '%s' has been exposed 
-        despite having a different type compared to the default value";
+        "For the visitor `%s`, the flag with the key `%s` has a different type compared to the default value. Therefore, the exposure is interrupted";
     public const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null.";
     public const TRACKER_MANAGER_MISSING_ERROR = "trackerManager must not be null.";
     public const CURL_LIBRARY_IS_NOT_LOADED = 'curl library is not loaded';

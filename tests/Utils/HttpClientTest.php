@@ -49,11 +49,12 @@ class HttpClientTest extends TestCase
             $versionSDkKey . '=' . $versionSDkValue;
         $urlBuild = $buildMethod->invokeArgs(
             $client,
-            [$urlOriginal,
-                [
-                    $visitoKey => $visitorid,
-                    $versionSDkKey => $versionSDkValue
-                ]
+            [
+             $urlOriginal,
+             [
+              $visitoKey     => $visitorid,
+              $versionSDkKey => $versionSDkValue,
+             ],
             ]
         );
         $this->assertEquals($urlExpected, $urlBuild);

@@ -33,6 +33,6 @@
   "scripts": {
     "test": "phpunit",
     "check-style": "phpcs --standard=PSR12 -n src tests",
-    "fix-style": "phpcbf --standard=PSR12 src tests"
+    "fix-style": "phpcbf  --standard=phpcs.xml src tests"
   }
 }

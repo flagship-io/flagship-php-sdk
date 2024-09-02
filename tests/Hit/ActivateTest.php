@@ -50,13 +50,13 @@ class ActivateTest extends TestCase
         $this->assertSame($variationGroupId, $activate->getVariationGroupId());
 
         $apiKeys = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::VARIATION_ID_API_ITEM => $variationId,
-            FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::ANONYMOUS_ID => null,
-            FlagshipConstant::QT_API_ITEM => 0,
-        ];
+                    FlagshipConstant::VISITOR_ID_API_ITEM         => $visitorId,
+                    FlagshipConstant::VARIATION_ID_API_ITEM       => $variationId,
+                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
+                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM    => $envId,
+                    FlagshipConstant::ANONYMOUS_ID                => null,
+                    FlagshipConstant::QT_API_ITEM                 => 0,
+                   ];
 
         $this->assertSame($apiKeys, $activate->toApiKeys());
 
@@ -64,13 +64,13 @@ class ActivateTest extends TestCase
         $activate->setAnonymousId($anonymousId);
 
         $apiKeys = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::VARIATION_ID_API_ITEM => $variationId,
-            FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::ANONYMOUS_ID => $anonymousId,
-            FlagshipConstant::QT_API_ITEM => 0,
-        ];
+                    FlagshipConstant::VISITOR_ID_API_ITEM         => $visitorId,
+                    FlagshipConstant::VARIATION_ID_API_ITEM       => $variationId,
+                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
+                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM    => $envId,
+                    FlagshipConstant::ANONYMOUS_ID                => $anonymousId,
+                    FlagshipConstant::QT_API_ITEM                 => 0,
+                   ];
 
         $this->assertSame($apiKeys, $activate->toApiKeys());
 
@@ -78,10 +78,7 @@ class ActivateTest extends TestCase
 
         $this->assertSame(Activate::ERROR_MESSAGE, $activate->getErrorMessage());
 
-        $activate->setFlagKey($flagKey)
-            ->setFlagValue($flagValue)
-            ->setFlagMetadata($flagMetadata)
-            ->setVisitorContext($visitorContext);
+        $activate->setFlagKey($flagKey)->setFlagValue($flagValue)->setFlagMetadata($flagMetadata)->setVisitorContext($visitorContext);
 
         $this->assertSame($flagKey, $activate->getFlagKey());
         $this->assertSame($flagValue, $activate->getFlagValue());

@@ -136,15 +136,15 @@ class VisitorBuilder
     public function build(): VisitorInterface
     {
         $visitorDelegate = $this->dependencyIContainer->get(VisitorDelegate::class, [
-            $this->dependencyIContainer,
-            $this->configManager,
-            $this->visitorId,
-            $this->isAuthenticated,
-            $this->context,
-            $this->hasConsented,
-            $this->flagshipInstance,
-            $this->onFetchFlagsStatusChanged
-        ], true);
+                                                                                     $this->dependencyIContainer,
+                                                                                     $this->configManager,
+                                                                                     $this->visitorId,
+                                                                                     $this->isAuthenticated,
+                                                                                     $this->context,
+                                                                                     $this->hasConsented,
+                                                                                     $this->flagshipInstance,
+                                                                                     $this->onFetchFlagsStatusChanged,
+                                                                                    ], true);
 
         $visitorDelegate->setFlagshipInstanceId($this->flagshipInstance);
 

@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<ruleset name="Flagship SDK Coding Standards">
+    <description>PHP CodeSniffer configuration for the Flagship SDK project.</description>
+
+    <!-- Define the coding standard to use -->
+    <rule ref="PSR12" />
+
+    <!-- Include all PHP files in the src and tests directories -->
+    <file>src</file>
+    <file>tests</file>
+
+    <!-- Exclude specific directories or files if needed -->
+    <exclude-pattern>vendor</exclude-pattern>
+
+    <!-- Custom rules or override existing rules -->
+    <rule ref="Generic.Commenting.DocComment.Missing">
+        <severity>5</severity>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120" />
+            <property name="absoluteLineLimit" value="0" />
+        </properties>
+    </rule>
+
+    <!-- Ensure proper indentation -->
+    <rule ref="Generic.WhiteSpace.ScopeIndent">
+        <properties>
+            <property name="indent" value="4" />
+            <property name="tabIndent" value="false" />
+        </properties>
+    </rule>
+
+    <!-- Ensure proper spacing around operators -->
+    <rule ref="Squiz.WhiteSpace.OperatorSpacing" />
+
+    <!-- Ensure proper spacing around control structures -->
+    <rule ref="Squiz.WhiteSpace.ControlStructureSpacing" />
+
+    <!-- Ensure proper spacing around function definitions -->
+    <!-- <rule ref="Squiz.WhiteSpace.FunctionSpacing" /> -->
+
+    <!-- Ensure proper spacing around array declarations -->
+    <!-- <rule ref="Squiz.Arrays.ArrayDeclaration" /> -->
+
+    <!-- Ensure proper spacing around object operators -->
+    <!-- <rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing" /> -->
+
+    <!-- Ensure proper spacing around semicolons -->
+    <rule ref="Squiz.WhiteSpace.SemicolonSpacing" />
+
+    <!-- Ensure proper spacing around cast operators -->
+    <rule ref="Squiz.WhiteSpace.CastSpacing" />
+
+    <!-- Set the tab width to 4 spaces -->
+    <arg name="tab-width" value="4" />
+
+    <!-- Show warnings as well as errors -->
+    <arg name="warning-severity" value="1" />
+    <arg name="error-severity" value="1" />
+</ruleset>

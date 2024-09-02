@@ -48,7 +48,7 @@ abstract class FlagshipConfig implements JsonSerializable
     /**
      * @var LogLevel
      */
-    private LogLevel $logLevel = LogLevel::ALL;
+    private LogLevel $logLevel = LogLevel::INFO;
 
     /**
      * @var (callable(FSSdkStatus $status): void) | null
@@ -86,7 +86,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param string|null $envId  Environment id provided by Flagship.
      * @param string|null $apiKey  Secure api key provided by Flagship.
      */
-    public function __construct(string $envId = null, string $apiKey = null)
+    public function __construct(string|null $envId = null, string|null $apiKey = null)
     {
         $this->envId = $envId;
         $this->apiKey = $apiKey;
@@ -335,11 +335,11 @@ abstract class FlagshipConfig implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            FlagshipField::FIELD_ENVIRONMENT_ID => $this->getEnvId(),
-            FlagshipField::FIELD_API_KEY => $this->getApiKey(),
-            FlagshipField::FIELD_TIMEOUT => $this->getTimeout(),
-            FlagshipField::FIELD_LOG_LEVEL => $this->getLogLevel()
-        ];
+                FlagshipField::FIELD_ENVIRONMENT_ID => $this->getEnvId(),
+                FlagshipField::FIELD_API_KEY        => $this->getApiKey(),
+                FlagshipField::FIELD_TIMEOUT        => $this->getTimeout(),
+                FlagshipField::FIELD_LOG_LEVEL      => $this->getLogLevel(),
+               ];
     }
 
     public static function bucketing(string $bucketingUrl): BucketingConfig

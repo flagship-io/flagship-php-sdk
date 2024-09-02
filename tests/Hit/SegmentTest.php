@@ -15,10 +15,10 @@ class SegmentTest extends TestCase
         $visitorId = "visitorId";
 
         $context = [
-            "key1" => "value1",
-            "key2" => 1,
-            "key3" => true
-        ];
+                    "key1" => "value1",
+                    "key2" => 1,
+                    "key3" => true,
+                   ];
 
         $config = new DecisionApiConfig($envId);
 
@@ -30,14 +30,14 @@ class SegmentTest extends TestCase
         $this->assertSame($context, $segment->getSl());
 
         $segmentArray = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::SEGMENT->value,
-            FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0.0,
-            FlagshipConstant::SL_API_ITEM => $context
-        ];
+                         FlagshipConstant::VISITOR_ID_API_ITEM      => $visitorId,
+                         FlagshipConstant::DS_API_ITEM              => FlagshipConstant::SDK_APP,
+                         FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
+                         FlagshipConstant::T_API_ITEM               => HitType::SEGMENT->value,
+                         FlagshipConstant::CUSTOMER_UID             => null,
+                         FlagshipConstant::QT_API_ITEM              => 0.0,
+                         FlagshipConstant::SL_API_ITEM              => $context,
+                        ];
 
         $this->assertSame($segmentArray, $segment->toApiKeys());
 

@@ -42,18 +42,18 @@ class FlagDTOTest extends TestCase
 
         $this->assertSame($variationId, $flagDTO->getVariationId());
 
-        $arrayToJson =  [
-            FlagshipField::FIELD_KEY => $flagDTO->getKey(),
-            FlagshipField::FIELD_CAMPAIGN_ID => $flagDTO->getCampaignId(),
-            FlagshipField::FIELD_CAMPAIGN_NAME => $flagDTO->getCampaignName(),
-            FlagshipField::FIELD_VARIATION_GROUP_ID => $flagDTO->getVariationGroupId(),
-            FlagshipField::FIELD_VARIATION_GROUP_NAME => $flagDTO->getVariationGroupName(),
-            FlagshipField::FIELD_VARIATION_ID => $flagDTO->getVariationId(),
-            FlagshipField::FIELD_VARIATION_NAME => $flagDTO->getVariationName(),
-            FlagshipField::FIELD_IS_REFERENCE => $flagDTO->getIsReference(),
-            FlagshipField::FIELD_VALUE => $flagDTO->getValue(),
-            FlagshipField::FIELD_SLUG => $flagDTO->getSlug()
-        ];
+        $arrayToJson = [
+                        FlagshipField::FIELD_KEY                  => $flagDTO->getKey(),
+                        FlagshipField::FIELD_CAMPAIGN_ID          => $flagDTO->getCampaignId(),
+                        FlagshipField::FIELD_CAMPAIGN_NAME        => $flagDTO->getCampaignName(),
+                        FlagshipField::FIELD_VARIATION_GROUP_ID   => $flagDTO->getVariationGroupId(),
+                        FlagshipField::FIELD_VARIATION_GROUP_NAME => $flagDTO->getVariationGroupName(),
+                        FlagshipField::FIELD_VARIATION_ID         => $flagDTO->getVariationId(),
+                        FlagshipField::FIELD_VARIATION_NAME       => $flagDTO->getVariationName(),
+                        FlagshipField::FIELD_IS_REFERENCE         => $flagDTO->getIsReference(),
+                        FlagshipField::FIELD_VALUE                => $flagDTO->getValue(),
+                        FlagshipField::FIELD_SLUG                 => $flagDTO->getSlug(),
+                       ];
 
         $this->assertJsonStringEqualsJsonString(json_encode($arrayToJson), json_encode($flagDTO));
     }

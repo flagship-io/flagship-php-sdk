@@ -11,9 +11,7 @@ class MurmurHash
      */
     private function multiply(mixed $k1, mixed $constant): int
     {
-        return ((($k1 & 0xffff) * $constant) +
-                ((($k1 >= 0 ? $k1 >> 16 :
-                            (($k1 & 0x7fffffff) >> 16) | 0x8000) * $constant & 0xffff) << 16)) & 0xffffffff;
+        return ((($k1 & 0xffff) * $constant) + ((($k1 >= 0 ? $k1 >> 16 : (($k1 & 0x7fffffff) >> 16) | 0x8000) * $constant & 0xffff) << 16)) & 0xffffffff;
     }
 
     /**
@@ -47,21 +45,15 @@ class MurmurHash
         $h1 = $seed < 0 ? -$seed : $seed;
         $i = 0;
         for ($bytes = $keyLength - ($remainder = $keyLength & 3); $i < $bytes;) {
-            $k1 = $source[$i]
-                | ($source[++$i] << 8)
-                | ($source[++$i] << 16)
-                | ($source[++$i] << 24);
+            $k1 = $source[$i] | ($source[++$i] << 8) | ($source[++$i] << 16) | ($source[++$i] << 24);
             ++$i;
             $k1 = $this->multiply($k1, 0xcc9e2d51);
             $k1 = $this->rotateLeft($k1);
             $k1 = $this->multiply($k1, 0x1b873593);
             $h1 ^= $k1;
             $h1 = $h1 << 13 | ($h1 >= 0 ? $h1 >> 19 : (($h1 & 0x7fffffff) >> 19) | 0x1000);
-            $h1b = ((($h1 & 0xffff) * 5) +
-                    (((($h1 >= 0 ? $h1 >> 16 :
-                                    (($h1 & 0x7fffffff) >> 16) | 0x8000) * 5) & 0xffff) << 16)) & 0xffffffff;
-            $h1 = ((($h1b & 0xffff) + 0x6b64) +
-                (((($h1b >= 0 ? $h1b >> 16 : (($h1b & 0x7fffffff) >> 16) | 0x8000) + 0xe654) & 0xffff) << 16));
+            $h1b = ((($h1 & 0xffff) * 5) + (((($h1 >= 0 ? $h1 >> 16 : (($h1 & 0x7fffffff) >> 16) | 0x8000) * 5) & 0xffff) << 16)) & 0xffffffff;
+            $h1 = ((($h1b & 0xffff) + 0x6b64) + (((($h1b >= 0 ? $h1b >> 16 : (($h1b & 0x7fffffff) >> 16) | 0x8000) + 0xe654) & 0xffff) << 16));
         }
         $k1 = 0;
         switch ($remainder) {

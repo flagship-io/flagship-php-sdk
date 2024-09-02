@@ -65,60 +65,59 @@ class TrackingManagerTest extends TestCase
 
         $BatchingCachingStrategyMock = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingCachingStrategyAbstract",
-            [$config, $httpClient],
+            [
+             $config,
+             $httpClient,
+            ],
             "",
             true,
             true,
             true,
             [
-                "addHit",
-                "activateFlag",
-                "sendBatch",
-                "sendTroubleshootingQueue",
-                "addTroubleshootingHit",
-                "setTroubleshootingData",
-                "getTroubleshootingData",
-                "addUsageHit"
+             "addHit",
+             "activateFlag",
+             "sendBatch",
+             "sendTroubleshootingQueue",
+             "addTroubleshootingHit",
+             "setTroubleshootingData",
+             "getTroubleshootingData",
+             "addUsageHit",
             ]
         );
 
         $trackingManager = $this->getMockForAbstractClass(
             "Flagship\Api\TrackingManager",
-            [$config, $httpClient],
+            [
+             $config,
+             $httpClient,
+            ],
             "",
             true,
             true,
             true,
-            ["getStrategy", "lookupHits"]
+            [
+             "getStrategy",
+             "lookupHits",
+            ]
         );
 
-        $trackingManager->expects($this->exactly(7))
-            ->method("getStrategy")
-            ->willReturn($BatchingCachingStrategyMock);
+        $trackingManager->expects($this->exactly(7))->method("getStrategy")->willReturn($BatchingCachingStrategyMock);
 
-        $BatchingCachingStrategyMock->expects($this->once())
-            ->method("addHit");
+        $BatchingCachingStrategyMock->expects($this->once())->method("addHit");
 
-        $BatchingCachingStrategyMock->expects($this->once())
-            ->method("setTroubleshootingData");
+        $BatchingCachingStrategyMock->expects($this->once())->method("setTroubleshootingData");
 
-        $BatchingCachingStrategyMock->expects($this->once())
-            ->method("getTroubleshootingData");
+        $BatchingCachingStrategyMock->expects($this->once())->method("getTroubleshootingData");
 
-        $BatchingCachingStrategyMock->expects($this->once())
-            ->method("activateFlag");
+        $BatchingCachingStrategyMock->expects($this->once())->method("activateFlag");
 
-        $BatchingCachingStrategyMock->expects($this->once())
-            ->method("addTroubleshootingHit");
+        $BatchingCachingStrategyMock->expects($this->once())->method("addTroubleshootingHit");
 
-        $BatchingCachingStrategyMock->expects($this->once())
-            ->method("sendBatch");
+        $BatchingCachingStrategyMock->expects($this->once())->method("sendBatch");
 
-        $BatchingCachingStrategyMock->expects($this->once())
-            ->method("sendTroubleshootingQueue");
+        $BatchingCachingStrategyMock->expects($this->once())->method("sendTroubleshootingQueue");
 
-        $BatchingCachingStrategyMock->expects($this->once())
-            ->method("addUsageHit");
+        $BatchingCachingStrategyMock->expects($this->once())->method("addUsageHit");
 
         $page = new Page("http://localhost");
         $page->setConfig($config);
@@ -151,12 +150,18 @@ class TrackingManagerTest extends TestCase
 
         $trackingManager = $this->getMockForAbstractClass(
             "Flagship\Api\TrackingManager",
-            [$config, $httpClient],
+            [
+             $config,
+             $httpClient,
+            ],
             "",
             true,
             true,
             true,
-            ["logDebugSprintf","logErrorSprintf"]
+            [
+             "logDebugSprintf",
+             "logErrorSprintf",
+            ]
         );
 
         $config->setHitCacheImplementation($hitCacheImplementationMock);
@@ -187,59 +192,65 @@ class TrackingManagerTest extends TestCase
         /**
          * @var $hits HitAbstract[]
          */
-        $hits = [$event, $item, $page, $screen, $segment, $activate, $transaction];
+        $hits = [
+                 $event,
+                 $item,
+                 $page,
+                 $screen,
+                 $segment,
+                 $activate,
+                 $transaction,
+                ];
         $data = [];
 
         foreach ($hits as $hit) {
             $hitData = [
-                HitCacheFields::VERSION => 1,
-                HitCacheFields::DATA => [
-                    HitCacheFields::VISITOR_ID => $hit->getVisitorId(),
-                    HitCacheFields::ANONYMOUS_ID => $hit->getAnonymousId(),
-                    HitCacheFields::TYPE => $hit->getType()->value,
-                    HitCacheFields::CONTENT => $hit->toArray(),
-                    HitCacheFields::TIME => \round(microtime(true) * 1000)
-                ]
-            ];
+                        HitCacheFields::VERSION => 1,
+                        HitCacheFields::DATA    => [
+                                                    HitCacheFields::VISITOR_ID   => $hit->getVisitorId(),
+                                                    HitCacheFields::ANONYMOUS_ID => $hit->getAnonymousId(),
+                                                    HitCacheFields::TYPE         => $hit->getType()->value,
+                                                    HitCacheFields::CONTENT      => $hit->toArray(),
+                                                    HitCacheFields::TIME         => \round(microtime(true) * 1000),
+                                                   ],
+                       ];
             $data[$hit->getKey()] = $hitData;
         }
 
         $data["$visitorId:key8"] = [
-            HitCacheFields::VERSION => 1,
-            HitCacheFields::DATA => [
-                HitCacheFields::VISITOR_ID => $page->getVisitorId(),
-                HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
-                HitCacheFields::TYPE => $page->getType()->value,
-                HitCacheFields::CONTENT => $page->toArray(),
-                HitCacheFields::TIME => (new DateTime("2020/01/01"))->format("Uv")
-            ]
-        ];
+                                    HitCacheFields::VERSION => 1,
+                                    HitCacheFields::DATA    => [
+                                                                HitCacheFields::VISITOR_ID   => $page->getVisitorId(),
+                                                                HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
+                                                                HitCacheFields::TYPE         => $page->getType()->value,
+                                                                HitCacheFields::CONTENT      => $page->toArray(),
+                                                                HitCacheFields::TIME         => (new DateTime("2020/01/01"))->format("Uv"),
+                                                               ],
+                                   ];
 
         $data["$visitorId:key9"] = [
-            HitCacheFields::VERSION => 1,
-            HitCacheFields::DATA => [
-                HitCacheFields::VISITOR_ID => $page->getVisitorId(),
-                HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
-                HitCacheFields::TYPE => "unknown",
-                HitCacheFields::CONTENT => $page->toArray(),
-                HitCacheFields::TIME => \round(microtime(true) * 1000)
-            ]
-        ];
+                                    HitCacheFields::VERSION => 1,
+                                    HitCacheFields::DATA    => [
+                                                                HitCacheFields::VISITOR_ID   => $page->getVisitorId(),
+                                                                HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
+                                                                HitCacheFields::TYPE         => "unknown",
+                                                                HitCacheFields::CONTENT      => $page->toArray(),
+                                                                HitCacheFields::TIME         => \round(microtime(true) * 1000),
+                                                               ],
+                                   ];
 
         $key10 = "$visitorId:key10";
         $data[$key10] = [
-            HitCacheFields::DATA => [
-                HitCacheFields::VISITOR_ID => $page->getVisitorId(),
-                HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
-                HitCacheFields::TYPE => "unknown",
-                HitCacheFields::CONTENT => $page->toArray(),
-                HitCacheFields::TIME => \round(microtime(true) * 1000)
-            ]
-        ];
+                         HitCacheFields::DATA => [
+                                                  HitCacheFields::VISITOR_ID   => $page->getVisitorId(),
+                                                  HitCacheFields::ANONYMOUS_ID => $page->getAnonymousId(),
+                                                  HitCacheFields::TYPE         => "unknown",
+                                                  HitCacheFields::CONTENT      => $page->toArray(),
+                                                  HitCacheFields::TIME         => \round(microtime(true) * 1000),
+                                                 ],
+                        ];
 
-        $hitCacheImplementationMock->expects($this->exactly(2))
-            ->method("lookupHits")
-            ->willReturnOnConsecutiveCalls($data, []);
+        $hitCacheImplementationMock->expects($this->exactly(2))->method("lookupHits")->willReturnOnConsecutiveCalls($data, []);
 
 
         Round::$returnValue = \round(microtime(true) * 1000);
@@ -262,7 +273,10 @@ class TrackingManagerTest extends TestCase
 
         $trackingManager = $this->getMockForAbstractClass(
             "Flagship\Api\TrackingManager",
-            [$config, $httpClient],
+            [
+             $config,
+             $httpClient,
+            ],
             "",
             true,
             true,
@@ -274,18 +288,17 @@ class TrackingManagerTest extends TestCase
 
         $exception = new Exception("error");
 
-        $hitCacheImplementationMock->expects($this->exactly(1))
-            ->method("lookupHits")
-            ->willThrowException($exception);
+        $hitCacheImplementationMock->expects($this->exactly(1))->method("lookupHits")->willThrowException($exception);
 
-        $trackingManager->expects($this->once())
-            ->method("logErrorSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_CACHE_ERROR,
-                ["lookupHits", $exception->getMessage()]
-            );
+        $trackingManager->expects($this->once())->method("logErrorSprintf")->with(
+            $config,
+            FlagshipConstant::PROCESS_CACHE,
+            FlagshipConstant::HIT_CACHE_ERROR,
+            [
+             "lookupHits",
+             $exception->getMessage(),
+            ]
+        );
 
         $trackingManager->lookupHits();
     }

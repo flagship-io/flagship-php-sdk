@@ -219,7 +219,10 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                 $this->config,
                 FlagshipConstant::PROCESS_CACHE,
                 FlagshipConstant::HIT_CACHE_ERROR,
-                ["lookupHits", $exception->getMessage()]
+                [
+                 "lookupHits",
+                 $exception->getMessage(),
+                ]
             );
         }
     }

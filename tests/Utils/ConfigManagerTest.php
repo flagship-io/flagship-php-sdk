@@ -11,8 +11,8 @@ class ConfigManagerTest extends TestCase
 {
     public function testInstance()
     {
-        $config =  new DecisionApiConfig();
-        $decisionManager =  new ApiManager(new HttpClient(), $config);
+        $config = new DecisionApiConfig();
+        $decisionManager = new ApiManager(new HttpClient(), $config);
         $trackingManager = new TrackingManager($config, new HttpClient());
         $configManager = new ConfigManager($config, $decisionManager, $trackingManager);
 

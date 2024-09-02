@@ -23,23 +23,21 @@ class ItemTest extends TestCase
         $itemCategory = "category 1";
 
         $itemArray = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::ITEM->value,
-            FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0.0,
-            FlagshipConstant::TID_API_ITEM => $transactionId,
-            FlagshipConstant::IN_API_ITEM => $itemName,
-            FlagshipConstant::IC_API_ITEM => $itemCode
-        ];
+                      FlagshipConstant::VISITOR_ID_API_ITEM      => $visitorId,
+                      FlagshipConstant::DS_API_ITEM              => FlagshipConstant::SDK_APP,
+                      FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
+                      FlagshipConstant::T_API_ITEM               => HitType::ITEM->value,
+                      FlagshipConstant::CUSTOMER_UID             => null,
+                      FlagshipConstant::QT_API_ITEM              => 0.0,
+                      FlagshipConstant::TID_API_ITEM             => $transactionId,
+                      FlagshipConstant::IN_API_ITEM              => $itemName,
+                      FlagshipConstant::IC_API_ITEM              => $itemCode,
+                     ];
 
         $item = new Item($transactionId, $itemName, $itemCode);
         $config = new DecisionApiConfig($envId);
 
-        $item->setVisitorId($visitorId)
-            ->setConfig($config)
-            ->setDs(FlagshipConstant::SDK_APP);
+        $item->setVisitorId($visitorId)->setConfig($config)->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertSame($itemArray, $item->toApiKeys());
 
@@ -95,9 +93,7 @@ class ItemTest extends TestCase
         $itemName = "";
         $item = new Item($transactionId, $itemName, $itemCode);
 
-        $item->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $item->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertFalse($item->isReady());
         $this->assertSame(Item::ERROR_MESSAGE, $item->getErrorMessage());
@@ -105,9 +101,7 @@ class ItemTest extends TestCase
         //Test with require HitAbstract fields and require Item fields
         $itemName = "ItemName";
         $item = new Item($transactionId, $itemName, $itemCode);
-        $item->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $item->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertTrue($item->isReady());
     }

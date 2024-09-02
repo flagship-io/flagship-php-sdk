@@ -37,9 +37,7 @@ class DefaultStrategy extends StrategyAbstract
         $consentHit = new Event(EventCategory::USER_ENGAGEMENT, FlagshipConstant::FS_CONSENT);
         $consentHit->setLabel(
             FlagshipConstant::SDK_LANGUAGE . ':' . ($hasConsented ? 'true' : 'false')
-        )->setConfig($this->getConfig())
-            ->setVisitorId($this->getVisitor()->getVisitorId())
-            ->setAnonymousId($this->getVisitor()->getAnonymousId());
+        )->setConfig($this->getConfig())->setVisitorId($this->getVisitor()->getVisitorId())->setAnonymousId($this->getVisitor()->getAnonymousId());
 
         $trackingManager = $this->getTrackingManager();
 
@@ -48,15 +46,7 @@ class DefaultStrategy extends StrategyAbstract
         $visitor = $this->getVisitor();
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setLogLevel(LogLevel::INFO)
-            ->setTraffic($visitor->getTraffic())
-            ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
-            ->setVisitorSessionId($visitor->getInstanceId())
-            ->setHitContent($consentHit->toApiKeys())
-            ->setVisitorId($visitor->getVisitorId())
-            ->setConfig($this->getConfig())
-            ->setAnonymousId($visitor->getAnonymousId());
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setLogLevel(LogLevel::INFO)->setTraffic($visitor->getTraffic())->setFlagshipInstanceId($visitor->getFlagshipInstanceId())->setVisitorSessionId($visitor->getInstanceId())->setHitContent($consentHit->toApiKeys())->setVisitorId($visitor->getVisitorId())->setConfig($this->getConfig())->setAnonymousId($visitor->getAnonymousId());
 
         if ($this->getDecisionManager() && $this->getDecisionManager()->getTroubleshootingData()) {
             $this->sendTroubleshootingHit($troubleshooting);
@@ -224,15 +214,7 @@ class DefaultStrategy extends StrategyAbstract
         $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::AUTHENTICATE);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_AUTHENTICATE)
-            ->setLogLevel(LogLevel::INFO)
-            ->setVisitorSessionId($this->getVisitor()->getInstanceId())
-            ->setVisitorContext($this->getVisitor()->getContext())
-            ->setTraffic($this->getVisitor()->getTraffic())
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-            ->setConfig($this->getConfig())
-            ->setVisitorId($this->getVisitor()->getVisitorId())
-            ->setAnonymousId($this->getVisitor()->getAnonymousId());
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_AUTHENTICATE)->setLogLevel(LogLevel::INFO)->setVisitorSessionId($this->getVisitor()->getInstanceId())->setVisitorContext($this->getVisitor()->getContext())->setTraffic($this->getVisitor()->getTraffic())->setFlagshipInstanceId($this->getFlagshipInstanceId())->setConfig($this->getConfig())->setVisitorId($this->getVisitor()->getVisitorId())->setAnonymousId($this->getVisitor()->getAnonymousId());
 
         $this->sendTroubleshootingHit($troubleshooting);
     }
@@ -264,15 +246,7 @@ class DefaultStrategy extends StrategyAbstract
         $this->setFetchStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::UNAUTHENTICATE);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_UNAUTHENTICATE)
-            ->setLogLevel(LogLevel::INFO)
-            ->setVisitorContext($this->getVisitor()->getContext())
-            ->setVisitorSessionId($this->getVisitor()->getInstanceId())
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-            ->setTraffic($this->getVisitor()->getTraffic())
-            ->setConfig($this->getConfig())
-            ->setVisitorId($this->getVisitor()->getVisitorId())
-            ->setAnonymousId($this->getVisitor()->getAnonymousId());
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_UNAUTHENTICATE)->setLogLevel(LogLevel::INFO)->setVisitorContext($this->getVisitor()->getContext())->setVisitorSessionId($this->getVisitor()->getInstanceId())->setFlagshipInstanceId($this->getFlagshipInstanceId())->setTraffic($this->getVisitor()->getTraffic())->setConfig($this->getConfig())->setVisitorId($this->getVisitor()->getVisitorId())->setAnonymousId($this->getVisitor()->getAnonymousId());
 
         $this->sendTroubleshootingHit($troubleshooting);
     }
@@ -301,17 +275,17 @@ class DefaultStrategy extends StrategyAbstract
         $campaigns = [];
         foreach ($data[self::CAMPAIGNS] as $item) {
             $campaigns[] = [
-                FlagshipField::FIELD_ID => $item[FlagshipField::FIELD_CAMPAIGN_ID],
-                FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                FlagshipField::FIELD_VARIATION => [
-                    FlagshipField::FIELD_ID => $item[self::CAMPAIGN_ID],
-                    FlagshipField::FIELD_REFERENCE => $item[FlagshipField::FIELD_IS_REFERENCE],
-                    FlagshipField::FIELD_MODIFICATIONS => [
-                        FlagshipField::FIELD_CAMPAIGN_TYPE => $item[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                        FlagshipField::FIELD_VALUE => $item[self::FLAGS],
-                    ],
-                ],
-            ];
+                            FlagshipField::FIELD_ID                 => $item[FlagshipField::FIELD_CAMPAIGN_ID],
+                            FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                            FlagshipField::FIELD_VARIATION          => [
+                                                                        FlagshipField::FIELD_ID            => $item[self::CAMPAIGN_ID],
+                                                                        FlagshipField::FIELD_REFERENCE     => $item[FlagshipField::FIELD_IS_REFERENCE],
+                                                                        FlagshipField::FIELD_MODIFICATIONS => [
+                                                                                                               FlagshipField::FIELD_CAMPAIGN_TYPE => $item[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                                                                                                               FlagshipField::FIELD_VALUE         => $item[self::FLAGS],
+                                                                                                              ],
+                                                                       ],
+                           ];
         }
 
         if (count($campaigns)) {
@@ -320,11 +294,11 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::PROCESS_FETCHING_FLAGS,
                 FlagshipConstant::FETCH_CAMPAIGNS_FROM_CACHE,
                 [
-                    $this->getVisitor()->getVisitorId(),
-                    $this->getVisitor()->getAnonymousId(),
-                    $this->getVisitor()->getContext(),
-                    $campaigns,
-                    ($this->getNow() - $now),
+                 $this->getVisitor()->getVisitorId(),
+                 $this->getVisitor()->getAnonymousId(),
+                 $this->getVisitor()->getContext(),
+                 $campaigns,
+                 ($this->getNow() - $now),
                 ]
             );
         }
@@ -349,11 +323,11 @@ class DefaultStrategy extends StrategyAbstract
             $functionName,
             FlagshipConstant::FETCH_CAMPAIGNS_SUCCESS,
             [
-                $this->getVisitor()->getVisitorId(),
-                $this->getVisitor()->getAnonymousId(),
-                $this->getVisitor()->getContext(),
-                $campaigns,
-                ($this->getNow() - $now),
+             $this->getVisitor()->getVisitorId(),
+             $this->getVisitor()->getAnonymousId(),
+             $this->getVisitor()->getContext(),
+             $campaigns,
+             ($this->getNow() - $now),
             ]
         );
     }
@@ -365,10 +339,10 @@ class DefaultStrategy extends StrategyAbstract
             $functionName,
             FlagshipConstant::FETCH_FLAGS_FROM_CAMPAIGNS,
             [
-                $this->getVisitor()->getVisitorId(),
-                $this->getVisitor()->getAnonymousId(),
-                $this->getVisitor()->getContext(),
-                $flagsDTO,
+             $this->getVisitor()->getVisitorId(),
+             $this->getVisitor()->getAnonymousId(),
+             $this->getVisitor()->getContext(),
+             $flagsDTO,
             ]
         );
     }
@@ -446,10 +420,7 @@ class DefaultStrategy extends StrategyAbstract
         $trackingManager = $this->getTrackingManager();
 
         $visitor = $this->getVisitor();
-        $hit->setConfig($visitor->getConfig())
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
-            ->setDs(FlagshipConstant::SDK_APP);
+        $hit->setConfig($visitor->getConfig())->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId())->setDs(FlagshipConstant::SDK_APP);
 
         if ($hit->isReady() === false) {
             $this->logError(
@@ -463,15 +434,7 @@ class DefaultStrategy extends StrategyAbstract
         $trackingManager->addHit($hit);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setLogLevel(LogLevel::INFO)
-            ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
-            ->setVisitorSessionId($visitor->getInstanceId())
-            ->setHitContent($hit->toApiKeys())
-            ->setTraffic($visitor->getTraffic())
-            ->setVisitorId($visitor->getVisitorId())
-            ->setConfig($this->getConfig())
-            ->setAnonymousId($visitor->getAnonymousId());
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setLogLevel(LogLevel::INFO)->setFlagshipInstanceId($visitor->getFlagshipInstanceId())->setVisitorSessionId($visitor->getInstanceId())->setHitContent($hit->toApiKeys())->setTraffic($visitor->getTraffic())->setVisitorId($visitor->getVisitorId())->setConfig($this->getConfig())->setAnonymousId($visitor->getAnonymousId());
         $this->sendTroubleshootingHit($troubleshooting);
     }
 
@@ -497,28 +460,12 @@ class DefaultStrategy extends StrategyAbstract
         $visitor = $this->getVisitor();
         $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
 
-        $activateHit
-            ->setFlagKey($flag->getKey())
-            ->setFlagValue($flag->getValue())
-            ->setFlagDefaultValue($defaultValue)
-            ->setVisitorContext($visitor->getContext())
-            ->setFlagMetadata($flagMetadata)
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
-            ->setConfig($this->getConfig());
+        $activateHit->setFlagKey($flag->getKey())->setFlagValue($flag->getValue())->setFlagDefaultValue($defaultValue)->setVisitorContext($visitor->getContext())->setFlagMetadata($flagMetadata)->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId())->setConfig($this->getConfig());
 
         $this->getTrackingManager()->activateFlag($activateHit);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_ACTIVATE)
-            ->setLogLevel(LogLevel::INFO)
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-            ->setVisitorSessionId($visitor->getInstanceId())
-            ->setHitContent($activateHit->toApiKeys())
-            ->setTraffic($this->getVisitor()->getTraffic())
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
-            ->setConfig($this->getConfig());
+        $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_ACTIVATE)->setLogLevel(LogLevel::INFO)->setFlagshipInstanceId($this->getFlagshipInstanceId())->setVisitorSessionId($visitor->getInstanceId())->setHitContent($activateHit->toApiKeys())->setTraffic($this->getVisitor()->getTraffic())->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId())->setConfig($this->getConfig());
         $this->sendTroubleshootingHit($troubleshooting);
     }
 
@@ -526,18 +473,7 @@ class DefaultStrategy extends StrategyAbstract
     {
         $visitor = $this->getVisitor();
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setLabel($label)
-            ->setLogLevel(LogLevel::WARNING)
-            ->setVisitorSessionId($visitor->getInstanceId())
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-            ->setTraffic($visitor->getTraffic())
-            ->setVisitorContext($visitor->getContext())
-            ->setFlagKey($key)
-            ->setFlagDefault($defaultValue)
-            ->setVisitorExposed($visitorExposed)
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
-            ->setConfig($this->getConfig());
+        $troubleshooting->setLabel($label)->setLogLevel(LogLevel::WARNING)->setVisitorSessionId($visitor->getInstanceId())->setFlagshipInstanceId($this->getFlagshipInstanceId())->setTraffic($visitor->getTraffic())->setVisitorContext($visitor->getContext())->setFlagKey($key)->setFlagDefault($defaultValue)->setVisitorExposed($visitorExposed)->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId())->setConfig($this->getConfig());
 
         $this->sendTroubleshootingHit($troubleshooting);
     }
@@ -561,8 +497,8 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_USER_EXPOSED,
                 FlagshipConstant::USER_EXPOSED_NO_FLAG_ERROR,
                 [
-                    $this->getVisitor()->getVisitorId(),
-                    $key,
+                 $this->getVisitor()->getVisitorId(),
+                 $key,
                 ]
             );
 
@@ -581,8 +517,8 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_USER_EXPOSED,
                 FlagshipConstant::VISITOR_EXPOSED_VALUE_NOT_CALLED,
                 [
-                    $this->getVisitor()->getVisitorId(),
-                    $key,
+                 $this->getVisitor()->getVisitorId(),
+                 $key,
                 ]
             );
 
@@ -604,8 +540,8 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_USER_EXPOSED,
                 FlagshipConstant::USER_EXPOSED_CAST_ERROR,
                 [
-                    $this->getVisitor()->getVisitorId(),
-                    $key,
+                 $this->getVisitor()->getVisitorId(),
+                 $key,
                 ]
             );
 
@@ -641,9 +577,9 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_VALUE,
                 FlagshipConstant::GET_FLAG_MISSING_ERROR,
                 [
-                    $this->getVisitor()->getVisitorId(),
-                    $key,
-                    $defaultValue,
+                 $this->getVisitor()->getVisitorId(),
+                 $key,
+                 $defaultValue,
                 ]
             );
 
@@ -670,9 +606,9 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_VALUE,
                 FlagshipConstant::GET_FLAG_CAST_ERROR,
                 [
-                    $this->getVisitor()->getVisitorId(),
-                    $key,
-                    $defaultValue,
+                 $this->getVisitor()->getVisitorId(),
+                 $key,
+                 $defaultValue,
                 ]
             );
 
@@ -691,9 +627,9 @@ class DefaultStrategy extends StrategyAbstract
             FlagshipConstant::FLAG_VALUE,
             FlagshipConstant::GET_FLAG_VALUE,
             [
-                $this->getVisitor()->getVisitorId(),
-                $key,
-                $flag->getValue(),
+             $this->getVisitor()->getVisitorId(),
+             $key,
+             $flag->getValue(),
             ]
         );
 

@@ -40,7 +40,7 @@ namespace Flagship\Decision{
 
     function fwrite($stream, $data)
     {
-        File::$fwriteData =  $data;
+        File::$fwriteData = $data;
     }
 
     function mkdir($directory, $permissions = 0777, $recursive = false)

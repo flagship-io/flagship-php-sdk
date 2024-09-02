@@ -14,8 +14,7 @@ use Flagship\Enum\HitType;
 class Event extends HitAbstract
 {
     public const ERROR_MESSAGE  = 'event category and event action are required';
-    public const CATEGORY_ERROR =
-        "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
+    public const CATEGORY_ERROR = "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
     public const VALUE_FIELD_ERROR = 'value must be an integer and be >= 0';
 
     public static function getClassName(): string
@@ -147,9 +146,7 @@ class Event extends HitAbstract
             $this->logError(
                 $this->config,
                 self::VALUE_FIELD_ERROR,
-                [
-                    FlagshipConstant::TAG => __FUNCTION__
-                ]
+                [FlagshipConstant::TAG => __FUNCTION__]
             );
             return $this;
         }

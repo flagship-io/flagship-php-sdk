@@ -62,7 +62,7 @@ class FlagshipConstant
     public const CONTEXT_PARAM_ERROR = "params 'key' must be a non null String, and 'value' must be one of the
         following types : String, Number, Boolean";
 
-    public const USER_EXPOSED_NO_FLAG_ERROR =  "For the visitor '%s', no flags were found with the key '%s'.
+    public const USER_EXPOSED_NO_FLAG_ERROR = "For the visitor '%s', no flags were found with the key '%s'.
      As a result, user exposure will not be sent.";
     public const VISITOR_EXPOSED_VALUE_NOT_CALLED =
         "For the visitor `%s`, assuming the getValue() method has not previously been invoked for the flag `%s`. Therefore, the exposure is canceled";
@@ -90,7 +90,7 @@ class FlagshipConstant
     "Method '%s' is deactivated for visitor '%s': visitor did not consent.";
     public const METHOD_DEACTIVATED_BUCKETING_ERROR = "Method '%s' is deactivated on Bucketing mode.";
     public const FLAGSHIP_PREDEFINED_CONTEXT_ERROR = "Flagship predefined context %s must be %s";
-    public const FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE =  "Visitor is not authentificated yet";
+    public const FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE = "Visitor is not authentificated yet";
     public const IS_NOT_CALLABLE_ERROR = "'%s' is not callable";
     //Messages Info
     public const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";

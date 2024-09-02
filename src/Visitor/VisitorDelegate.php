@@ -181,7 +181,10 @@ class VisitorDelegate extends VisitorAbstract
                 $this->getConfig(),
                 FlagshipConstant::GET_FLAG,
                 $this->flagSyncStatusMessage($fetchFlagsStatus->getReason()),
-                [$this->getVisitorId(), $key]
+                [
+                 $this->getVisitorId(),
+                 $key,
+                ]
             );
         }
         return new FSFlag($key, $this);

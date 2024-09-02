@@ -282,19 +282,18 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
             foreach ($visitor->campaigns as $campaign) {
                 $variation     = $campaign[FlagshipField::FIELD_VARIATION];
                 $modifications = $variation[FlagshipField::FIELD_MODIFICATIONS];
-                $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] =
-                    $variation[FlagshipField::FIELD_ID];
+                $assignmentsHistory[$campaign[FlagshipField::FIELD_VARIATION_GROUP_ID]] = $variation[FlagshipField::FIELD_ID];
 
                 $campaigns[] = [
-                    FlagshipField::FIELD_CAMPAIGN_ID        => $campaign[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_SLUG               => $campaign[FlagshipField::FIELD_SLUG] ?? null,
-                    FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                    FlagshipField::FIELD_VARIATION_ID       => $variation[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_IS_REFERENCE       => $variation[FlagshipField::FIELD_REFERENCE],
-                    FlagshipField::FIELD_CAMPAIGN_TYPE      => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                    self::ACTIVATED                         => false,
-                    self::FLAGS                             => $modifications[FlagshipField::FIELD_VALUE],
-                ];
+                                FlagshipField::FIELD_CAMPAIGN_ID        => $campaign[FlagshipField::FIELD_ID],
+                                FlagshipField::FIELD_SLUG               => $campaign[FlagshipField::FIELD_SLUG] ?? null,
+                                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                                FlagshipField::FIELD_VARIATION_ID       => $variation[FlagshipField::FIELD_ID],
+                                FlagshipField::FIELD_IS_REFERENCE       => $variation[FlagshipField::FIELD_REFERENCE],
+                                FlagshipField::FIELD_CAMPAIGN_TYPE      => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                                self::ACTIVATED                         => false,
+                                self::FLAGS                             => $modifications[FlagshipField::FIELD_VALUE],
+                               ];
             }
 
             if (
@@ -311,16 +310,16 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
             }
 
             $data = [
-                self::VERSION => self::CURRENT_VERSION,
-                self::DATA    => [
-                    self::VISITOR_ID          => $visitor->getVisitorId(),
-                    self::ANONYMOUS_ID        => $visitor->getAnonymousId(),
-                    self::CONSENT             => $visitor->hasConsented(),
-                    self::CONTEXT             => $visitor->getContext(),
-                    self::CAMPAIGNS           => $campaigns,
-                    self::ASSIGNMENTS_HISTORY => $assignmentsHistory,
-                ],
-            ];
+                     self::VERSION => self::CURRENT_VERSION,
+                     self::DATA    => [
+                                       self::VISITOR_ID          => $visitor->getVisitorId(),
+                                       self::ANONYMOUS_ID        => $visitor->getAnonymousId(),
+                                       self::CONSENT             => $visitor->hasConsented(),
+                                       self::CONTEXT             => $visitor->getContext(),
+                                       self::CAMPAIGNS           => $campaigns,
+                                       self::ASSIGNMENTS_HISTORY => $assignmentsHistory,
+                                      ],
+                    ];
 
             $visitorCacheInstance->cacheVisitor($visitor->getVisitorId(), $data);
 
@@ -399,21 +398,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
             $fetchThirdPartyData = $config->getFetchThirdPartyData();
         }
         $analytic = new UsageHit();
-        $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)
-            ->setLogLevel(LogLevel::INFO)
-            ->setSdkConfigMode($config->getDecisionMode())
-            ->setSdkConfigLogLevel($config->getLogLevel())
-            ->setSdkConfigTimeout($config->getTimeout())
-            ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
-            ->setSdkConfigBucketingUrl($bucketingUrl)
-            ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
-            ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
-            ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
-            ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
-            ->setSdkStatus($visitor->getSdkStatus())
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-            ->setVisitorId($this->getFlagshipInstanceId())
-            ->setConfig($config);
+        $analytic->setLabel(TroubleshootingLabel::SDK_CONFIG)->setLogLevel(LogLevel::INFO)->setSdkConfigMode($config->getDecisionMode())->setSdkConfigLogLevel($config->getLogLevel())->setSdkConfigTimeout($config->getTimeout())->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())->setSdkConfigBucketingUrl($bucketingUrl)->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())->setSdkStatus($visitor->getSdkStatus())->setFlagshipInstanceId($this->getFlagshipInstanceId())->setVisitorId($this->getFlagshipInstanceId())->setConfig($config);
         $this->getTrackingManager()->addUsageHit($analytic);
     }
 
@@ -452,32 +437,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         $visitor->setTraffic($traffic);
 
         $troubleshootingHit = new Troubleshooting();
-        $troubleshootingHit->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS)
-            ->setLogLevel(LogLevel::INFO)
-            ->setVisitorSessionId($visitor->getInstanceId())
-            ->setFlagshipInstanceId($visitor->getFlagshipInstanceId())
-            ->setTraffic($traffic)
-            ->setVisitorAssignmentHistory($assignmentHistory)
-            ->setVisitorContext($visitor->getContext())
-            ->setSdkStatus($visitor->getSdkStatus())
-            ->setVisitorCampaigns($campaigns)
-            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-            ->setVisitorFlags($flagsDTO)
-            ->setVisitorConsent($visitor->hasConsented())
-            ->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())
-            ->setHttpResponseTime(($this->getNow() - $now))
-            ->setSdkConfigMode($config->getDecisionMode())
-            ->setSdkConfigLogLevel($config->getLogLevel())
-            ->setSdkConfigTimeout($config->getTimeout())
-            ->setSdkConfigBucketingUrl($bucketingUrl)
-            ->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)
-            ->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())
-            ->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())
-            ->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())
-            ->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())
-            ->setVisitorId($visitor->getVisitorId())
-            ->setAnonymousId($visitor->getAnonymousId())
-            ->setConfig($config);
+        $troubleshootingHit->setLabel(TroubleshootingLabel::VISITOR_FETCH_CAMPAIGNS)->setLogLevel(LogLevel::INFO)->setVisitorSessionId($visitor->getInstanceId())->setFlagshipInstanceId($visitor->getFlagshipInstanceId())->setTraffic($traffic)->setVisitorAssignmentHistory($assignmentHistory)->setVisitorContext($visitor->getContext())->setSdkStatus($visitor->getSdkStatus())->setVisitorCampaigns($campaigns)->setFlagshipInstanceId($this->getFlagshipInstanceId())->setVisitorFlags($flagsDTO)->setVisitorConsent($visitor->hasConsented())->setVisitorIsAuthenticated(!!$visitor->getAnonymousId())->setHttpResponseTime(($this->getNow() - $now))->setSdkConfigMode($config->getDecisionMode())->setSdkConfigLogLevel($config->getLogLevel())->setSdkConfigTimeout($config->getTimeout())->setSdkConfigBucketingUrl($bucketingUrl)->setSdkConfigFetchThirdPartyData($fetchThirdPartyData)->setSdkConfigUsingOnVisitorExposed(!!$config->getOnVisitorExposed())->setSdkConfigUsingCustomHitCache(!!$config->getHitCacheImplementation())->setSdkConfigUsingCustomVisitorCache(!!$config->getVisitorCacheImplementation())->setSdkConfigTrackingManagerConfigStrategy($config->getCacheStrategy())->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId())->setConfig($config);
 
         $this->sendTroubleshootingHit($troubleshootingHit);
     }

@@ -28,30 +28,24 @@ class EventTest extends TestCase
         $sessionNumber = 1;
 
         $eventArray = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::EVENT->value,
-            FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0.0,
-            FlagshipConstant::USER_IP_API_ITEM => $userIp,
-            FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $screenResolution,
-            FlagshipConstant::USER_LANGUAGE => $userLanguage,
-            FlagshipConstant::SESSION_NUMBER => $sessionNumber,
-            FlagshipConstant::EVENT_CATEGORY_API_ITEM => $eventCategory,
-            FlagshipConstant::EVENT_ACTION_API_ITEM => $eventAction,
-        ];
+                       FlagshipConstant::VISITOR_ID_API_ITEM        => $visitorId,
+                       FlagshipConstant::DS_API_ITEM                => FlagshipConstant::SDK_APP,
+                       FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM   => $envId,
+                       FlagshipConstant::T_API_ITEM                 => HitType::EVENT->value,
+                       FlagshipConstant::CUSTOMER_UID               => null,
+                       FlagshipConstant::QT_API_ITEM                => 0.0,
+                       FlagshipConstant::USER_IP_API_ITEM           => $userIp,
+                       FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $screenResolution,
+                       FlagshipConstant::USER_LANGUAGE              => $userLanguage,
+                       FlagshipConstant::SESSION_NUMBER             => $sessionNumber,
+                       FlagshipConstant::EVENT_CATEGORY_API_ITEM    => $eventCategory,
+                       FlagshipConstant::EVENT_ACTION_API_ITEM      => $eventAction,
+                      ];
 
         $event = new Event($eventCategory, $eventAction);
         $config = new DecisionApiConfig();
         $config->setEnvId($envId);
-        $event->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setDs(FlagshipConstant::SDK_APP)
-            ->setLocale($userLanguage)
-            ->setUserIP($userIp)
-            ->setScreenResolution($screenResolution)
-            ->setSessionNumber($sessionNumber);
+        $event->setConfig($config)->setVisitorId($visitorId)->setDs(FlagshipConstant::SDK_APP)->setLocale($userLanguage)->setUserIP($userIp)->setScreenResolution($screenResolution)->setSessionNumber($sessionNumber);
 
         $this->assertSame($eventArray, $event->toApiKeys());
 
@@ -109,9 +103,7 @@ class EventTest extends TestCase
         $eventCategory = EventCategory::ACTION_TRACKING;
         $event = new Event($eventCategory, $eventAction);
 
-        $event->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $event->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertFalse($event->isReady());
 
@@ -120,9 +112,7 @@ class EventTest extends TestCase
         //Test with require HitAbstract fields and require Transaction fields
         $eventAction = "ItemName";
         $event = new Event($eventCategory, $eventAction);
-        $event->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $event->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertTrue($event->isReady());
     }

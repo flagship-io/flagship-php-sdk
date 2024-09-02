@@ -12,9 +12,7 @@ class HttpResponseTest extends TestCase
     {
         $statusCode = 200;
         $body = 'Body';
-        $headers = [
-            "accept" => "application/json"
-        ];
+        $headers = ["accept" => "application/json"];
         $httpResponse = new HttpResponse($statusCode, $body, $headers);
 
         $this->assertSame($statusCode, $httpResponse->getStatusCode());

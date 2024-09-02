@@ -44,32 +44,29 @@ class NotReadyStrategyTest extends TestCase
         };
 
 
-        $decisionManager = $this->getMockBuilder(ApiManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $decisionManager = $this->getMockBuilder(ApiManager::class)->disableOriginalConstructor()->getMock();
 
         $configManager = new ConfigManager($config, $decisionManager, $trackerManager);
 
         $visitorId = "visitorId";
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $logManagerStub->expects($this->exactly(5))->method('error')
-            ->with(
-                $this->logicalOr(
-                    $logMessageBuild('sendHit'),
-                    $logMessageBuild('fetchFlags'),
-                    $logMessageBuild('getFlagValue'),
-                    $logMessageBuild('visitorExposed'),
-                    $logMessageBuild('getFlagMetadata')
-                ),
-                $this->logicalOr(
-                    [FlagshipConstant::TAG => 'sendHit'],
-                    [FlagshipConstant::TAG => 'fetchFlags'],
-                    [FlagshipConstant::TAG => 'getFlagValue'],
-                    [FlagshipConstant::TAG => 'visitorExposed'],
-                    [FlagshipConstant::TAG => 'getFlagMetadata']
-                )
-            );
+        $logManagerStub->expects($this->exactly(5))->method('error')->with(
+            $this->logicalOr(
+                $logMessageBuild('sendHit'),
+                $logMessageBuild('fetchFlags'),
+                $logMessageBuild('getFlagValue'),
+                $logMessageBuild('visitorExposed'),
+                $logMessageBuild('getFlagMetadata')
+            ),
+            $this->logicalOr(
+                [FlagshipConstant::TAG => 'sendHit'],
+                [FlagshipConstant::TAG => 'fetchFlags'],
+                [FlagshipConstant::TAG => 'getFlagValue'],
+                [FlagshipConstant::TAG => 'visitorExposed'],
+                [FlagshipConstant::TAG => 'getFlagMetadata']
+            )
+        );
 
         $notReadyStrategy = new NotReadyStrategy($visitor);
 
@@ -81,24 +78,24 @@ class NotReadyStrategyTest extends TestCase
 
         $this->assertSame([
 
-            "sdk_osName" => PHP_OS,
-            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,
-            $key => $value,
-            ], $visitor->getContext());
+                           "sdk_osName"                 => PHP_OS,
+                           FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+                           FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+                           FlagshipConstant::FS_USERS   => $visitorId,
+                           $key                         => $value,
+                          ], $visitor->getContext());
 
         //Test updateContextCollection
         $notReadyStrategy->updateContextCollection(['age' => 20]);
 
         $this->assertSame([
-            "sdk_osName" => PHP_OS,
-            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,
-            $key => $value,
-            'age' => 20
-        ], $visitor->getContext());
+                           "sdk_osName"                 => PHP_OS,
+                           FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+                           FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+                           FlagshipConstant::FS_USERS   => $visitorId,
+                           $key                         => $value,
+                           'age'                        => 20,
+                          ], $visitor->getContext());
 
         //Test clearContext
         $notReadyStrategy->clearContext();
@@ -129,14 +126,15 @@ class NotReadyStrategyTest extends TestCase
             true,
             true,
             true,
-            ['lookupVisitor', 'cacheVisitor']
+            [
+             'lookupVisitor',
+             'cacheVisitor',
+            ]
         );
 
-        $VisitorCacheImplementationMock->expects($this->never())
-            ->method("cacheVisitor");
+        $VisitorCacheImplementationMock->expects($this->never())->method("cacheVisitor");
 
-        $VisitorCacheImplementationMock->expects($this->never())
-            ->method("lookupVisitor");
+        $VisitorCacheImplementationMock->expects($this->never())->method("lookupVisitor");
 
         $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
 

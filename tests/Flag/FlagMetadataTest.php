@@ -40,29 +40,29 @@ class FlagMetadataTest extends TestCase
         $this->assertSame($metadata->getVariationName(), $variationName);
 
         $metadataJson = json_encode([
-            "campaignId" => $campaignId,
-            "campaignName" => $campaignName,
-            "variationGroupId" => $variationGroupId,
-            "variationGroupName" => $variationGroupName,
-            "variationId" => $variationId,
-            "variationName" => $variationName,
-            "isReference" => $isReferenceId,
-            "campaignType" => $campaignType,
-            "slug" => $slug
-        ]);
+                                     "campaignId"         => $campaignId,
+                                     "campaignName"       => $campaignName,
+                                     "variationGroupId"   => $variationGroupId,
+                                     "variationGroupName" => $variationGroupName,
+                                     "variationId"        => $variationId,
+                                     "variationName"      => $variationName,
+                                     "isReference"        => $isReferenceId,
+                                     "campaignType"       => $campaignType,
+                                     "slug"               => $slug,
+                                    ]);
         $this->assertJsonStringEqualsJsonString(json_encode($metadata), $metadataJson);
 
         $metadataJson = json_encode([
-            "campaignId" => "",
-            "campaignName" => "",
-            "variationGroupId" => "",
-            "variationGroupName" => '',
-            "variationId" => "",
-            "variationName" => "",
-            "isReference" => false,
-            "campaignType" => "",
-            "slug" => ""
-        ]);
+                                     "campaignId"         => "",
+                                     "campaignName"       => "",
+                                     "variationGroupId"   => "",
+                                     "variationGroupName" => '',
+                                     "variationId"        => "",
+                                     "variationName"      => "",
+                                     "isReference"        => false,
+                                     "campaignType"       => "",
+                                     "slug"               => "",
+                                    ]);
 
         $this->assertJsonStringEqualsJsonString(json_encode(FSFlagMetadata::getEmpty()), $metadataJson);
     }

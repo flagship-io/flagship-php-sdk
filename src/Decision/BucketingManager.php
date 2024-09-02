@@ -92,44 +92,48 @@ class BucketingManager extends DecisionManagerAbstract
     protected function getThirdPartySegment(string $visitorId): array
     {
         $url = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $this->getConfig()->getEnvId(), $visitorId);
-        $now =  $this->getNow();
+        $now = $this->getNow();
         $context = [];
         try {
             $response = $this->httpClient->get($url);
             $content = $response->getBody();
             foreach ($content as $item) {
                 $key = $item[self::PARTNER] . "::" . $item[self::SEGMENT];
-                $context[$key] =  $item[self::VALUE];
+                $context[$key] = $item[self::VALUE];
             }
             $this->logDebugSprintf(
                 $this->config,
                 self::GET_THIRD_PARTY_SEGMENT,
                 FlagshipConstant::FETCH_THIRD_PARTY_SUCCESS,
                 [
-                    self::THIRD_PARTY_SEGMENT,
-                    $this->getLogFormat(
-                        null,
-                        $url,
-                        [],
-                        [],
-                        $this->getNow() - $now,
-                        $response->getHeaders(),
-                        $response->getBody(),
-                        $response->getStatusCode()
-                    )]
+                 self::THIRD_PARTY_SEGMENT,
+                 $this->getLogFormat(
+                     null,
+                     $url,
+                     [],
+                     [],
+                     $this->getNow() - $now,
+                     $response->getHeaders(),
+                     $response->getBody(),
+                     $response->getStatusCode()
+                 ),
+                ]
             );
         } catch (Exception $exception) {
             $this->logErrorSprintf(
                 $this->getConfig(),
                 self::GET_THIRD_PARTY_SEGMENT,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [self::THIRD_PARTY_SEGMENT, $this->getLogFormat(
-                    $exception->getMessage(),
-                    $url,
-                    [],
-                    [],
-                    $this->getNow() - $now
-                )]
+                [
+                 self::THIRD_PARTY_SEGMENT,
+                 $this->getLogFormat(
+                     $exception->getMessage(),
+                     $url,
+                     [],
+                     [],
+                     $this->getNow() - $now
+                 ),
+                ]
             );
         }
         return $context;
@@ -150,35 +154,13 @@ class BucketingManager extends DecisionManagerAbstract
             $response = $this->httpClient->get($url);
 
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE)
-                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-                ->setVisitorId($this->getFlagshipInstanceId())
-                ->setTraffic(0)
-                ->setLogLevel(LogLevel::INFO)
-                ->setConfig($this->getConfig())
-                ->setHttpRequestMethod("GET")
-                ->setHttpRequestUrl($url)
-                ->setHttpResponseBody($response->getBody())
-                ->setHttpResponseHeaders($response->getHeaders())
-                ->setHttpResponseCode($response->getStatusCode())
-                ->setHttpResponseTime($this->getNow() - $now);
+            $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE)->setFlagshipInstanceId($this->getFlagshipInstanceId())->setVisitorId($this->getFlagshipInstanceId())->setTraffic(0)->setLogLevel(LogLevel::INFO)->setConfig($this->getConfig())->setHttpRequestMethod("GET")->setHttpRequestUrl($url)->setHttpResponseBody($response->getBody())->setHttpResponseHeaders($response->getHeaders())->setHttpResponseCode($response->getStatusCode())->setHttpResponseTime($this->getNow() - $now);
             $this->troubleshootingHit = $troubleshooting;
             return $response->getBody();
         } catch (Exception $exception) {
-            $this->logError($this->getConfig(), $exception->getMessage(), [
-                FlagshipConstant::TAG => __FUNCTION__
-            ]);
+            $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR)
-                ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-                ->setVisitorId($this->getFlagshipInstanceId())
-                ->setTraffic(0)
-                ->setLogLevel(LogLevel::ERROR)
-                ->setConfig($this->getConfig())
-                ->setHttpRequestMethod("GET")
-                ->setHttpRequestUrl($url)
-                ->setHttpResponseBody($exception->getMessage())
-                ->setHttpResponseTime($this->getNow() - $now);
+            $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR)->setFlagshipInstanceId($this->getFlagshipInstanceId())->setVisitorId($this->getFlagshipInstanceId())->setTraffic(0)->setLogLevel(LogLevel::ERROR)->setConfig($this->getConfig())->setHttpRequestMethod("GET")->setHttpRequestUrl($url)->setHttpResponseBody($exception->getMessage())->setHttpResponseTime($this->getNow() - $now);
             $this->troubleshootingHit = $troubleshooting;
         }
         return null;
@@ -285,14 +267,14 @@ class BucketingManager extends DecisionManagerAbstract
                     $visitor
                 );
                 $visitorCampaigns[] = [
-                    FlagshipField::FIELD_ID => $campaignId,
-                    FlagshipField::FIELD_NANE => $campaignName,
-                    FlagshipField::FIELD_SLUG => $slug,
-                    FlagshipField::FIELD_VARIATION_GROUP_ID => $variationGroup[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_VARIATION_GROUP_NAME => $variationGroup[FlagshipField::FIELD_NANE] ?? null,
-                    FlagshipField::FIELD_VARIATION => $variations,
-                    FlagshipField::FIELD_CAMPAIGN_TYPE => $campaignType
-                ];
+                                       FlagshipField::FIELD_ID                   => $campaignId,
+                                       FlagshipField::FIELD_NANE                 => $campaignName,
+                                       FlagshipField::FIELD_SLUG                 => $slug,
+                                       FlagshipField::FIELD_VARIATION_GROUP_ID   => $variationGroup[FlagshipField::FIELD_ID],
+                                       FlagshipField::FIELD_VARIATION_GROUP_NAME => $variationGroup[FlagshipField::FIELD_NANE] ?? null,
+                                       FlagshipField::FIELD_VARIATION            => $variations,
+                                       FlagshipField::FIELD_CAMPAIGN_TYPE        => $campaignType,
+                                      ];
                 break;
             }
         }
@@ -342,28 +324,28 @@ class BucketingManager extends DecisionManagerAbstract
             if (!isset($variation[FlagshipField::FIELD_ALLOCATION])) {
                 continue;
             }
-            $assignmentsVariationId =  $this->getVisitorAssignmentsHistory($groupVariationId, $visitor);
+            $assignmentsVariationId = $this->getVisitorAssignmentsHistory($groupVariationId, $visitor);
             if ($assignmentsVariationId) {
                 $newVariation = $this->findVariationById($variations, $assignmentsVariationId);
                 if (!$newVariation) {
                     continue;
                 }
                 $visitorVariation = [
-                    FlagshipField::FIELD_ID => $newVariation[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_MODIFICATIONS => $newVariation[FlagshipField::FIELD_MODIFICATIONS],
-                    FlagshipField::FIELD_REFERENCE => !empty($newVariation[FlagshipField::FIELD_REFERENCE]),
-                    FlagshipField::FIELD_NANE => $newVariation[FlagshipField::FIELD_NANE] ?? null
-                ];
+                                     FlagshipField::FIELD_ID            => $newVariation[FlagshipField::FIELD_ID],
+                                     FlagshipField::FIELD_MODIFICATIONS => $newVariation[FlagshipField::FIELD_MODIFICATIONS],
+                                     FlagshipField::FIELD_REFERENCE     => !empty($newVariation[FlagshipField::FIELD_REFERENCE]),
+                                     FlagshipField::FIELD_NANE          => $newVariation[FlagshipField::FIELD_NANE] ?? null,
+                                    ];
                 break;
             }
             $totalAllocation += $variation[FlagshipField::FIELD_ALLOCATION];
             if ($hashAllocation < $totalAllocation) {
                 $visitorVariation = [
-                    FlagshipField::FIELD_ID => $variation[FlagshipField::FIELD_ID],
-                    FlagshipField::FIELD_MODIFICATIONS => $variation[FlagshipField::FIELD_MODIFICATIONS],
-                    FlagshipField::FIELD_REFERENCE => !empty($variation[FlagshipField::FIELD_REFERENCE]),
-                    FlagshipField::FIELD_NANE => $variation[FlagshipField::FIELD_NANE] ?? null
-                ];
+                                     FlagshipField::FIELD_ID            => $variation[FlagshipField::FIELD_ID],
+                                     FlagshipField::FIELD_MODIFICATIONS => $variation[FlagshipField::FIELD_MODIFICATIONS],
+                                     FlagshipField::FIELD_REFERENCE     => !empty($variation[FlagshipField::FIELD_REFERENCE]),
+                                     FlagshipField::FIELD_NANE          => $variation[FlagshipField::FIELD_NANE] ?? null,
+                                    ];
                 break;
             }
         }
@@ -433,7 +415,7 @@ class BucketingManager extends DecisionManagerAbstract
                     break;
                 }
                 $isMatching = true;
-                continue ;
+                continue;
             }
 
             switch ($key) {

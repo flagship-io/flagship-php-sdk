@@ -335,11 +335,11 @@ abstract class FlagshipConfig implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            FlagshipField::FIELD_ENVIRONMENT_ID => $this->getEnvId(),
-            FlagshipField::FIELD_API_KEY => $this->getApiKey(),
-            FlagshipField::FIELD_TIMEOUT => $this->getTimeout(),
-            FlagshipField::FIELD_LOG_LEVEL => $this->getLogLevel()
-        ];
+                FlagshipField::FIELD_ENVIRONMENT_ID => $this->getEnvId(),
+                FlagshipField::FIELD_API_KEY        => $this->getApiKey(),
+                FlagshipField::FIELD_TIMEOUT        => $this->getTimeout(),
+                FlagshipField::FIELD_LOG_LEVEL      => $this->getLogLevel(),
+               ];
     }
 
     public static function bucketing(string $bucketingUrl): BucketingConfig

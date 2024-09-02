@@ -198,13 +198,13 @@ class Activate extends HitAbstract
     public function toApiKeys(): array
     {
         $apiKeys = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $this->getVisitorId(),
-            FlagshipConstant::VARIATION_ID_API_ITEM => $this->getVariationId(),
-            FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $this->getVariationGroupId(),
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->config->getEnvId(),
-            FlagshipConstant::ANONYMOUS_ID => null,
-            FlagshipConstant::QT_API_ITEM => round(microtime(true) * 1000) - $this->createdAt,
-        ];
+                    FlagshipConstant::VISITOR_ID_API_ITEM         => $this->getVisitorId(),
+                    FlagshipConstant::VARIATION_ID_API_ITEM       => $this->getVariationId(),
+                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $this->getVariationGroupId(),
+                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM    => $this->config->getEnvId(),
+                    FlagshipConstant::ANONYMOUS_ID                => null,
+                    FlagshipConstant::QT_API_ITEM                 => round(microtime(true) * 1000) - $this->createdAt,
+                   ];
 
         if ($this->getVisitorId() && $this->getAnonymousId()) {
             $apiKeys[FlagshipConstant::VISITOR_ID_API_ITEM]  = $this->getVisitorId();

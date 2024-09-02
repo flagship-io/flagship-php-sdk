@@ -16,16 +16,7 @@ class FlagTest extends TestCase
         $key = "key";
         $defaultValue = "DefaultValue";
         $flagDTO = new FlagDTO();
-        $flagDTO->setIsReference(true)
-            ->setVariationId("variationId")
-            ->setVariationName("variationName")
-            ->setVariationGroupId('varGroupId')
-            ->setVariationGroupName("variationGroupName")
-            ->setCampaignId("campaignId")
-            ->setCampaignName("campaignName")
-            ->setKey($key)->setValue("value")
-            ->setSlug("slug")
-            ->setCampaignType("ab");
+        $flagDTO->setIsReference(true)->setVariationId("variationId")->setVariationName("variationName")->setVariationGroupId('varGroupId')->setVariationGroupName("variationGroupName")->setCampaignId("campaignId")->setCampaignName("campaignName")->setKey($key)->setValue("value")->setSlug("slug")->setCampaignType("ab");
 
         $metadata = new FSFlagMetadata(
             $flagDTO->getCampaignId(),
@@ -45,25 +36,29 @@ class FlagTest extends TestCase
             false,
             false,
             true,
-            ['getFlagValue', 'userExposed', 'getFlagMetadata', 'getFlagsDTO'],
+            [
+             'getFlagValue',
+             'userExposed',
+             'getFlagMetadata',
+             'getFlagsDTO',
+            ],
             '',
         );
 
         $visitorDelegateMock->method("getFlagsDTO")->willReturn([$flagDTO]);
 
-        $visitorDelegateMock->expects($this->exactly(2))->method('getFlagValue')
-            ->with(
-                $this->logicalOr(
-                    $key,
-                    $key
-                ),
-                $defaultValue,
-                $flagDTO,
-                $this->logicalOr(
-                    true,
-                    false
-                )
-            )->willReturn($flagDTO->getValue());
+        $visitorDelegateMock->expects($this->exactly(2))->method('getFlagValue')->with(
+            $this->logicalOr(
+                $key,
+                $key
+            ),
+            $defaultValue,
+            $flagDTO,
+            $this->logicalOr(
+                true,
+                false
+            )
+        )->willReturn($flagDTO->getValue());
 
         $flag = new FSFlag($key, $visitorDelegateMock);
 
@@ -117,7 +112,11 @@ class FlagTest extends TestCase
 
         $visitorDelegateMock = $this->getMockForAbstractClass(
             'Flagship\Visitor\VisitorAbstract',
-            ['getFlagValue', 'userExposed', 'getFlagMetadata'],
+            [
+             'getFlagValue',
+             'userExposed',
+             'getFlagMetadata',
+            ],
             '',
             false
         );

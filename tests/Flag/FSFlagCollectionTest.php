@@ -10,9 +10,7 @@ class FSFlagCollectionTest extends TestCase
 {
     public function testFlagCollection()
     {
-        $visitor = $this->getMockBuilder('Flagship\Visitor\VisitorAbstract')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $visitor = $this->getMockBuilder('Flagship\Visitor\VisitorAbstract')->disableOriginalConstructor()->getMock();
 
         $visitor->method("getConfig")->willReturn(new DecisionApiConfig());
 
@@ -23,16 +21,7 @@ class FSFlagCollectionTest extends TestCase
         $key1 = "key1";
         $key2 = "key2";
         $flagDTO = new FlagDTO();
-        $flagDTO->setIsReference(true)
-            ->setVariationId("variationId")
-            ->setVariationName("variationName")
-            ->setVariationGroupId('varGroupId')
-            ->setVariationGroupName("variationGroupName")
-            ->setCampaignId("campaignId")
-            ->setCampaignName("campaignName")
-            ->setKey($key1)->setValue($value1)
-            ->setSlug("slug")
-            ->setCampaignType("ab");
+        $flagDTO->setIsReference(true)->setVariationId("variationId")->setVariationName("variationName")->setVariationGroupId('varGroupId')->setVariationGroupName("variationGroupName")->setCampaignId("campaignId")->setCampaignName("campaignName")->setKey($key1)->setValue($value1)->setSlug("slug")->setCampaignType("ab");
 
         $flagMetadata1 = new FSFlagMetadata(
             $flagDTO->getCampaignId(),
@@ -47,16 +36,7 @@ class FSFlagCollectionTest extends TestCase
         );
 
         $flagDTO2 = new FlagDTO();
-        $flagDTO2->setIsReference(true)
-            ->setVariationId("variationId")
-            ->setVariationName("variationName")
-            ->setVariationGroupId('varGroupId')
-            ->setVariationGroupName("variationGroupName")
-            ->setCampaignId("campaignId")
-            ->setCampaignName("campaignName")
-            ->setKey($key2)->setValue($value2)
-            ->setSlug("slug")
-            ->setCampaignType("ab");
+        $flagDTO2->setIsReference(true)->setVariationId("variationId")->setVariationName("variationName")->setVariationGroupId('varGroupId')->setVariationGroupName("variationGroupName")->setCampaignId("campaignId")->setCampaignName("campaignName")->setKey($key2)->setValue($value2)->setSlug("slug")->setCampaignType("ab");
 
         $flagMetadata2 = new FSFlagMetadata(
             $flagDTO2->getCampaignId(),

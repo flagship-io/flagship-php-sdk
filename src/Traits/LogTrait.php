@@ -180,13 +180,13 @@ trait LogTrait
             $format[FlagshipConstant::LOG_FORMAT_DURATION] = $duration;
         }
         if ($responseHeader !== null) {
-            $format[FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS] =  $responseHeader;
+            $format[FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS] = $responseHeader;
         }
         if ($responseBody !== null) {
-            $format[FlagshipConstant::LOG_FORMAT_RESPONSE_BODY] =  $responseBody;
+            $format[FlagshipConstant::LOG_FORMAT_RESPONSE_BODY] = $responseBody;
         }
         if ($responseStatus !== null) {
-            $format[FlagshipConstant::LOG_FORMAT_RESPONSE_STATUS] =  $responseStatus;
+            $format[FlagshipConstant::LOG_FORMAT_RESPONSE_STATUS] = $responseStatus;
         }
         return  $format;
     }

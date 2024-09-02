@@ -15,7 +15,10 @@ class FlagshipConfigTest extends TestCase
 {
     public function configData(): array
     {
-        return ['envId' => 'env_value','apiKey' => 'key_value'];
+        return [
+                'envId'  => 'env_value',
+                'apiKey' => 'key_value',
+               ];
     }
 
 
@@ -151,12 +154,12 @@ class FlagshipConfigTest extends TestCase
 
     public function testJson()
     {
-        $data =  [
-            FlagshipField::FIELD_ENVIRONMENT_ID => 'envId',
-            FlagshipField::FIELD_API_KEY => "apiKey",
-            FlagshipField::FIELD_TIMEOUT => 2000,
-            FlagshipField::FIELD_LOG_LEVEL => LogLevel::ALL,
-        ];
+        $data = [
+                 FlagshipField::FIELD_ENVIRONMENT_ID => 'envId',
+                 FlagshipField::FIELD_API_KEY        => "apiKey",
+                 FlagshipField::FIELD_TIMEOUT        => 2000,
+                 FlagshipField::FIELD_LOG_LEVEL      => LogLevel::ALL,
+                ];
 
         $config = new DecisionApiConfig($data['environmentId'], $data['apiKey']);
         $config->setTimeout($data['timeout']);

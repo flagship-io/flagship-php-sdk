@@ -18,9 +18,7 @@ class VisitorBuilderTest extends TestCase
     public function testBuilder()
     {
 
-        $trackerManager = $this->getMockBuilder('Flagship\Api\TrackingManager')
-            ->onlyMethods(['addHit'])
-            ->disableOriginalConstructor()->getMock();
+        $trackerManager = $this->getMockBuilder('Flagship\Api\TrackingManager')->onlyMethods(['addHit'])->disableOriginalConstructor()->getMock();
 
         $container = new Container();
 
@@ -28,8 +26,7 @@ class VisitorBuilderTest extends TestCase
         $hasConsented = true;
 
         $config = new DecisionApiConfig();
-        $decisionManager = $this->getMockBuilder('Flagship\Decision\ApiManager')
-            ->disableOriginalConstructor()->getMock();
+        $decisionManager = $this->getMockBuilder('Flagship\Decision\ApiManager')->disableOriginalConstructor()->getMock();
         $configManager = new ConfigManager($config, $decisionManager, $trackerManager);
 
         $visitor = VisitorBuilder::builder(
@@ -45,23 +42,20 @@ class VisitorBuilderTest extends TestCase
         $this->assertNull($visitor->getAnonymousId());
 
         $context = [
-            'age' => 20,
-            "sdk_osName" => PHP_OS,
-            "sdk_deviceType" => "server",
-            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,
-        ];
+                    'age'                        => 20,
+                    "sdk_osName"                 => PHP_OS,
+                    "sdk_deviceType"             => "server",
+                    FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+                    FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+                    FlagshipConstant::FS_USERS   => $visitorId,
+                   ];
 
         $onFetchFlagsStatusChanged = function (FetchFlagsStatusInterface $fetchFlagsStatus) {
             $this->assertSame($fetchFlagsStatus->getStatus(), FSFetchStatus::FETCH_REQUIRED);
             $this->assertSame($fetchFlagsStatus->getReason(), FSFetchReason::VISITOR_CREATED);
         };
 
-        $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $container, "instanceId")
-            ->setIsAuthenticated(true)
-            ->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged)
-            ->setContext($context)->build();
+        $visitor = VisitorBuilder::builder($visitorId, $hasConsented, $configManager, $container, "instanceId")->setIsAuthenticated(true)->setOnFetchFlagsStatusChanged($onFetchFlagsStatusChanged)->setContext($context)->build();
 
         $this->assertSame($context, $visitor->getContext());
         $this->assertTrue($visitor->hasConsented());

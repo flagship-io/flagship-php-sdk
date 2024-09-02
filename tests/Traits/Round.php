@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Flagship\Traits {
 
     class Round

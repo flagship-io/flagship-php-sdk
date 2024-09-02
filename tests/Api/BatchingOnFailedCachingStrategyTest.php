@@ -56,11 +56,11 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         //Test getActivateHeaders
         $activateHeaders = [
-            FlagshipConstant::HEADER_X_API_KEY => $config->getApiKey(),
-            FlagshipConstant::HEADER_X_SDK_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON,
-            FlagshipConstant::HEADER_X_SDK_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-        ];
+                            FlagshipConstant::HEADER_X_API_KEY     => $config->getApiKey(),
+                            FlagshipConstant::HEADER_X_SDK_VERSION => FlagshipConstant::SDK_VERSION,
+                            FlagshipConstant::HEADER_CONTENT_TYPE  => FlagshipConstant::HEADER_APPLICATION_JSON,
+                            FlagshipConstant::HEADER_X_SDK_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+                           ];
         $this->assertSame($activateHeaders, $strategy->getActivateHeaders());
 
         //Test generateHitKey method
@@ -81,21 +81,26 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             BatchingOnFailedCachingStrategy::class,
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["cacheHit","flushHits","flushAllHits"]
+            [
+             "cacheHit",
+             "flushHits",
+             "flushAllHits",
+            ]
         );
 
         $strategy->expects($this->never())->method("cacheHit");
 
-        $strategy->expects($this->never())
-            ->method("flushAllHits");
+        $strategy->expects($this->never())->method("flushAllHits");
 
-        $strategy->expects($this->once())
-            ->method("flushHits")->with([$page3Key, $activate3Key]);
+        $strategy->expects($this->once())->method("flushHits")->with([$page3Key, $activate3Key]);
 
 
         $page = new Page("http://localhost");
@@ -109,18 +114,18 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $strategy->addHit($page2);
 
         $contentPage3 = [
-            'pageUrl' => 'page1',
-            'visitorId' => $visitorId,
-            'ds' => 'APP',
-            'type' => "PAGEVIEW",
-            'anonymousId' => null,
-            'userIP' => null,
-            'pageResolution' => null,
-            'locale' => null,
-            'sessionNumber' => null,
-            'key' => $page3Key,
-            'createdAt' => 1676542078047,
-        ];
+                         'pageUrl'        => 'page1',
+                         'visitorId'      => $visitorId,
+                         'ds'             => 'APP',
+                         'type'           => "PAGEVIEW",
+                         'anonymousId'    => null,
+                         'userIP'         => null,
+                         'pageResolution' => null,
+                         'locale'         => null,
+                         'sessionNumber'  => null,
+                         'key'            => $page3Key,
+                         'createdAt'      => 1676542078047,
+                        ];
 
         $page3 = HitAbstract::hydrate(Page::getClassName(), $contentPage3);
 
@@ -138,19 +143,19 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $strategy->activateFlag($activate2);
 
         $contentActivate = [
-            'variationGroupId' => 'cagt08da51hg0787cns0',
-            'variationId' => 'cagt08da51hg0787cnt0',
-            'visitorId' => $visitorId,
-            'ds' => 'APP',
-            'type' => 'ACTIVATE',
-            'anonymousId' => null,
-            'userIP' => null,
-            'pageResolution' => null,
-            'locale' => null,
-            'sessionNumber' => null,
-            'key' => $activate3Key,
-            'createdAt' => 1676542078044,
-        ];
+                            'variationGroupId' => 'cagt08da51hg0787cns0',
+                            'variationId'      => 'cagt08da51hg0787cnt0',
+                            'visitorId'        => $visitorId,
+                            'ds'               => 'APP',
+                            'type'             => 'ACTIVATE',
+                            'anonymousId'      => null,
+                            'userIP'           => null,
+                            'pageResolution'   => null,
+                            'locale'           => null,
+                            'sessionNumber'    => null,
+                            'key'              => $activate3Key,
+                            'createdAt'        => 1676542078044,
+                           ];
 
         $activate3 = HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
         $activate3->setConfig($config);
@@ -225,12 +230,20 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["flushHits","logDebugSprintf","cacheHit", "getNow"]
+            [
+             "flushHits",
+             "logDebugSprintf",
+             "cacheHit",
+             "getNow",
+            ]
         );
 
         $strategy->activateFlag($activate);
@@ -239,19 +252,19 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $activate3Key = "$visitorId:51d18dbf-53ba-4aec-9bff-0d295c1d5d02";
 
         $contentActivate = [
-            'variationGroupId' => 'cagt08da51hg0787cns0',
-            'variationId' => 'cagt08da51hg0787cnt0',
-            'visitorId' => $visitorId,
-            'ds' => 'APP',
-            'type' => 'ACTIVATE',
-            'anonymousId' => null,
-            'userIP' => null,
-            'pageResolution' => null,
-            'locale' => null,
-            'sessionNumber' => null,
-            'key' => $activate3Key,
-            'createdAt' => 1676542078044,
-        ];
+                            'variationGroupId' => 'cagt08da51hg0787cns0',
+                            'variationId'      => 'cagt08da51hg0787cnt0',
+                            'visitorId'        => $visitorId,
+                            'ds'               => 'APP',
+                            'type'             => 'ACTIVATE',
+                            'anonymousId'      => null,
+                            'userIP'           => null,
+                            'pageResolution'   => null,
+                            'locale'           => null,
+                            'sessionNumber'    => null,
+                            'key'              => $activate3Key,
+                            'createdAt'        => 1676542078044,
+                           ];
 
         $activate3 = HitAbstract::hydrate(Activate::getClassName(), $contentActivate);
         $activate3->setConfig($config);
@@ -262,15 +275,11 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $requestBody = $activateBatch->toApiKeys();
 
-        $httpClientMock->expects($this->once())->method("post")
-            ->with($url, [], $requestBody);
+        $httpClientMock->expects($this->once())->method("post")->with($url, [], $requestBody);
 
         $headers = $strategy->getActivateHeaders();
 
-        $strategy
-            ->expects($this->exactly(1))
-            ->method("flushHits")
-            ->with([$activate3Key]);
+        $strategy->expects($this->exactly(1))->method("flushHits")->with([$activate3Key]);
 
         $logMessage = $this->getLogFormat(
             null,
@@ -280,13 +289,15 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             0
         );
 
-        $strategy->expects($this->once())->method("logDebugSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::HIT_SENT_SUCCESS,
-                [FlagshipConstant::SEND_ACTIVATE, $logMessage ]
-            );
+        $strategy->expects($this->once())->method("logDebugSprintf")->with(
+            $config,
+            FlagshipConstant::TRACKING_MANAGER,
+            FlagshipConstant::HIT_SENT_SUCCESS,
+            [
+             FlagshipConstant::SEND_ACTIVATE,
+             $logMessage,
+            ]
+        );
 
         $this->assertCount(3, $strategy->getActivatePoolQueue());
 
@@ -330,13 +341,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             $variationName1
         );
 
-        $activate->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setVisitorContext($context)
-            ->setFlagKey($flagKey1)
-            ->setFlagValue($flagValue1)
-            ->setFlagDefaultValue($flagDefaultValue1)
-            ->setFlagMetadata($flagMetadata1);
+        $activate->setConfig($config)->setVisitorId($visitorId)->setVisitorContext($context)->setFlagKey($flagKey1)->setFlagValue($flagValue1)->setFlagDefaultValue($flagDefaultValue1)->setFlagMetadata($flagMetadata1);
 
         $variationGroupId2 = "variationGroupId2";
         $variationGroupName2 = "variationGroupName2";
@@ -361,22 +366,24 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         );
 
         $activate2 = new Activate($variationGroupId2, $variationId2);
-        $activate2->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setVisitorContext($context)
-            ->setFlagKey($flagKey2)
-            ->setFlagValue($flagValue2)
-            ->setFlagDefaultValue($flagDefaultValue2)
-            ->setFlagMetadata($flagMetadata2);
+        $activate2->setConfig($config)->setVisitorId($visitorId)->setVisitorContext($context)->setFlagKey($flagKey2)->setFlagValue($flagValue2)->setFlagDefaultValue($flagDefaultValue2)->setFlagMetadata($flagMetadata2);
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["flushHits","logDebugSprintf","cacheHit", "logErrorSprintf"]
+            [
+             "flushHits",
+             "logDebugSprintf",
+             "cacheHit",
+             "logErrorSprintf",
+            ]
         );
 
         $strategy->activateFlag($activate);
@@ -386,8 +393,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $requestBody = $activateBatch->toApiKeys();
 
-        $httpClientMock->expects($this->once())->method("post")
-            ->with($url, [], $requestBody);
+        $httpClientMock->expects($this->once())->method("post")->with($url, [], $requestBody);
 
         $check1 = false;
         $check2 = false;
@@ -476,12 +482,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             $variationName1
         );
 
-        $activate->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setVisitorContext($context)
-            ->setFlagKey($flagKey1)
-            ->setFlagValue($flagValue1)
-            ->setFlagMetadata($flagMetadata1);
+        $activate->setConfig($config)->setVisitorId($visitorId)->setVisitorContext($context)->setFlagKey($flagKey1)->setFlagValue($flagValue1)->setFlagMetadata($flagMetadata1);
 
         $variationGroupId2 = "variationGroupId2";
         $variationId2 = "variationId2";
@@ -505,21 +506,24 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         );
 
         $activate2 = new Activate($variationGroupId2, $variationId2);
-        $activate2->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setVisitorContext($context)
-            ->setFlagKey($flagKey2)
-            ->setFlagValue($flagValue2)
-            ->setFlagMetadata($flagMetadata2);
+        $activate2->setConfig($config)->setVisitorId($visitorId)->setVisitorContext($context)->setFlagKey($flagKey2)->setFlagValue($flagValue2)->setFlagMetadata($flagMetadata2);
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["flushHits","logDebugSprintf","cacheHit", "logErrorSprintf"]
+            [
+             "flushHits",
+             "logDebugSprintf",
+             "cacheHit",
+             "logErrorSprintf",
+            ]
         );
 
         $strategy->activateFlag($activate);
@@ -529,8 +533,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $requestBody = $activateBatch->toApiKeys();
 
-        $httpClientMock->expects($this->once())->method("post")
-            ->with($url, [], $requestBody);
+        $httpClientMock->expects($this->once())->method("post")->with($url, [], $requestBody);
 
         $count = 0;
 
@@ -541,8 +544,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             throw new Exception($exceptionMessage);
         });
 
-        $strategy->expects($this->exactly(2))
-            ->method("logErrorSprintf");
+        $strategy->expects($this->exactly(2))->method("logErrorSprintf");
 
         $this->assertCount(2, $strategy->getActivatePoolQueue());
 
@@ -571,12 +573,21 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock, "instanceId"],
+            [
+             $config,
+             $httpClientMock,
+             "instanceId",
+            ],
             "",
             true,
             true,
             true,
-            ["flushHits","logErrorSprintf","cacheHit", "getNow"]
+            [
+             "flushHits",
+             "logErrorSprintf",
+             "cacheHit",
+             "getNow",
+            ]
         );
 
         $strategy->activateFlag($activate);
@@ -587,17 +598,11 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $requestBody = $activateBatch->toApiKeys();
 
         $exception = new Exception("activate error");
-        $httpClientMock->expects($this->once())->method("post")
-            ->with($url, [], $requestBody)->willThrowException($exception);
+        $httpClientMock->expects($this->once())->method("post")->with($url, [], $requestBody)->willThrowException($exception);
 
-        $strategy
-            ->expects($this->never())
-            ->method("flushHits");
+        $strategy->expects($this->never())->method("flushHits");
 
-        $strategy
-            ->expects($this->once())
-            ->method("cacheHit")
-            ->with($this->countOf(2));
+        $strategy->expects($this->once())->method("cacheHit")->with($this->countOf(2));
 
         $logMessage = $this->getLogFormat(
             $exception->getMessage(),
@@ -607,13 +612,15 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             0
         );
 
-        $strategy->expects($this->once())->method("logErrorSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_ACTIVATE, $logMessage ]
-            );
+        $strategy->expects($this->once())->method("logErrorSprintf")->with(
+            $config,
+            FlagshipConstant::TRACKING_MANAGER,
+            FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
+            [
+             FlagshipConstant::SEND_ACTIVATE,
+             $logMessage,
+            ]
+        );
 
         $this->assertCount(2, $strategy->getActivatePoolQueue());
 
@@ -640,12 +647,22 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock, "instanceId"],
+            [
+             $config,
+             $httpClientMock,
+             "instanceId",
+            ],
             "",
             true,
             true,
             true,
-            ["flushHits","logDebugSprintf","cacheHit","flushAllHits", "getNow"]
+            [
+             "flushHits",
+             "logDebugSprintf",
+             "cacheHit",
+             "flushAllHits",
+             "getNow",
+            ]
         );
 
         $strategy->addHit($page);
@@ -653,18 +670,18 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $page3Key = "$visitorId:b1b48180-0d72-410d-8e9b-44ee90dfafc6";
         $contentPage3 = [
-            'pageUrl' => 'page1',
-            'visitorId' => $visitorId,
-            'ds' => 'APP',
-            'type' => "PAGEVIEW",
-            'anonymousId' => null,
-            'userIP' => null,
-            'pageResolution' => null,
-            'locale' => null,
-            'sessionNumber' => null,
-            'key' => $page3Key,
-            'createdAt' => 1676542078047,
-        ];
+                         'pageUrl'        => 'page1',
+                         'visitorId'      => $visitorId,
+                         'ds'             => 'APP',
+                         'type'           => "PAGEVIEW",
+                         'anonymousId'    => null,
+                         'userIP'         => null,
+                         'pageResolution' => null,
+                         'locale'         => null,
+                         'sessionNumber'  => null,
+                         'key'            => $page3Key,
+                         'createdAt'      => 1676542078047,
+                        ];
 
         $page3 = HitAbstract::hydrate(Page::getClassName(), $contentPage3);
 
@@ -677,26 +694,18 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $requestBody = $batchHit->toApiKeys();
 
-        $httpClientMock->expects($this->once())->method("post")
-            ->with($url, [], $requestBody);
+        $httpClientMock->expects($this->once())->method("post")->with($url, [], $requestBody);
 
         $headers = [FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON];
 
         $httpClientMock->expects($this->once())->method('setHeaders')->with($headers);
         $httpClientMock->expects($this->once())->method("setTimeout")->with($config->getTimeout());
 
-        $strategy
-            ->expects($this->exactly(1))
-            ->method("flushHits")->with([$page3Key]);
+        $strategy->expects($this->exactly(1))->method("flushHits")->with([$page3Key]);
 
-        $strategy
-            ->expects($this->never())
-            ->method("flushAllHits");
+        $strategy->expects($this->never())->method("flushAllHits");
 
-        $strategy
-            ->expects($this->never())
-            ->method("cacheHit")
-            ->with([]);
+        $strategy->expects($this->never())->method("cacheHit")->with([]);
 
         $logMessage = $this->getLogFormat(
             null,
@@ -706,13 +715,15 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             0
         );
 
-        $strategy->expects($this->once())->method("logDebugSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::HIT_SENT_SUCCESS,
-                [FlagshipConstant::SEND_BATCH, $logMessage ]
-            );
+        $strategy->expects($this->once())->method("logDebugSprintf")->with(
+            $config,
+            FlagshipConstant::TRACKING_MANAGER,
+            FlagshipConstant::HIT_SENT_SUCCESS,
+            [
+             FlagshipConstant::SEND_BATCH,
+             $logMessage,
+            ]
+        );
 
         $this->assertCount(3, $strategy->getHitsPoolQueue());
         $strategy->sendBatch();
@@ -736,12 +747,22 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock, "instanceId"],
+            [
+             $config,
+             $httpClientMock,
+             "instanceId",
+            ],
             "",
             true,
             true,
             true,
-            ["flushHits","logErrorSprintf","cacheHit","flushAllHits", "getNow"]
+            [
+             "flushHits",
+             "logErrorSprintf",
+             "cacheHit",
+             "flushAllHits",
+             "getNow",
+            ]
         );
 
         $strategy->addHit($page);
@@ -753,22 +774,15 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $requestBody = $batchHit->toApiKeys();
 
         $exception = new Exception("batch error");
-        $httpClientMock->expects($this->once())->method("post")
-            ->with($url, [], $requestBody)->willThrowException($exception);
+        $httpClientMock->expects($this->once())->method("post")->with($url, [], $requestBody)->willThrowException($exception);
 
         $headers = [FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON];
 
-        $strategy
-            ->expects($this->never())
-            ->method("flushHits");
+        $strategy->expects($this->never())->method("flushHits");
 
-        $strategy
-            ->expects($this->once())
-            ->method("cacheHit")->with($this->countOf(2));
+        $strategy->expects($this->once())->method("cacheHit")->with($this->countOf(2));
 
-        $strategy
-            ->expects($this->never())
-            ->method("flushAllHits");
+        $strategy->expects($this->never())->method("flushAllHits");
 
         $logMessage = $this->getLogFormat(
             $exception->getMessage(),
@@ -778,13 +792,15 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             0
         );
 
-        $strategy->expects($this->once())->method("logErrorSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_BATCH, $logMessage ]
-            );
+        $strategy->expects($this->once())->method("logErrorSprintf")->with(
+            $config,
+            FlagshipConstant::TRACKING_MANAGER,
+            FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
+            [
+             FlagshipConstant::SEND_BATCH,
+             $logMessage,
+            ]
+        );
 
         $this->assertCount(2, $strategy->getHitsPoolQueue());
         $strategy->sendBatch();
@@ -800,7 +816,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $url = FlagshipConstant::HIT_EVENT_URL;
 
-        \Flagship\Traits\Round::$returnValue = FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS ;
+        \Flagship\Traits\Round::$returnValue = FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
         $page = new Page("https://myurl.com");
         $page->setConfig($config)->setVisitorId($visitorId);
 
@@ -813,15 +829,23 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["flushHits","logErrorSprintf","cacheHit", "flushAllHits"]
+            [
+             "flushHits",
+             "logErrorSprintf",
+             "cacheHit",
+             "flushAllHits",
+            ]
         );
 
-        \Flagship\Traits\Round::$returnValue = FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS ;
+        \Flagship\Traits\Round::$returnValue = FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
 
         $strategy->addHit($page);
         $strategy->addHit($screen);
@@ -838,20 +862,13 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $requestBody = $batchHit->toApiKeys();
 
-        $httpClientMock->expects($this->once())->method("post")
-            ->with($url, [], $requestBody);
+        $httpClientMock->expects($this->once())->method("post")->with($url, [], $requestBody);
 
-        $strategy
-            ->expects($this->exactly(0))
-            ->method("flushHits");
+        $strategy->expects($this->exactly(0))->method("flushHits");
 
-        $strategy
-            ->expects($this->never())
-            ->method("cacheHit");
+        $strategy->expects($this->never())->method("cacheHit");
 
-        $strategy
-            ->expects($this->never())
-            ->method("flushAllHits");
+        $strategy->expects($this->never())->method("flushAllHits");
 
         $this->assertCount(2, $strategy->getHitsPoolQueue());
 
@@ -871,26 +888,34 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["logDebugSprintf","cacheHit"]
+            [
+             "logDebugSprintf",
+             "cacheHit",
+            ]
         );
 
-        $keyToRemove = ["key1","key2","key3"];
+        $keyToRemove = [
+                        "key1",
+                        "key2",
+                        "key3",
+                       ];
 
-        $strategy->expects($this->once())->method("logDebugSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_DATA_FLUSHED,
-                [$keyToRemove]
-            );
+        $strategy->expects($this->once())->method("logDebugSprintf")->with(
+            $config,
+            FlagshipConstant::PROCESS_CACHE,
+            FlagshipConstant::HIT_DATA_FLUSHED,
+            [$keyToRemove]
+        );
 
-        $hitCacheImplementationMock->expects($this->exactly(1))
-            ->method("flushHits")->with($keyToRemove);
+        $hitCacheImplementationMock->expects($this->exactly(1))->method("flushHits")->with($keyToRemove);
 
         $strategy->flushHits($keyToRemove);
 
@@ -920,7 +945,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -928,21 +956,25 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ["logErrorSprintf"]
         );
 
-        $keyToRemove = ["key1","key2","key3"];
+        $keyToRemove = [
+                        "key1",
+                        "key2",
+                        "key3",
+                       ];
 
         $exception = new Exception("flushHits error");
 
-        $strategy->expects($this->once())->method("logErrorSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_CACHE_ERROR,
-                ["flushHits", $exception->getMessage()]
-            );
+        $strategy->expects($this->once())->method("logErrorSprintf")->with(
+            $config,
+            FlagshipConstant::PROCESS_CACHE,
+            FlagshipConstant::HIT_CACHE_ERROR,
+            [
+             "flushHits",
+             $exception->getMessage(),
+            ]
+        );
 
-        $hitCacheImplementationMock->expects($this->exactly(1))
-            ->method("flushHits")->with($keyToRemove)
-            ->willThrowException($exception);
+        $hitCacheImplementationMock->expects($this->exactly(1))->method("flushHits")->with($keyToRemove)->willThrowException($exception);
 
         $strategy->flushHits($keyToRemove);
     }
@@ -960,7 +992,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -968,15 +1003,13 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ["logDebugSprintf"]
         );
 
-        $strategy->expects($this->once())->method("logDebugSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::ALL_HITS_FLUSHED
-            );
+        $strategy->expects($this->once())->method("logDebugSprintf")->with(
+            $config,
+            FlagshipConstant::PROCESS_CACHE,
+            FlagshipConstant::ALL_HITS_FLUSHED
+        );
 
-        $hitCacheImplementationMock->expects($this->exactly(1))
-            ->method("flushAllHits");
+        $hitCacheImplementationMock->expects($this->exactly(1))->method("flushAllHits");
 
         $strategy->flushAllHits();
 
@@ -996,7 +1029,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -1006,16 +1042,17 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $exception = new Exception("flushHits error");
 
-        $strategy->expects($this->exactly(1))->method('logErrorSprintf')
-            ->with(
-                $config,
-                FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_CACHE_ERROR,
-                ["flushAllHits", $exception->getMessage()]
-            );
+        $strategy->expects($this->exactly(1))->method('logErrorSprintf')->with(
+            $config,
+            FlagshipConstant::PROCESS_CACHE,
+            FlagshipConstant::HIT_CACHE_ERROR,
+            [
+             "flushAllHits",
+             $exception->getMessage(),
+            ]
+        );
 
-        $hitCacheImplementationMock->expects($this->exactly(1))
-            ->method("flushAllHits")->willThrowException($exception);
+        $hitCacheImplementationMock->expects($this->exactly(1))->method("flushAllHits")->willThrowException($exception);
 
         $strategy->flushAllHits();
     }
@@ -1032,12 +1069,18 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["logDebugSprintf", "getNow"]
+            [
+             "logDebugSprintf",
+             "getNow",
+            ]
         );
 
         $visitorId = "visitorId";
@@ -1049,29 +1092,27 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $activate->setFlagValue("flagValue");
 
         $hitData = [
-            HitCacheFields::VERSION => 1,
-            HitCacheFields::DATA => [
-                HitCacheFields::VISITOR_ID => $activate->getVisitorId(),
-                HitCacheFields::ANONYMOUS_ID => $activate->getAnonymousId(),
-                HitCacheFields::TYPE => $activate->getType(),
-                HitCacheFields::CONTENT => $activate->toArray(),
-                HitCacheFields::TIME => 0
-            ]
-        ];
+                    HitCacheFields::VERSION => 1,
+                    HitCacheFields::DATA    => [
+                                                HitCacheFields::VISITOR_ID   => $activate->getVisitorId(),
+                                                HitCacheFields::ANONYMOUS_ID => $activate->getAnonymousId(),
+                                                HitCacheFields::TYPE         => $activate->getType(),
+                                                HitCacheFields::CONTENT      => $activate->toArray(),
+                                                HitCacheFields::TIME         => 0,
+                                               ],
+                   ];
 
         $data = [];
         $data[$key] = $hitData;
 
-        $strategy->expects($this->once())->method("logDebugSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_CACHE_SAVED,
-                [$data]
-            );
+        $strategy->expects($this->once())->method("logDebugSprintf")->with(
+            $config,
+            FlagshipConstant::PROCESS_CACHE,
+            FlagshipConstant::HIT_CACHE_SAVED,
+            [$data]
+        );
 
-        $hitCacheImplementationMock->expects($this->exactly(1))
-            ->method("cacheHit")->with($data);
+        $hitCacheImplementationMock->expects($this->exactly(1))->method("cacheHit")->with($data);
 
         $strategy->cacheHit([$activate]);
 
@@ -1091,7 +1132,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -1106,31 +1150,32 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $activate->setKey($key);
 
         $hitData = [
-            HitCacheFields::VERSION => 1,
-            HitCacheFields::DATA => [
-                HitCacheFields::VISITOR_ID => $activate->getVisitorId(),
-                HitCacheFields::ANONYMOUS_ID => $activate->getAnonymousId(),
-                HitCacheFields::TYPE => $activate->getType(),
-                HitCacheFields::CONTENT => $activate->toArray(),
-                HitCacheFields::TIME => 0
-            ]
-        ];
+                    HitCacheFields::VERSION => 1,
+                    HitCacheFields::DATA    => [
+                                                HitCacheFields::VISITOR_ID   => $activate->getVisitorId(),
+                                                HitCacheFields::ANONYMOUS_ID => $activate->getAnonymousId(),
+                                                HitCacheFields::TYPE         => $activate->getType(),
+                                                HitCacheFields::CONTENT      => $activate->toArray(),
+                                                HitCacheFields::TIME         => 0,
+                                               ],
+                   ];
 
         $data = [];
         $data[$key] = $hitData;
 
         $exception = new Exception("Cache error");
 
-        $strategy->expects($this->once())->method("logErrorSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::PROCESS_CACHE,
-                FlagshipConstant::HIT_CACHE_ERROR,
-                ["cacheHit", $exception->getMessage()]
-            );
+        $strategy->expects($this->once())->method("logErrorSprintf")->with(
+            $config,
+            FlagshipConstant::PROCESS_CACHE,
+            FlagshipConstant::HIT_CACHE_ERROR,
+            [
+             "cacheHit",
+             $exception->getMessage(),
+            ]
+        );
 
-        $hitCacheImplementationMock->expects($this->exactly(1))
-            ->method("cacheHit")->with($data)->willThrowException($exception);
+        $hitCacheImplementationMock->expects($this->exactly(1))->method("cacheHit")->with($data)->willThrowException($exception);
 
         $strategy->cacheHit([$activate]);
     }
@@ -1144,7 +1189,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -1152,27 +1200,17 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
             ["isTroubleshootingActivated"]
         );
 
-        $strategy->expects($this->exactly(4))
-            ->method("isTroubleshootingActivated")
-            ->willReturnOnConsecutiveCalls(true, true, true, false);
+        $strategy->expects($this->exactly(4))->method("isTroubleshootingActivated")->willReturnOnConsecutiveCalls(true, true, true, false);
 
         $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
         $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
         $troubleshootingData = new TroubleshootingData();
-        $troubleshootingData->setStartDate($startDatetime)
-            ->setEndDate($endDatetime)
-            ->setTraffic(100);
+        $troubleshootingData->setStartDate($startDatetime)->setEndDate($endDatetime)->setTraffic(100);
 
         $strategy->setTroubleshootingData($troubleshootingData);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setTraffic(100);
+        $troubleshooting->setConfig($config)->setVisitorId($visitorId)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setTraffic(100);
 
         $strategy->addTroubleshootingHit($troubleshooting);
 
@@ -1180,13 +1218,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $this->assertCount(1, $troubleshootingQueue);
 
         $troubleshooting2 = new Troubleshooting();
-        $troubleshooting2->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setTraffic(50);
+        $troubleshooting2->setConfig($config)->setVisitorId($visitorId)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setTraffic(50);
 
         $strategy->addTroubleshootingHit($troubleshooting2);
 
@@ -1196,9 +1228,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $troubleshootingData->setTraffic(49);
 
         $troubleshooting3 = new Troubleshooting();
-        $troubleshooting3->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setTraffic(50);
+        $troubleshooting3->setConfig($config)->setVisitorId($visitorId)->setTraffic(50);
 
         $strategy->addTroubleshootingHit($troubleshooting3);
 
@@ -1206,13 +1236,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $this->assertCount(2, $troubleshootingQueue);
 
         $troubleshooting4 = new Troubleshooting();
-        $troubleshooting4->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setTraffic(50);
+        $troubleshooting4->setConfig($config)->setVisitorId($visitorId)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setTraffic(50);
 
         $strategy->addTroubleshootingHit($troubleshooting4);
 
@@ -1237,7 +1261,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -1247,42 +1274,27 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
 
 
-        $strategy->expects($this->exactly(4))
-            ->method("isTroubleshootingActivated")
-            ->willReturn(true, true, true, false);
+        $strategy->expects($this->exactly(4))->method("isTroubleshootingActivated")->willReturn(true, true, true, false);
 
         $match = $this->exactly(2);
 
-        $httpClientMock->expects($match)
-            ->method('post')
-            ->with($this->callback(function ($url) use ($match) {
+        $httpClientMock->expects($match)->method('post')->with($this->callback(function ($url) use ($match) {
                 $troubleshootingUrl = FlagshipConstant::TROUBLESHOOTING_HIT_URL;
                 return $url === $troubleshootingUrl;
-            }));
+        }));
 
         $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
         $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
 
         $troubleshootingData = new TroubleshootingData();
-        $troubleshootingData->setStartDate($startDatetime)
-            ->setEndDate($endDatetime)->setTraffic(100);
+        $troubleshootingData->setStartDate($startDatetime)->setEndDate($endDatetime)->setTraffic(100);
         $strategy->setTroubleshootingData($troubleshootingData);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setVisitorId($visitorId)->setTraffic(100);
+        $troubleshooting->setConfig($config)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setVisitorId($visitorId)->setTraffic(100);
 
         $troubleshooting2 = new Troubleshooting();
-        $troubleshooting2->setConfig($config)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setVisitorId($visitorId)->setTraffic(100);
+        $troubleshooting2->setConfig($config)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setVisitorId($visitorId)->setTraffic(100);
 
         $strategy->addTroubleshootingHit($troubleshooting);
         $strategy->addTroubleshootingHit($troubleshooting2);
@@ -1310,42 +1322,37 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["isTroubleshootingActivated", "logErrorSprintf"]
+            [
+             "isTroubleshootingActivated",
+             "logErrorSprintf",
+            ]
         );
 
 
 
-        $strategy->expects($this->exactly(2))
-            ->method("isTroubleshootingActivated")
-            ->willReturn(true);
+        $strategy->expects($this->exactly(2))->method("isTroubleshootingActivated")->willReturn(true);
 
-        $strategy->expects($this->exactly(1))
-            ->method("logErrorSprintf");
+        $strategy->expects($this->exactly(1))->method("logErrorSprintf");
 
         $exception = new Exception("Error");
-        $httpClientMock->expects($this->exactly(1))
-            ->method('post')->willThrowException($exception);
+        $httpClientMock->expects($this->exactly(1))->method('post')->willThrowException($exception);
 
         $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
         $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
         $troubleshootingData = new TroubleshootingData();
-        $troubleshootingData->setStartDate($startDatetime)
-            ->setEndDate($endDatetime)->setTraffic(100);
+        $troubleshootingData->setStartDate($startDatetime)->setEndDate($endDatetime)->setTraffic(100);
         $strategy->setTroubleshootingData($troubleshootingData);
 
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setConfig($config)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setVisitorId($visitorId)
-            ->setTraffic(100);
+        $troubleshooting->setConfig($config)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setVisitorId($visitorId)->setTraffic(100);
 
         $strategy->addTroubleshootingHit($troubleshooting);
 
@@ -1368,12 +1375,18 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["logErrorSprintf", "getNow"]
+            [
+             "logErrorSprintf",
+             "getNow",
+            ]
         );
 
         //No troubleshooting data is given
@@ -1382,12 +1395,11 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
 //        //Test troubleshooting data
 
-        $strategy->expects($this->exactly(3))->method("getNow")
-            ->willReturnOnConsecutiveCalls(
-                (new DateTime("2023-04-13T09:32:38.049Z"))->getTimestamp() * 1000,
-                (new DateTime("2023-04-13T10:03:39.049Z"))->getTimestamp() * 1000,
-                (new DateTime("2023-04-13T09:40:38.049Z"))->getTimestamp() * 1000
-            );
+        $strategy->expects($this->exactly(3))->method("getNow")->willReturnOnConsecutiveCalls(
+            (new DateTime("2023-04-13T09:32:38.049Z"))->getTimestamp() * 1000,
+            (new DateTime("2023-04-13T10:03:39.049Z"))->getTimestamp() * 1000,
+            (new DateTime("2023-04-13T09:40:38.049Z"))->getTimestamp() * 1000
+        );
 //
         //Test troubleshooting not start
         $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
@@ -1401,8 +1413,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         //Test troubleshooting is finished
         $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
         $troubleshootingData = new TroubleshootingData();
-        $troubleshootingData->setStartDate($startDatetime)
-            ->setEndDate($endDatetime);
+        $troubleshootingData->setStartDate($startDatetime)->setEndDate($endDatetime);
         $strategy->setTroubleshootingData($troubleshootingData);
 
         $check = $strategy->isTroubleshootingActivated();
@@ -1412,8 +1423,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $startDatetime = new DateTime("2023-04-13T09:33:38.049Z");
         $endDatetime = new DateTime("2023-04-13T10:03:38.049Z");
         $troubleshootingData = new TroubleshootingData();
-        $troubleshootingData->setStartDate($startDatetime)
-            ->setEndDate($endDatetime);
+        $troubleshootingData->setStartDate($startDatetime)->setEndDate($endDatetime);
 
         $strategy->setTroubleshootingData($troubleshootingData);
 
@@ -1431,13 +1441,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $strategy = new BatchingOnFailedCachingStrategy($config, $httpClientMock);
 
         $usageHit = new UsageHit();
-        $usageHit->setConfig($config)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setVisitorId($visitorId)
-            ->setTraffic(100);
+        $usageHit->setConfig($config)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setVisitorId($visitorId)->setTraffic(100);
 
         $strategy->addUsageHit($usageHit);
 
@@ -1446,13 +1450,7 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $this->assertCount(1, $usageHitQueue);
 
         $usageHit2 = new UsageHit();
-        $usageHit2->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setTraffic(50);
+        $usageHit2->setConfig($config)->setVisitorId($visitorId)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setTraffic(50);
 
         $strategy->addUsageHit($usageHit2);
 
@@ -1469,7 +1467,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -1479,38 +1480,25 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
 
         $usageHit = new UsageHit();
-        $usageHit->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setTraffic(100);
+        $usageHit->setConfig($config)->setVisitorId($visitorId)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setTraffic(100);
 
         $strategy->addUsageHit($usageHit);
 
 
 
         $usageHit2 = new UsageHit();
-        $usageHit2->setConfig($config)
-            ->setVisitorId($visitorId)
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setTraffic(50);
+        $usageHit2->setConfig($config)->setVisitorId($visitorId)->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setTraffic(50);
 
         $strategy->addUsageHit($usageHit2);
 
         $matcher = $this->exactly(2);
-        $strategy->expects($matcher)->method('sendUsageHit')
-            ->with($this->callback(function ($hit) use ($matcher, $usageHit, $usageHit2) {
+        $strategy->expects($matcher)->method('sendUsageHit')->with($this->callback(function ($hit) use ($matcher, $usageHit, $usageHit2) {
                 return match ($matcher->getInvocationCount()) {
                     1 => $hit === $usageHit,
                     2 => $hit === $usageHit2,
                     default => false,
                 };
-            }));
+        }));
 
         $strategy->sendUsageHitQueue();
         $usageHitQueue = $strategy->getUsageHitQueue();
@@ -1537,7 +1525,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -1548,23 +1539,15 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $match = $this->exactly(1);
 
-        $httpClientMock->expects($match)
-            ->method('post')
-            ->with($this->callback(function ($url) use ($match) {
+        $httpClientMock->expects($match)->method('post')->with($this->callback(function ($url) use ($match) {
                 $troubleshootingUrl = FlagshipConstant::ANALYTICS_HIT_URL;
                 return $url === $troubleshootingUrl;
-            }), $this->callback(function () use ($match) {
-                return true;
-            }));
+        }), $this->callback(function () use ($match) {
+            return true;
+        }));
 
         $analytic = new UsageHit();
-        $analytic
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setVisitorId($visitorId)
-            ->setConfig($config);
+        $analytic->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setVisitorId($visitorId)->setConfig($config);
 
         $strategy->sendUsageHit($analytic);
     }
@@ -1586,7 +1569,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\BatchingOnFailedCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
@@ -1598,18 +1584,10 @@ class BatchingOnFailedCachingStrategyTest extends TestCase
         $match = $this->exactly(1);
 
         $exception = new Exception("Error");
-        $httpClientMock->expects($match)
-            ->method('post')
-            ->willThrowException($exception);
+        $httpClientMock->expects($match)->method('post')->willThrowException($exception);
 
         $analytic = new UsageHit();
-        $analytic
-            ->setLogLevel(LogLevel::ALL)
-            ->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)
-            ->setVisitorSessionId("visitorSessionId")
-            ->setFlagshipInstanceId("flagshipInstanceId")
-            ->setVisitorId($visitorId)
-            ->setConfig($config);
+        $analytic->setLogLevel(LogLevel::ALL)->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setVisitorSessionId("visitorSessionId")->setFlagshipInstanceId("flagshipInstanceId")->setVisitorId($visitorId)->setConfig($config);
 
         $strategy->sendUsageHit($analytic);
     }

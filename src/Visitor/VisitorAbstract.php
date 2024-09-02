@@ -432,9 +432,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function jsonSerialize(): mixed
     {
         return [
-            'visitorId'  => $this->getVisitorId(),
-            'context'    => $this->getContext(),
-            'hasConsent' => $this->hasConsented(),
-        ];
+                'visitorId'  => $this->getVisitorId(),
+                'context'    => $this->getContext(),
+                'hasConsent' => $this->hasConsented(),
+               ];
     }
 }

@@ -25,13 +25,13 @@ class BucketingConfigTest extends TestCase
     public function testJson()
     {
         $bucketingUrl = "http:127.0.0.1:3000";
-        $data =  [
-            FlagshipField::FIELD_ENVIRONMENT_ID => null,
-            FlagshipField::FIELD_API_KEY => null,
-            FlagshipField::FIELD_TIMEOUT => 2000,
-            FlagshipField::FIELD_LOG_LEVEL => LogLevel::ALL,
-            FlagshipField::FIELD_BUCKETING_URL => $bucketingUrl
-        ];
+        $data = [
+                 FlagshipField::FIELD_ENVIRONMENT_ID => null,
+                 FlagshipField::FIELD_API_KEY        => null,
+                 FlagshipField::FIELD_TIMEOUT        => 2000,
+                 FlagshipField::FIELD_LOG_LEVEL      => LogLevel::ALL,
+                 FlagshipField::FIELD_BUCKETING_URL  => $bucketingUrl,
+                ];
 
         $config = new BucketingConfig($bucketingUrl);
         $config->setTimeout($data[FlagshipField::FIELD_TIMEOUT]);

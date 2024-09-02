@@ -70,10 +70,9 @@ class PanicStrategyTest extends TestCase
 
 
 
-        $httpClientMock->expects($this->exactly(1))->method("post")
-            ->willReturnOnConsecutiveCalls(
-                new HttpResponse(500, [])
-            );
+        $httpClientMock->expects($this->exactly(1))->method("post")->willReturnOnConsecutiveCalls(
+            new HttpResponse(500, [])
+        );
 
         $decisionManager = new ApiManager($httpClientMock, $config);
 
@@ -81,29 +80,28 @@ class PanicStrategyTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, "visitorId", false, [], true);
 
-        $logManagerStub->expects($this->exactly(8))->method('info')
-            ->with(
-                $this->logicalOr(
-                    $logMessageBuild('updateContext'),
-                    $logMessageBuild('updateContextCollection'),
-                    $logMessageBuild('clearContext'),
-                    $logMessageBuild('sendHit'),
-                    $logMessageBuildConsent(),
-                    $logMessageBuild('getFlagValue'),
-                    $logMessageBuild('visitorExposed'),
-                    $logMessageBuild('getFlagMetadata')
-                ),
-                $this->logicalOr(
-                    [FlagshipConstant::TAG => 'updateContext'],
-                    [FlagshipConstant::TAG => 'updateContextCollection'],
-                    [FlagshipConstant::TAG => 'clearContext'],
-                    [FlagshipConstant::TAG => 'sendHit'],
-                    [FlagshipConstant::TAG => 'setConsent'],
-                    [FlagshipConstant::TAG => 'getFlagValue'],
-                    [FlagshipConstant::TAG => 'visitorExposed'],
-                    [FlagshipConstant::TAG => 'getFlagMetadata']
-                )
-            );
+        $logManagerStub->expects($this->exactly(8))->method('info')->with(
+            $this->logicalOr(
+                $logMessageBuild('updateContext'),
+                $logMessageBuild('updateContextCollection'),
+                $logMessageBuild('clearContext'),
+                $logMessageBuild('sendHit'),
+                $logMessageBuildConsent(),
+                $logMessageBuild('getFlagValue'),
+                $logMessageBuild('visitorExposed'),
+                $logMessageBuild('getFlagMetadata')
+            ),
+            $this->logicalOr(
+                [FlagshipConstant::TAG => 'updateContext'],
+                [FlagshipConstant::TAG => 'updateContextCollection'],
+                [FlagshipConstant::TAG => 'clearContext'],
+                [FlagshipConstant::TAG => 'sendHit'],
+                [FlagshipConstant::TAG => 'setConsent'],
+                [FlagshipConstant::TAG => 'getFlagValue'],
+                [FlagshipConstant::TAG => 'visitorExposed'],
+                [FlagshipConstant::TAG => 'getFlagMetadata']
+            )
+        );
 
         $panicStrategy = new PanicStrategy($visitor);
 
@@ -144,27 +142,27 @@ class PanicStrategyTest extends TestCase
             $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
 
             $campaigns[] = [
-                FlagshipField::FIELD_CAMPAIGN_ID => $campaign[FlagshipField::FIELD_ID],
-                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                FlagshipField::FIELD_VARIATION_ID => $variation[FlagshipField::FIELD_ID],
-                FlagshipField::FIELD_IS_REFERENCE => $variation[FlagshipField::FIELD_REFERENCE],
-                FlagshipField::FIELD_CAMPAIGN_TYPE => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                StrategyAbstract::ACTIVATED => false,
-                StrategyAbstract::FLAGS => $modifications[FlagshipField::FIELD_VALUE]
-            ];
+                            FlagshipField::FIELD_CAMPAIGN_ID        => $campaign[FlagshipField::FIELD_ID],
+                            FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                            FlagshipField::FIELD_VARIATION_ID       => $variation[FlagshipField::FIELD_ID],
+                            FlagshipField::FIELD_IS_REFERENCE       => $variation[FlagshipField::FIELD_REFERENCE],
+                            FlagshipField::FIELD_CAMPAIGN_TYPE      => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                            StrategyAbstract::ACTIVATED             => false,
+                            StrategyAbstract::FLAGS                 => $modifications[FlagshipField::FIELD_VALUE],
+                           ];
         }
 
         $visitorCache = [
-            StrategyAbstract::VERSION => 1,
-            StrategyAbstract::DATA => [
-                StrategyAbstract::VISITOR_ID => $visitor->getVisitorId(),
-                StrategyAbstract::ANONYMOUS_ID => $visitor->getAnonymousId(),
-                StrategyAbstract::CONSENT => $visitor->hasConsented(),
-                StrategyAbstract::CONTEXT => $visitor->getContext(),
-                StrategyAbstract::CAMPAIGNS => $campaigns,
-                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
-            ]
-        ];
+                         StrategyAbstract::VERSION => 1,
+                         StrategyAbstract::DATA    => [
+                                                       StrategyAbstract::VISITOR_ID          => $visitor->getVisitorId(),
+                                                       StrategyAbstract::ANONYMOUS_ID        => $visitor->getAnonymousId(),
+                                                       StrategyAbstract::CONSENT             => $visitor->hasConsented(),
+                                                       StrategyAbstract::CONTEXT             => $visitor->getContext(),
+                                                       StrategyAbstract::CAMPAIGNS           => $campaigns,
+                                                       StrategyAbstract::ASSIGNMENTS_HISTORY => $assignmentsHistory,
+                                                      ],
+                        ];
 
         //Test fetchVisitorCampaigns
         $visitor->visitorCache = $visitorCache;
@@ -179,14 +177,15 @@ class PanicStrategyTest extends TestCase
             true,
             true,
             true,
-            ['lookupVisitor', 'cacheVisitor']
+            [
+             'lookupVisitor',
+             'cacheVisitor',
+            ]
         );
 
-        $VisitorCacheImplementationMock->expects($this->never())
-            ->method("cacheVisitor");
+        $VisitorCacheImplementationMock->expects($this->never())->method("cacheVisitor");
 
-        $VisitorCacheImplementationMock->expects($this->never())
-            ->method("lookupVisitor");
+        $VisitorCacheImplementationMock->expects($this->never())->method("lookupVisitor");
 
         $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
 

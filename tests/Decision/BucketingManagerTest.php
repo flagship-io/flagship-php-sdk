@@ -35,32 +35,22 @@ class BucketingManagerTest extends TestCase
         $bucketingManager->setFlagshipInstanceId("flagship_instance_id");
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
-        $visitorContext = [
-            "age" => 20
-        ];
+        $visitorContext = ["age" => 20];
         $container = new Container();
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->setConfig($config);
 
-        $visitor = $this->getMockBuilder(VisitorDelegate::class)
-            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
-            ->onlyMethods(["sendHit"])
-            ->getMock();
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])->onlyMethods(["sendHit"])->getMock();
 
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
-        $httpClientMock->expects($this->exactly(6))
-            ->method('get')
-            ->with($bucketingUrl)
-            ->willReturnOnConsecutiveCalls(
-                new HttpResponse(204, null),
-                new HttpResponse(204, json_decode('{"panic": true}', true)),
-                new HttpResponse(204, json_decode('{}', true)),
-                new HttpResponse(204, json_decode('{"campaigns":[{}]}', true)),
-                new HttpResponse(204, json_decode('{"notExistKey": false}', true)),
-                new HttpResponse(204, json_decode($bucketingFile, true))
-            );
+        $httpClientMock->expects($this->exactly(6))->method('get')->with($bucketingUrl)->willReturnOnConsecutiveCalls(
+            new HttpResponse(204, null),
+            new HttpResponse(204, json_decode('{"panic": true}', true)),
+            new HttpResponse(204, json_decode('{}', true)),
+            new HttpResponse(204, json_decode('{"campaigns":[{}]}', true)),
+            new HttpResponse(204, json_decode('{"notExistKey": false}', true)),
+            new HttpResponse(204, json_decode($bucketingFile, true))
+        );
 
         //Test File not exist
         $campaigns = $bucketingManager->getCampaignFlags($visitor);
@@ -118,44 +108,30 @@ class BucketingManagerTest extends TestCase
         $bucketingManager->setFlagshipInstanceId("flagship_instance_id");
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
-        $visitorContext = [
-            "age" => 20
-        ];
+        $visitorContext = ["age" => 20];
         $container = new Container();
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
 
-        $visitor = $this->getMockBuilder(VisitorDelegate::class)
-            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
-            ->onlyMethods(["sendHit"])
-            ->getMock();
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])->onlyMethods(["sendHit"])->getMock();
 
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $bucketingContent = json_decode($bucketingFile, true);
         $troubleshooting = [
-            "startDate" => "2023-04-13T09:33:38.049Z",
-            "endDate" => "2023-04-13T10:03:38.049Z",
-            "timezone" => "Europe/Paris",
-            "traffic" => 40
-        ];
-        $bucketingContent["accountSettings"] = [
-            "troubleshooting" => $troubleshooting
-        ];
+                            "startDate" => "2023-04-13T09:33:38.049Z",
+                            "endDate"   => "2023-04-13T10:03:38.049Z",
+                            "timezone"  => "Europe/Paris",
+                            "traffic"   => 40,
+                           ];
+        $bucketingContent["accountSettings"] = ["troubleshooting" => $troubleshooting];
 
         $matcher = $this->exactly(1);
-        $trackingManagerMock->expects($matcher)
-            ->method('addTroubleshootingHit')
-            ->with($this->callback(function ($param) use ($matcher) {
+        $trackingManagerMock->expects($matcher)->method('addTroubleshootingHit')->with($this->callback(function ($param) use ($matcher) {
                 return $param->getLabel() === TroubleshootingLabel::SDK_BUCKETING_FILE;
-            }));
+        }));
 
-        $httpClientMock->expects($this->exactly(1))
-            ->method('get')
-            ->with($bucketingUrl)
-            ->willReturnOnConsecutiveCalls(
-                new HttpResponse(204, $bucketingContent)
-            );
+        $httpClientMock->expects($this->exactly(1))->method('get')->with($bucketingUrl)->willReturnOnConsecutiveCalls(
+            new HttpResponse(204, $bucketingContent)
+        );
 
         $bucketingManager->getCampaignFlags($visitor);
 
@@ -179,7 +155,10 @@ class BucketingManagerTest extends TestCase
 
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
-            ['post', 'get'],
+            [
+             'post',
+             'get',
+            ],
             "",
             false
         );
@@ -208,13 +187,13 @@ class BucketingManagerTest extends TestCase
 
         $visitorId = "visitor_1";
         $visitorContext = [
-            "age" => 20,
-            "sdk_osName" => PHP_OS,
-            "sdk_deviceType" => "server",
-            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,
-        ];
+                           "age"                        => 20,
+                           "sdk_osName"                 => PHP_OS,
+                           "sdk_deviceType"             => "server",
+                           FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+                           FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+                           FlagshipConstant::FS_USERS   => $visitorId,
+                          ];
 
 
         $bucketingUrl  = "http:127.0.0.1:3000";
@@ -227,20 +206,13 @@ class BucketingManagerTest extends TestCase
 
         $bucketingManager->setTrackingManager($trackingManagerMock);
 
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
-        $visitor = $this->getMockBuilder(VisitorDelegate::class)
-            ->setConstructorArgs([$containerMock, $configManager, $visitorId, false, $visitorContext, true])
-            ->onlyMethods(["sendHit"])
-            ->getMock();
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)->setConstructorArgs([$containerMock, $configManager, $visitorId, false, $visitorContext, true])->onlyMethods(["sendHit"])->getMock();
 
-        $httpClientMock->expects($this->exactly(2))
-            ->method('get')
-            ->willReturn(
-                new HttpResponse(204, json_decode('{"campaigns":[{}]}', true))
-            );
+        $httpClientMock->expects($this->exactly(2))->method('get')->willReturn(
+            new HttpResponse(204, json_decode('{"campaigns":[{}]}', true))
+        );
 
         $visitor->expects($this->exactly(1))->method("sendHit");
 
@@ -264,9 +236,7 @@ class BucketingManagerTest extends TestCase
         $visitorId = "123456";
 
         $container = new Container();
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, [], true);
 
@@ -279,53 +249,47 @@ class BucketingManagerTest extends TestCase
 
         //Test key id  in variationGroup
         $variations = [
-            [
-                "id" => "c20j8bk3fk9hdphqtd30",
-                "name" => "variation1",
-                "modifications" => [
-                    "type" => "HTML",
-                    "value" => [
-                        "my_html" => "<div>\n  <p>Original</p>\n</div>"
-                    ]
-                ],
-                "allocation" => 34,
-                "reference" => true
-            ],
-            [
-                "id" => "c20j8bk3fk9hdphqtd3g",
-                "name" => "variation2",
-                "modifications" => [
-                    "type" => "HTML",
-                    "value" => [
-                        "my_html" => "<div>\n  <p>variation 1</p>\n</div>"
-                    ]
-                ],
-                "allocation" => 33
-            ],
-            [
-                "id" => "c20j9lgbcahhf2mvhbf0",
-                "name" => "variation3",
-                "modifications" => [
-                    "type" => "HTML",
-                    "value" => [
-                        "my_html" => "<div>\n  <p>variation 2</p>\n</div>"
-                    ]
-                ],
-                "allocation" => 33
-            ]
-        ];
+                       [
+                        "id"            => "c20j8bk3fk9hdphqtd30",
+                        "name"          => "variation1",
+                        "modifications" => [
+                                            "type"  => "HTML",
+                                            "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
+                                           ],
+                        "allocation"    => 34,
+                        "reference"     => true,
+                       ],
+                       [
+                        "id"            => "c20j8bk3fk9hdphqtd3g",
+                        "name"          => "variation2",
+                        "modifications" => [
+                                            "type"  => "HTML",
+                                            "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
+                                           ],
+                        "allocation"    => 33,
+                       ],
+                       [
+                        "id"            => "c20j9lgbcahhf2mvhbf0",
+                        "name"          => "variation3",
+                        "modifications" => [
+                                            "type"  => "HTML",
+                                            "value" => ["my_html" => "<div>\n  <p>variation 2</p>\n</div>"],
+                                           ],
+                        "allocation"    => 33,
+                       ],
+                      ];
         $variationGroups = [
-            FlagshipField::FIELD_ID => "9273BKSDJtoto",
-            FlagshipField::FIELD_VARIATIONS => $variations,
-            FlagshipField::FIELD_NANE => "varGroupName"
-        ];
+                            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
+                            FlagshipField::FIELD_VARIATIONS => $variations,
+                            FlagshipField::FIELD_NANE       => "varGroupName",
+                           ];
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
         $this->assertSame($variations[0]['id'], $variation['id']);
 
         $variationGroups = [
-            FlagshipField::FIELD_ID => "vgidéééà",
-            FlagshipField::FIELD_VARIATIONS => $variations
-        ];
+                            FlagshipField::FIELD_ID         => "vgidéééà",
+                            FlagshipField::FIELD_VARIATIONS => $variations,
+                           ];
         $visitorId = 'ëééééé';
         $visitor->setVisitorId($visitorId);
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
@@ -333,54 +297,46 @@ class BucketingManagerTest extends TestCase
 
         //Test realloc
         $realloCvariations = [
-            [
-                "id" => "c20j8bk3fk9hdphqtd30",
-                "name" => "variation1",
-                "modifications" => [
-                    "type" => "HTML",
-                    "value" => [
-                        "my_html" => "<div>\n  <p>Original</p>\n</div>"
-                    ]
-                ],
-                "allocation" => 100,
-                "reference" => true
-            ],
-            [
-                "id" => "c20j8bk3fk9hdphqtd3g",
-                "name" => "variation2",
-                "modifications" => [
-                    "type" => "HTML",
-                    "value" => [
-                        "my_html" => "<div>\n  <p>variation 1</p>\n</div>"
-                    ]
-                ],
-                "allocation" => 0
-            ],
-            [
-                "id" => "c20j9lgbcahhf2mvhbf0",
-                "name" => "variation2",
-                "modifications" => [
-                    "type" => "HTML",
-                    "value" => [
-                        "my_html" => "<div>\n  <p>variation 2</p>\n</div>"
-                    ]
-                ],
-                "allocation" => 0
-            ]
-        ];
+                              [
+                               "id"            => "c20j8bk3fk9hdphqtd30",
+                               "name"          => "variation1",
+                               "modifications" => [
+                                                   "type"  => "HTML",
+                                                   "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
+                                                  ],
+                               "allocation"    => 100,
+                               "reference"     => true,
+                              ],
+                              [
+                               "id"            => "c20j8bk3fk9hdphqtd3g",
+                               "name"          => "variation2",
+                               "modifications" => [
+                                                   "type"  => "HTML",
+                                                   "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
+                                                  ],
+                               "allocation"    => 0,
+                              ],
+                              [
+                               "id"            => "c20j9lgbcahhf2mvhbf0",
+                               "name"          => "variation2",
+                               "modifications" => [
+                                                   "type"  => "HTML",
+                                                   "value" => ["my_html" => "<div>\n  <p>variation 2</p>\n</div>"],
+                                                  ],
+                               "allocation"    => 0,
+                              ],
+                             ];
 
 
         $variationGroups = [
-            FlagshipField::FIELD_ID => "9273BKSDJtoto",
-            FlagshipField::FIELD_VARIATIONS => $realloCvariations
-        ];
+                            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
+                            FlagshipField::FIELD_VARIATIONS => $realloCvariations,
+                           ];
         $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
-            StrategyAbstract::VERSION => 1,
-            StrategyAbstract::DATA => [
-                StrategyAbstract::ASSIGNMENTS_HISTORY =>  $assignmentsHistory
-            ]
-        ];
+                         StrategyAbstract::VERSION => 1,
+                         StrategyAbstract::DATA    => [StrategyAbstract::ASSIGNMENTS_HISTORY => $assignmentsHistory],
+                        ];
 
         $visitor->visitorCache = $visitorCache;
 
@@ -391,34 +347,30 @@ class BucketingManagerTest extends TestCase
         //Test deleted variation
 
         $reallovariations = [
-            [
-                "id" => "c20j8bk3fk9hdphqtd30",
-                "modifications" => [
-                    "type" => "HTML",
-                    "value" => [
-                        "my_html" => "<div>\n  <p>Original</p>\n</div>"
-                    ]
-                ],
-                "allocation" => 50,
-                "reference" => true
-            ],
-            [
-                "id" => "c20j8bk3fk9hdphqtd3g",
-                "modifications" => [
-                    "type" => "HTML",
-                    "value" => [
-                        "my_html" => "<div>\n  <p>variation 1</p>\n</div>"
-                    ]
-                ],
-                "allocation" => 50
-            ]
-        ];
+                             [
+                              "id"            => "c20j8bk3fk9hdphqtd30",
+                              "modifications" => [
+                                                  "type"  => "HTML",
+                                                  "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
+                                                 ],
+                              "allocation"    => 50,
+                              "reference"     => true,
+                             ],
+                             [
+                              "id"            => "c20j8bk3fk9hdphqtd3g",
+                              "modifications" => [
+                                                  "type"  => "HTML",
+                                                  "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
+                                                 ],
+                              "allocation"    => 50,
+                             ],
+                            ];
 
 
         $variationGroups = [
-            FlagshipField::FIELD_ID => "9273BKSDJtoto",
-            FlagshipField::FIELD_VARIATIONS => $reallovariations
-        ];
+                            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
+                            FlagshipField::FIELD_VARIATIONS => $reallovariations,
+                           ];
 
 
         $visitor->visitorCache = $visitorCache;
@@ -438,13 +390,9 @@ class BucketingManagerTest extends TestCase
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
-        $visitorContext = [
-            "age" => 20
-        ];
+        $visitorContext = ["age" => 20];
         $container = new Container();
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
@@ -458,42 +406,38 @@ class BucketingManagerTest extends TestCase
 
         //Test key targetingGroups in targeting
         $variationGroup = [
-            FlagshipField::FIELD_TARGETING => [
-
-            ]
-        ];
+                           FlagshipField::FIELD_TARGETING => [],
+                          ];
         $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
 
         //Test key targetings in targetingGroups
         $variationGroup = [
-            FlagshipField::FIELD_TARGETING => [
-                FlagshipField::FIELD_TARGETING_GROUPS => [
-                    []
-                ]
-            ]
-        ];
+                           FlagshipField::FIELD_TARGETING => [
+                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
+                                                                                                        [],
+                                                                                                       ],
+                                                             ],
+                          ];
         $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
 
         //Test not matching targetings
 
         $targetings = [
-            "key" => "age",
-            "operator" => "EQUALS",
-            'value' => 21
-        ];
+                       "key"      => "age",
+                       "operator" => "EQUALS",
+                       'value'    => 21,
+                      ];
         $variationGroup = [
-            FlagshipField::FIELD_TARGETING => [
-                FlagshipField::FIELD_TARGETING_GROUPS => [
-                    [
-                        FlagshipField::FIELD_TARGETINGS => [
-                            $targetings
-                        ]
-                    ]
-                ]
-            ]
-        ];
+                           FlagshipField::FIELD_TARGETING => [
+                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
+                                                                                                        [
+                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings],
+                                                                                                        ],
+                                                                                                       ],
+                                                             ],
+                          ];
 
         $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
@@ -501,22 +445,20 @@ class BucketingManagerTest extends TestCase
         //Test matching targetings
 
         $targetings2 = [
-            "key" => "age",
-            "operator" => "EQUALS",
-            'value' => 20
-        ];
+                        "key"      => "age",
+                        "operator" => "EQUALS",
+                        'value'    => 20,
+                       ];
 
         $variationGroup = [
-            FlagshipField::FIELD_TARGETING => [
-                FlagshipField::FIELD_TARGETING_GROUPS => [
-                    [
-                        FlagshipField::FIELD_TARGETINGS => [
-                            $targetings2
-                        ]
-                    ]
-                ]
-            ]
-        ];
+                           FlagshipField::FIELD_TARGETING => [
+                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
+                                                                                                        [
+                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings2],
+                                                                                                        ],
+                                                                                                       ],
+                                                             ],
+                          ];
 
         $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertTrue($output);
@@ -525,38 +467,32 @@ class BucketingManagerTest extends TestCase
         //Test Many targetingGroups with one match
 
         $targetings2 = [
-            "key" => "age",
-            "operator" => "EQUALS",
-            'value' => 22
-        ];
+                        "key"      => "age",
+                        "operator" => "EQUALS",
+                        'value'    => 22,
+                       ];
 
         $targetingAllUsers = [
-            "key" => "fs_all_users",
-            "operator" => "EQUALS",
-            'value' => ''
-        ];
+                              "key"      => "fs_all_users",
+                              "operator" => "EQUALS",
+                              'value'    => '',
+                             ];
 
         $variationGroup = [
-            FlagshipField::FIELD_TARGETING => [
-                FlagshipField::FIELD_TARGETING_GROUPS => [
-                    [
-                        FlagshipField::FIELD_TARGETINGS => [
-                            $targetings
-                        ]
-                    ],
-                    [
-                        FlagshipField::FIELD_TARGETINGS => [
-                            $targetings2
-                        ]
-                    ],
-                    [
-                        FlagshipField::FIELD_TARGETINGS => [
-                            $targetingAllUsers
-                        ]
-                    ]
-                ]
-            ]
-        ];
+                           FlagshipField::FIELD_TARGETING => [
+                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
+                                                                                                        [
+                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings],
+                                                                                                        ],
+                                                                                                        [
+                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings2],
+                                                                                                        ],
+                                                                                                        [
+                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetingAllUsers],
+                                                                                                        ],
+                                                                                                       ],
+                                                             ],
+                          ];
 
         $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertTrue($output);
@@ -564,26 +500,20 @@ class BucketingManagerTest extends TestCase
         //Test Many targetingGroups with all false
 
         $variationGroup = [
-            FlagshipField::FIELD_TARGETING => [
-                FlagshipField::FIELD_TARGETING_GROUPS => [
-                    [
-                        FlagshipField::FIELD_TARGETINGS => [
-                            $targetings
-                        ]
-                    ],
-                    [
-                        FlagshipField::FIELD_TARGETINGS => [
-                            $targetings2
-                        ]
-                    ],
-                    [
-                        FlagshipField::FIELD_TARGETINGS => [
-                            $targetings2
-                        ]
-                    ]
-                ]
-            ]
-        ];
+                           FlagshipField::FIELD_TARGETING => [
+                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
+                                                                                                        [
+                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings],
+                                                                                                        ],
+                                                                                                        [
+                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings2],
+                                                                                                        ],
+                                                                                                        [
+                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings2],
+                                                                                                        ],
+                                                                                                       ],
+                                                             ],
+                          ];
 
         $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
@@ -599,13 +529,9 @@ class BucketingManagerTest extends TestCase
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
         $visitorId = "visitor_3";
-        $visitorContext = [
-            "age" => 20
-        ];
+        $visitorContext = ["age" => 20];
         $container = new Container();
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
@@ -613,32 +539,38 @@ class BucketingManagerTest extends TestCase
 
         //test key = fs_all_users
         $targetingAllUsers = [
-            "key" => "fs_all_users",
-            "operator" => "EQUALS",
-            'value' => ''
-        ];
+                              "key"      => "fs_all_users",
+                              "operator" => "EQUALS",
+                              'value'    => '',
+                             ];
 
         $innerTargetings = [$targetingAllUsers];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertTrue($output);
 
         //test key = fs_all_users and not match key
-        $innerTargetings = [$targetingAllUsers,[
-            "key" => "anyValue",
-            "operator" => "EQUALS",
-            'value' => ''
-        ]];
+        $innerTargetings = [
+                            $targetingAllUsers,
+                            [
+                             "key"      => "anyValue",
+                             "operator" => "EQUALS",
+                             'value'    => '',
+                            ],
+                           ];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertFalse($output);
 
         //Test operator EXISTS when context doesn't exist
 
-        $innerTargetingsExists = [$targetingAllUsers,[
-            "operator" => "EXISTS",
-            "key" => "mixpanel::city",
-            "value" => true,
-            "provider" => "mixpanel"
-        ]];
+        $innerTargetingsExists = [
+                                  $targetingAllUsers,
+                                  [
+                                   "operator" => "EXISTS",
+                                   "key"      => "mixpanel::city",
+                                   "value"    => true,
+                                   "provider" => "mixpanel",
+                                  ],
+                                 ];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
         $this->assertFalse($output);
 
@@ -650,33 +582,39 @@ class BucketingManagerTest extends TestCase
 
         //Test operator NOT_EXISTS when context  exists
 
-        $innerTargetingsExists = [$targetingAllUsers,[
-            "operator" => "NOT_EXISTS",
-            "key" => "mixpanel::city",
-            "value" => true,
-            "provider" => "mixpanel"
-        ]];
+        $innerTargetingsExists = [
+                                  $targetingAllUsers,
+                                  [
+                                   "operator" => "NOT_EXISTS",
+                                   "key"      => "mixpanel::city",
+                                   "value"    => true,
+                                   "provider" => "mixpanel",
+                                  ],
+                                 ];
 
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
         $this->assertFalse($output);
 
         //Test operator NOT_EXISTS when context doesn't exist
 
-        $innerTargetingsExists = [$targetingAllUsers,[
-            "operator" => "NOT_EXISTS",
-            "key" => "mixpanel::genre",
-            "value" => true,
-            "provider" => "mixpanel"
-        ]];
+        $innerTargetingsExists = [
+                                  $targetingAllUsers,
+                                  [
+                                   "operator" => "NOT_EXISTS",
+                                   "key"      => "mixpanel::genre",
+                                   "value"    => true,
+                                   "provider" => "mixpanel",
+                                  ],
+                                 ];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
         $this->assertTrue($output);
 
         //test key = fs_users
         $targetingFsUsers = [
-            "key" => "fs_users",
-            "operator" => "EQUALS",
-            'value' => $visitorId
-        ];
+                             "key"      => "fs_users",
+                             "operator" => "EQUALS",
+                             'value'    => $visitorId,
+                            ];
 
         $innerTargetings = [$targetingFsUsers];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
@@ -684,10 +622,10 @@ class BucketingManagerTest extends TestCase
 
         //test key not match context
         $targetingKeyContext = [
-            "key" => "anyKey",
-            "operator" => "EQUALS",
-            'value' => "anyValue"
-        ];
+                                "key"      => "anyKey",
+                                "operator" => "EQUALS",
+                                'value'    => "anyValue",
+                               ];
 
         $innerTargetings = [$targetingKeyContext];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
@@ -695,10 +633,10 @@ class BucketingManagerTest extends TestCase
 
         //test key match context
         $targetingKeyContext = [
-            "key" => "age",
-            "operator" => "EQUALS",
-            'value' => 20
-        ];
+                                "key"      => "age",
+                                "operator" => "EQUALS",
+                                'value'    => 20,
+                               ];
 
         $innerTargetings = [$targetingKeyContext];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
@@ -706,10 +644,10 @@ class BucketingManagerTest extends TestCase
 
         //test key match context with different value
         $targetingKeyContext2 = [
-            "key" => "age",
-            "operator" => "EQUALS",
-            'value' => 21
-        ];
+                                 "key"      => "age",
+                                 "operator" => "EQUALS",
+                                 'value'    => 21,
+                                ];
 
         $innerTargetings = [$targetingKeyContext2];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
@@ -717,12 +655,20 @@ class BucketingManagerTest extends TestCase
 
         //And logic
         //All true
-        $innerTargetings = [$targetingAllUsers, $targetingFsUsers, $targetingKeyContext];
+        $innerTargetings = [
+                            $targetingAllUsers,
+                            $targetingFsUsers,
+                            $targetingKeyContext,
+                           ];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertTrue($output);
 
         //Test one false
-        $innerTargetings = [$targetingAllUsers, $targetingFsUsers, $targetingKeyContext2];
+        $innerTargetings = [
+                            $targetingAllUsers,
+                            $targetingFsUsers,
+                            $targetingKeyContext2,
+                           ];
         $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertFalse($output);
     }
@@ -737,9 +683,7 @@ class BucketingManagerTest extends TestCase
         $config = new BucketingConfig($bucketingUrl);
         $bucketingManager = new BucketingManager(new HttpClient(), $config, $murmurhash);
 
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->setConfig($config);
 
         $testOperatorMethod = Utils::getMethod(BucketingManager::class, "testOperator");
@@ -765,7 +709,12 @@ class BucketingManagerTest extends TestCase
         $this->assertTrue($output);
 
 
-        $targetingValue = [5,1,2,3];
+        $targetingValue = [
+                           5,
+                           1,
+                           2,
+                           3,
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
@@ -778,7 +727,12 @@ class BucketingManagerTest extends TestCase
         $this->assertTrue($output);
 
 
-        $targetingValue = [6,1,2,3];
+        $targetingValue = [
+                           6,
+                           1,
+                           2,
+                           3,
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
@@ -794,7 +748,13 @@ class BucketingManagerTest extends TestCase
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
-        $targetingValue = [1,2,3,5,6];
+        $targetingValue = [
+                           1,
+                           2,
+                           3,
+                           5,
+                           6,
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
@@ -802,19 +762,34 @@ class BucketingManagerTest extends TestCase
 
         //Test contextValue not contains targetingValue
 
-        $targetingValue = [8, 7, 4, 1];
+        $targetingValue = [
+                           8,
+                           7,
+                           4,
+                           1,
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue contains targetingValue
 
-        $targetingValue = [8, 7, 5, 1];
+        $targetingValue = [
+                           8,
+                           7,
+                           5,
+                           1,
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue contains targetingValue
         $contextValue = "nopq_hij";
-        $targetingValue = ["abc", "dfg", "hij", "klm"];
+        $targetingValue = [
+                           "abc",
+                           "dfg",
+                           "hij",
+                           "klm",
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
@@ -834,19 +809,34 @@ class BucketingManagerTest extends TestCase
 
         //Test contextValue not contains targetingValue
         $contextValue = 5;
-        $targetingValue = [8, 7, 4, 1];
+        $targetingValue = [
+                           8,
+                           7,
+                           4,
+                           1,
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_CONTAINS', $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue contains targetingValue
 
-        $targetingValue = [8, 7, 5, 1];
+        $targetingValue = [
+                           8,
+                           7,
+                           5,
+                           1,
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_CONTAINS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue contains targetingValue
         $contextValue = "nopq_hij";
-        $targetingValue = ["abc", "dfg", "hij", "klm"];
+        $targetingValue = [
+                           "abc",
+                           "dfg",
+                           "hij",
+                           "klm",
+                          ];
         $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_CONTAINS', $contextValue, $targetingValue);
         $this->assertFalse($output);
 
@@ -1059,7 +1049,10 @@ class BucketingManagerTest extends TestCase
             false,
             false,
             true,
-            ['post', 'get']
+            [
+             'post',
+             'get',
+            ]
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
@@ -1077,89 +1070,77 @@ class BucketingManagerTest extends TestCase
         $bucketingUrl = "127.0.0.1:3000";
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
-        $config->setEnvId("env_id")
-            ->setFetchThirdPartyData(true)
-            ->setLogManager($logManagerStub);
+        $config->setEnvId("env_id")->setFetchThirdPartyData(true)->setLogManager($logManagerStub);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
         $bucketingManager->setFlagshipInstanceId("instance_id");
 
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $visitorId = "visitor_1";
-        $visitorContext = [
-            "age" => 20
-        ];
+        $visitorContext = ["age" => 20];
 
         $container = new Container();
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->setConfig($config);
 
-        $visitor = $this->getMockBuilder(VisitorDelegate::class)
-            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
-            ->onlyMethods(["sendHit"])
-            ->getMock();
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])->onlyMethods(["sendHit"])->getMock();
 
         $segments = [
-            [
-                'visitor_id' => 'wonderful_visitor_1',
-                'segment' => 'gender',
-                'value' => '',
-                'expiration' => 1689771307,
-                'partner' => 'facebook',
-            ],
-            [
-                'visitor_id' => 'wonderful_visitor_1',
-                'segment' => 'generation',
-                'value' => '',
-                'expiration' => 1689771307,
-                'partner' => 'facebook',
-            ],
-            [
-                'visitor_id' => 'wonderful_visitor_1',
-                'segment' => 'city',
-                'value' => 'london',
-                'expiration' => 1689771117,
-                'partner' => 'mixpanel',
-            ],
-            [
-                'visitor_id' => 'wonderful_visitor_1',
-                'segment' => 'device',
-                'value' => 'firefox',
-                'expiration' => 1689771117,
-                'partner' => 'mixpanel',
-            ],
-            [
-                'visitor_id' => 'wonderful_visitor_1',
-                'segment' => 'gender',
-                'value' => 'female',
-                'expiration' => 1689771007,
-                'partner' => 'segmentio',
-            ],
-            [
-                'visitor_id' => 'wonderful_visitor_1',
-                'segment' => 'generation',
-                'value' => 'gen-z',
-                'expiration' => 1689771007,
-                'partner' => 'segmentio',
-            ],
-        ];
+                     [
+                      'visitor_id' => 'wonderful_visitor_1',
+                      'segment'    => 'gender',
+                      'value'      => '',
+                      'expiration' => 1689771307,
+                      'partner'    => 'facebook',
+                     ],
+                     [
+                      'visitor_id' => 'wonderful_visitor_1',
+                      'segment'    => 'generation',
+                      'value'      => '',
+                      'expiration' => 1689771307,
+                      'partner'    => 'facebook',
+                     ],
+                     [
+                      'visitor_id' => 'wonderful_visitor_1',
+                      'segment'    => 'city',
+                      'value'      => 'london',
+                      'expiration' => 1689771117,
+                      'partner'    => 'mixpanel',
+                     ],
+                     [
+                      'visitor_id' => 'wonderful_visitor_1',
+                      'segment'    => 'device',
+                      'value'      => 'firefox',
+                      'expiration' => 1689771117,
+                      'partner'    => 'mixpanel',
+                     ],
+                     [
+                      'visitor_id' => 'wonderful_visitor_1',
+                      'segment'    => 'gender',
+                      'value'      => 'female',
+                      'expiration' => 1689771007,
+                      'partner'    => 'segmentio',
+                     ],
+                     [
+                      'visitor_id' => 'wonderful_visitor_1',
+                      'segment'    => 'generation',
+                      'value'      => 'gen-z',
+                      'expiration' => 1689771007,
+                      'partner'    => 'segmentio',
+                     ],
+                    ];
 
         $segmentUrl = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $config->getEnvId(), $visitorId);
         $campaigns = ["campaigns" => []];
 
         $matcher = $this->exactly(2);
-        $httpClientMock->expects($matcher)
-            ->method("get")
-            ->with(
-                $this->logicalOr(
-                    $this->equalTo($bucketingUrl),
-                    $this->equalTo($segmentUrl)
-                ),
-                $this->equalTo([])
-            )
-            ->willReturnOnConsecutiveCalls(new HttpResponse(200, $campaigns, []), new HttpResponse(200, $segments, []));
+        $httpClientMock->expects($matcher)->method("get")->with(
+            $this->logicalOr(
+                $this->equalTo($bucketingUrl),
+                $this->equalTo($segmentUrl)
+            ),
+            $this->equalTo([])
+        )->willReturnOnConsecutiveCalls(new HttpResponse(200, $campaigns, []), new HttpResponse(200, $segments, []));
 
         $bucketingManager->getCampaigns($visitor);
         $context = $visitor->getContext();
@@ -1180,7 +1161,10 @@ class BucketingManagerTest extends TestCase
             false,
             false,
             true,
-            ['post', 'get']
+            [
+             'post',
+             'get',
+            ]
         );
 
         $logManagerStub = $this->getMockForAbstractClass(
@@ -1198,47 +1182,36 @@ class BucketingManagerTest extends TestCase
         $bucketingUrl = "127.0.0.1:3000";
         $murmurhash = new MurmurHash();
         $config = new BucketingConfig($bucketingUrl);
-        $config->setEnvId("env_id")
-            ->setFetchThirdPartyData(true);
+        $config->setEnvId("env_id")->setFetchThirdPartyData(true);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
         $bucketingManager->setTrackingManager($trackingManagerMock);
         $bucketingManager->setFlagshipInstanceId("instance_id");
 
         $visitorId = "visitor_1";
-        $visitorContext = [
-            "age" => 20
-        ];
+        $visitorContext = ["age" => 20];
         $container = new Container();
 
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
 
         $configManager->setConfig($config);
 
-        $visitor = $this->getMockBuilder(VisitorDelegate::class)
-            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
-            ->onlyMethods(["sendHit"])
-            ->getMock();
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])->onlyMethods(["sendHit"])->getMock();
 
         $segmentUrl = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $config->getEnvId(), $visitorId);
         $campaigns = ["campaigns" => []];
 
         $matcher = $this->exactly(2);
-        $httpClientMock->expects($matcher)
-            ->method("get")
-            ->with(
-                $this->logicalOr(
-                    $this->equalTo($bucketingUrl),
-                    $this->equalTo($segmentUrl)
-                ),
-                $this->equalTo([])
-            )
-            ->willReturnOnConsecutiveCalls(
-                new HttpResponse(200, $campaigns, []),
-                $this->throwException(new Exception("error"))
-            );
+        $httpClientMock->expects($matcher)->method("get")->with(
+            $this->logicalOr(
+                $this->equalTo($bucketingUrl),
+                $this->equalTo($segmentUrl)
+            ),
+            $this->equalTo([])
+        )->willReturnOnConsecutiveCalls(
+            new HttpResponse(200, $campaigns, []),
+            $this->throwException(new Exception("error"))
+        );
 
         $config->setLogManager($logManagerStub);
 

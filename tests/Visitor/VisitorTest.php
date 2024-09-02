@@ -26,13 +26,16 @@ class VisitorTest extends TestCase
      */
     public function testConstruct()
     {
-        $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
+        $configData = [
+                       'envId'  => 'env_value',
+                       'apiKey' => 'key_value',
+                      ];
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
         $visitorContext = [
-            'name' => 'visitor_name',
-            'age' => 25
-        ];
+                           'name' => 'visitor_name',
+                           'age'  => 25,
+                          ];
 
         $trackerManager = new TrackingManager($config, new HttpClient());
 
@@ -64,43 +67,47 @@ class VisitorTest extends TestCase
 
     public function testMethods()
     {
-        $configData = ['envId' => 'env_value', 'apiKey' => 'key_value'];
+        $configData = [
+                       'envId'  => 'env_value',
+                       'apiKey' => 'key_value',
+                      ];
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
         $visitorContext = [
-            'name' => 'visitor_name',
-            'age' => 25
-        ];
+                           'name' => 'visitor_name',
+                           'age'  => 25,
+                          ];
 
-        $trackerManager = $this->getMockBuilder(TrackingManager::class)
-            ->onlyMethods(['addHit'])
-            ->disableOriginalConstructor()->getMock();
+        $trackerManager = $this->getMockBuilder(TrackingManager::class)->onlyMethods(['addHit'])->disableOriginalConstructor()->getMock();
 
-        $decisionManagerMock = $this->getMockBuilder(ApiManager::class)
-            ->disableOriginalConstructor()->getMock();
+        $decisionManagerMock = $this->getMockBuilder(ApiManager::class)->disableOriginalConstructor()->getMock();
 
         $configManager = new ConfigManager($config, $decisionManagerMock, $trackerManager);
 
-        $visitorDelegateMock = $this->getMockBuilder('Flagship\Visitor\VisitorDelegate')
-            ->onlyMethods([
-                'getContext',
-                'setContext',
-                'updateContext',
-                'updateContextCollection',
-                'clearContext',
-                'authenticate',
-                'unauthenticate',
-                'getAnonymousId',
-                'sendHit',
-                'fetchFlags',
-                'getFlag',
-                'getFlags',
-                'getFlagsDTO',
-                "getFetchStatus",
-                "setOnFetchFlagsStatusChanged"
-            ])
-            ->setConstructorArgs([new Container(), $configManager,
-                $visitorId, false, $visitorContext, true])->getMock();
+        $visitorDelegateMock = $this->getMockBuilder('Flagship\Visitor\VisitorDelegate')->onlyMethods([
+                                                                                                       'getContext',
+                                                                                                       'setContext',
+                                                                                                       'updateContext',
+                                                                                                       'updateContextCollection',
+                                                                                                       'clearContext',
+                                                                                                       'authenticate',
+                                                                                                       'unauthenticate',
+                                                                                                       'getAnonymousId',
+                                                                                                       'sendHit',
+                                                                                                       'fetchFlags',
+                                                                                                       'getFlag',
+                                                                                                       'getFlags',
+                                                                                                       'getFlagsDTO',
+                                                                                                       "getFetchStatus",
+                                                                                                       "setOnFetchFlagsStatusChanged",
+                                                                                                      ])->setConstructorArgs([
+                                                                                                                              new Container(),
+                                                                                                                              $configManager,
+                                                                                                                              $visitorId,
+                                                                                                                              false,
+                                                                                                                              $visitorContext,
+                                                                                                                              true,
+                                                                                                                             ])->getMock();
 
         $visitor = new Visitor($visitorDelegateMock);
 
@@ -109,25 +116,19 @@ class VisitorTest extends TestCase
         $visitor->getContext();
 
         //test SetContext
-        $visitorDelegateMock->expects($this->once())
-            ->method('setContext')
-            ->with($visitorContext);
+        $visitorDelegateMock->expects($this->once())->method('setContext')->with($visitorContext);
 
         $visitor->setContext($visitorContext);
 
         //test updateContext
         $key = "age";
         $value = 20;
-        $visitorDelegateMock->expects($this->once())
-            ->method('updateContext')
-            ->with($key, $value);
+        $visitorDelegateMock->expects($this->once())->method('updateContext')->with($key, $value);
 
         $visitor->updateContext($key, $value);
 
         //test updateContextCollection
-        $visitorDelegateMock->expects($this->once())
-            ->method('updateContextCollection')
-            ->with($visitorContext);
+        $visitorDelegateMock->expects($this->once())->method('updateContextCollection')->with($visitorContext);
 
         $visitor->updateContextCollection($visitorContext);
 
@@ -141,8 +142,7 @@ class VisitorTest extends TestCase
 
         //Test authenticate
         $newVisitorId = "newVisitorId";
-        $visitorDelegateMock->expects($this->once())->method('authenticate')
-            ->with($newVisitorId);
+        $visitorDelegateMock->expects($this->once())->method('authenticate')->with($newVisitorId);
         $visitor->authenticate($newVisitorId);
 
         //Test unauthenticate
@@ -151,36 +151,28 @@ class VisitorTest extends TestCase
 
         //Test sendHit
         $hit = new Page("http://localhost");
-        $visitorDelegateMock->expects($this->once())
-            ->method('sendHit')->with($hit);
+        $visitorDelegateMock->expects($this->once())->method('sendHit')->with($hit);
 
         $visitor->sendHit($hit);
 
         //Test fetchFlags
-        $visitorDelegateMock->expects($this->once())
-            ->method('fetchFlags');
+        $visitorDelegateMock->expects($this->once())->method('fetchFlags');
         $visitor->fetchFlags();
 
         //Test getFlag
         $key = 'key';
-        $visitorDelegateMock->expects($this->once())
-            ->method('getFlag')
-            ->with($key)->willReturn(new FSFlag($key, null));
+        $visitorDelegateMock->expects($this->once())->method('getFlag')->with($key)->willReturn(new FSFlag($key, null));
 
          $visitor->getFlag($key);
 
         //Test getFlags
-        $visitorDelegateMock->expects($this->once())
-            ->method('getFlags')
-            ->willReturn(new FSFlagCollection(null));
+        $visitorDelegateMock->expects($this->once())->method('getFlags')->willReturn(new FSFlagCollection(null));
 
         $visitor->getFlags();
 
 
         //Test getFetchStatus
-        $visitorDelegateMock->expects($this->once())
-            ->method('getFetchStatus')
-            ->willReturn(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
+        $visitorDelegateMock->expects($this->once())->method('getFetchStatus')->willReturn(new FetchFlagsStatus(FSFetchStatus::FETCHED, FSFetchReason::NONE));
         $fetchStatus = $visitor->getFetchStatus();
         $this->assertInstanceOf(FetchFlagsStatus::class, $fetchStatus);
     }
@@ -190,19 +182,16 @@ class VisitorTest extends TestCase
         $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
         $context = [
-            "age" => 20,
-            "sdk_osName" => PHP_OS,
-            "sdk_deviceType" => "server",
-            FlagshipConstant::FS_CLIENT => FlagshipConstant::SDK_LANGUAGE,
-            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-            FlagshipConstant::FS_USERS => $visitorId,
-        ];
-        $trackerManager = $this->getMockBuilder(TrackingManager::class)
-            ->onlyMethods(['addHit'])
-            ->disableOriginalConstructor()->getMock();
+                    "age"                        => 20,
+                    "sdk_osName"                 => PHP_OS,
+                    "sdk_deviceType"             => "server",
+                    FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+                    FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+                    FlagshipConstant::FS_USERS   => $visitorId,
+                   ];
+        $trackerManager = $this->getMockBuilder(TrackingManager::class)->onlyMethods(['addHit'])->disableOriginalConstructor()->getMock();
 
-        $decisionManagerMock = $this->getMockBuilder(ApiManager::class)
-            ->disableOriginalConstructor()->getMock();
+        $decisionManagerMock = $this->getMockBuilder(ApiManager::class)->disableOriginalConstructor()->getMock();
 
         $configManager = new ConfigManager($config, $decisionManagerMock, $trackerManager);
         $visitorDelegate = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $context, true);
@@ -211,10 +200,10 @@ class VisitorTest extends TestCase
 
         $this->assertJsonStringEqualsJsonString(
             json_encode([
-                'visitorId' => $visitorId,
-                'context' => $context,
-                'hasConsent' => true
-            ]),
+                         'visitorId'  => $visitorId,
+                         'context'    => $context,
+                         'hasConsent' => true,
+                        ]),
             json_encode($visitor)
         );
     }

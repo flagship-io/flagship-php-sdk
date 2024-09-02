@@ -116,7 +116,8 @@ class BucketingManager extends DecisionManagerAbstract
                         $response->getHeaders(),
                         $response->getBody(),
                         $response->getStatusCode()
-                    )]
+                    )
+                ]
             );
         } catch (Exception $exception) {
             $this->logErrorSprintf(
@@ -152,16 +153,16 @@ class BucketingManager extends DecisionManagerAbstract
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE)
                 ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-                ->setVisitorId($this->getFlagshipInstanceId())
                 ->setTraffic(0)
                 ->setLogLevel(LogLevel::INFO)
-                ->setConfig($this->getConfig())
                 ->setHttpRequestMethod("GET")
                 ->setHttpRequestUrl($url)
                 ->setHttpResponseBody($response->getBody())
                 ->setHttpResponseHeaders($response->getHeaders())
                 ->setHttpResponseCode($response->getStatusCode())
-                ->setHttpResponseTime($this->getNow() - $now);
+                ->setHttpResponseTime($this->getNow() - $now)
+                ->setVisitorId($this->getFlagshipInstanceId())
+                ->setConfig($this->getConfig());
             $this->troubleshootingHit = $troubleshooting;
             return $response->getBody();
         } catch (Exception $exception) {
@@ -171,14 +172,14 @@ class BucketingManager extends DecisionManagerAbstract
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SDK_BUCKETING_FILE_ERROR)
                 ->setFlagshipInstanceId($this->getFlagshipInstanceId())
-                ->setVisitorId($this->getFlagshipInstanceId())
-                ->setTraffic(0)
-                ->setLogLevel(LogLevel::ERROR)
-                ->setConfig($this->getConfig())
                 ->setHttpRequestMethod("GET")
                 ->setHttpRequestUrl($url)
                 ->setHttpResponseBody($exception->getMessage())
-                ->setHttpResponseTime($this->getNow() - $now);
+                ->setHttpResponseTime($this->getNow() - $now)
+                ->setTraffic(0)
+                ->setLogLevel(LogLevel::ERROR)
+                ->setConfig($this->getConfig())
+                ->setVisitorId($this->getFlagshipInstanceId());
             $this->troubleshootingHit = $troubleshooting;
         }
         return null;
@@ -306,8 +307,7 @@ class BucketingManager extends DecisionManagerAbstract
      */
     private function getVisitorAssignmentsHistory(string $variationGroupId, VisitorAbstract $visitor): mixed
     {
-        return $visitor->visitorCache[StrategyAbstract::DATA]
-        [StrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId] ?? null;
+        return $visitor->visitorCache[StrategyAbstract::DATA][StrategyAbstract::ASSIGNMENTS_HISTORY][$variationGroupId] ?? null;
     }
 
     private function findVariationById(array $variations, $key)
@@ -433,7 +433,7 @@ class BucketingManager extends DecisionManagerAbstract
                     break;
                 }
                 $isMatching = true;
-                continue ;
+                continue;
             }
 
             switch ($key) {

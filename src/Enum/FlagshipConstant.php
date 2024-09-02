@@ -65,21 +65,20 @@ class FlagshipConstant
     public const USER_EXPOSED_NO_FLAG_ERROR =  "For the visitor '%s', no flags were found with the key '%s'.
      As a result, user exposure will not be sent.";
     public const VISITOR_EXPOSED_VALUE_NOT_CALLED =
-        "Visitor '%s', the flag with the key '%s' has been exposed without calling the `getValue` method first.";
+        "For the visitor `%s`, assuming the getValue() method has not previously been invoked for the flag `%s`. Therefore, the exposure is canceled";
     public const GET_FLAG_MISSING_ERROR =
-        "For the visitor '%s', no flags were found with the key '%s'. 
+    "For the visitor '%s', no flags were found with the key '%s'. 
         Therefore, the default value '%s' has been returned.";
     public const GET_FLAG_NOT_FOUND =
-        "For the visitor '%s', no flags were found with the key '%s'. Therefore, an empty flag has been returned.";
+    "For the visitor '%s', no flags were found with the key '%s'. Therefore, an empty flag has been returned.";
 
     public const NO_FLAG_METADATA =
-        "For the visitor '%s',no flags were found with the key '%s'. As a result, an empty metadata object is returned";
+    "For the visitor '%s',no flags were found with the key '%s'. As a result, an empty metadata object is returned";
     public const GET_FLAG_CAST_ERROR =
-        "For the visitor '%s', the flag with key '%s' has a different type compared to the default value. 
+    "For the visitor '%s', the flag with key '%s' has a different type compared to the default value. 
         Therefore, the default value '%s' has been returned.";
     public const USER_EXPOSED_CAST_ERROR =
-        "For the visitor '%s', the flag with key '%s' has been exposed 
-        despite having a different type compared to the default value";
+        "For the visitor `%s`, the flag with the key `%s` has a different type compared to the default value. Therefore, the exposure is interrupted";
     public const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null.";
     public const TRACKER_MANAGER_MISSING_ERROR = "trackerManager must not be null.";
     public const CURL_LIBRARY_IS_NOT_LOADED = 'curl library is not loaded';
@@ -88,7 +87,7 @@ class FlagshipConstant
     public const METHOD_DEACTIVATED_ERROR = "Method '%s' is deactivated while SDK status is: %s.";
     public const METHOD_DEACTIVATED_SEND_CONSENT_ERROR = "Send consent hit is deactivated while SDK status is: %s.";
     public const METHOD_DEACTIVATED_CONSENT_ERROR =
-        "Method '%s' is deactivated for visitor '%s': visitor did not consent.";
+    "Method '%s' is deactivated for visitor '%s': visitor did not consent.";
     public const METHOD_DEACTIVATED_BUCKETING_ERROR = "Method '%s' is deactivated on Bucketing mode.";
     public const FLAGSHIP_PREDEFINED_CONTEXT_ERROR = "Flagship predefined context %s must be %s";
     public const FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE =  "Visitor is not authentificated yet";
@@ -96,6 +95,8 @@ class FlagshipConstant
     //Messages Info
     public const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";
     public const FLAGSHIP_SDK = "Flagship SDK";
+
+    public const XPC_BUCKETING_WARNING = "Experience continuity is disabled on bucketing mode when visitor cache is not set ";
 
 
     //Tag
@@ -177,12 +178,14 @@ class FlagshipConstant
     public const FETCH_FLAGS_STARTED = 'visitor `%s` fetchFlags process is started';
     public const PROCESS_FETCHING_FLAGS = 'FETCH_FLAGS';
     public const FETCH_CAMPAIGNS_SUCCESS =
-        'Visitor %s, anonymousId %s with context %s has just fetched campaigns %s in %s ms';
+    'Visitor %s, anonymousId %s with context %s has just fetched campaigns %s in %s ms';
     public const FETCH_CAMPAIGNS_FROM_CACHE =
     'Visitor %s, anonymousId %s with context %s has just fetched campaigns from cache %s in %s ms';
     public const FETCH_FLAGS_FROM_CAMPAIGNS =
     'Visitor %s, anonymousId %s with context %s has just fetched flags %s from Campaigns';
     public const FLAG_USER_EXPOSED = 'FLAG_USER_EXPOSED';
+
+    public const ADD_HIT = 'ADD HIT';
     public const FLAG_VALUE = 'FLAG_VALUE';
     public const GET_FLAG_VALUE = 'Visitor %s, Flag for key %s returns value %s';
     public const LOG_FORMAT_MESSAGE = "message";
@@ -194,5 +197,5 @@ class FlagshipConstant
     public const LOG_FORMAT_DURATION = 'DURATION';
     public const ANALYTIC_HIT_ALLOCATION = 1;
     public const FLAGSHIP_VISITOR_ALREADY_AUTHENTICATE =
-        "Visitor is already authenticated";
+    "Visitor is already authenticated";
 }

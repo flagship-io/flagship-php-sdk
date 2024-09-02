@@ -237,6 +237,7 @@ class LogTraitTest extends TestCase
             );
 
         $config = new DecisionApiConfig();
+        $config->setLogLevel(LogLevel::DEBUG);
         $config->setLogManager($logManagerMock);
 
         $logDebug = Utils::getMethod($logTraitMock, "logDebug");
@@ -271,6 +272,7 @@ class LogTraitTest extends TestCase
             );
 
         $config = new DecisionApiConfig();
+        $config->setLogLevel(LogLevel::DEBUG);
         $config->setLogManager($logManagerMock);
 
         $logError = Utils::getMethod($logTraitMock, "logDebugSprintf");

@@ -298,15 +298,9 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         }
     }
 
-    /**
-     * @return void
-     */
-    protected function sendActivateHit(): void
+    protected function sendActivateHitBatch(ActivateBatch $activateBatch)
     {
         $headers = $this->getActivateHeaders();
-
-        $activateBatch = new ActivateBatch($this->config, $this->activatePoolQueue);
-
         $requestBody = $activateBatch->toApiKeys();
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
         $now = $this->getNow();
@@ -365,6 +359,28 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                     $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now),
                 ]
             );
+        }
+    }
+
+    /**
+     * @return void
+     */
+    protected function sendActivateHit(): void
+    {
+        $filteredItems = array_filter($this->activatePoolQueue, function ($item) {
+            return $this->getNow() - $item->getCreatedAt() < FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
+        });
+
+
+        if (empty($filteredItems)) {
+            return;
+        }
+
+        $batches = array_chunk($filteredItems, FlagshipConstant::MAX_ACTIVATE_HIT_PER_BATCH);
+
+        foreach ($batches as $batch) {
+            $activateBatch = new ActivateBatch($this->config, $batch);
+            $this->sendActivateHitBatch($activateBatch);
         }
     }
 

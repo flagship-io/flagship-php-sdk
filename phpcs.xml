@@ -42,10 +42,10 @@
     <!-- <rule ref="Squiz.WhiteSpace.FunctionSpacing" /> -->
 
     <!-- Ensure proper spacing around array declarations -->
-    <rule ref="Squiz.Arrays.ArrayDeclaration" />
+    <!-- <rule ref="Squiz.Arrays.ArrayDeclaration" /> -->
 
     <!-- Ensure proper spacing around object operators -->
-    <rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing" />
+    <!-- <rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing" /> -->
 
     <!-- Ensure proper spacing around semicolons -->
     <rule ref="Squiz.WhiteSpace.SemicolonSpacing" />

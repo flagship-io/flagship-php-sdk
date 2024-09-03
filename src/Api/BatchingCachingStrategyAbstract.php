@@ -164,11 +164,11 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
     public function getActivateHeaders(): array
     {
         return [
-                FlagshipConstant::HEADER_X_API_KEY     => $this->config->getApiKey(),
-                FlagshipConstant::HEADER_X_SDK_VERSION => FlagshipConstant::SDK_VERSION,
-                FlagshipConstant::HEADER_CONTENT_TYPE  => FlagshipConstant::HEADER_APPLICATION_JSON,
-                FlagshipConstant::HEADER_X_SDK_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
-               ];
+            FlagshipConstant::HEADER_X_API_KEY     => $this->config->getApiKey(),
+            FlagshipConstant::HEADER_X_SDK_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::HEADER_CONTENT_TYPE  => FlagshipConstant::HEADER_APPLICATION_JSON,
+            FlagshipConstant::HEADER_X_SDK_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+        ];
     }
 
     /**
@@ -322,8 +322,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::HIT_SENT_SUCCESS,
                 [
-                 FlagshipConstant::SEND_ACTIVATE,
-                 $this->getLogFormat(null, $url, $requestBody, $headers, $this->getNow() - $now),
+                    FlagshipConstant::SEND_ACTIVATE,
+                    $this->getLogFormat(null, $url, $requestBody, $headers, $this->getNow() - $now),
                 ]
             );
 
@@ -342,7 +342,18 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         } catch (Exception $exception) {
             $this->cacheHit($this->activatePoolQueue);
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)->setLogLevel(LogLevel::ERROR)->setVisitorId($this->flagshipInstanceId)->setFlagshipInstanceId($this->flagshipInstanceId)->setTraffic(100)->setConfig($this->config)->setHttpRequestBody($requestBody)->setHttpRequestHeaders($headers)->setHttpRequestMethod("POST")->setHttpRequestUrl($url)->setHttpResponseBody($exception->getMessage())->setHttpResponseTime($this->getNow() - $now);
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)
+                ->setHttpRequestBody($requestBody)
+                ->setHttpRequestHeaders($headers)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+                ->setFlagshipInstanceId($this->flagshipInstanceId)
+                ->setLogLevel(LogLevel::ERROR)
+                ->setTraffic(100)->setConfig($this->config)
+                ->setVisitorId($this->flagshipInstanceId);
+
             $this->addTroubleshootingHit($troubleshooting);
             $this->sendTroubleshootingQueue();
             $this->logErrorSprintf(
@@ -350,8 +361,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [
-                 FlagshipConstant::SEND_ACTIVATE,
-                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now),
+                    FlagshipConstant::SEND_ACTIVATE,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now),
                 ]
             );
         }
@@ -431,8 +442,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         }
 
         $header = [
-                   FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON,
-                  ];
+            FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON,
+        ];
 
         $requestBody = $batchHit->toApiKeys();
         $now = $this->getNow();
@@ -448,8 +459,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::HIT_SENT_SUCCESS,
                 [
-                 FlagshipConstant::SEND_BATCH,
-                 $this->getLogFormat(null, $url, $requestBody, $header, $this->getNow() - $now),
+                    FlagshipConstant::SEND_BATCH,
+                    $this->getLogFormat(null, $url, $requestBody, $header, $this->getNow() - $now),
                 ]
             );
 
@@ -460,7 +471,17 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
         } catch (Exception $exception) {
             $this->cacheHit($this->hitsPoolQueue);
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::SEND_BATCH_HIT_ROUTE_RESPONSE_ERROR)->setLogLevel(LogLevel::ERROR)->setVisitorId($this->flagshipInstanceId)->setFlagshipInstanceId($this->flagshipInstanceId)->setTraffic(100)->setConfig($this->config)->setHttpRequestBody($requestBody)->setHttpRequestHeaders($header)->setHttpRequestMethod("POST")->setHttpRequestUrl($url)->setHttpResponseBody($exception->getMessage())->setHttpResponseTime($this->getNow() - $now);
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_BATCH_HIT_ROUTE_RESPONSE_ERROR)
+                ->setLogLevel(LogLevel::ERROR)
+                ->setFlagshipInstanceId($this->flagshipInstanceId)
+                ->setHttpRequestBody($requestBody)
+                ->setHttpRequestHeaders($header)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+                ->setTraffic(100)->setConfig($this->config)
+                ->setVisitorId($this->flagshipInstanceId);
             $this->addTroubleshootingHit($troubleshooting);
             $this->sendTroubleshootingQueue();
             $this->logErrorSprintf(
@@ -468,8 +489,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [
-                 FlagshipConstant::SEND_BATCH,
-                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now),
+                    FlagshipConstant::SEND_BATCH,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now),
                 ]
             );
         }
@@ -491,15 +512,15 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
 
             foreach ($hits as $hit) {
                 $hitData = [
-                            HitCacheFields::VERSION => 1,
-                            HitCacheFields::DATA    => [
-                                                        HitCacheFields::VISITOR_ID   => $hit->getVisitorId(),
-                                                        HitCacheFields::ANONYMOUS_ID => $hit->getAnonymousId(),
-                                                        HitCacheFields::TYPE         => $hit->getType(),
-                                                        HitCacheFields::CONTENT      => $hit->toArray(),
-                                                        HitCacheFields::TIME         => $this->getNow(),
-                                                       ],
-                           ];
+                    HitCacheFields::VERSION => 1,
+                    HitCacheFields::DATA    => [
+                        HitCacheFields::VISITOR_ID   => $hit->getVisitorId(),
+                        HitCacheFields::ANONYMOUS_ID => $hit->getAnonymousId(),
+                        HitCacheFields::TYPE         => $hit->getType(),
+                        HitCacheFields::CONTENT      => $hit->toArray(),
+                        HitCacheFields::TIME         => $this->getNow(),
+                    ],
+                ];
 
                 $data[$hit->getKey()] = $hitData;
             }
@@ -518,8 +539,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::PROCESS_CACHE,
                 FlagshipConstant::HIT_CACHE_ERROR,
                 [
-                 "cacheHit",
-                 $exception->getMessage(),
+                    "cacheHit",
+                    $exception->getMessage(),
                 ]
             );
         }
@@ -550,8 +571,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::PROCESS_CACHE,
                 FlagshipConstant::HIT_CACHE_ERROR,
                 [
-                 "flushHits",
-                 $exception->getMessage(),
+                    "flushHits",
+                    $exception->getMessage(),
                 ]
             );
         }
@@ -575,8 +596,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::PROCESS_CACHE,
                 FlagshipConstant::HIT_CACHE_ERROR,
                 [
-                 "flushAllHits",
-                 $exception->getMessage(),
+                    "flushAllHits",
+                    $exception->getMessage(),
                 ]
             );
         }
@@ -648,8 +669,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::SEND_TROUBLESHOOTING,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [
-                 FlagshipConstant::SEND_TROUBLESHOOTING,
-                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, [], $this->getNow() - $now),
+                    FlagshipConstant::SEND_TROUBLESHOOTING,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, [], $this->getNow() - $now),
                 ]
             );
         }
@@ -697,8 +718,8 @@ abstract class BatchingCachingStrategyAbstract implements TrackingManagerCommonI
                 FlagshipConstant::SEND_USAGE_HIT,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [
-                 FlagshipConstant::SEND_USAGE_HIT,
-                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, [], $this->getNow() - $now),
+                    FlagshipConstant::SEND_USAGE_HIT,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, [], $this->getNow() - $now),
                 ]
             );
         }

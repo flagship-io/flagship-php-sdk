@@ -16,6 +16,8 @@ class FlagshipConstant
 
     public const DEFAULT_HIT_CACHE_TIME_MS = 14400000;
 
+    public const MAX_ACTIVATE_HIT_PER_BATCH = 100;
+
     /**
      * SDK language
      */

@@ -178,14 +178,11 @@ class DefaultStrategy extends StrategyAbstract
      * @param string $functionName
      * @return void
      */
-    private function logDeactivate(string $functionName): void
+    private function logXpcWarning(string $functionName): void
     {
-        $this->logError(
+        $this->logWarning(
             $this->getVisitor()->getConfig(),
-            sprintf(
-                FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
-                $functionName
-            ),
+            FlagshipConstant::XPC_BUCKETING_WARNING,
             [FlagshipConstant::TAG => $functionName]
         );
     }
@@ -196,8 +193,10 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function authenticate(string $visitorId): void
     {
-        if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
-            $this->logDeactivate(__FUNCTION__);
+        $visitorCacheInstance = $this->getConfig()->getVisitorCacheImplementation();
+        $decisionMode = $this->getConfig()->getDecisionMode();
+        if ($decisionMode == DecisionMode::BUCKETING && $visitorCacheInstance === null) {
+            $this->logXpcWarning(__FUNCTION__);
             return;
         }
 
@@ -243,8 +242,10 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function unauthenticate(): void
     {
-        if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
-            $this->logDeactivate(__FUNCTION__);
+        $visitorCacheInstance = $this->getConfig()->getVisitorCacheImplementation();
+        $decisionMode = $this->getConfig()->getDecisionMode();
+        if ($decisionMode == DecisionMode::BUCKETING && $visitorCacheInstance === null) {
+            $this->logXpcWarning(__FUNCTION__);
             return;
         }
 

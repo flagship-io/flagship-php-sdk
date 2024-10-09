@@ -97,6 +97,8 @@ class FlagshipConstant
     public const SDK_STARTED_INFO = "Flagship SDK (version: %s) READY";
     public const FLAGSHIP_SDK = "Flagship SDK";
 
+    public const XPC_BUCKETING_WARNING = "Experience continuity is disabled on bucketing mode when visitor cache is not set ";
+
 
     //Tag
     public const TAG = 'TAG';

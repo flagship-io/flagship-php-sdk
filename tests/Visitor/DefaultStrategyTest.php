@@ -34,10 +34,14 @@ use Flagship\Utils\ConfigManager;
 use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Config\BucketingConfig;
+use Flagship\Enum\VisitorCacheStatus;
 use Flagship\Config\DecisionApiConfig;
+use Flagship\Utils\ContainerInterface;
 use Flagship\Enum\TroubleshootingLabel;
+use Flagship\Utils\HttpClientInterface;
 use Flagship\Api\TrackingManagerAbstract;
 use PHPUnit\Framework\MockObject\MockObject;
+use Flagship\Cache\IVisitorCacheImplementation;
 
 
 class DefaultStrategyTest extends TestCase
@@ -98,7 +102,9 @@ class DefaultStrategyTest extends TestCase
 
     public function testUpdateContext()
     {
-        //Mock logManger
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -118,9 +124,16 @@ class DefaultStrategyTest extends TestCase
             'age' => 25
         ];
 
+        /**
+         * @var ApiManager|MockObject $decisionManager
+         */
         $decisionManager = $this->getMockBuilder(ApiManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackingManager
+         */
         $trackingManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             ['sendHit'],
@@ -213,9 +226,15 @@ class DefaultStrategyTest extends TestCase
             'name' => 'visitor_name',
             'age' => 25
         ];
+        /**
+         * @var ApiManager|MockObject $decisionManager
+         */
         $decisionManager = $this->getMockBuilder(ApiManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackingManager
+         */
         $trackingManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             ['sendHit'],
@@ -253,9 +272,15 @@ class DefaultStrategyTest extends TestCase
             'age' => 25
         ];
         $config = new DecisionApiConfig('envId', 'apiKey');
+        /**
+         * @var ApiManager|MockObject $decisionManager
+         */
         $decisionManager = $this->getMockBuilder(ApiManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackingManager
+         */
         $trackingManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             ['sendHit'],
@@ -277,7 +302,9 @@ class DefaultStrategyTest extends TestCase
 
     public function testAuthenticate()
     {
-        //Mock logManger
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
         $logManagerStub = $this->getMockForAbstractClass(
             LoggerInterface::class,
             [],
@@ -285,9 +312,12 @@ class DefaultStrategyTest extends TestCase
             true,
             true,
             true,
-            ['error']
+            ['error', 'warning']
         );
 
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackerManager
+         */
         $trackerManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             ['sendConsentHit'],
@@ -304,6 +334,9 @@ class DefaultStrategyTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
+        /**
+         * @var ApiManager|MockObject $decisionManager
+         */
         $decisionManager = $this->getMockBuilder(ApiManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -313,7 +346,7 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
 
         $authenticateName = "authenticate";
-        $logManagerStub->expects($this->exactly(3))
+        $logManagerStub->expects($this->exactly(2))
             ->method('error')
             ->with(
                 $this->logicalOr(
@@ -323,10 +356,6 @@ class DefaultStrategyTest extends TestCase
                     ),
                     sprintf(
                         FlagshipConstant::FLAGSHIP_VISITOR_ALREADY_AUTHENTICATE,
-                        $authenticateName
-                    ),
-                    sprintf(
-                        FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
                         $authenticateName
                     )
                 ),
@@ -354,10 +383,94 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy->authenticate($newVisitorId2);
         $this->assertSame($visitorId, $visitor->getAnonymousId());
         $this->assertSame($newVisitorId, $visitor->getVisitorId());
+    }
 
-        //Test with bucketing mode
-        $newVisitorId2 = "new_visitor_id";
-        $visitor->setConfig((new BucketingConfig("http:127.0.0.1:3000"))->setLogManager($logManagerStub));
+    public function testAuthenticateBucketingMode()
+    {
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
+        $logManagerStub = $this->getMockForAbstractClass(
+            LoggerInterface::class,
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error', 'warning']
+        );
+
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackerManager
+         */
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        /**
+         * @var IVisitorCacheImplementation|MockObject $visitorCache
+         */
+        $visitorCache = $this->getMockForAbstractClass(
+            IVisitorCacheImplementation::class,
+            [],
+            '',
+            false
+        );
+
+        $config = new BucketingConfig('http:127.0.0.1:3000', 'envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        /**
+         * @var ApiManager|MockObject $decisionManager
+         */
+        $decisionManager = $this->getMockBuilder(ApiManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $configManager = new ConfigManager($config, $decisionManager, $trackerManager);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
+
+        $authenticateName = "authenticate";
+
+        $logManagerStub->expects($this->exactly(1))
+            ->method('warning')
+            ->with(
+                $this->logicalOr(
+                    sprintf(
+                        FlagshipConstant::XPC_BUCKETING_WARNING,
+                        $authenticateName
+                    ),
+                ),
+                [FlagshipConstant::TAG => $authenticateName]
+            );
+
+        //Test authenticate with null visitorId
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $defaultStrategy->authenticate("new_visitor_id_xpc");
+
+        $config->setVisitorCacheImplementation($visitorCache);
+
+        $newVisitorId = "new_visitor_id";
+        $defaultStrategy->authenticate($newVisitorId);
+        $this->assertSame($visitorId, $visitor->getAnonymousId());
+        $this->assertSame($newVisitorId, $visitor->getVisitorId());
+        $this->assertSame(FSFetchReason::AUTHENTICATE, $visitor->getFetchStatus()->getReason());
+        $this->assertSame(FSFetchStatus::FETCH_REQUIRED, $visitor->getFetchStatus()->getStatus());
+
+        //
+        $newVisitorId2 = "new_visitor_id_2";
         $defaultStrategy->authenticate($newVisitorId2);
         $this->assertSame($visitorId, $visitor->getAnonymousId());
         $this->assertSame($newVisitorId, $visitor->getVisitorId());
@@ -365,7 +478,9 @@ class DefaultStrategyTest extends TestCase
 
     public function testUnauthenticate()
     {
-        //Mock logManger
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -376,6 +491,9 @@ class DefaultStrategyTest extends TestCase
             ['error']
         );
 
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackerManager
+         */
         $trackerManager = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             ['sendConsentHit'],
@@ -390,6 +508,9 @@ class DefaultStrategyTest extends TestCase
         $config = new DecisionApiConfig('envId', 'apiKey');
         $config->setLogManager($logManagerStub);
 
+        /**
+         * @var ApiManager|MockObject $decisionManager
+         */
         $decisionManager = $this->getMockBuilder(ApiManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -398,17 +519,15 @@ class DefaultStrategyTest extends TestCase
 
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
-        $visitor->setConfig((new BucketingConfig("http://127.0.0.1:3000"))->setLogManager($logManagerStub));
+        $config->setLogManager($logManagerStub);
+        $visitor->setConfig($config);
+        // $visitor->setConfig((new BucketingConfig("http://127.0.0.1:3000"))->setLogManager($logManagerStub));
 
         $unauthenticateName = "unauthenticate";
-        $logManagerStub->expects($this->exactly(2))
+        $logManagerStub->expects($this->exactly(1))
             ->method('error')
             ->with(
                 $this->logicalOr(
-                    sprintf(
-                        FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
-                        $unauthenticateName
-                    ),
                     FlagshipConstant::FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE
                 ),
                 [FlagshipConstant::TAG => $unauthenticateName]
@@ -417,10 +536,89 @@ class DefaultStrategyTest extends TestCase
         $defaultStrategy = new DefaultStrategy($visitor);
         $defaultStrategy->unauthenticate();
 
-        //Test Visitor not authenticate yet
+        //Test valid data
+        $newVisitorId = "newVisitorId";
+        $defaultStrategy->authenticate($newVisitorId);
+
+        $anonymous = $visitor->getAnonymousId();
+        $defaultStrategy->unauthenticate();
+        $this->assertNull($visitor->getAnonymousId());
+        $this->assertSame($anonymous, $visitor->getVisitorId());
+        $this->assertSame(FSFetchReason::UNAUTHENTICATE, $visitor->getFetchStatus()->getReason());
+        $this->assertSame(FSFetchStatus::FETCH_REQUIRED, $visitor->getFetchStatus()->getStatus());
+    }
+
+    public function testUnauthenticateBucketingMode()
+    {
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error', 'warning']
+        );
+
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackerManager
+         */
+        $trackerManager = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendConsentHit'],
+            '',
+            false
+        );
+
+        /**
+         * @var IVisitorCacheImplementation|MockObject $visitorCache
+         */
+        $visitorCache = $this->getMockForAbstractClass(
+            IVisitorCacheImplementation::class,
+            [],
+            '',
+            false
+        );
+
+
+        $visitorId = "visitor_id";
+
+        $config = new BucketingConfig("http://127.0.0.1:3000", 'envId', 'apiKey');
+        $config->setLogManager($logManagerStub);
+
+        /**
+         * @var ApiManager|MockObject $decisionManager
+         */
+        $decisionManager = $this->getMockBuilder(ApiManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $configManager = new ConfigManager($config, $decisionManager, $trackerManager);
+
+        $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
+
         $config->setLogManager($logManagerStub);
         $visitor->setConfig($config);
+
+        $unauthenticateName = "unauthenticate";
+
+        $logManagerStub->expects($this->exactly(1))
+            ->method('warning')
+            ->with(
+                $this->logicalOr(
+                    FlagshipConstant::XPC_BUCKETING_WARNING
+                ),
+                [FlagshipConstant::TAG => $unauthenticateName]
+            );
+
+
+        $defaultStrategy = new DefaultStrategy($visitor);
         $defaultStrategy->unauthenticate();
+
+        $config->setVisitorCacheImplementation($visitorCache);
 
         //Test valid data
         $newVisitorId = "newVisitorId";
@@ -1067,8 +1265,11 @@ class DefaultStrategyTest extends TestCase
             'age' => 25
         ];
 
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
         $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
+            LoggerInterface::class,
             [],
             "",
             true,
@@ -1089,10 +1290,16 @@ class DefaultStrategyTest extends TestCase
             ['lookupVisitor']
         );
 
+        /**
+         * @var ApiManager|MockObject $apiManager
+         */
         $apiManager = $this->getMockBuilder(ApiManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackingManagerMock
+         */
         $trackingManagerMock = $this->getMockForAbstractClass(
             'Flagship\Api\TrackingManagerAbstract',
             ['sendHit'],
@@ -1169,6 +1376,9 @@ class DefaultStrategyTest extends TestCase
             ]
         ];
 
+        /**
+         * @var IVisitorCacheImplementation|MockObject $VisitorCacheImplementationMock
+         */
         $VisitorCacheImplementationMock->expects($this->exactly(7))
             ->method("lookupVisitor")
             ->with($visitorId)
@@ -1237,6 +1447,167 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame($visitorCache6, $visitor->visitorCache);
     }
 
+    public function testLookupVisitorXpc()
+    {
+        $config = new DecisionApiConfig('envId', 'apiKey');
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
+        $logManagerStub = $this->getMockForAbstractClass(
+            LoggerInterface::class,
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error', 'info']
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['lookupVisitor']
+        );
+
+        /**
+         * @var ApiManager|MockObject $apiManager
+         */
+        $apiManager = $this->getMockBuilder(ApiManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackingManagerMock
+         */
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            'Flagship\Api\TrackingManagerAbstract',
+            ['sendHit'],
+            '',
+            false
+        );
+
+        $configManager = new ConfigManager($config, $apiManager, $trackingManagerMock);
+
+        $container = new Container();
+
+        $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $differentVisitorId = "different visitorID";
+
+        $anonymousId = "anonymousId";
+
+        $visitorCache = [
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::CAMPAIGNS => [
+                    [
+                        FlagshipField::FIELD_CAMPAIGN_ID => "c8pimlr7n0ig3a0pt2ig",
+                        FlagshipField::FIELD_VARIATION_GROUP_ID => "c8pimlr7n0ig3a0pt2jg",
+                        FlagshipField::FIELD_VARIATION_ID => "c8pimlr7n0ig3a0pt2kg",
+                        FlagshipField::FIELD_IS_REFERENCE => false,
+                        FlagshipField::FIELD_CAMPAIGN_TYPE => "ab",
+                        StrategyAbstract::ACTIVATED => false,
+                        StrategyAbstract::FLAGS => [
+                            "Number" => 5,
+                            "isBool" => false,
+                            "background" => "EE3300",
+                            "borderColor" => "blue",
+                            "Null" => null,
+                            "Empty" => ""
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $visitorCacheAnonymous = [
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $anonymousId,
+                StrategyAbstract::CAMPAIGNS => [
+                    [
+                        FlagshipField::FIELD_CAMPAIGN_ID => $anonymousId . "c8pimlr7n0ig3a0pt2ig",
+                        FlagshipField::FIELD_VARIATION_GROUP_ID => $anonymousId . "c8pimlr7n0ig3a0pt2jg",
+                        FlagshipField::FIELD_VARIATION_ID => $anonymousId . "c8pimlr7n0ig3a0pt2kg",
+                        FlagshipField::FIELD_IS_REFERENCE => false,
+                        FlagshipField::FIELD_CAMPAIGN_TYPE => "ab",
+                        StrategyAbstract::ACTIVATED => false,
+                        StrategyAbstract::FLAGS => [
+                            "Number" => 5,
+                            "isBool" => false,
+                            "background" => "EE3300",
+                            "borderColor" => "blue",
+                            "Null" => null,
+                            "Empty" => ""
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        /**
+         * @var IVisitorCacheImplementation|MockObject $VisitorCacheImplementationMock
+         */
+        $VisitorCacheImplementationMock->expects($this->exactly(7))
+            ->method("lookupVisitor")->willReturnCallback(function ($id) use ($visitorCache, $visitorId, $anonymousId, $visitorCacheAnonymous) {
+                if ($id === $visitorId) {
+                    return $visitorCache;
+                }
+                if ($id === $anonymousId) {
+                    return $visitorCacheAnonymous;
+                }
+                
+                return [];
+            });
+
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+
+        $this->assertCount(0, $visitor->visitorCache);
+
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache, $visitor->visitorCache);
+        $this->assertSame(VisitorCacheStatus::VISITOR_ID_CACHE, $visitor->getVisitorCacheStatus());
+
+        $visitor->setAnonymousId( $anonymousId);
+
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertSame($visitorCache, $visitor->visitorCache);
+        $this->assertSame(VisitorCacheStatus::VISITOR_ID_CACHE_ONLY, $visitor->getVisitorCacheStatus());
+
+        $visitor->setVisitorId("new_visitor_id");
+
+        $defaultStrategy->lookupVisitor();
+        $this->assertEquals(VisitorCacheStatus::ANONYMOUS_ID_CACHE, $visitor->getVisitorCacheStatus());
+        $this->assertSame($visitorCacheAnonymous, $visitor->visitorCache);
+
+        $visitor->setAnonymousId("another_anonymous_id");
+        $visitor->setVisitorId("another_visitor_id");
+        $defaultStrategy->lookupVisitor();
+
+        $this->assertEquals(VisitorCacheStatus::NONE, $visitor->getVisitorCacheStatus());
+        $this->assertCount(0, $visitor->visitorCache);
+
+    }
+
     public function testCacheVisitor()
     {
 
@@ -1247,6 +1618,10 @@ class DefaultStrategyTest extends TestCase
         ];
 
         $config = new DecisionApiConfig('envId', 'apiKey');
+
+        /**
+         * @var HttpClientInterface|MockObject $httpClientMock
+         */
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             ['post'],
@@ -1266,6 +1641,9 @@ class DefaultStrategyTest extends TestCase
 
         $decisionManager = new ApiManager($httpClientMock, $config);
 
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
         $logManagerStub = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -1276,6 +1654,9 @@ class DefaultStrategyTest extends TestCase
             ['error', 'info']
         );
 
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackingManagerMock
+         */
         $trackingManagerMock = $this->getMockForAbstractClass(
             "Flagship\Api\TrackingManagerAbstract",
             [],
@@ -1288,6 +1669,9 @@ class DefaultStrategyTest extends TestCase
 
         $config->setLogManager($logManagerStub);
 
+        /**
+         * @var IVisitorCacheImplementation|MockObject $VisitorCacheImplementationMock
+         */
         $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
             "Flagship\Cache\IVisitorCacheImplementation",
             [],
@@ -1300,6 +1684,9 @@ class DefaultStrategyTest extends TestCase
 
         $configManager = new ConfigManager($config, $decisionManager, $trackingManagerMock);
 
+        /**
+         * @var ContainerInterface|MockObject $containerMock
+         */
         $containerMock = $this->getMockForAbstractClass(
             'Flagship\Utils\ContainerInterface',
             ['get'],
@@ -1417,6 +1804,174 @@ class DefaultStrategyTest extends TestCase
             );
 
         $visitor->fetchFlags();
+    }
+
+    public function testCacheVisitorXpc()
+    {
+
+        $visitorId = "visitor_id";
+        $visitorContext = [
+            'name' => 'visitor_name',
+            'age' => 25
+        ];
+
+        $config = new DecisionApiConfig('envId', 'apiKey');
+
+        /**
+         * @var HttpClientInterface|MockObject $httpClientMock
+         */
+        $httpClientMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\HttpClientInterface',
+            ['post'],
+            '',
+            false
+        );
+
+
+        $decisionManager = new ApiManager($httpClientMock, $config);
+
+        /**
+         * @var LoggerInterface|MockObject $logManagerStub
+         */
+        $logManagerStub = $this->getMockForAbstractClass(
+            'Psr\Log\LoggerInterface',
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['error', 'info']
+        );
+
+        /**
+         * @var TrackingManagerAbstract|MockObject $trackingManagerMock
+         */
+        $trackingManagerMock = $this->getMockForAbstractClass(
+            "Flagship\Api\TrackingManagerAbstract",
+            [],
+            "",
+            false,
+            false,
+            true,
+            ["setTroubleshootingData", "addTroubleshootingHit"]
+        );
+
+        $config->setLogManager($logManagerStub);
+
+        /**
+         * @var IVisitorCacheImplementation|MockObject $VisitorCacheImplementationMock
+         */
+        $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
+            "Flagship\Cache\IVisitorCacheImplementation",
+            [],
+            "",
+            true,
+            true,
+            true,
+            ['lookupVisitor', 'cacheVisitor']
+        );
+
+        $configManager = new ConfigManager($config, $decisionManager, $trackingManagerMock);
+
+        /**
+         * @var ContainerInterface|MockObject $containerMock
+         */
+        $containerMock = $this->getMockForAbstractClass(
+            'Flagship\Utils\ContainerInterface',
+            ['get'],
+            '',
+            false
+        );
+
+        $containerGetMethod = function () {
+            $args = func_get_args();
+            $params = $args[1];
+            return new DefaultStrategy($params[0]);
+        };
+
+        $containerMock->method('get')->willReturnCallback($containerGetMethod);
+        $visitor = new VisitorDelegate(
+            $containerMock,
+            $configManager,
+            $visitorId,
+            false,
+            $visitorContext,
+            true
+        );
+
+        $defaultStrategy = new DefaultStrategy($visitor);
+
+        $anonymousId = "anonymousId";
+
+        $visitorCache = [
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::ANONYMOUS_ID => null,
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => [],
+                StrategyAbstract::ASSIGNMENTS_HISTORY => []
+            ]
+        ];
+
+        $visitorCache2 = [
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $visitorId,
+                StrategyAbstract::ANONYMOUS_ID => $anonymousId,
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => [],
+                StrategyAbstract::ASSIGNMENTS_HISTORY => []
+            ]
+        ];
+
+        $visitorCacheAnonymous = [
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA => [
+                StrategyAbstract::VISITOR_ID => $anonymousId,
+                StrategyAbstract::ANONYMOUS_ID => null,
+                StrategyAbstract::CONSENT => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS => [],
+                StrategyAbstract::ASSIGNMENTS_HISTORY => []
+            ]
+        ];
+
+        $exception = new Exception("Message error");
+
+        $VisitorCacheImplementationMock->expects($this->exactly(4))
+            ->method("cacheVisitor")
+            ->with(
+                $this->logicalOr(
+                    $visitorId,
+                    $anonymousId
+                ),
+                $this->logicalOr(
+                    $visitorCache,
+                    $visitorCache2,
+                    $visitorCacheAnonymous
+                )
+            );
+
+        $config->setVisitorCacheImplementation($VisitorCacheImplementationMock);
+
+        $defaultStrategy->cacheVisitor();
+
+        $this->assertSame($visitorCache, $visitor->visitorCache);
+
+        $visitor->setAnonymousId($anonymousId);
+
+        $visitor->setVisitorCacheStatus(VisitorCacheStatus::ANONYMOUS_ID_CACHE);
+
+        $defaultStrategy->cacheVisitor();
+
+        $this->assertSame($visitorCache2, $visitor->visitorCache);
+
+        $visitor->setVisitorCacheStatus(VisitorCacheStatus::VISITOR_ID_CACHE_ONLY);
+
+        $defaultStrategy->cacheVisitor();
     }
 
     public function testFlushVisitor()

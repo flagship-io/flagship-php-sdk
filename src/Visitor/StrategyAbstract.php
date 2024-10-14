@@ -173,7 +173,7 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
         }
 
         if (!isset($data[self::CAMPAIGNS])) {
-            return true;
+            return false;
         }
 
         $campaigns = $data[self::CAMPAIGNS];
@@ -239,7 +239,6 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
                 $visitorCache = $visitorCacheInstance->lookupVisitor($this->visitor->getAnonymousId());
                 if ($visitorCache) {
                     $visitor->setVisitorCacheStatus(VisitorCacheStatus::ANONYMOUS_ID_CACHE);
-
                 }
             }
 
@@ -257,8 +256,8 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
 
             if ($visitor->getVisitorCacheStatus() === VisitorCacheStatus::VISITOR_ID_CACHE && $visitor->getAnonymousId()) {
                 $visitorCache = $visitorCacheInstance->lookupVisitor($this->visitor->getAnonymousId());
-                if (count($visitorCache) > 0) {
-                    $visitor->setVisitorCacheStatus(VisitorCacheStatus::VISITOR_ID_CACHE_ONLY);
+                if (is_array($visitorCache) && count($visitorCache) > 0) {
+                    $visitor->setVisitorCacheStatus(VisitorCacheStatus::VISITOR_ID_CACHE_WITH_ANONYMOUS_ID_CACHE);
                 }
             }
         } catch (Exception $exception) {
@@ -327,7 +326,8 @@ abstract class StrategyAbstract implements VisitorCoreInterface, VisitorFlagInte
 
             $visitorCacheInstance->cacheVisitor($visitor->getVisitorId(), $data);
 
-            if ($visitor->getAnonymousId() && $visitor->getVisitorCacheStatus() !== VisitorCacheStatus::ANONYMOUS_ID_CACHE) {
+            if ($visitor->getAnonymousId() && ($visitor->getVisitorCacheStatus() === VisitorCacheStatus::NONE ||
+                $visitor->getVisitorCacheStatus() === VisitorCacheStatus::VISITOR_ID_CACHE)) {
                 $anonymousData = [
                     self::VERSION => self::CURRENT_VERSION,
                     self::DATA    => [

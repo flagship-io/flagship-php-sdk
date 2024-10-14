@@ -1409,10 +1409,14 @@ class DefaultStrategyTest extends TestCase
         // test return empty array
         $defaultStrategy->lookupVisitor();
 
+        $this->assertEquals($visitor->getVisitorCacheStatus(), VisitorCacheStatus::NONE);
+
         $this->assertCount(0, $visitor->visitorCache);
 
         // test return array["version"=>1] only
         $defaultStrategy->lookupVisitor();
+
+        $this->assertEquals($visitor->getVisitorCacheStatus(), VisitorCacheStatus::VISITOR_ID_CACHE);
 
         $this->assertCount(0, $visitor->visitorCache);
 
@@ -1420,29 +1424,40 @@ class DefaultStrategyTest extends TestCase
 
         $defaultStrategy->lookupVisitor();
 
+        $this->assertEquals($visitor->getVisitorCacheStatus(), VisitorCacheStatus::VISITOR_ID_CACHE);
+
         $this->assertCount(0, $visitor->visitorCache);
+
 
         // test return cache without campaings
 
         $defaultStrategy->lookupVisitor();
 
-        $this->assertSame($visitorCache3, $visitor->visitorCache);
+        $this->assertEquals($visitor->getVisitorCacheStatus(), VisitorCacheStatus::VISITOR_ID_CACHE);
+
+        $this->assertCount(0, $visitor->visitorCache);
 
         // test return cache with is_array(campaings) === false
 
         $defaultStrategy->lookupVisitor();
 
-        $this->assertSame($visitorCache3, $visitor->visitorCache);
+        $this->assertEquals($visitor->getVisitorCacheStatus(), VisitorCacheStatus::VISITOR_ID_CACHE);
+
+        $this->assertCount(0, $visitor->visitorCache);
 
         // test return cache with invalid campaigns
 
         $defaultStrategy->lookupVisitor();
 
-        $this->assertSame($visitorCache3, $visitor->visitorCache);
+        $this->assertEquals($visitor->getVisitorCacheStatus(), VisitorCacheStatus::VISITOR_ID_CACHE);
+
+        $this->assertCount(0, $visitor->visitorCache);
 
         // test return cache with valid cache
 
         $defaultStrategy->lookupVisitor();
+
+        $this->assertEquals($visitor->getVisitorCacheStatus(), VisitorCacheStatus::VISITOR_ID_CACHE);
 
         $this->assertSame($visitorCache6, $visitor->visitorCache);
     }
@@ -1571,7 +1586,7 @@ class DefaultStrategyTest extends TestCase
                 if ($id === $anonymousId) {
                     return $visitorCacheAnonymous;
                 }
-                
+
                 return [];
             });
 
@@ -1586,12 +1601,12 @@ class DefaultStrategyTest extends TestCase
         $this->assertSame($visitorCache, $visitor->visitorCache);
         $this->assertSame(VisitorCacheStatus::VISITOR_ID_CACHE, $visitor->getVisitorCacheStatus());
 
-        $visitor->setAnonymousId( $anonymousId);
+        $visitor->setAnonymousId($anonymousId);
 
         $defaultStrategy->lookupVisitor();
 
         $this->assertSame($visitorCache, $visitor->visitorCache);
-        $this->assertSame(VisitorCacheStatus::VISITOR_ID_CACHE_ONLY, $visitor->getVisitorCacheStatus());
+        $this->assertEquals(VisitorCacheStatus::VISITOR_ID_CACHE_WITH_ANONYMOUS_ID_CACHE, $visitor->getVisitorCacheStatus());
 
         $visitor->setVisitorId("new_visitor_id");
 
@@ -1605,7 +1620,6 @@ class DefaultStrategyTest extends TestCase
 
         $this->assertEquals(VisitorCacheStatus::NONE, $visitor->getVisitorCacheStatus());
         $this->assertCount(0, $visitor->visitorCache);
-
     }
 
     public function testCacheVisitor()
@@ -1645,7 +1659,7 @@ class DefaultStrategyTest extends TestCase
          * @var LoggerInterface|MockObject $logManagerStub
          */
         $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
+            LoggerInterface::class,
             [],
             "",
             true,
@@ -1658,7 +1672,7 @@ class DefaultStrategyTest extends TestCase
          * @var TrackingManagerAbstract|MockObject $trackingManagerMock
          */
         $trackingManagerMock = $this->getMockForAbstractClass(
-            "Flagship\Api\TrackingManagerAbstract",
+            TrackingManagerAbstract::class,
             [],
             "",
             false,
@@ -1673,7 +1687,7 @@ class DefaultStrategyTest extends TestCase
          * @var IVisitorCacheImplementation|MockObject $VisitorCacheImplementationMock
          */
         $VisitorCacheImplementationMock = $this->getMockForAbstractClass(
-            "Flagship\Cache\IVisitorCacheImplementation",
+            IVisitorCacheImplementation::class,
             [],
             "",
             true,
@@ -1688,7 +1702,7 @@ class DefaultStrategyTest extends TestCase
          * @var ContainerInterface|MockObject $containerMock
          */
         $containerMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\ContainerInterface',
+            ContainerInterface::class,
             ['get'],
             '',
             false
@@ -1794,6 +1808,14 @@ class DefaultStrategyTest extends TestCase
         $functionName = "cacheVisitor";
 
         $visitor->fetchFlags();
+
+        $VisitorCacheImplementationMock->expects($this->exactly(2))
+            ->method("lookupVisitor")
+            ->with(
+                $visitorId
+            )->willReturn(
+                $visitorCache
+            );
 
         $visitor->fetchFlags();
 
@@ -1941,7 +1963,7 @@ class DefaultStrategyTest extends TestCase
 
         $exception = new Exception("Message error");
 
-        $VisitorCacheImplementationMock->expects($this->exactly(4))
+        $VisitorCacheImplementationMock->expects($this->exactly(7))
             ->method("cacheVisitor")
             ->with(
                 $this->logicalOr(
@@ -1969,7 +1991,15 @@ class DefaultStrategyTest extends TestCase
 
         $this->assertSame($visitorCache2, $visitor->visitorCache);
 
-        $visitor->setVisitorCacheStatus(VisitorCacheStatus::VISITOR_ID_CACHE_ONLY);
+        $visitor->setVisitorCacheStatus(VisitorCacheStatus::NONE);
+
+        $defaultStrategy->cacheVisitor();
+
+        $visitor->setVisitorCacheStatus(VisitorCacheStatus::VISITOR_ID_CACHE);
+
+        $defaultStrategy->cacheVisitor();
+
+        $visitor->setVisitorCacheStatus(VisitorCacheStatus::VISITOR_ID_CACHE_WITH_ANONYMOUS_ID_CACHE);
 
         $defaultStrategy->cacheVisitor();
     }

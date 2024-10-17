@@ -2,20 +2,24 @@
 
 namespace Flagship\Config;
 
-use Flagship\Enum\CacheStrategy;
-use Flagship\Enum\DecisionMode;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipField;
-use Flagship\Enum\LogLevel;
-use Flagship\Utils\Utils;
-use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use Flagship\Utils\Utils;
+use Flagship\Enum\LogLevel;
+use Psr\Log\LoggerInterface;
+use Flagship\Enum\DecisionMode;
+use PHPUnit\Framework\TestCase;
+use Flagship\Enum\CacheStrategy;
+use Flagship\Enum\FlagshipField;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Cache\IHitCacheImplementation;
+use PHPUnit\Framework\MockObject\MockObject;
+use Flagship\Cache\IVisitorCacheImplementation;
 
 class FlagshipConfigTest extends TestCase
 {
     public function configData(): array
     {
-        return ['envId' => 'env_value','apiKey' => 'key_value'];
+        return ['envId' => 'env_value', 'apiKey' => 'key_value'];
     }
 
 
@@ -75,6 +79,27 @@ class FlagshipConfigTest extends TestCase
         $this->assertEquals(DecisionMode::DECISION_API, $config->getDecisionMode());
     }
 
+    public function testHitDeduplicationTime()
+    {
+        $configData = $this->configData();
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
+        $this->assertEquals(FlagshipConstant::DEFAULT_DEDUPLICATION_TIME, $config->getHitDeduplicationTime());
+
+        $time = 5000;
+        $config->setHitDeduplicationTime($time);
+        $this->assertEquals($time, $config->getHitDeduplicationTime());
+    }
+
+    public function testSetDisableDeveloperUsageTracking()
+    {
+        $configData = $this->configData();
+        $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
+        $this->assertFalse($config->disableDeveloperUsageTracking());
+
+        $config->setDisableDeveloperUsageTracking(true);
+        $this->assertTrue($config->disableDeveloperUsageTracking());
+    }
+
 
     public function testConstruct()
     {
@@ -89,11 +114,17 @@ class FlagshipConfigTest extends TestCase
         $config->setCacheStrategy(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE);
         $this->assertSame(CacheStrategy::NO_BATCHING_AND_CACHING_ON_FAILURE, $config->getCacheStrategy());
 
+        /**
+         * @var IVisitorCacheImplementation|MockObject $visitorCacheImplementation
+         */
         $visitorCacheImplementation = $this->getMockForAbstractClass("Flagship\Cache\IVisitorCacheImplementation");
         $config->setVisitorCacheImplementation($visitorCacheImplementation);
 
         $this->assertSame($visitorCacheImplementation, $config->getVisitorCacheImplementation());
 
+        /**
+         * @var IHitCacheImplementation|MockObject $hitCacheImplementation
+         */
         $hitCacheImplementation = $this->getMockForAbstractClass("Flagship\Cache\IHitCacheImplementation");
         $config->setHitCacheImplementation($hitCacheImplementation);
 
@@ -117,6 +148,9 @@ class FlagshipConfigTest extends TestCase
 
     public function testSetStatusChangedCallback()
     {
+        /**
+         * @var  LoggerInterface|MockObject $logManagerMock
+         */
         $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
 
         $config = new DecisionApiConfig();
@@ -125,8 +159,7 @@ class FlagshipConfigTest extends TestCase
 
         $this->assertNull($config->getOnSdkStatusChanged());
 
-        $callable = function () {
-        };
+        $callable = function () {};
         $config->setOnSdkStatusChanged($callable);
 
         $this->assertSame($callable, $config->getOnSdkStatusChanged());
@@ -134,6 +167,9 @@ class FlagshipConfigTest extends TestCase
 
     public function testSetOnVisitorExposure()
     {
+        /**
+         * @var  LoggerInterface|MockObject $logManagerMock
+         */
         $logManagerMock = $this->getMockForAbstractClass('Psr\Log\LoggerInterface');
 
         $config = new DecisionApiConfig();
@@ -142,8 +178,7 @@ class FlagshipConfigTest extends TestCase
 
         $this->assertNull($config->getOnVisitorExposed());
 
-        $callable = function () {
-        };
+        $callable = function () {};
         $config->setOnVisitorExposed($callable);
 
         $this->assertSame($callable, $config->getOnVisitorExposed());
@@ -165,8 +200,14 @@ class FlagshipConfigTest extends TestCase
             json_encode($data),
             json_encode($config)
         );
+
+        /**
+         * @var  LoggerInterface|MockObject $logManager
+         */
         $logManager = $this->getMockForAbstractClass("Psr\Log\LoggerInterface");
+
         $config->setLogManager($logManager);
+
         $this->assertSame($logManager, $config->getLogManager());
     }
 

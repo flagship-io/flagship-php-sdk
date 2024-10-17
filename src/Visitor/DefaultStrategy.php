@@ -460,6 +460,22 @@ class DefaultStrategy extends StrategyAbstract
             return;
         }
 
+        $hitInstanceItem = $hit->toApiKeys();
+        unset($hitInstanceItem[FlagshipConstant::QT_API_ITEM]);
+
+        if ($this->isDeDuplicated(json_encode($hitInstanceItem), $this->getConfig()->getHitDeduplicationTime())) {
+            $logData = [
+                "hIt" => $hitInstanceItem
+            ];
+            $this->logDebugSprintf(
+                $this->getConfig(),
+                FlagshipConstant::ADD_HIT,
+                FlagshipConstant::HIT_DEDUPLICATED,
+                [$logData]
+            );
+            return;
+        }
+
         $trackingManager->addHit($hit);
 
         $troubleshooting = new Troubleshooting();
@@ -506,6 +522,22 @@ class DefaultStrategy extends StrategyAbstract
             ->setVisitorId($visitor->getVisitorId())
             ->setAnonymousId($visitor->getAnonymousId())
             ->setConfig($this->getConfig());
+
+        $hitInstanceItem = $activateHit->toApiKeys();
+        unset($hitInstanceItem[FlagshipConstant::QT_API_ITEM]);
+
+        if ($this->isDeDuplicated(json_encode($hitInstanceItem), $this->getConfig()->getHitDeduplicationTime())) {
+            $logData = [
+                "hit" => $hitInstanceItem
+            ];
+            $this->logDebugSprintf(
+                $this->getConfig(),
+                FlagshipConstant::ADD_HIT,
+                FlagshipConstant::ACTIVATE_DEDUPLICATED,
+                [$logData]
+            );
+            return;
+        }
 
         $this->getTrackingManager()->activateFlag($activateHit);
 

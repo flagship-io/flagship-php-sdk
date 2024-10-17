@@ -2,7 +2,7 @@ name: CI PHP 8
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, q2 ]
 
 jobs:
   build:

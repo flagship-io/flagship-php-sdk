@@ -61,7 +61,6 @@ class VisitorDelegate extends VisitorAbstract
         }
 
         $this->setConsent($hasConsented);
-        $this->getStrategy()->lookupVisitor();
         $this->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::VISITOR_CREATED));
     }
 
@@ -128,6 +127,7 @@ class VisitorDelegate extends VisitorAbstract
 
     public function fetchFlags(): void
     {
+        $this->getStrategy()->lookupVisitor();
         $this->getStrategy()->fetchFlags();
         $this->getStrategy()->cacheVisitor();
     }

@@ -117,7 +117,18 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function updateContext(string $key, float|bool|int|string|null $value): void
     {
+        $oldContext = $this->getVisitor()->getContext();
+
         $this->updateContextKeyValue($key, $value);
+
+        $newContext = $this->getVisitor()->getContext();
+
+        if ($this->arraysAreEqual($oldContext, $newContext)) {
+            return;
+        }
+
+        $this->getVisitor()->setHasContextBeenUpdated(true);
+
         $this->fetchStatusUpdateContext();
     }
 
@@ -126,8 +137,19 @@ class DefaultStrategy extends StrategyAbstract
      * @inheritDoc
      */
     public function updateContextCollection(array $context): void
-    {
+    {        
+        $oldContext = $this->getVisitor()->getContext();
+
         $this->initialContext($context);
+
+        $newContext = $this->getVisitor()->getContext();
+
+        if ($this->arraysAreEqual($oldContext, $newContext)) {
+            return;
+        }
+
+        $this->getVisitor()->setHasContextBeenUpdated(true);
+
         $this->fetchStatusUpdateContext();
     }
 
@@ -137,7 +159,17 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function clearContext(): void
     {
+        $oldContext = $this->getVisitor()->getContext();
+
         $this->getVisitor()->context = [];
+        
+        $newContext = $this->getVisitor()->getContext();
+
+        if ($this->arraysAreEqual($oldContext, $newContext)) {
+            return;
+        }
+
+        $this->getVisitor()->setHasContextBeenUpdated(true);
         $this->fetchStatusUpdateContext();
     }
 
@@ -146,14 +178,11 @@ class DefaultStrategy extends StrategyAbstract
      * @param string $functionName
      * @return void
      */
-    private function logDeactivate(string $functionName): void
+    private function logXpcWarning(string $functionName): void
     {
-        $this->logError(
+        $this->logWarning(
             $this->getVisitor()->getConfig(),
-            sprintf(
-                FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
-                $functionName
-            ),
+            FlagshipConstant::XPC_BUCKETING_WARNING,
             [FlagshipConstant::TAG => $functionName]
         );
     }
@@ -164,8 +193,10 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function authenticate(string $visitorId): void
     {
-        if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
-            $this->logDeactivate(__FUNCTION__);
+        $visitorCacheInstance = $this->getConfig()->getVisitorCacheImplementation();
+        $decisionMode = $this->getConfig()->getDecisionMode();
+        if ($decisionMode == DecisionMode::BUCKETING && $visitorCacheInstance === null) {
+            $this->logXpcWarning(__FUNCTION__);
             return;
         }
 
@@ -211,8 +242,10 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function unauthenticate(): void
     {
-        if ($this->getVisitor()->getConfig()->getDecisionMode() == DecisionMode::BUCKETING) {
-            $this->logDeactivate(__FUNCTION__);
+        $visitorCacheInstance = $this->getConfig()->getVisitorCacheImplementation();
+        $decisionMode = $this->getConfig()->getDecisionMode();
+        if ($decisionMode == DecisionMode::BUCKETING && $visitorCacheInstance === null) {
+            $this->logXpcWarning(__FUNCTION__);
             return;
         }
 
@@ -427,6 +460,22 @@ class DefaultStrategy extends StrategyAbstract
             return;
         }
 
+        $hitInstanceItem = $hit->toApiKeys();
+        unset($hitInstanceItem[FlagshipConstant::QT_API_ITEM]);
+
+        if ($this->isDeDuplicated(json_encode($hitInstanceItem), $this->getConfig()->getHitDeduplicationTime())) {
+            $logData = [
+                "hIt" => $hitInstanceItem
+            ];
+            $this->logDebugSprintf(
+                $this->getConfig(),
+                FlagshipConstant::ADD_HIT,
+                FlagshipConstant::HIT_DEDUPLICATED,
+                [$logData]
+            );
+            return;
+        }
+
         $trackingManager->addHit($hit);
 
         $troubleshooting = new Troubleshooting();
@@ -473,6 +522,22 @@ class DefaultStrategy extends StrategyAbstract
             ->setVisitorId($visitor->getVisitorId())
             ->setAnonymousId($visitor->getAnonymousId())
             ->setConfig($this->getConfig());
+
+        $hitInstanceItem = $activateHit->toApiKeys();
+        unset($hitInstanceItem[FlagshipConstant::QT_API_ITEM]);
+
+        if ($this->isDeDuplicated(json_encode($hitInstanceItem), $this->getConfig()->getHitDeduplicationTime())) {
+            $logData = [
+                "hit" => $hitInstanceItem
+            ];
+            $this->logDebugSprintf(
+                $this->getConfig(),
+                FlagshipConstant::ADD_HIT,
+                FlagshipConstant::ACTIVATE_DEDUPLICATED,
+                [$logData]
+            );
+            return;
+        }
 
         $this->getTrackingManager()->activateFlag($activateHit);
 
@@ -559,6 +624,7 @@ class DefaultStrategy extends StrategyAbstract
                 $defaultValue,
                 true
             );
+            return;
         }
 
         if (
@@ -581,6 +647,7 @@ class DefaultStrategy extends StrategyAbstract
                 $defaultValue,
                 true
             );
+            return;
         }
 
         $this->activateFlag($flag, $defaultValue);

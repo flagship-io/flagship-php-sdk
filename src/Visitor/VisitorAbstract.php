@@ -107,19 +107,6 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     protected FetchFlagsStatusInterface $fetchStatus;
 
-    protected bool $hasContextBeenUpdated = true;
-
-    public function setHasContextBeenUpdated(bool $hasContextBeenUpdated): static
-    {
-        $this->hasContextBeenUpdated = $hasContextBeenUpdated;
-        return $this;
-    }
-
-    public function getHasContextBeenUpdated(): bool
-    {
-        return $this->hasContextBeenUpdated;
-    }
-
     /**
      * @return callable
      */

@@ -591,6 +591,7 @@ class DefaultStrategy extends StrategyAbstract
                 $defaultValue,
                 true
             );
+            return;
         }
 
         if (
@@ -613,6 +614,7 @@ class DefaultStrategy extends StrategyAbstract
                 $defaultValue,
                 true
             );
+            return;
         }
 
         $this->activateFlag($flag, $defaultValue);

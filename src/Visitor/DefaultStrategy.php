@@ -117,7 +117,18 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function updateContext(string $key, float|bool|int|string|null $value): void
     {
+        $oldContext = $this->getVisitor()->getContext();
+
         $this->updateContextKeyValue($key, $value);
+
+        $newContext = $this->getVisitor()->getContext();
+
+        if ($this->arraysAreEqual($oldContext, $newContext)) {
+            return;
+        }
+
+        $this->getVisitor()->setHasContextBeenUpdated(true);
+
         $this->fetchStatusUpdateContext();
     }
 
@@ -126,8 +137,19 @@ class DefaultStrategy extends StrategyAbstract
      * @inheritDoc
      */
     public function updateContextCollection(array $context): void
-    {
+    {        
+        $oldContext = $this->getVisitor()->getContext();
+
         $this->initialContext($context);
+
+        $newContext = $this->getVisitor()->getContext();
+
+        if ($this->arraysAreEqual($oldContext, $newContext)) {
+            return;
+        }
+
+        $this->getVisitor()->setHasContextBeenUpdated(true);
+
         $this->fetchStatusUpdateContext();
     }
 
@@ -137,7 +159,17 @@ class DefaultStrategy extends StrategyAbstract
      */
     public function clearContext(): void
     {
+        $oldContext = $this->getVisitor()->getContext();
+
         $this->getVisitor()->context = [];
+        
+        $newContext = $this->getVisitor()->getContext();
+
+        if ($this->arraysAreEqual($oldContext, $newContext)) {
+            return;
+        }
+
+        $this->getVisitor()->setHasContextBeenUpdated(true);
         $this->fetchStatusUpdateContext();
     }
 

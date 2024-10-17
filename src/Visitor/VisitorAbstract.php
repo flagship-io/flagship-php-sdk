@@ -15,6 +15,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ContainerInterface;
 use Flagship\Model\FetchFlagsStatusInterface;
+use Flagship\Enum\visitorCacheStatus;
 
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, VisitorFlagInterface
 {
@@ -118,6 +119,19 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function getHasContextBeenUpdated(): bool
     {
         return $this->hasContextBeenUpdated;
+    }
+
+    protected visitorCacheStatus $visitorCacheStatus;
+
+    public function getVisitorCacheStatus(): visitorCacheStatus
+    {
+        return $this->visitorCacheStatus;
+    }
+
+    public function setVisitorCacheStatus(visitorCacheStatus $visitorCacheStatus): static
+    {
+        $this->visitorCacheStatus = $visitorCacheStatus;
+        return $this;
     }
 
     /**

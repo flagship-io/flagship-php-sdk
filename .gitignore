@@ -8,3 +8,4 @@ flagship
 /src/Api/HIT_LOG
 /.phpunit.cache
 demo-test.php
+docker-compose.demo.yml

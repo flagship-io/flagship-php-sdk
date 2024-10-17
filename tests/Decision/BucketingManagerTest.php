@@ -4,21 +4,23 @@ namespace Flagship\Decision;
 
 use DateTime;
 use Exception;
-use Flagship\Config\BucketingConfig;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipField;
-use Flagship\Enum\TroubleshootingLabel;
-use Flagship\Model\HttpResponse;
-use Flagship\Utils\ConfigManager;
+use ReflectionException;
+use Flagship\Utils\Utils;
+use Psr\Log\LoggerInterface;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
 use Flagship\Utils\MurmurHash;
-use Flagship\Utils\Utils;
+use PHPUnit\Framework\TestCase;
+use Flagship\Enum\FlagshipField;
+use Flagship\Model\HttpResponse;
+use Flagship\Utils\ConfigManager;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\BucketingConfig;
 use Flagship\Visitor\DefaultStrategy;
 use Flagship\Visitor\VisitorDelegate;
 use Flagship\Visitor\StrategyAbstract;
-use PHPUnit\Framework\TestCase;
-use ReflectionException;
+use Flagship\Enum\TroubleshootingLabel;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class BucketingManagerTest extends TestCase
 {
@@ -171,7 +173,7 @@ class BucketingManagerTest extends TestCase
     public function testSendContext()
     {
         $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
+            LoggerInterface::class,
             ['error'],
             '',
             false
@@ -230,19 +232,32 @@ class BucketingManagerTest extends TestCase
         $configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $configManager->setConfig($config)->setTrackingManager($trackerManager);
+
+
+        /**
+         * @var MockObject|VisitorDelegate $visitor
+         */
         $visitor = $this->getMockBuilder(VisitorDelegate::class)
             ->setConstructorArgs([$containerMock, $configManager, $visitorId, false, $visitorContext, true])
             ->onlyMethods(["sendHit"])
             ->getMock();
 
-        $httpClientMock->expects($this->exactly(2))
+        $httpClientMock->expects($this->exactly(4))
             ->method('get')
             ->willReturn(
                 new HttpResponse(204, json_decode('{"campaigns":[{}]}', true))
             );
 
-        $visitor->expects($this->exactly(1))->method("sendHit");
+        $visitor->expects($this->exactly(2))->method("sendHit");
+
+        $bucketingManager->getCampaignFlags($visitor);
+
+        $bucketingManager->getCampaignFlags($visitor);
+
+        $visitor->updateContext("new_context", "new_value");
+
 
         $bucketingManager->getCampaignFlags($visitor);
 

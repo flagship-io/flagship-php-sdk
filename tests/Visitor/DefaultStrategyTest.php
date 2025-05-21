@@ -320,7 +320,7 @@ class DefaultStrategyTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, $visitorContext, true);
 
         $authenticateName = "authenticate";
-        $logManagerStub->expects($this->exactly(3))->method('error')->with(
+        $logManagerStub->expects($this->exactly(2))->method('error')->with(
             $this->logicalOr(
                 sprintf(
                     FlagshipConstant::VISITOR_ID_ERROR,
@@ -328,10 +328,6 @@ class DefaultStrategyTest extends TestCase
                 ),
                 sprintf(
                     FlagshipConstant::FLAGSHIP_VISITOR_ALREADY_AUTHENTICATE,
-                    $authenticateName
-                ),
-                sprintf(
-                    FlagshipConstant::METHOD_DEACTIVATED_BUCKETING_ERROR,
                     $authenticateName
                 )
             ),
@@ -506,8 +502,6 @@ class DefaultStrategyTest extends TestCase
                 $this->logicalOr(
                     FlagshipConstant::FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE
                 ),
-                FlagshipConstant::FLAGSHIP_VISITOR_NOT_AUTHENTIFICATE
-            ),
             [FlagshipConstant::TAG => $unauthenticateName]
         );
 

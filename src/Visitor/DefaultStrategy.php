@@ -127,7 +127,7 @@ class DefaultStrategy extends StrategyAbstract
      * @inheritDoc
      */
     public function updateContextCollection(array $context): void
-    {        
+    {
         $oldContext = $this->getVisitor()->getContext();
 
         $this->initialContext($context);
@@ -152,7 +152,7 @@ class DefaultStrategy extends StrategyAbstract
         $oldContext = $this->getVisitor()->getContext();
 
         $this->getVisitor()->context = [];
-        
+
         $newContext = $this->getVisitor()->getContext();
 
         if ($this->arraysAreEqual($oldContext, $newContext)) {
@@ -275,17 +275,17 @@ class DefaultStrategy extends StrategyAbstract
         $campaigns = [];
         foreach ($data[self::CAMPAIGNS] as $item) {
             $campaigns[] = [
-                            FlagshipField::FIELD_ID                 => $item[FlagshipField::FIELD_CAMPAIGN_ID],
-                            FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                            FlagshipField::FIELD_VARIATION          => [
-                                                                        FlagshipField::FIELD_ID            => $item[self::CAMPAIGN_ID],
-                                                                        FlagshipField::FIELD_REFERENCE     => $item[FlagshipField::FIELD_IS_REFERENCE],
-                                                                        FlagshipField::FIELD_MODIFICATIONS => [
-                                                                                                               FlagshipField::FIELD_CAMPAIGN_TYPE => $item[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                                                                                                               FlagshipField::FIELD_VALUE         => $item[self::FLAGS],
-                                                                                                              ],
-                                                                       ],
-                           ];
+                FlagshipField::FIELD_ID                 => $item[FlagshipField::FIELD_CAMPAIGN_ID],
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION          => [
+                    FlagshipField::FIELD_ID            => $item[self::CAMPAIGN_ID],
+                    FlagshipField::FIELD_REFERENCE     => $item[FlagshipField::FIELD_IS_REFERENCE],
+                    FlagshipField::FIELD_MODIFICATIONS => [
+                        FlagshipField::FIELD_CAMPAIGN_TYPE => $item[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                        FlagshipField::FIELD_VALUE         => $item[self::FLAGS],
+                    ],
+                ],
+            ];
         }
 
         if (count($campaigns)) {
@@ -294,11 +294,11 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::PROCESS_FETCHING_FLAGS,
                 FlagshipConstant::FETCH_CAMPAIGNS_FROM_CACHE,
                 [
-                 $this->getVisitor()->getVisitorId(),
-                 $this->getVisitor()->getAnonymousId(),
-                 $this->getVisitor()->getContext(),
-                 $campaigns,
-                 ($this->getNow() - $now),
+                    $this->getVisitor()->getVisitorId(),
+                    $this->getVisitor()->getAnonymousId(),
+                    $this->getVisitor()->getContext(),
+                    $campaigns,
+                    ($this->getNow() - $now),
                 ]
             );
         }
@@ -323,11 +323,11 @@ class DefaultStrategy extends StrategyAbstract
             $functionName,
             FlagshipConstant::FETCH_CAMPAIGNS_SUCCESS,
             [
-             $this->getVisitor()->getVisitorId(),
-             $this->getVisitor()->getAnonymousId(),
-             $this->getVisitor()->getContext(),
-             $campaigns,
-             ($this->getNow() - $now),
+                $this->getVisitor()->getVisitorId(),
+                $this->getVisitor()->getAnonymousId(),
+                $this->getVisitor()->getContext(),
+                $campaigns,
+                ($this->getNow() - $now),
             ]
         );
     }
@@ -339,10 +339,10 @@ class DefaultStrategy extends StrategyAbstract
             $functionName,
             FlagshipConstant::FETCH_FLAGS_FROM_CAMPAIGNS,
             [
-             $this->getVisitor()->getVisitorId(),
-             $this->getVisitor()->getAnonymousId(),
-             $this->getVisitor()->getContext(),
-             $flagsDTO,
+                $this->getVisitor()->getVisitorId(),
+                $this->getVisitor()->getAnonymousId(),
+                $this->getVisitor()->getContext(),
+                $flagsDTO,
             ]
         );
     }
@@ -497,8 +497,8 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_USER_EXPOSED,
                 FlagshipConstant::USER_EXPOSED_NO_FLAG_ERROR,
                 [
-                 $this->getVisitor()->getVisitorId(),
-                 $key,
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
                 ]
             );
 
@@ -517,8 +517,8 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_USER_EXPOSED,
                 FlagshipConstant::VISITOR_EXPOSED_VALUE_NOT_CALLED,
                 [
-                 $this->getVisitor()->getVisitorId(),
-                 $key,
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
                 ]
             );
 
@@ -540,8 +540,8 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_USER_EXPOSED,
                 FlagshipConstant::USER_EXPOSED_CAST_ERROR,
                 [
-                 $this->getVisitor()->getVisitorId(),
-                 $key,
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
                 ]
             );
 
@@ -577,9 +577,9 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_VALUE,
                 FlagshipConstant::GET_FLAG_MISSING_ERROR,
                 [
-                 $this->getVisitor()->getVisitorId(),
-                 $key,
-                 $defaultValue,
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
+                    $defaultValue,
                 ]
             );
 
@@ -606,9 +606,9 @@ class DefaultStrategy extends StrategyAbstract
                 FlagshipConstant::FLAG_VALUE,
                 FlagshipConstant::GET_FLAG_CAST_ERROR,
                 [
-                 $this->getVisitor()->getVisitorId(),
-                 $key,
-                 $defaultValue,
+                    $this->getVisitor()->getVisitorId(),
+                    $key,
+                    $defaultValue,
                 ]
             );
 
@@ -627,9 +627,9 @@ class DefaultStrategy extends StrategyAbstract
             FlagshipConstant::FLAG_VALUE,
             FlagshipConstant::GET_FLAG_VALUE,
             [
-             $this->getVisitor()->getVisitorId(),
-             $key,
-             $flag->getValue(),
+                $this->getVisitor()->getVisitorId(),
+                $key,
+                $flag->getValue(),
             ]
         );
 

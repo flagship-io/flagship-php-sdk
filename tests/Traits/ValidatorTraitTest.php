@@ -136,29 +136,36 @@ class ValidatorTraitTest extends TestCase
         $config = new BucketingConfig("http://127.0.0.1:3000");
         $config->setLogManager($logManagerStub);
         $value = "linux";
-        $check = $checkFlagshipContext->invokeArgs($validatorTraitMock, ['item',$value, $config]);
+        $check = $checkFlagshipContext->invokeArgs($validatorTraitMock, ['item', $value, $config]);
         $this->assertNull($check);
 
         $sdk = FlagshipConstant::FLAGSHIP_SDK;
-        $logManagerStub->expects($this->once())->method('error')
-            ->with(
-                sprintf(
-                    FlagshipConstant::FLAGSHIP_PREDEFINED_CONTEXT_ERROR,
-                    "sdk_osName",
-                    "string"
-                )
-            );
+        $logManagerStub->expects($this->once())->method('error')->with(
+            sprintf(
+                FlagshipConstant::FLAGSHIP_PREDEFINED_CONTEXT_ERROR,
+                "sdk_osName",
+                "string"
+            )
+        );
         $value = 1;
         $check = $checkFlagshipContext->invokeArgs(
             $validatorTraitMock,
-            [FlagshipContext::OS_NAME,$value, $config]
+            [
+             FlagshipContext::OS_NAME,
+             $value,
+             $config,
+            ]
         );
         $this->assertFalse($check);
 
         $value = "mac";
         $check = $checkFlagshipContext->invokeArgs(
             $validatorTraitMock,
-            [FlagshipContext::OS_NAME,$value, $config]
+            [
+             FlagshipContext::OS_NAME,
+             $value,
+             $config,
+            ]
         );
         $this->assertTrue($check);
     }
@@ -216,10 +223,9 @@ class ValidatorTraitTest extends TestCase
         $this->assertTrue($isNumeric->invokeArgs($validatorTraitMock, [1, $itemName, $config]));
 
         $sdk = FlagshipConstant::FLAGSHIP_SDK;
-        $logManagerStub->expects($this->once())->method('error')
-            ->with(
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
-            );
+        $logManagerStub->expects($this->once())->method('error')->with(
+            sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
+        );
 
         $this->assertFalse($isNumeric->invokeArgs($validatorTraitMock, ["abc", $itemName, $config]));
     }

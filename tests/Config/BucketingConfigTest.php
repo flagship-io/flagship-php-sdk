@@ -29,7 +29,7 @@ class BucketingConfigTest extends TestCase
             FlagshipField::FIELD_ENVIRONMENT_ID => null,
             FlagshipField::FIELD_API_KEY => null,
             FlagshipField::FIELD_TIMEOUT => 2000,
-            FlagshipField::FIELD_LOG_LEVEL => LogLevel::ALL,
+            FlagshipField::FIELD_LOG_LEVEL => LogLevel::INFO,
             FlagshipField::FIELD_BUCKETING_URL => $bucketingUrl
         ];
 

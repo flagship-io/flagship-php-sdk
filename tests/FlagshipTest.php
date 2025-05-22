@@ -40,7 +40,10 @@ class FlagshipTest extends TestCase
             false,
             true,
             true,
-            ['error', 'info']
+            [
+             'error',
+             'info',
+            ]
         );
     }
 
@@ -182,12 +185,11 @@ class FlagshipTest extends TestCase
 
         $flagshipMock->method('getContainer')->willReturn($this->containerInitialization());
 
-        $flagshipMock->expects($this->once())->method('logInfo')
-            ->with(
-                $config,
-                sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
-            );
+        $flagshipMock->expects($this->once())->method('logInfo')->with(
+            $config,
+            sprintf(FlagshipConstant::SDK_STARTED_INFO, FlagshipConstant::SDK_VERSION),
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
+        );
 
         $flagshipMock->expects($this->never())->method('logError');
 
@@ -248,9 +250,7 @@ class FlagshipTest extends TestCase
 
         $config->setLogManager($logManager);
 
-        $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
-            ->onlyMethods(['logInfo', 'logError', 'getContainer'])
-            ->disableOriginalConstructor()->getMock();
+        $flagshipMock = $this->getMockBuilder('Flagship\Flagship')->onlyMethods(['logInfo', 'logError', 'getContainer'])->disableOriginalConstructor()->getMock();
 
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
@@ -259,12 +259,11 @@ class FlagshipTest extends TestCase
 
         $flagshipMock->method('getContainer')->willReturn($this->containerInitialization());
 
-        $flagshipMock->expects($this->once())->method('logError')
-            ->with(
-                $config,
-                FlagshipConstant::INITIALIZATION_PARAM_ERROR,
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
-            );
+        $flagshipMock->expects($this->once())->method('logError')->with(
+            $config,
+            FlagshipConstant::INITIALIZATION_PARAM_ERROR,
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
+        );
         $flagshipMock->expects($this->never())->method('logInfo');
 
         Flagship::start($envId, $apiKey, $config);
@@ -288,9 +287,7 @@ class FlagshipTest extends TestCase
 
         $config->setLogManager($logManager);
 
-        $flagshipMock = $this->getMockBuilder('Flagship\Flagship')
-            ->onlyMethods(['logInfo', 'logError', 'getContainer','setConfigManager'])
-            ->disableOriginalConstructor()->getMock();
+        $flagshipMock = $this->getMockBuilder('Flagship\Flagship')->onlyMethods(['logInfo', 'logError', 'getContainer', 'setConfigManager'])->disableOriginalConstructor()->getMock();
 
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
@@ -302,12 +299,11 @@ class FlagshipTest extends TestCase
         $flagshipMock->method('getContainer')->willReturn($this->containerInitialization());
         $flagshipMock->method('setConfigManager')->willThrowException($exception);
 
-        $flagshipMock->expects($this->once())->method('logError')
-            ->with(
-                $config,
-                $exception->getMessage(),
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
-            );
+        $flagshipMock->expects($this->once())->method('logError')->with(
+            $config,
+            $exception->getMessage(),
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_INITIALIZATION]
+        );
         $flagshipMock->expects($this->never())->method('logInfo');
 
         Flagship::start($envId, $apiKey, $config);
@@ -363,9 +359,7 @@ class FlagshipTest extends TestCase
         };
 
         $config->setLogLevel(LogLevel::ALL);
-        $config->expects($this->exactly(1))
-            ->method("getOnSdkStatusChanged")
-            ->willReturn($callable);
+        $config->expects($this->exactly(1))->method("getOnSdkStatusChanged")->willReturn($callable);
 
         Flagship::start('envId', 'apiKey', $config);
     }
@@ -382,19 +376,18 @@ class FlagshipTest extends TestCase
         $visitorId = "visitorId";
 
         $body = [
-            "visitorId" => $visitorId,
-            "campaigns" => [],
-            "panic" => true
-        ];
+                 "visitorId" => $visitorId,
+                 "campaigns" => [],
+                 "panic"     => true,
+                ];
 
-        $httpClientMock->expects($this->exactly(2))->method('post')
-            ->willReturnOnConsecutiveCalls(
-                new HttpResponse(204, $body),
-                new HttpResponse(204, [
-                    "visitorId" => $visitorId,
-                    "campaigns" => [],
-                ])
-            );
+        $httpClientMock->expects($this->exactly(2))->method('post')->willReturnOnConsecutiveCalls(
+            new HttpResponse(204, $body),
+            new HttpResponse(204, [
+                                   "visitorId" => $visitorId,
+                                   "campaigns" => [],
+                                  ])
+        );
 
         $apiManager = new ApiManager($httpClientMock, $config);
 
@@ -423,8 +416,7 @@ class FlagshipTest extends TestCase
             'Flagship\Utils\Container'
         )->onlyMethods(['get'])->disableOriginalConstructor()->getMock();
 
-        $containerMock->method('get')
-            ->will($this->returnCallback($containerGetMethod));
+        $containerMock->method('get')->will($this->returnCallback($containerGetMethod));
 
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
@@ -464,8 +456,7 @@ class FlagshipTest extends TestCase
 
         $flagshipMock = $this->getMockBuilder(
             'Flagship\Flagship'
-        )->onlyMethods(['logInfo', 'logError', 'getContainer', "getConfigManager"])
-            ->disableOriginalConstructor()->getMock();
+        )->onlyMethods(['logInfo', 'logError', 'getContainer', "getConfigManager"])->disableOriginalConstructor()->getMock();
 
 
         $trackingManagerMock = $this->getMockForAbstractClass(
@@ -495,8 +486,7 @@ class FlagshipTest extends TestCase
 
         $trackingManagerMock->expects($this->once())->method("sendBatch");
 
-        $flagshipMock->expects($this->exactly(1))->method("getConfigManager")
-            ->willReturn($configManagerMock);
+        $flagshipMock->expects($this->exactly(1))->method("getConfigManager")->willReturn($configManagerMock);
 
         Flagship::Close();
     }
@@ -516,16 +506,14 @@ class FlagshipTest extends TestCase
 
         $flagshipMock = $this->getMockBuilder(
             'Flagship\Flagship'
-        )->onlyMethods(['logInfo', 'logError', 'getContainer', "getConfigManager"])
-            ->disableOriginalConstructor()->getMock();
+        )->onlyMethods(['logInfo', 'logError', 'getContainer', "getConfigManager"])->disableOriginalConstructor()->getMock();
 
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
 
         Utils::setPrivateProperty($instance, 'instance', $flagshipMock);
 
-        $flagshipMock->expects($this->once())->method("getConfigManager")
-            ->willReturn(null);
+        $flagshipMock->expects($this->once())->method("getConfigManager")->willReturn(null);
 
         Flagship::Close();
     }

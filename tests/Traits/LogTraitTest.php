@@ -21,11 +21,10 @@ class LogTraitTest extends TestCase
         $message = "hello";
         $context = ['exception' => 'hello Exception'];
 
-        $logManagerMock->expects($this->exactly(3))->method('error')
-            ->with(
-                $message,
-                $context
-            );
+        $logManagerMock->expects($this->exactly(3))->method('error')->with(
+            $message,
+            $context
+        );
 
         $config = new DecisionApiConfig();
         $config->setLogManager($logManagerMock);
@@ -60,11 +59,10 @@ class LogTraitTest extends TestCase
         $tag = __FUNCTION__;
         $context = [FlagshipConstant::TAG => $tag];
 
-        $logManagerMock->expects($this->exactly(2))->method('error')
-            ->with(
-                $message,
-                $context
-            );
+        $logManagerMock->expects($this->exactly(2))->method('error')->with(
+            $message,
+            $context
+        );
 
         $config = new DecisionApiConfig();
         $config->setLogManager($logManagerMock);
@@ -92,11 +90,10 @@ class LogTraitTest extends TestCase
         $message = "hello";
         $context = ['exception' => 'hello Exception'];
 
-        $logManagerMock->expects($this->exactly(3))->method('info')
-            ->with(
-                $message,
-                $context
-            );
+        $logManagerMock->expects($this->exactly(3))->method('info')->with(
+            $message,
+            $context
+        );
 
         $config = new DecisionApiConfig();
         $config->setLogManager($logManagerMock);
@@ -130,11 +127,10 @@ class LogTraitTest extends TestCase
         $tag = __FUNCTION__;
         $context = [FlagshipConstant::TAG => $tag];
 
-        $logManagerMock->expects($this->exactly(2))->method('info')
-            ->with(
-                $message,
-                $context
-            );
+        $logManagerMock->expects($this->exactly(2))->method('info')->with(
+            $message,
+            $context
+        );
 
         $config = new DecisionApiConfig();
         $config->setLogManager($logManagerMock);
@@ -161,11 +157,10 @@ class LogTraitTest extends TestCase
         $message = "hello";
         $context = ['exception' => 'hello Exception'];
 
-        $logManagerMock->expects($this->exactly(3))->method('warning')
-            ->with(
-                $message,
-                $context
-            );
+        $logManagerMock->expects($this->exactly(3))->method('warning')->with(
+            $message,
+            $context
+        );
 
         $config = new DecisionApiConfig();
         $config->setLogManager($logManagerMock);
@@ -199,11 +194,10 @@ class LogTraitTest extends TestCase
         $tag = __FUNCTION__;
         $context = [FlagshipConstant::TAG => $tag];
 
-        $logManagerMock->expects($this->exactly(2))->method('warning')
-            ->with(
-                $message,
-                $context
-            );
+        $logManagerMock->expects($this->exactly(2))->method('warning')->with(
+            $message,
+            $context
+        );
 
         $config = new DecisionApiConfig();
         $config->setLogManager($logManagerMock);
@@ -230,13 +224,13 @@ class LogTraitTest extends TestCase
         $message = "hello";
         $context = ['exception' => 'hello Exception'];
 
-        $logManagerMock->expects($this->exactly(2))->method('debug')
-            ->with(
-                $message,
-                $context
-            );
+        $logManagerMock->expects($this->exactly(2))->method('debug')->with(
+            $message,
+            $context
+        );
 
         $config = new DecisionApiConfig();
+        $config->setLogLevel(LogLevel::DEBUG);
         $config->setLogManager($logManagerMock);
 
         $logDebug = Utils::getMethod($logTraitMock, "logDebug");
@@ -259,18 +253,24 @@ class LogTraitTest extends TestCase
 
         $message = "hello %s %s";
         $tag = __FUNCTION__;
-        $args = ["there", ["key" => "value"]];
+        $args = [
+                 "there",
+                 ["key" => "value"],
+                ];
         $context = [FlagshipConstant::TAG => $tag];
 
-        $logArgs = [$args[0], json_encode($args[1])];
+        $logArgs = [
+                    $args[0],
+                    json_encode($args[1]),
+                   ];
 
-        $logManagerMock->expects($this->exactly(2))->method('debug')
-            ->with(
-                vsprintf($message, $logArgs),
-                $context
-            );
+        $logManagerMock->expects($this->exactly(2))->method('debug')->with(
+            vsprintf($message, $logArgs),
+            $context
+        );
 
         $config = new DecisionApiConfig();
+        $config->setLogLevel(LogLevel::DEBUG);
         $config->setLogManager($logManagerMock);
 
         $logError = Utils::getMethod($logTraitMock, "logDebugSprintf");
@@ -295,19 +295,17 @@ class LogTraitTest extends TestCase
 
         $message = "message";
         $url = "http://localhost";
-        $requestBody = [
-            "key" => "value"
-        ];
+        $requestBody = ["key" => "value"];
         $headers = ["key" => "value"];
         $duration = 300;
         $value = $getLogFormat->invokeArgs($logTraitMock, [$message, $url, $requestBody, $headers, $duration]);
         $expectedValue = [
-            FlagshipConstant::LOG_FORMAT_MESSAGE => $message,
-            FlagshipConstant::LOG_FORMAT_URL => $url,
-            FlagshipConstant::LOG_FORMAT_REQUEST_BODY => $requestBody,
-            FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS => $headers,
-            FlagshipConstant::LOG_FORMAT_DURATION => $duration
-        ];
+                          FlagshipConstant::LOG_FORMAT_MESSAGE         => $message,
+                          FlagshipConstant::LOG_FORMAT_URL             => $url,
+                          FlagshipConstant::LOG_FORMAT_REQUEST_BODY    => $requestBody,
+                          FlagshipConstant::LOG_FORMAT_REQUEST_HEADERS => $headers,
+                          FlagshipConstant::LOG_FORMAT_DURATION        => $duration,
+                         ];
 
         $this->assertSame($expectedValue, $value);
     }

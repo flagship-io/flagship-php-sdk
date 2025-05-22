@@ -127,7 +127,11 @@ class Flagship
                 $murmurHash = $container->get(MurmurHash::class);
                 $decisionManager = $container->get(
                     BucketingManager::class,
-                    [$httpClient, $config, $murmurHash]
+                    [
+                     $httpClient,
+                     $config,
+                     $murmurHash,
+                    ]
                 );
             } else {
                 $decisionManager = $container->get(ApiManager::class, [$httpClient, $config]);
@@ -139,7 +143,11 @@ class Flagship
 
             $trackingManager = $container->get(
                 TrackingManager::class,
-                [$config, $httpClient, $flagship->flagshipInstanceId]
+                [
+                 $config,
+                 $httpClient,
+                 $flagship->flagshipInstanceId,
+                ]
             );
 
             $configManager = $container->get(ConfigManager::class, [$config, $decisionManager, $trackingManager], true);

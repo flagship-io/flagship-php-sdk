@@ -19,19 +19,17 @@ class ScreenTest extends TestCase
         $config = new DecisionApiConfig($envId);
 
         $screen = new Screen($screenName);
-        $screen->setConfig($config)
-            ->setDs(FlagshipConstant::SDK_APP)
-            ->setVisitorId($visitorId);
+        $screen->setConfig($config)->setDs(FlagshipConstant::SDK_APP)->setVisitorId($visitorId);
 
         $screenArray = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::DS_API_ITEM => FlagshipConstant::SDK_APP,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::SCREEN_VIEW->value,
-            FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0.0,
-            FlagshipConstant::DL_API_ITEM => $screenName
-        ];
+                        FlagshipConstant::VISITOR_ID_API_ITEM      => $visitorId,
+                        FlagshipConstant::DS_API_ITEM              => FlagshipConstant::SDK_APP,
+                        FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
+                        FlagshipConstant::T_API_ITEM               => HitType::SCREEN_VIEW->value,
+                        FlagshipConstant::CUSTOMER_UID             => null,
+                        FlagshipConstant::QT_API_ITEM              => 0.0,
+                        FlagshipConstant::DL_API_ITEM              => $screenName,
+                       ];
 
         $this->assertSame($screenArray, $screen->toApiKeys());
     }
@@ -49,9 +47,7 @@ class ScreenTest extends TestCase
         $screenName = "";
         $screen = new Screen($screenName);
         $config = new DecisionApiConfig('envId');
-        $screen->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $screen->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertFalse($screen->isReady());
 
@@ -61,9 +57,7 @@ class ScreenTest extends TestCase
         $screenName = "screenName";
         $screen = new Screen($screenName);
 
-        $screen->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $screen->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
         $this->assertTrue($screen->isReady());
     }
 }

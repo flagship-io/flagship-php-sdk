@@ -51,8 +51,8 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
     protected function sendHit(HitAbstract $hit): void
     {
         $header = [
-            FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON
-        ];
+                   FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON,
+                  ];
 
         $requestBody = $hit->toApiKeys();
         $now = $this->getNow();
@@ -68,8 +68,9 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::HIT_SENT_SUCCESS,
                 [
-                    FlagshipConstant::SEND_HIT,
-                    $this->getLogFormat(null, $url, $requestBody, $header, $this->getNow() - $now)]
+                 FlagshipConstant::SEND_HIT,
+                 $this->getLogFormat(null, $url, $requestBody, $header, $this->getNow() - $now),
+                ]
             );
         } catch (Exception $exception) {
             $this->onError($hit);
@@ -77,23 +78,13 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_HIT,
-                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now)]
+                [
+                 FlagshipConstant::SEND_HIT,
+                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now),
+                ]
             );
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::SEND_HIT_ROUTE_ERROR)
-                ->setLogLevel(LogLevel::ERROR)
-                ->setVisitorId($this->flagshipInstanceId)
-                ->setFlagshipInstanceId($this->flagshipInstanceId)
-                ->setTraffic(100)
-                ->setConfig($this->config)
-                ->setHttpRequestBody($requestBody)
-                ->setHttpRequestHeaders($header)
-                ->setHttpRequestMethod("POST")
-                ->setHttpRequestUrl($url)
-                ->setHttpResponseBody($exception->getMessage())
-                ->setHttpResponseTime($this->getNow() - $now)
-            ;
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_HIT_ROUTE_ERROR)->setLogLevel(LogLevel::ERROR)->setVisitorId($this->flagshipInstanceId)->setFlagshipInstanceId($this->flagshipInstanceId)->setTraffic(100)->setConfig($this->config)->setHttpRequestBody($requestBody)->setHttpRequestHeaders($header)->setHttpRequestMethod("POST")->setHttpRequestUrl($url)->setHttpResponseBody($exception->getMessage())->setHttpResponseTime($this->getNow() - $now);
             $this->addTroubleshootingHit($troubleshooting);
             $this->sendTroubleshootingQueue();
         }
@@ -126,8 +117,9 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::HIT_SENT_SUCCESS,
                 [
-                    FlagshipConstant::SEND_ACTIVATE,
-                $this->getLogFormat(null, $url, $requestBody, $headers, $this->getNow() - $now)]
+                 FlagshipConstant::SEND_ACTIVATE,
+                 $this->getLogFormat(null, $url, $requestBody, $headers, $this->getNow() - $now),
+                ]
             );
         } catch (Exception $exception) {
             $this->onError($hit);
@@ -135,24 +127,14 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_ACTIVATE,
-                $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now)]
+                [
+                 FlagshipConstant::SEND_ACTIVATE,
+                 $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now),
+                ]
             );
 
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)
-                ->setLogLevel(LogLevel::ERROR)
-                ->setVisitorId($this->flagshipInstanceId)
-                ->setFlagshipInstanceId($this->flagshipInstanceId)
-                ->setTraffic(100)
-                ->setConfig($this->config)
-                ->setHttpRequestBody($requestBody)
-                ->setHttpRequestHeaders($headers)
-                ->setHttpRequestMethod("POST")
-                ->setHttpRequestUrl($url)
-                ->setHttpResponseBody($exception->getMessage())
-                ->setHttpResponseTime($this->getNow() - $now)
-            ;
+            $troubleshooting->setLabel(TroubleshootingLabel::SEND_ACTIVATE_HIT_ROUTE_ERROR)->setLogLevel(LogLevel::ERROR)->setVisitorId($this->flagshipInstanceId)->setFlagshipInstanceId($this->flagshipInstanceId)->setTraffic(100)->setConfig($this->config)->setHttpRequestBody($requestBody)->setHttpRequestHeaders($headers)->setHttpRequestMethod("POST")->setHttpRequestUrl($url)->setHttpResponseBody($exception->getMessage())->setHttpResponseTime($this->getNow() - $now);
             $this->addTroubleshootingHit($troubleshooting);
             $this->sendTroubleshootingQueue();
         }

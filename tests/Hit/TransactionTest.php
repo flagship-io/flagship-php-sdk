@@ -35,15 +35,15 @@ class TransactionTest extends TestCase
         $transaction->setVisitorId($visitorId)->setDs($ds)->setConfig($config);
 
         $transactionArray = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $visitorId,
-            FlagshipConstant::DS_API_ITEM => $ds,
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-            FlagshipConstant::T_API_ITEM => HitType::TRANSACTION->value,
-            FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => 0.0,
-            FlagshipConstant::TID_API_ITEM => $transactionId,
-            FlagshipConstant::TA_API_ITEM => $transactionAffiliation
-        ];
+                             FlagshipConstant::VISITOR_ID_API_ITEM      => $visitorId,
+                             FlagshipConstant::DS_API_ITEM              => $ds,
+                             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
+                             FlagshipConstant::T_API_ITEM               => HitType::TRANSACTION->value,
+                             FlagshipConstant::CUSTOMER_UID             => null,
+                             FlagshipConstant::QT_API_ITEM              => 0.0,
+                             FlagshipConstant::TID_API_ITEM             => $transactionId,
+                             FlagshipConstant::TA_API_ITEM              => $transactionAffiliation,
+                            ];
 
         $taxesAmount = 76.0;
         $transaction->setTaxes($taxesAmount);
@@ -110,18 +110,14 @@ class TransactionTest extends TestCase
         //Test with require HitAbstract fields and with null transactionId
         $config = new DecisionApiConfig('envId');
 
-        $transaction->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $transaction->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
 
 
         //Test isReady with require HitAbstract fields and  with empty transactionAffiliation
         $transactionAffiliation = "";
         $transaction = new Transaction($transactionId, $transactionAffiliation);
 
-        $transaction->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $transaction->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertFalse($transaction->isReady());
 
@@ -131,9 +127,7 @@ class TransactionTest extends TestCase
         $transactionAffiliation = "ItemName";
         $transaction = new Transaction($transactionId, $transactionAffiliation);
 
-        $transaction->setConfig($config)
-            ->setVisitorId('visitorId')
-            ->setDs(FlagshipConstant::SDK_APP);
+        $transaction->setConfig($config)->setVisitorId('visitorId')->setDs(FlagshipConstant::SDK_APP);
 
         $this->assertTrue($transaction->isReady());
     }

@@ -15,6 +15,7 @@ use Flagship\Enum\FlagshipConstant;
 use Flagship\Traits\ValidatorTrait;
 use Flagship\Utils\ContainerInterface;
 use Flagship\Model\FetchFlagsStatusInterface;
+use Flagship\Enum\visitorCacheStatus;
 
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, VisitorFlagInterface
 {
@@ -106,6 +107,33 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @var FetchFlagsStatusInterface
      */
     protected FetchFlagsStatusInterface $fetchStatus;
+
+    protected bool $hasContextBeenUpdated = true;
+
+    public function setHasContextBeenUpdated(bool $hasContextBeenUpdated): static
+    {
+        $this->hasContextBeenUpdated = $hasContextBeenUpdated;
+        return $this;
+    }
+
+    public function getHasContextBeenUpdated(): bool
+    {
+        return $this->hasContextBeenUpdated;
+    }
+
+    protected visitorCacheStatus $visitorCacheStatus;
+
+    public function getVisitorCacheStatus(): visitorCacheStatus
+    {
+        return $this->visitorCacheStatus;
+    }
+
+    public function setVisitorCacheStatus(visitorCacheStatus $visitorCacheStatus): static
+    {
+        $this->visitorCacheStatus = $visitorCacheStatus;
+        return $this;
+    }
+    protected array $deDuplicationCache = [];
 
     /**
      * @return callable
@@ -432,9 +460,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function jsonSerialize(): mixed
     {
         return [
-            'visitorId'  => $this->getVisitorId(),
-            'context'    => $this->getContext(),
-            'hasConsent' => $this->hasConsented(),
-        ];
+                'visitorId'  => $this->getVisitorId(),
+                'context'    => $this->getContext(),
+                'hasConsent' => $this->hasConsented(),
+               ];
     }
 }

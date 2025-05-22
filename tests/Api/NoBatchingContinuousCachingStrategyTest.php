@@ -29,12 +29,19 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\NoBatchingContinuousCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["cacheHit","flushHits","logDebugSprintf"]
+            [
+             "cacheHit",
+             "flushHits",
+             "logDebugSprintf",
+            ]
         );
 
         $strategy->expects($this->never())->method("cacheHit");
@@ -58,24 +65,23 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $url = FlagshipConstant::HIT_EVENT_URL;
 
-        $httpClientMock->expects($this->exactly(3))->method("post")
-            ->with(
-                $this->logicalOr(
-                    $url,
-                    $url,
-                    $url
-                ),
-                $this->logicalOr(
-                    [],
-                    [],
-                    []
-                ),
-                $this->logicalOr(
-                    $requestBody,
-                    $requestBody2,
-                    $requestBody3
-                )
-            );
+        $httpClientMock->expects($this->exactly(3))->method("post")->with(
+            $this->logicalOr(
+                $url,
+                $url,
+                $url
+            ),
+            $this->logicalOr(
+                [],
+                [],
+                []
+            ),
+            $this->logicalOr(
+                $requestBody,
+                $requestBody2,
+                $requestBody3
+            )
+        );
 
         $headers = [FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON];
 
@@ -105,29 +111,37 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
             0
         );
 
-        $strategy->expects($this->exactly(3))->method("logDebugSprintf")
-            ->with(
-                $this->logicalOr(
-                    $config,
-                    $config,
-                    $config
-                ),
-                $this->logicalOr(
-                    FlagshipConstant::TRACKING_MANAGER,
-                    FlagshipConstant::TRACKING_MANAGER,
-                    FlagshipConstant::TRACKING_MANAGER
-                ),
-                $this->logicalOr(
-                    FlagshipConstant::HIT_SENT_SUCCESS,
-                    FlagshipConstant::HIT_SENT_SUCCESS,
-                    FlagshipConstant::HIT_SENT_SUCCESS
-                ),
-                $this->logicalOr(
-                    [FlagshipConstant::SEND_HIT, $logMessage ],
-                    [FlagshipConstant::SEND_HIT, $logMessage1 ],
-                    [FlagshipConstant::SEND_HIT, $logMessage2 ]
-                )
-            );
+        $strategy->expects($this->exactly(3))->method("logDebugSprintf")->with(
+            $this->logicalOr(
+                $config,
+                $config,
+                $config
+            ),
+            $this->logicalOr(
+                FlagshipConstant::TRACKING_MANAGER,
+                FlagshipConstant::TRACKING_MANAGER,
+                FlagshipConstant::TRACKING_MANAGER
+            ),
+            $this->logicalOr(
+                FlagshipConstant::HIT_SENT_SUCCESS,
+                FlagshipConstant::HIT_SENT_SUCCESS,
+                FlagshipConstant::HIT_SENT_SUCCESS
+            ),
+            $this->logicalOr(
+                [
+                 FlagshipConstant::SEND_HIT,
+                 $logMessage,
+                ],
+                [
+                 FlagshipConstant::SEND_HIT,
+                 $logMessage1,
+                ],
+                [
+                 FlagshipConstant::SEND_HIT,
+                 $logMessage2,
+                ]
+            )
+        );
 
         $this->assertCount(0, $strategy->getHitsPoolQueue());
         $this->assertCount(0, $strategy->getActivatePoolQueue());
@@ -151,12 +165,22 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\NoBatchingContinuousCachingStrategy",
-            [$config, $httpClientMock, "instanceId"],
+            [
+             $config,
+             $httpClientMock,
+             "instanceId",
+            ],
             "",
             true,
             true,
             true,
-            ["cacheHit","flushHits","logErrorSprintf", "addTroubleshootingHit", "sendTroubleshootingQueue"]
+            [
+             "cacheHit",
+             "flushHits",
+             "logErrorSprintf",
+             "addTroubleshootingHit",
+             "sendTroubleshootingQueue",
+            ]
         );
 
         $strategy->expects($this->never())->method("flushHits");
@@ -172,12 +196,11 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $exception = new Exception("error");
 
-        $httpClientMock->expects($this->exactly(1))->method("post")
-            ->with(
-                $url,
-                [],
-                $requestBody
-            )->willThrowException($exception);
+        $httpClientMock->expects($this->exactly(1))->method("post")->with(
+            $url,
+            [],
+            $requestBody
+        )->willThrowException($exception);
 
         $headers = [FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON];
 
@@ -192,13 +215,15 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
             0
         );
 
-        $strategy->expects($this->once())->method("logErrorSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_HIT, $logMessage ]
-            );
+        $strategy->expects($this->once())->method("logErrorSprintf")->with(
+            $config,
+            FlagshipConstant::TRACKING_MANAGER,
+            FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
+            [
+             FlagshipConstant::SEND_HIT,
+             $logMessage,
+            ]
+        );
 
         $strategy->expects($this->once())->method("addTroubleshootingHit");
         $strategy->expects($this->once())->method("sendTroubleshootingQueue");
@@ -222,12 +247,18 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\NoBatchingContinuousCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["cacheHit","flushHits"]
+            [
+             "cacheHit",
+             "flushHits",
+            ]
         );
 
         $strategy->expects($this->never())->method("cacheHit");
@@ -235,8 +266,7 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
         $key1 = "$visitorId:key1";
         $key2 = "$visitorId:key2";
 
-        $strategy->expects($this->once())
-            ->method("flushHits")->with([$page3Key]);
+        $strategy->expects($this->once())->method("flushHits")->with([$page3Key]);
 
         $page = new Page("http://localhost");
         $page->setConfig($config)->setVisitorId($visitorId)->setKey($key1);
@@ -248,18 +278,18 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
         $strategy->hydrateHitsPoolQueue($key2, $page2);
 
         $contentPage3 = [
-            'pageUrl' => 'page1',
-            'visitorId' => $visitorId,
-            'ds' => 'APP',
-            'type' => 'PAGEVIEW',
-            'anonymousId' => null,
-            'userIP' => null,
-            'pageResolution' => null,
-            'locale' => null,
-            'sessionNumber' => null,
-            'key' => $page3Key,
-            'createdAt' => 1676542078047,
-        ];
+                         'pageUrl'        => 'page1',
+                         'visitorId'      => $visitorId,
+                         'ds'             => 'APP',
+                         'type'           => 'PAGEVIEW',
+                         'anonymousId'    => null,
+                         'userIP'         => null,
+                         'pageResolution' => null,
+                         'locale'         => null,
+                         'sessionNumber'  => null,
+                         'key'            => $page3Key,
+                         'createdAt'      => 1676542078047,
+                        ];
 
         $page3 = HitAbstract::hydrate(Page::getClassName(), $contentPage3);
 
@@ -276,12 +306,11 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $url = FlagshipConstant::HIT_EVENT_URL;
 
-        $httpClientMock->expects($this->exactly(2))->method("post")
-            ->with(
-                $url,
-                [],
-                $requestBody3
-            );
+        $httpClientMock->expects($this->exactly(2))->method("post")->with(
+            $url,
+            [],
+            $requestBody3
+        );
 
         $headers = [FlagshipConstant::HEADER_CONTENT_TYPE => FlagshipConstant::HEADER_APPLICATION_JSON];
 
@@ -307,12 +336,19 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\NoBatchingContinuousCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             true,
             true,
-            ["cacheHit","flushHits","logDebugSprintf"]
+            [
+             "cacheHit",
+             "flushHits",
+             "logDebugSprintf",
+            ]
         );
 
         $strategy->expects($this->never())->method("cacheHit");
@@ -333,21 +369,20 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $url = FlagshipConstant::BASE_API_URL . '/' . FlagshipConstant::URL_ACTIVATE_MODIFICATION;
 
-        $httpClientMock->expects($this->exactly(2))->method("post")
-            ->with(
-                $this->logicalOr(
-                    $url,
-                    $url
-                ),
-                $this->logicalOr(
-                    [],
-                    []
-                ),
-                $this->logicalOr(
-                    $requestBody,
-                    $requestBody2
-                )
-            );
+        $httpClientMock->expects($this->exactly(2))->method("post")->with(
+            $this->logicalOr(
+                $url,
+                $url
+            ),
+            $this->logicalOr(
+                [],
+                []
+            ),
+            $this->logicalOr(
+                $requestBody,
+                $requestBody2
+            )
+        );
 
         $headers = $strategy->getActivateHeaders();
 
@@ -369,25 +404,30 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
             0
         );
 
-        $strategy->expects($this->exactly(2))->method("logDebugSprintf")
-            ->with(
-                $this->logicalOr(
-                    $config,
-                    $config
-                ),
-                $this->logicalOr(
-                    FlagshipConstant::TRACKING_MANAGER,
-                    FlagshipConstant::TRACKING_MANAGER
-                ),
-                $this->logicalOr(
-                    FlagshipConstant::HIT_SENT_SUCCESS,
-                    FlagshipConstant::HIT_SENT_SUCCESS
-                ),
-                $this->logicalOr(
-                    [FlagshipConstant::SEND_ACTIVATE, $logMessage ],
-                    [FlagshipConstant::SEND_ACTIVATE, $logMessage1 ]
-                )
-            );
+        $strategy->expects($this->exactly(2))->method("logDebugSprintf")->with(
+            $this->logicalOr(
+                $config,
+                $config
+            ),
+            $this->logicalOr(
+                FlagshipConstant::TRACKING_MANAGER,
+                FlagshipConstant::TRACKING_MANAGER
+            ),
+            $this->logicalOr(
+                FlagshipConstant::HIT_SENT_SUCCESS,
+                FlagshipConstant::HIT_SENT_SUCCESS
+            ),
+            $this->logicalOr(
+                [
+                 FlagshipConstant::SEND_ACTIVATE,
+                 $logMessage,
+                ],
+                [
+                 FlagshipConstant::SEND_ACTIVATE,
+                 $logMessage1,
+                ]
+            )
+        );
 
         $this->assertCount(0, $strategy->getHitsPoolQueue());
         $this->assertCount(0, $strategy->getActivatePoolQueue());
@@ -408,12 +448,22 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\NoBatchingContinuousCachingStrategy",
-            [$config, $httpClientMock, "instanceId"],
+            [
+             $config,
+             $httpClientMock,
+             "instanceId",
+            ],
             "",
             true,
             true,
             true,
-            ["cacheHit","flushHits","logErrorSprintf", "addTroubleshootingHit", "sendTroubleshootingQueue"]
+            [
+             "cacheHit",
+             "flushHits",
+             "logErrorSprintf",
+             "addTroubleshootingHit",
+             "sendTroubleshootingQueue",
+            ]
         );
 
         $strategy->expects($this->never())->method("flushHits");
@@ -430,12 +480,11 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $exception = new Exception("error");
 
-        $httpClientMock->expects($this->exactly(1))->method("post")
-            ->with(
-                $url,
-                [],
-                $requestBody
-            )->willThrowException($exception);
+        $httpClientMock->expects($this->exactly(1))->method("post")->with(
+            $url,
+            [],
+            $requestBody
+        )->willThrowException($exception);
 
         $headers = $strategy->getActivateHeaders();
 
@@ -450,13 +499,15 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
             0
         );
 
-        $strategy->expects($this->exactly(1))->method("logErrorSprintf")
-            ->with(
-                $config,
-                FlagshipConstant::TRACKING_MANAGER,
-                FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_ACTIVATE, $logMessage ]
-            );
+        $strategy->expects($this->exactly(1))->method("logErrorSprintf")->with(
+            $config,
+            FlagshipConstant::TRACKING_MANAGER,
+            FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
+            [
+             FlagshipConstant::SEND_ACTIVATE,
+             $logMessage,
+            ]
+        );
         $strategy->expects($this->once())->method("addTroubleshootingHit");
         $strategy->expects($this->once())->method("sendTroubleshootingQueue");
 
@@ -478,7 +529,10 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\NoBatchingContinuousCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             false,
@@ -503,7 +557,10 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\NoBatchingContinuousCachingStrategy",
-            [$config, $httpClientMock],
+            [
+             $config,
+             $httpClientMock,
+            ],
             "",
             true,
             false,

@@ -94,7 +94,7 @@ abstract class HitAbstract
     {
         $this->setType($type);
         $this->ds = FlagshipConstant::SDK_APP;
-        $this->createdAt =  $this->getNow();
+        $this->createdAt = $this->getNow();
         $this->anonymousId = null;
         $this->isFromCache = false;
         $this->userIP = null;
@@ -335,13 +335,13 @@ abstract class HitAbstract
     public function toApiKeys(): array
     {
         $data = [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId ?: $this->anonymousId,
-            FlagshipConstant::DS_API_ITEM => $this->getDs(),
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-            FlagshipConstant::T_API_ITEM => $this->getType()->value,
-            FlagshipConstant::CUSTOMER_UID => null,
-            FlagshipConstant::QT_API_ITEM => $this->getNow() - $this->createdAt,
-        ];
+                 FlagshipConstant::VISITOR_ID_API_ITEM      => $this->visitorId ?: $this->anonymousId,
+                 FlagshipConstant::DS_API_ITEM              => $this->getDs(),
+                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
+                 FlagshipConstant::T_API_ITEM               => $this->getType()->value,
+                 FlagshipConstant::CUSTOMER_UID             => null,
+                 FlagshipConstant::QT_API_ITEM              => $this->getNow() - $this->createdAt,
+                ];
 
         if ($this->getUserIP() !== null) {
             $data[FlagshipConstant::USER_IP_API_ITEM] = $this->getUserIP();

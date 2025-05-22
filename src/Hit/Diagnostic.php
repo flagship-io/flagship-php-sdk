@@ -297,11 +297,7 @@ class Diagnostic extends HitAbstract
         parent::__construct($type);
         $this->setVersion(FlagshipConstant::TROUBLESHOOTING_VERSION);
         $date = $this->getCurrentDateTime();
-        $this->setTimestamp($date->format('c'))
-            ->setTimeZone($date->getTimezone()->getName())
-            ->setStackType(FlagshipConstant::SDK)
-            ->setStackName(FlagshipConstant::SDK_LANGUAGE)
-            ->setStackVersion(FlagshipConstant::SDK_VERSION);
+        $this->setTimestamp($date->format('c'))->setTimeZone($date->getTimezone()->getName())->setStackType(FlagshipConstant::SDK)->setStackName(FlagshipConstant::SDK_LANGUAGE)->setStackVersion(FlagshipConstant::SDK_VERSION);
     }
 
     /**
@@ -1320,16 +1316,16 @@ class Diagnostic extends HitAbstract
     public function toApiKeys(): array
     {
         $customVariable = [
-            'version' => $this->getVersion(),
-            'logLevel' => $this->getLogLevel()->name,
-            'envId' => $this->getConfig()->getEnvId(),
-            "timestamp" => $this->getTimestamp(),
-            'timeZone' => $this->getTimeZone(),
-            'label' => $this->getLabel()->value,
-            'stack.type' => $this->getStackType(),
-            'stack.name' => $this->getStackName(),
-            'stack.version' => $this->getStackVersion()
-        ];
+                           'version'       => $this->getVersion(),
+                           'logLevel'      => $this->getLogLevel()->name,
+                           'envId'         => $this->getConfig()->getEnvId(),
+                           "timestamp"     => $this->getTimestamp(),
+                           'timeZone'      => $this->getTimeZone(),
+                           'label'         => $this->getLabel()->value,
+                           'stack.type'    => $this->getStackType(),
+                           'stack.name'    => $this->getStackName(),
+                           'stack.version' => $this->getStackVersion(),
+                          ];
         if ($this->getVisitorId() !== null) {
             $customVariable["visitor.visitorId"] = $this->getVisitorId();
         }
@@ -1374,8 +1370,7 @@ class Diagnostic extends HitAbstract
         }
 
         if ($this->getSdkConfigTrackingManagerConfigStrategy() !== null) {
-            $customVariable["sdk.config.trackingManager.strategy"] =
-                $this->getSdkConfigTrackingManagerConfigStrategy()->name;
+            $customVariable["sdk.config.trackingManager.strategy"] = $this->getSdkConfigTrackingManagerConfigStrategy()->name;
         }
 
         if ($this->getSdkConfigBucketingUrl() !== null) {
@@ -1387,8 +1382,7 @@ class Diagnostic extends HitAbstract
         }
 
         if ($this->isSdkConfigUsingOnVisitorExposed() !== null) {
-            $customVariable["sdk.config.usingOnVisitorExposed"] =
-                json_encode($this->isSdkConfigUsingOnVisitorExposed());
+            $customVariable["sdk.config.usingOnVisitorExposed"] = json_encode($this->isSdkConfigUsingOnVisitorExposed());
         }
 
         if ($this->isSdkConfigUsingCustomHitCache() !== null) {
@@ -1396,8 +1390,7 @@ class Diagnostic extends HitAbstract
         }
 
         if ($this->isSdkConfigUsingCustomVisitorCache() !== null) {
-            $customVariable["sdk.config.usingCustomVisitorCache"] =
-                json_encode($this->isSdkConfigUsingCustomVisitorCache());
+            $customVariable["sdk.config.usingCustomVisitorCache"] = json_encode($this->isSdkConfigUsingCustomVisitorCache());
         }
 
         if ($this->getHttpRequestUrl() !== null) {
@@ -1443,7 +1436,7 @@ class Diagnostic extends HitAbstract
         if (is_array($this->getVisitorContext())) {
             $context = $this->getVisitorContext();
             foreach ($context as $index => $item) {
-                $customVariable["visitor.context.[$index]"] = is_string($item) ?  $item : json_encode($item);
+                $customVariable["visitor.context.[$index]"] = is_string($item) ? $item : json_encode($item);
             }
         }
 
@@ -1464,14 +1457,11 @@ class Diagnostic extends HitAbstract
                 $customVariableKey = "visitor.flags.[$key]";
                 $customVariableKeyMetadata = "visitor.flags.[$key].metadata";
                 $customVariable["$customVariableKey.key"] = $visitorFlag->getKey();
-                $customVariable["$customVariableKey.value"] = is_string($visitorFlag->getValue()) ?
-                    $visitorFlag->getValue() :
-                    json_encode($visitorFlag->getValue());
+                $customVariable["$customVariableKey.value"] = is_string($visitorFlag->getValue()) ? $visitorFlag->getValue() : json_encode($visitorFlag->getValue());
                 $customVariable["$customVariableKeyMetadata.variationId"] = $visitorFlag->getVariationId();
                 $customVariable["$customVariableKeyMetadata.variationName"] = $visitorFlag->getVariationName();
                 $customVariable["$customVariableKeyMetadata.variationGroupId"] = $visitorFlag->getVariationGroupId();
-                $customVariable["$customVariableKeyMetadata.variationGroupName"] =
-                    $visitorFlag->getVariationGroupName();
+                $customVariable["$customVariableKeyMetadata.variationGroupName"] = $visitorFlag->getVariationGroupName();
                 $customVariable["$customVariableKeyMetadata.campaignId"] = $visitorFlag->getCampaignId();
                 $customVariable["$customVariableKeyMetadata.campaignName"] = $visitorFlag->getCampaignName();
                 $customVariable["$customVariableKeyMetadata.campaignType"] = $visitorFlag->getCampaignType();
@@ -1490,12 +1480,10 @@ class Diagnostic extends HitAbstract
             $customVariable["flag.key"] = $this->getFlagKey();
         }
         if ($this->getFlagValue() !== null) {
-            $customVariable["flag.value"] = is_string($this->getFlagValue()) ? $this->getFlagValue() :
-            json_encode($this->getFlagValue());
+            $customVariable["flag.value"] = is_string($this->getFlagValue()) ? $this->getFlagValue() : json_encode($this->getFlagValue());
         }
         if ($this->getFlagDefault() !== null) {
-            $customVariable["flag.default"] = is_string($this->getFlagDefault()) ? $this->getFlagDefault() :
-                json_encode($this->getFlagDefault());
+            $customVariable["flag.default"] = is_string($this->getFlagDefault()) ? $this->getFlagDefault() : json_encode($this->getFlagDefault());
         }
         if ($this->isVisitorExposed() !== null) {
             $customVariable["flag.visitorExposed"] = json_encode($this->isVisitorExposed());
@@ -1529,17 +1517,17 @@ class Diagnostic extends HitAbstract
         }
         if ($this->getHitContent() !== null) {
             foreach ($this->getHitContent() as $key => $item) {
-                $customVariable["hit." . $key] =  is_string($item) ? $item : json_encode($item);
+                $customVariable["hit." . $key] = is_string($item) ? $item : json_encode($item);
             }
         }
 
         return [
-            FlagshipConstant::VISITOR_ID_API_ITEM => $this->visitorId,
-            FlagshipConstant::DS_API_ITEM => $this->getDs(),
-            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-            FlagshipConstant::T_API_ITEM => $this->getType()->value,
-            'cv' => $customVariable
-        ];
+                FlagshipConstant::VISITOR_ID_API_ITEM      => $this->visitorId,
+                FlagshipConstant::DS_API_ITEM              => $this->getDs(),
+                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
+                FlagshipConstant::T_API_ITEM               => $this->getType()->value,
+                'cv'                                       => $customVariable,
+               ];
     }
 
     /**

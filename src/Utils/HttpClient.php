@@ -150,11 +150,11 @@ class HttpClient implements HttpClientInterface
 
         if ($httpError || $curlErrorCode) {
             $message = [
-                'curlCode' => $curlErrorCode,
-                'curlMessage' => $curlErrorMessage,
-                'httpCode' => $httpStatusCode,
-                'httpMessage' => $rawResponse
-            ];
+                        'curlCode'    => $curlErrorCode,
+                        'curlMessage' => $curlErrorMessage,
+                        'httpCode'    => $httpStatusCode,
+                        'httpMessage' => $rawResponse,
+                       ];
             throw new Exception(json_encode($message), $curlErrorCode);
         }
         $response = $rawResponse;

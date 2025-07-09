@@ -68,7 +68,8 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 FlagshipConstant::HIT_SENT_SUCCESS,
                 [
                     FlagshipConstant::SEND_HIT,
-                    $this->getLogFormat(null, $url, $requestBody, $header, $this->getNow() - $now)]
+                    $this->getLogFormat(null, $url, $requestBody, $header, $this->getNow() - $now)
+                ]
             );
         } catch (\Exception $exception) {
             $this->onError($hit);
@@ -76,8 +77,10 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_HIT,
-                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now)]
+                [
+                    FlagshipConstant::SEND_HIT,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, $header, $this->getNow() - $now)
+                ]
             );
             $troubleshooting = new Troubleshooting();
             $troubleshooting->setLabel(TroubleshootingLabel::SEND_HIT_ROUTE_ERROR)
@@ -126,7 +129,8 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 FlagshipConstant::HIT_SENT_SUCCESS,
                 [
                     FlagshipConstant::SEND_ACTIVATE,
-                $this->getLogFormat(null, $url, $requestBody, $headers, $this->getNow() - $now)]
+                    $this->getLogFormat(null, $url, $requestBody, $headers, $this->getNow() - $now)
+                ]
             );
         } catch (\Exception $exception) {
             $this->onError($hit);
@@ -134,8 +138,10 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 $this->config,
                 FlagshipConstant::TRACKING_MANAGER,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
-                [FlagshipConstant::SEND_ACTIVATE,
-                $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now)]
+                [
+                    FlagshipConstant::SEND_ACTIVATE,
+                    $this->getLogFormat($exception->getMessage(), $url, $requestBody, $headers, $this->getNow() - $now)
+                ]
             );
 
             $troubleshooting = new Troubleshooting();
@@ -174,11 +180,15 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
 
     public function addTroubleshootingHit(Troubleshooting $hit)
     {
-         $this->sendTroubleshooting($hit);
+        if (!$this->isTroubleshootingActivated()) {
+            return;
+        }
+        $this->sendTroubleshooting($hit);
     }
 
     public function addUsageHit(UsageHit $hit)
     {
+
         $this->sendUsageHit($hit);
     }
 }

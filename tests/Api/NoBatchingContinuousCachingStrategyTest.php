@@ -455,11 +455,13 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
             true,
             false,
             true,
-            ["sendTroubleshooting"]
+            ["sendTroubleshooting", 'isTroubleshootingActivated']
         );
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setConfig($config);
+
+        $strategy->expects($this->once())->method('isTroubleshootingActivated')->willReturn(true);
 
         $strategy->expects($this->once())->method('sendTroubleshooting')->with($troubleshooting);
 

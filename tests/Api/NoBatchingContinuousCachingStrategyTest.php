@@ -3,18 +3,19 @@
 namespace Flagship\Api;
 
 use Exception;
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Enum\EventCategory;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Hit\Activate;
-use Flagship\Hit\ActivateBatch;
-use Flagship\Hit\UsageHit;
-use Flagship\Hit\Event;
-use Flagship\Hit\HitAbstract;
 use Flagship\Hit\Page;
-use Flagship\Hit\Troubleshooting;
+use Flagship\Hit\Event;
+use Flagship\Hit\Activate;
+use Flagship\Hit\UsageHit;
+use Flagship\Hit\HitAbstract;
 use Flagship\Traits\LogTrait;
+use Flagship\Hit\ActivateBatch;
 use PHPUnit\Framework\TestCase;
+use Flagship\Enum\EventCategory;
+use Flagship\Hit\Troubleshooting;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\DecisionApiConfig;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class NoBatchingContinuousCachingStrategyTest extends TestCase
 {
@@ -527,6 +528,9 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
 
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface');
 
+        /**
+         * @var NoBatchingContinuousCachingStrategy| MockObject
+         */
         $strategy = $this->getMockForAbstractClass(
             "Flagship\Api\NoBatchingContinuousCachingStrategy",
             [
@@ -537,11 +541,13 @@ class NoBatchingContinuousCachingStrategyTest extends TestCase
             true,
             false,
             true,
-            ["sendTroubleshooting"]
+            ["sendTroubleshooting", 'isTroubleshootingActivated']
         );
 
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setConfig($config);
+
+        $strategy->expects($this->once())->method('isTroubleshootingActivated')->willReturn(true);
 
         $strategy->expects($this->once())->method('sendTroubleshooting')->with($troubleshooting);
 

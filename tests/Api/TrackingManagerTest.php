@@ -180,7 +180,7 @@ class TrackingManagerTest extends TestCase
         $screen = new Screen("home");
         $screen->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key4");
 
-        $segment = new Segment(["key" => "value"]);
+        $segment = new Segment(["key" => "value"], $config);
         $segment->setConfig($config)->setVisitorId($visitorId)->setKey("$visitorId:key5");
 
         $activate = new Activate("varGrid", "varId");

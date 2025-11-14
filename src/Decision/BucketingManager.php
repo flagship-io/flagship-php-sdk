@@ -77,13 +77,13 @@ class BucketingManager extends DecisionManagerAbstract
      */
     protected function sendContext(VisitorAbstract $visitor): void
     {
-        if (count($visitor->getContext()) <= self::NB_MIN_CONTEXT_KEYS || !$visitor->hasConsented()|| !$visitor->getHasContextBeenUpdated()) {
+        if (count($visitor->getContext()) <= self::NB_MIN_CONTEXT_KEYS || !$visitor->hasConsented() || !$visitor->getHasContextBeenUpdated()) {
             return;
         }
 
         $visitor->setHasContextBeenUpdated(false);
 
-        $segmentHit = new Segment($visitor->getContext());
+        $segmentHit = new Segment($visitor->getContext(), $this->getConfig());
         $visitor->sendHit($segmentHit);
     }
 
@@ -127,14 +127,14 @@ class BucketingManager extends DecisionManagerAbstract
                 self::GET_THIRD_PARTY_SEGMENT,
                 FlagshipConstant::UNEXPECTED_ERROR_OCCURRED,
                 [
-                 self::THIRD_PARTY_SEGMENT,
-                 $this->getLogFormat(
-                     $exception->getMessage(),
-                     $url,
-                     [],
-                     [],
-                     $this->getNow() - $now
-                 ),
+                    self::THIRD_PARTY_SEGMENT,
+                    $this->getLogFormat(
+                        $exception->getMessage(),
+                        $url,
+                        [],
+                        [],
+                        $this->getNow() - $now
+                    ),
                 ]
             );
         }
@@ -289,14 +289,14 @@ class BucketingManager extends DecisionManagerAbstract
                     $visitor
                 );
                 $visitorCampaigns[] = [
-                                       FlagshipField::FIELD_ID                   => $campaignId,
-                                       FlagshipField::FIELD_NANE                 => $campaignName,
-                                       FlagshipField::FIELD_SLUG                 => $slug,
-                                       FlagshipField::FIELD_VARIATION_GROUP_ID   => $variationGroup[FlagshipField::FIELD_ID],
-                                       FlagshipField::FIELD_VARIATION_GROUP_NAME => $variationGroup[FlagshipField::FIELD_NANE] ?? null,
-                                       FlagshipField::FIELD_VARIATION            => $variations,
-                                       FlagshipField::FIELD_CAMPAIGN_TYPE        => $campaignType,
-                                      ];
+                    FlagshipField::FIELD_ID                   => $campaignId,
+                    FlagshipField::FIELD_NANE                 => $campaignName,
+                    FlagshipField::FIELD_SLUG                 => $slug,
+                    FlagshipField::FIELD_VARIATION_GROUP_ID   => $variationGroup[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_VARIATION_GROUP_NAME => $variationGroup[FlagshipField::FIELD_NANE] ?? null,
+                    FlagshipField::FIELD_VARIATION            => $variations,
+                    FlagshipField::FIELD_CAMPAIGN_TYPE        => $campaignType,
+                ];
                 break;
             }
         }
@@ -352,11 +352,11 @@ class BucketingManager extends DecisionManagerAbstract
                     continue;
                 }
                 $visitorVariation = [
-                                     FlagshipField::FIELD_ID            => $newVariation[FlagshipField::FIELD_ID],
-                                     FlagshipField::FIELD_MODIFICATIONS => $newVariation[FlagshipField::FIELD_MODIFICATIONS],
-                                     FlagshipField::FIELD_REFERENCE     => !empty($newVariation[FlagshipField::FIELD_REFERENCE]),
-                                     FlagshipField::FIELD_NANE          => $newVariation[FlagshipField::FIELD_NANE] ?? null,
-                                    ];
+                    FlagshipField::FIELD_ID            => $newVariation[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_MODIFICATIONS => $newVariation[FlagshipField::FIELD_MODIFICATIONS],
+                    FlagshipField::FIELD_REFERENCE     => !empty($newVariation[FlagshipField::FIELD_REFERENCE]),
+                    FlagshipField::FIELD_NANE          => $newVariation[FlagshipField::FIELD_NANE] ?? null,
+                ];
                 break;
             }
 
@@ -367,11 +367,11 @@ class BucketingManager extends DecisionManagerAbstract
             $totalAllocation += $variation[FlagshipField::FIELD_ALLOCATION];
             if ($hashAllocation < $totalAllocation) {
                 $visitorVariation = [
-                                     FlagshipField::FIELD_ID            => $variation[FlagshipField::FIELD_ID],
-                                     FlagshipField::FIELD_MODIFICATIONS => $variation[FlagshipField::FIELD_MODIFICATIONS],
-                                     FlagshipField::FIELD_REFERENCE     => !empty($variation[FlagshipField::FIELD_REFERENCE]),
-                                     FlagshipField::FIELD_NANE          => $variation[FlagshipField::FIELD_NANE] ?? null,
-                                    ];
+                    FlagshipField::FIELD_ID            => $variation[FlagshipField::FIELD_ID],
+                    FlagshipField::FIELD_MODIFICATIONS => $variation[FlagshipField::FIELD_MODIFICATIONS],
+                    FlagshipField::FIELD_REFERENCE     => !empty($variation[FlagshipField::FIELD_REFERENCE]),
+                    FlagshipField::FIELD_NANE          => $variation[FlagshipField::FIELD_NANE] ?? null,
+                ];
                 break;
             }
         }

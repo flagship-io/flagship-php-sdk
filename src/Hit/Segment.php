@@ -2,8 +2,9 @@
 
 namespace Flagship\Hit;
 
-use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use Flagship\Config\FlagshipConfig;
+use Flagship\Enum\FlagshipConstant;
 
 class Segment extends HitAbstract
 {
@@ -18,7 +19,7 @@ class Segment extends HitAbstract
     /**
      * @var array<string, mixed>
      */
-    protected array $sl;
+    protected array $sl = [];
 
     /**
      * @return array<string, mixed>
@@ -45,9 +46,10 @@ class Segment extends HitAbstract
     /**
      * @param array $sl
      */
-    public function __construct(array $sl)
+    public function __construct(array $sl, FlagshipConfig $config)
     {
         parent::__construct(HitType::SEGMENT);
+        $this->setConfig($config);
         $this->setSl($sl);
     }
 
@@ -57,9 +59,7 @@ class Segment extends HitAbstract
      */
     protected function isAssoc(array $array): bool
     {
-        $keys = array_keys($array);
-
-        return array_keys($keys) !== $keys;
+        return !array_is_list($array);
     }
 
     /**
@@ -68,7 +68,17 @@ class Segment extends HitAbstract
     public function toApiKeys(): array
     {
         $arrayParent = parent::toApiKeys();
-        $arrayParent[FlagshipConstant::SL_API_ITEM] = $this->getSl();
+        $apiContext = array_map(function ($value) {
+            if ($value === null) {
+                return 'null';
+            }
+            if (is_bool($value)) {
+                return $value ? 'true' : 'false';
+            }
+            return strval($value);
+        }, $this->getSl());
+
+        $arrayParent[FlagshipConstant::SL_API_ITEM] = $apiContext;
         return $arrayParent;
     }
 
@@ -77,7 +87,7 @@ class Segment extends HitAbstract
      */
     public function isReady(): bool
     {
-        return parent::isReady() && $this->getSl();
+        return parent::isReady() && $this->getSl() && count($this->getSl()) > 0;
     }
 
     /**

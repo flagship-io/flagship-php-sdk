@@ -59,7 +59,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     }
 
 
-    public function setVisitorId($visitorId): static
+    public function setVisitorId(string $visitorId): self
     {
         $this->getVisitorDelegate()->setVisitorId($visitorId);
         return $this;
@@ -113,7 +113,7 @@ class Visitor implements VisitorInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function updateContext(string $key, float|bool|int|string|null $value): void
+    public function updateContext(string $key, float|bool|int|string $value): void
     {
         $this->getVisitorDelegate()->updateContext($key, $value);
     }

@@ -14,10 +14,7 @@ class Item extends HitAbstract
 {
     public const ERROR_MESSAGE = 'Transaction Id, Item name and item code are required';
 
-    public static function getClassName(): string
-    {
-        return __CLASS__;
-    }
+
 
     /**
      * @var string
@@ -81,7 +78,7 @@ class Item extends HitAbstract
      * @param string $transactionId : Transaction unique identifier.
      * @return Item
      */
-    public function setTransactionId(string $transactionId): static
+    public function setTransactionId(string $transactionId): self
     {
         $this->transactionId = $transactionId;
         return $this;
@@ -103,7 +100,7 @@ class Item extends HitAbstract
      * @param string $productName : Name of the item product.
      * @return Item
      */
-    public function setProductName(string $productName): static
+    public function setProductName(string $productName): self
     {
         $this->productName = $productName;
         return $this;
@@ -125,7 +122,7 @@ class Item extends HitAbstract
      * @param string $productSku
      * @return Item
      */
-    public function setProductSku(string $productSku): static
+    public function setProductSku(string $productSku): self
     {
         $this->productSku = $productSku;
         return $this;
@@ -147,7 +144,7 @@ class Item extends HitAbstract
      * @param ?float $itemPrice
      * @return Item
      */
-    public function setItemPrice(?float $itemPrice): static
+    public function setItemPrice(?float $itemPrice): self
     {
         $this->itemPrice = $itemPrice;
         return $this;
@@ -169,7 +166,7 @@ class Item extends HitAbstract
      * @param ?int $itemQuantity
      * @return Item
      */
-    public function setItemQuantity(?int $itemQuantity): static
+    public function setItemQuantity(?int $itemQuantity): self
     {
         $this->itemQuantity = $itemQuantity;
         return $this;
@@ -191,7 +188,7 @@ class Item extends HitAbstract
      * @param ?string $itemCategory
      * @return Item
      */
-    public function setItemCategory(?string $itemCategory): static
+    public function setItemCategory(?string $itemCategory): self
     {
         $this->itemCategory = $itemCategory;
         return $this;

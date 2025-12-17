@@ -4,7 +4,7 @@ namespace Flagship;
 
 use Exception;
 use Flagship\Traits\Guid;
-use Flagship\Utils\FlagshipLogManager8;
+use Flagship\Utils\FlagshipLogManager;
 use Flagship\Utils\HttpClient;
 use Psr\Log\LoggerInterface;
 use Flagship\Traits\LogTrait;
@@ -44,10 +44,11 @@ class Flagship
      * @var Container
      */
     private Container $container;
+
     /**
      * @var FlagshipConfig|null
      */
-    private ?FlagshipConfig $config;
+    private ?FlagshipConfig $config = null;
 
     /**
      * @var ?ConfigManager
@@ -128,9 +129,9 @@ class Flagship
                 $decisionManager = $container->get(
                     BucketingManager::class,
                     [
-                     $httpClient,
-                     $config,
-                     $murmurHash,
+                        $httpClient,
+                        $config,
+                        $murmurHash,
                     ]
                 );
             } else {
@@ -144,9 +145,9 @@ class Flagship
             $trackingManager = $container->get(
                 TrackingManager::class,
                 [
-                 $config,
-                 $httpClient,
-                 $flagship->flagshipInstanceId,
+                    $config,
+                    $httpClient,
+                    $flagship->flagshipInstanceId,
                 ]
             );
 
@@ -200,7 +201,7 @@ class Flagship
         );
         $newContainer->bind(
             LoggerInterface::class,
-            FlagshipLogManager8::class
+            FlagshipLogManager::class
         );
 
         return $newContainer;
@@ -218,7 +219,7 @@ class Flagship
      * @param ConfigManager $configManager
      * @return Flagship
      */
-    protected function setConfigManager(ConfigManager $configManager): static
+    protected function setConfigManager(ConfigManager $configManager): self
     {
         $this->configManager = $configManager;
         return $this;
@@ -228,9 +229,9 @@ class Flagship
     /**
      * Return the current config set by the customer and used by the SDK.
      *
-     * @return FlagshipConfig
+     * @return ?FlagshipConfig
      */
-    public static function getConfig(): FlagshipConfig
+    public static function getConfig(): ?FlagshipConfig
     {
         return self::getInstance()->config;
     }
@@ -239,7 +240,7 @@ class Flagship
      * @param FlagshipConfig $config
      * @return Flagship
      */
-    protected function setConfig(FlagshipConfig $config): static
+    protected function setConfig(FlagshipConfig $config): self
     {
         $this->config = $config;
         return $this;
@@ -260,7 +261,7 @@ class Flagship
      * @param FSSdkStatus $status FSSdkStatus
      * @return Flagship
      */
-    public function setStatus(FSSdkStatus $status): static
+    public function setStatus(FSSdkStatus $status): self
     {
         $onSdkStatusChanged = $this->config?->getOnSdkStatusChanged();
         if ($onSdkStatusChanged && $this->status !== $status) {
@@ -291,6 +292,48 @@ class Flagship
         $instance->getConfigManager()?->getTrackingManager()?->sendBatch();
     }
 
+    private function defaultConfigManagerInitialization(?ConfigManager $configManager): ConfigManager
+    {
+        if ($configManager) {
+            return $configManager;
+        }
+        $instance = self::getInstance();
+        $container = $instance->getContainer();
+
+        $instance->flagshipInstanceId = $instance->newGuid();
+
+        $config = $container->get(DecisionApiConfig::class, ['', '']);
+        $logManager = $container->get(LoggerInterface::class);
+        $config->setLogManager($logManager);
+
+        $config = $container->get(DecisionApiConfig::class, ['', '']);
+        $httpClient = $container->get(HttpClientInterface::class);
+        $decisionManager = $container->get(
+            ApiManager::class,
+            [$httpClient, $config]
+        );
+        $trackingManager = $container->get(
+            TrackingManager::class,
+            [
+                $config,
+                $httpClient,
+                $instance->flagshipInstanceId,
+            ]
+        );
+        $configManager =  $container->get(
+            ConfigManager::class,
+            [$config, $decisionManager, $trackingManager],
+            true
+        );
+
+        $instance->logWarning(
+            $config,
+            FlagshipConstant::NEW_VISITOR_WARNING,
+            [FlagshipConstant::TAG => FlagshipConstant::TAG_NEW_VISITOR]
+        );
+        return $configManager;
+    }
+
     /**
      * Initialize the builder and return a \Flagship\Visitor\VisitorBuilder.
      *
@@ -301,10 +344,12 @@ class Flagship
     public static function newVisitor(?string $visitorId, bool $hasConsented): VisitorBuilder
     {
         $instance = self::getInstance();
+        $configManager = $instance->defaultConfigManagerInitialization($instance->getConfigManager());
+
         return VisitorBuilder::builder(
             $visitorId,
             $hasConsented,
-            $instance->getConfigManager(),
+            $configManager,
             $instance->getContainer(),
             $instance->flagshipInstanceId
         );

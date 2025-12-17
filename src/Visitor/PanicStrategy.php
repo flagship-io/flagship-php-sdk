@@ -92,7 +92,7 @@ class PanicStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
+    public function getFlagMetadata(string $key, ?FlagDTO $flag = null): FSFlagMetadata
     {
         $this->log(__FUNCTION__);
         return FSFlagMetadata::getEmpty();

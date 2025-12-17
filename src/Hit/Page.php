@@ -14,10 +14,7 @@ class Page extends HitAbstract
 {
     public const ERROR_MESSAGE = 'Page url is required';
 
-    public static function getClassName(): string
-    {
-        return __CLASS__;
-    }
+
 
     /**
      * @var string
@@ -49,7 +46,7 @@ class Page extends HitAbstract
      * @param string $pageUrl
      * @return Page
      */
-    public function setPageUrl(string $pageUrl): static
+    public function setPageUrl(string $pageUrl): self
     {
         $this->pageUrl = $pageUrl;
         return $this;

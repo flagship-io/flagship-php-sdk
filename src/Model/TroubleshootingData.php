@@ -17,9 +17,9 @@ class TroubleshootingData
     private DateTime $endDate;
 
     /**
-     * @var numeric
+     * @var int|float $traffic
      */
-    private string|int|float $traffic;
+    private int|float $traffic;
 
     /**
      * @var string
@@ -38,7 +38,7 @@ class TroubleshootingData
      * @param DateTime $startDate
      * @return TroubleshootingData
      */
-    public function setStartDate(DateTime $startDate): static
+    public function setStartDate(DateTime $startDate): self
     {
         $this->startDate = $startDate;
         return $this;
@@ -56,7 +56,7 @@ class TroubleshootingData
      * @param DateTime $endDate
      * @return TroubleshootingData
      */
-    public function setEndDate(DateTime $endDate): static
+    public function setEndDate(DateTime $endDate): self
     {
         $this->endDate = $endDate;
         return $this;
@@ -74,7 +74,7 @@ class TroubleshootingData
      * @param float|int $traffic
      * @return TroubleshootingData
      */
-    public function setTraffic(float|int $traffic): static
+    public function setTraffic(float|int $traffic): self
     {
         $this->traffic = $traffic;
         return $this;
@@ -92,7 +92,7 @@ class TroubleshootingData
      * @param string $timezone
      * @return TroubleshootingData
      */
-    public function setTimezone(string $timezone): static
+    public function setTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
         return $this;

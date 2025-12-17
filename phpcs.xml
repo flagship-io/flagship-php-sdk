@@ -5,6 +5,8 @@
     <!-- Define the coding standard to use -->
     <rule ref="PSR12" />
 
+    <!-- Add deprecated functions rule -->
+    <rule ref="Generic.PHP.DeprecatedFunctions"/>
     <!-- Include all PHP files in the src and tests directories -->
     <file>src</file>
     <file>tests</file>

@@ -3,8 +3,9 @@
 namespace Flagship\Decision;
 
 use Flagship\Model\FlagDTO;
-use Flagship\Model\TroubleshootingData;
+use Flagship\Model\CampaignDTO;
 use Flagship\Visitor\VisitorAbstract;
+use Flagship\Model\TroubleshootingData;
 
 interface DecisionManagerInterface
 {
@@ -18,15 +19,15 @@ interface DecisionManagerInterface
 
     /**
      * @param VisitorAbstract $visitor
-     * @return array|null
+     * @return CampaignDTO[]|null
      */
     public function getCampaigns(VisitorAbstract $visitor): array|null;
 
     /**
-     * @param $campaigns
+     * @param CampaignDTO[] $campaigns
      * @return FlagDTO[]
      */
-    public function getFlagsData($campaigns): array;
+    public function getFlagsData(array $campaigns): array;
 
     public function getTroubleshootingData(): ?TroubleshootingData;
 }

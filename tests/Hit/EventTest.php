@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Flagship\Hit;
 
-use Flagship\Config\DecisionApiConfig;
+use Flagship\Enum\HitType;
+use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\TestCase;
 use Flagship\Enum\EventCategory;
 use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\HitType;
-use PHPUnit\Framework\TestCase;
+use Flagship\Config\DecisionApiConfig;
 
 class EventTest extends TestCase
 {
+    use PHPMock;
     public function testConstruct()
     {
+        $round = $this->getFunctionMock("Flagship\Traits", 'round');
+        $round->expects($this->any())->willReturn(0);
 
         $visitorId = "visitorId";
         $envId = "envId";
@@ -28,19 +32,19 @@ class EventTest extends TestCase
         $sessionNumber = 1;
 
         $eventArray = [
-                       FlagshipConstant::VISITOR_ID_API_ITEM        => $visitorId,
-                       FlagshipConstant::DS_API_ITEM                => FlagshipConstant::SDK_APP,
-                       FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM   => $envId,
-                       FlagshipConstant::T_API_ITEM                 => HitType::EVENT->value,
-                       FlagshipConstant::CUSTOMER_UID               => null,
-                       FlagshipConstant::QT_API_ITEM                => 0.0,
-                       FlagshipConstant::USER_IP_API_ITEM           => $userIp,
-                       FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $screenResolution,
-                       FlagshipConstant::USER_LANGUAGE              => $userLanguage,
-                       FlagshipConstant::SESSION_NUMBER             => $sessionNumber,
-                       FlagshipConstant::EVENT_CATEGORY_API_ITEM    => $eventCategory,
-                       FlagshipConstant::EVENT_ACTION_API_ITEM      => $eventAction,
-                      ];
+            FlagshipConstant::VISITOR_ID_API_ITEM        => $visitorId,
+            FlagshipConstant::DS_API_ITEM                => FlagshipConstant::SDK_APP,
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM   => $envId,
+            FlagshipConstant::T_API_ITEM                 => HitType::EVENT->value,
+            FlagshipConstant::CUSTOMER_UID               => null,
+            FlagshipConstant::QT_API_ITEM                => 0.0,
+            FlagshipConstant::USER_IP_API_ITEM           => $userIp,
+            FlagshipConstant::SCREEN_RESOLUTION_API_ITEM => $screenResolution,
+            FlagshipConstant::USER_LANGUAGE              => $userLanguage,
+            FlagshipConstant::SESSION_NUMBER             => $sessionNumber,
+            FlagshipConstant::EVENT_CATEGORY_API_ITEM    => $eventCategory,
+            FlagshipConstant::EVENT_ACTION_API_ITEM      => $eventAction,
+        ];
 
         $event = new Event($eventCategory, $eventAction);
         $config = new DecisionApiConfig();

@@ -2,15 +2,20 @@
 
 namespace Flagship\Hit;
 
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\DecisionApiConfig;
 
 class SegmentTest extends TestCase
 {
+     use PHPMock;
     public function testConstructor()
     {
+        $round = $this->getFunctionMock("Flagship\Traits", 'round');
+        $round->expects($this->any())->willReturn(0);
+
         $envId = "envId";
         $visitorId = "visitorId";
 
@@ -20,6 +25,7 @@ class SegmentTest extends TestCase
             "key3" => true,
             "key4" => null,
             "key5" => false,
+            "key6" => ["subKey" => "subValue"]
         ];
 
         $config = new DecisionApiConfig($envId);
@@ -46,6 +52,7 @@ class SegmentTest extends TestCase
                 "key3" => "true",
                 "key4" => "null",
                 "key5" => "false",
+                "key6" => ''
             ]
         ];
 

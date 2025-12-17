@@ -48,4 +48,17 @@ class FlagshipField
     public const TRAFFIC = "traffic";
     public const FIELD_CAMPAIGN_NAME = "campaignName";
     public const FIELD_VARIATION_NAME = "variationName";
+
+    public const FIELD_ACTIVATED = "activated";
+
+    public const FIELD_FLAGS = "flags";
+
+    public const FIELD_OPERATOR = 'operator';
+
+    public const FS_ALL_USERS = 'fs_all_users';
+    public const FS_USERS = 'fs_users';
+
+    public const ENABLED_XPC = 'enabledXPC';
+    public const EAI_COLLECT_ENABLED = 'eaiCollectEnabled';
+    public const EAI_ACTIVATION_ENABLED = 'eaiActivationEnabled';
 }

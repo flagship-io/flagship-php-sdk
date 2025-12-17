@@ -7,8 +7,8 @@ use Flagship\Enum\FlagshipConstant;
 
 class ActivateBatch
 {
-    /***
-     * @var Activate[]
+    /**
+     * @var Activate[] $hits
      */
     protected array $hits;
 
@@ -19,7 +19,7 @@ class ActivateBatch
 
     /**
      * @param FlagshipConfig $config
-     * @param array $hits
+     * @param Activate[] $hits
      */
     public function __construct(FlagshipConfig $config, array $hits)
     {
@@ -28,7 +28,7 @@ class ActivateBatch
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function toApiKeys(): array
     {
@@ -39,8 +39,8 @@ class ActivateBatch
             $activates[] = $apiKeys;
         }
         return [
-                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->config->getEnvId(),
-                FlagshipConstant::BATCH                    => $activates,
-               ];
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->config->getEnvId(),
+            FlagshipConstant::BATCH                    => $activates,
+        ];
     }
 }

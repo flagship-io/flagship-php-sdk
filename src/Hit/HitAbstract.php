@@ -76,9 +76,9 @@ abstract class HitAbstract
     protected string $key;
 
     /**
-     * @var int
+     * @var float
      */
-    protected int $createdAt;
+    protected float $createdAt;
 
     /**
      * @var bool
@@ -115,9 +115,9 @@ abstract class HitAbstract
      * Specifies visitor unique identifier provided by developer at visitor creation
      *
      * @param string $visitorId
-     * @return HitAbstract
+     * @return self
      */
-    public function setVisitorId(string $visitorId): static
+    public function setVisitorId(string $visitorId): self
     {
         $this->visitorId = $visitorId;
         return $this;
@@ -133,9 +133,9 @@ abstract class HitAbstract
 
     /**
      * @param string $ds
-     * @return HitAbstract
+     * @return self
      */
-    public function setDs(string $ds): static
+    public function setDs(string $ds): self
     {
         $this->ds = $ds;
         return $this;
@@ -151,10 +151,10 @@ abstract class HitAbstract
         return $this->type;
     }
 
-    protected function setType(HitType $type): static
+    protected function setType(HitType $type): self
     {
-         $this->type = $type;
-         return $this;
+        $this->type = $type;
+        return $this;
     }
 
     /**
@@ -167,9 +167,9 @@ abstract class HitAbstract
 
     /**
      * @param FlagshipConfig $config
-     * @return HitAbstract
+     * @return self
      */
-    public function setConfig(FlagshipConfig $config): static
+    public function setConfig(FlagshipConfig $config): self
     {
         $this->config = $config;
         return $this;
@@ -185,9 +185,9 @@ abstract class HitAbstract
 
     /**
      * @param string|null $anonymousId
-     * @return HitAbstract
+     * @return self
      */
-    public function setAnonymousId(?string $anonymousId): static
+    public function setAnonymousId(?string $anonymousId): self
     {
         $this->anonymousId = $anonymousId;
         return $this;
@@ -205,9 +205,9 @@ abstract class HitAbstract
     /**
      * Define the User IP address
      * @param string|null $userIP
-     * @return HitAbstract
+     * @return self
      */
-    public function setUserIP(?string $userIP): static
+    public function setUserIP(?string $userIP): self
     {
         $this->userIP = $userIP;
         return $this;
@@ -225,9 +225,9 @@ abstract class HitAbstract
     /**
      * Screen Resolution
      * @param string|null $screenResolution
-     * @return HitAbstract
+     * @return self
      */
-    public function setScreenResolution(?string $screenResolution): static
+    public function setScreenResolution(?string $screenResolution): self
     {
         $this->screenResolution = $screenResolution;
         return $this;
@@ -245,9 +245,9 @@ abstract class HitAbstract
     /**
      * Define User language
      * @param string|null $locale
-     * @return HitAbstract
+     * @return self
      */
-    public function setLocale(?string $locale): static
+    public function setLocale(?string $locale): self
     {
         $this->locale = $locale;
         return $this;
@@ -265,9 +265,9 @@ abstract class HitAbstract
     /**
      * Define Session number. Number of sessions the current visitor has logged, including the current session
      * @param float|int|string|null $sessionNumber
-     * @return HitAbstract
+     * @return self
      */
-    public function setSessionNumber(float|int|string|null $sessionNumber): static
+    public function setSessionNumber(float|int|string|null $sessionNumber): self
     {
         $this->sessionNumber = $sessionNumber;
         return $this;
@@ -283,27 +283,27 @@ abstract class HitAbstract
 
     /**
      * @param string $key
-     * @return HitAbstract
+     * @return self
      */
-    public function setKey(string $key): static
+    public function setKey(string $key): self
     {
         $this->key = $key;
         return $this;
     }
 
     /**
-     * @return int
+     * @return float
      */
-    public function getCreatedAt(): int
+    public function getCreatedAt(): float
     {
         return $this->createdAt;
     }
 
     /**
-     * @param int $createdAt
-     * @return HitAbstract
+     * @param float $createdAt
+     * @return self
      */
-    public function setCreatedAt(int $createdAt): static
+    public function setCreatedAt(float $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;
@@ -319,9 +319,9 @@ abstract class HitAbstract
 
     /**
      * @param bool $isFromCache
-     * @return HitAbstract
+     * @return self
      */
-    protected function setIsFromCache(bool $isFromCache): static
+    protected function setIsFromCache(bool $isFromCache): self
     {
         $this->isFromCache = $isFromCache;
         return $this;
@@ -330,18 +330,18 @@ abstract class HitAbstract
     /**
      * Return an associative array of the class with Api parameters as keys
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toApiKeys(): array
     {
         $data = [
-                 FlagshipConstant::VISITOR_ID_API_ITEM      => $this->visitorId ?: $this->anonymousId,
-                 FlagshipConstant::DS_API_ITEM              => $this->getDs(),
-                 FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-                 FlagshipConstant::T_API_ITEM               => $this->getType()->value,
-                 FlagshipConstant::CUSTOMER_UID             => null,
-                 FlagshipConstant::QT_API_ITEM              => $this->getNow() - $this->createdAt,
-                ];
+            FlagshipConstant::VISITOR_ID_API_ITEM      => $this->visitorId ?: $this->anonymousId,
+            FlagshipConstant::DS_API_ITEM              => $this->getDs(),
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()?->getEnvId(),
+            FlagshipConstant::T_API_ITEM               => $this->getType()->value,
+            FlagshipConstant::CUSTOMER_UID             => null,
+            FlagshipConstant::QT_API_ITEM              => $this->getNow() - $this->createdAt,
+        ];
 
         if ($this->getUserIP() !== null) {
             $data[FlagshipConstant::USER_IP_API_ITEM] = $this->getUserIP();
@@ -367,30 +367,34 @@ abstract class HitAbstract
     }
 
     /**
-     * @param $class
-     * @param $data
-     * @return object
+     * @template T of object
+     * @param class-string<T> $class
+     * @param array<string, mixed> $data
+     * @return T
      * @throws ReflectionException
      */
-    public static function hydrate($class, $data): object
+    public static function hydrate(string $class, array $data): object
     {
+
         $reflector = new ReflectionClass($class);
         $objet = $reflector->newInstanceWithoutConstructor();
         foreach ($data as $key => $value) {
             $method = 'set' . ucwords($key);
             if (is_callable(array($objet, $method))) {
-                if ($key === "type") {
+                if ($key === "type" && is_string($value)) {
                     $value = HitType::from($value);
                 }
                 $objet->$method($value);
             }
         }
-        $objet->setIsFromCache(true);
+        if ($objet instanceof HitAbstract) {
+            $objet->setIsFromCache(true);
+        }
         return $objet;
     }
 
     /**
-     * @return array
+     * @return array<string,mixed>
      */
     public function toArray(): array
     {
@@ -401,7 +405,6 @@ abstract class HitAbstract
             if ($property->getName() === 'config' || $property->getName() === 'isFromCache') {
                 continue;
             }
-            $property->setAccessible(true);
             $value = $property->getValue($this);
             if ($value instanceof HitType) {
                 $value = $value->value;
@@ -420,7 +423,7 @@ abstract class HitAbstract
     public function isReady(): bool
     {
         return $this->getVisitorId() && $this->getDs() && $this->getConfig() &&
-            $this->getConfig()->getEnvId() && $this->getType();
+            $this->getConfig()->getEnvId();
     }
 
     /**

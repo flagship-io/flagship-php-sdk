@@ -4,15 +4,17 @@ namespace Flagship\Flag;
 
 use Flagship\Enum\FSFlagStatus;
 
+
 interface FSFlagInterface
 {
-     /**
-      * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,
-      * or if types are different.
-      * @param array|bool|string|numeric|null $defaultValue
-      * @param boolean $visitorExposed
-      * @return bool|numeric|string|array|null
-      */
+    /**
+     * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,
+     * or if types are different.
+     * @phpstan-template T of scalar|array<mixed>|null  
+     * @param T $defaultValue
+     * @param boolean $visitorExposed
+     * @return T
+     */
     public function getValue(
         float|array|bool|int|string|null $defaultValue,
         bool $visitorExposed = true

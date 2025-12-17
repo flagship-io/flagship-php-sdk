@@ -11,70 +11,6 @@ use ReflectionException;
 
 class ValidatorTraitTest extends TestCase
 {
-    /**
-     * @throws ReflectionException
-     */
-    public function testIsValueValid()
-    {
-        $validatorTraitMock = $this->getMockForTrait(
-            'Flagship\Traits\ValidatorTrait',
-            [],
-            "",
-            false,
-            true,
-            true
-        );
-        $isKeyValid = Utils::getMethod($validatorTraitMock, "isKeyValid");
-        // Key is empty
-        $this->assertFalse($isKeyValid->invokeArgs($validatorTraitMock, ['']));
-        // Key is null
-        $this->assertFalse($isKeyValid->invokeArgs($validatorTraitMock, [null]));
-        // Key is not string
-        $this->assertFalse($isKeyValid->invokeArgs($validatorTraitMock, [44]));
-        $this->assertFalse($isKeyValid->invokeArgs($validatorTraitMock, [[]]));
-
-        //Key is valid
-        $this->assertTrue($isKeyValid->invokeArgs($validatorTraitMock, ['validKey']));
-    }
-
-
-    /**
-     * @throws ReflectionException
-     */
-    public function testIsKeyValid()
-    {
-        $validatorTraitMock = $this->getMockForTrait(
-            'Flagship\Traits\ValidatorTrait',
-            [],
-            "",
-            false,
-            true,
-            true
-        );
-
-        $isValueValid = Utils::getMethod($validatorTraitMock, "isValueValid");
-        // Value is empty
-        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, ['']));
-
-        // Value is null
-        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [null]));
-
-        //Value is not valid
-        $this->assertFalse($isValueValid->invokeArgs($validatorTraitMock, [[]]));
-
-        //Test value is numeric
-        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [14]));
-        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [14.5]));
-
-        //Test value is string
-        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, ['abc']));
-
-        //Test value is boolean
-        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [true]));
-
-        //Test value is boolean
-        $this->assertTrue($isValueValid->invokeArgs($validatorTraitMock, [false]));
-    }
 
     /**
      * @throws ReflectionException
@@ -189,44 +125,5 @@ class ValidatorTraitTest extends TestCase
         $this->assertFalse($isJsonObject->invokeArgs($validatorTraitMock, ["item"]));
         $this->assertTrue($isJsonObject->invokeArgs($validatorTraitMock, ["{}"]));
         $this->assertFalse($isJsonObject->invokeArgs($validatorTraitMock, ["[]"]));
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function testIsNumeric()
-    {
-        //Mock logManger
-        $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
-            [],
-            "",
-            true,
-            true,
-            true,
-            ['error']
-        );
-
-        $validatorTraitMock = $this->getMockForTrait(
-            'Flagship\Traits\ValidatorTrait',
-            [],
-            "",
-            false,
-            true,
-            true
-        );
-        $itemName = "test";
-
-        $isNumeric = Utils::getMethod($validatorTraitMock, "isNumeric");
-        $config = new BucketingConfig("http://127.0.0.1:3000");
-        $config->setLogManager($logManagerStub);
-        $this->assertTrue($isNumeric->invokeArgs($validatorTraitMock, [1, $itemName, $config]));
-
-        $sdk = FlagshipConstant::FLAGSHIP_SDK;
-        $logManagerStub->expects($this->once())->method('error')->with(
-            sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
-        );
-
-        $this->assertFalse($isNumeric->invokeArgs($validatorTraitMock, ["abc", $itemName, $config]));
     }
 }

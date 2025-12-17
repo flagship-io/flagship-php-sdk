@@ -8,14 +8,17 @@ use Flagship\Traits\Guid;
 use Flagship\Model\FlagDTO;
 use Flagship\Enum\FSSdkStatus;
 use Flagship\Utils\MurmurHash;
+use Flagship\Model\CampaignDTO;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Utils\ConfigManager;
 use Flagship\Config\FlagshipConfig;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Model\VisitorCacheDTO;
 use Flagship\Traits\ValidatorTrait;
+use Flagship\Enum\VisitorCacheStatus;
 use Flagship\Utils\ContainerInterface;
+use Flagship\Model\VisitorCacheDataDTO;
 use Flagship\Model\FetchFlagsStatusInterface;
-use Flagship\Enum\visitorCacheStatus;
 
 abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, VisitorFlagInterface
 {
@@ -38,7 +41,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     private ?string $anonymousId = null;
 
     /**
-     * @var array
+     * @var array<string, scalar>
      */
     public array $context = [];
 
@@ -48,7 +51,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     protected array $flagsDTO = [];
 
     /**
-     * @var array
+     * @var CampaignDTO[]
      */
     public array $campaigns = [];
 
@@ -68,14 +71,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     private ContainerInterface $dependencyIContainer;
 
     /**
-     * @var ?array
+     * @var ?VisitorCacheDTO
      */
-    public ?array $visitorCache;
-
-    /**
-     * @var string
-     */
-    private string $flagSyncStatus;
+    public ?VisitorCacheDTO $visitorCache;
 
     /**
      * @var int|float|null
@@ -97,7 +95,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     protected ?Troubleshooting $ConsentHitTroubleshooting = null;
 
     /**
-     * @var callable
+     * @var ?callable
      */
     protected $onFetchFlagsStatusChanged;
 
@@ -107,6 +105,12 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @var FetchFlagsStatusInterface
      */
     protected FetchFlagsStatusInterface $fetchStatus;
+
+    /**
+     * 
+     * @var array<string, mixed>
+     */
+    protected array $deDuplicationCache = [];
 
     protected bool $hasContextBeenUpdated = true;
 
@@ -133,21 +137,21 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         $this->visitorCacheStatus = $visitorCacheStatus;
         return $this;
     }
-    protected array $deDuplicationCache = [];
+
 
     /**
-     * @return callable
+     * @return ?callable
      */
-    public function getOnFetchFlagsStatusChanged(): callable
+    public function getOnFetchFlagsStatusChanged(): callable|null
     {
         return $this->onFetchFlagsStatusChanged;
     }
 
     /**
-     * @param callable $onFetchFlagsStatusChanged
+     * @param callable|null $onFetchFlagsStatusChanged
      * @return VisitorAbstract
      */
-    public function setOnFetchFlagsStatusChanged(callable $onFetchFlagsStatusChanged): static
+    public function setOnFetchFlagsStatusChanged(?callable $onFetchFlagsStatusChanged): self
     {
         $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
         return $this;
@@ -182,7 +186,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param Troubleshooting|null $ConsentHitTroubleshooting
      * @return VisitorAbstract
      */
-    public function setConsentHitTroubleshooting(?Troubleshooting $ConsentHitTroubleshooting): static
+    public function setConsentHitTroubleshooting(?Troubleshooting $ConsentHitTroubleshooting): self
     {
         $this->ConsentHitTroubleshooting = $ConsentHitTroubleshooting;
         return $this;
@@ -208,7 +212,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param ?string $flagshipInstanceId
      * @return VisitorAbstract
      */
-    public function setFlagshipInstanceId(?string $flagshipInstanceId): static
+    public function setFlagshipInstanceId(?string $flagshipInstanceId): self
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
@@ -225,7 +229,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
     public function __construct()
     {
-        $this->visitorCache = [];
+        $this->visitorCache = null;
         $this->instanceId = $this->newGuid();
     }
 
@@ -249,7 +253,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param float|int $traffic
      * @return VisitorAbstract
      */
-    public function setTraffic(float|int $traffic): static
+    public function setTraffic(float|int $traffic): self
     {
         $this->traffic = $traffic;
         return $this;
@@ -267,7 +271,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param FlagDTO[] $flagsDTO
      * @return VisitorAbstract
      */
-    public function setFlagsDTO(array $flagsDTO): static
+    public function setFlagsDTO(array $flagsDTO): self
     {
         $this->flagsDTO = $flagsDTO;
         return $this;
@@ -286,7 +290,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param ConfigManager $configManager
      * @return VisitorAbstract
      */
-    public function setConfigManager(ConfigManager $configManager): static
+    public function setConfigManager(ConfigManager $configManager): self
     {
         $this->configManager = $configManager;
         return $this;
@@ -305,7 +309,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param string $visitorId
      * @return VisitorAbstract
      */
-    public function setVisitorId(string $visitorId): static
+    public function setVisitorId(string $visitorId): self
     {
         if (empty($visitorId)) {
             $this->logError(
@@ -334,7 +338,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param string|null $anonymousId
      * @return VisitorAbstract
      */
-    public function setAnonymousId(?string $anonymousId): static
+    public function setAnonymousId(?string $anonymousId): self
     {
         $this->anonymousId = $anonymousId;
         return $this;
@@ -342,7 +346,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
 
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, scalar>
      */
     public function getContext(): array
     {
@@ -353,7 +357,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     /**
      * Clear the current context and set a new context value
      *
-     * @param array $context collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
+     * @param array<string, scalar> $context collection of keys, values. e.g: ["age"=>42, "vip"=>true, "country"=>"UK"]
      * @return void
      */
     public function setContext(array $context): void
@@ -362,6 +366,12 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
         $this->updateContextCollection($context);
     }
 
+    /**
+     * 
+     * 
+     * @param array<string, mixed> $context
+     * @return void
+     */
     public function initialContext(array $context): void
     {
         $this->context = [];
@@ -382,7 +392,7 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      * @param FlagshipConfig $config
      * @return VisitorAbstract
      */
-    public function setConfig(FlagshipConfig $config): static
+    public function setConfig(FlagshipConfig $config): self
     {
         $this->config = $config;
         return $this;
@@ -395,17 +405,19 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
      */
     protected function getStrategy(): StrategyAbstract
     {
-        if (Flagship::getStatus() === FSSdkStatus::SDK_NOT_INITIALIZED) {
-            $strategy = $this->getDependencyIContainer()->get(NotReadyStrategy::class, [$this], true);
-        } elseif (Flagship::getStatus() === FSSdkStatus::SDK_PANIC) {
-            $strategy = $this->getDependencyIContainer()->get(PanicStrategy::class, [$this], true);
-        } elseif (!$this->hasConsented()) {
-            $strategy = $this->getDependencyIContainer()->get(NoConsentStrategy::class, [$this], true);
-        } else {
-            $strategy = $this->getDependencyIContainer()->get(DefaultStrategy::class, [$this], true);
-        }
+        $strategyClass = match (true) {
+            Flagship::getStatus() === FSSdkStatus::SDK_NOT_INITIALIZED => NotReadyStrategy::class,
+            Flagship::getStatus() === FSSdkStatus::SDK_PANIC => PanicStrategy::class,
+            !$this->hasConsented() => NoConsentStrategy::class,
+            default => DefaultStrategy::class,
+        };
+
+        /** @var StrategyAbstract $strategy */
+        $strategy = $this->getDependencyIContainer()->get($strategyClass, [$this], true);
+
         $strategy->setMurmurHash(new MurmurHash());
         $strategy->setFlagshipInstanceId($this->getFlagshipInstanceId());
+
         return $strategy;
     }
 
@@ -460,9 +472,9 @@ abstract class VisitorAbstract implements VisitorInterface, JsonSerializable, Vi
     public function jsonSerialize(): mixed
     {
         return [
-                'visitorId'  => $this->getVisitorId(),
-                'context'    => $this->getContext(),
-                'hasConsent' => $this->hasConsented(),
-               ];
+            'visitorId'  => $this->getVisitorId(),
+            'context'    => $this->getContext(),
+            'hasConsent' => $this->hasConsented(),
+        ];
     }
 }

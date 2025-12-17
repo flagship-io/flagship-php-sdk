@@ -44,7 +44,7 @@ class ConfigManager
      * @param FlagshipConfig $config
      * @return ConfigManager
      */
-    public function setConfig(FlagshipConfig $config): static
+    public function setConfig(FlagshipConfig $config): self
     {
         $this->config = $config;
         return $this;
@@ -62,7 +62,7 @@ class ConfigManager
      * @param DecisionManagerAbstract $decisionManager
      * @return ConfigManager
      */
-    public function setDecisionManager(DecisionManagerAbstract $decisionManager): static
+    public function setDecisionManager(DecisionManagerAbstract $decisionManager): self
     {
         $this->decisionManager = $decisionManager;
         return $this;
@@ -80,7 +80,7 @@ class ConfigManager
      * @param TrackingManagerAbstract $trackerManager
      * @return ConfigManager
      */
-    public function setTrackingManager(TrackingManagerAbstract $trackerManager): static
+    public function setTrackingManager(TrackingManagerAbstract $trackerManager): self
     {
         $this->trackingManager = $trackerManager;
         return $this;

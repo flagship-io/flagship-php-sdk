@@ -8,6 +8,12 @@ use Flagship\Enum\FSFetchStatus;
 use Flagship\Traits\HasSameTypeTrait;
 use Flagship\Visitor\VisitorAbstract;
 
+/**
+ * Flagship Feature Flag
+ * 
+ * Represents a feature flag that can be evaluated for a visitor.
+ * Provides access to flag values, metadata, and exposure tracking.
+ */
 class FSFlag implements FSFlagInterface
 {
     use HasSameTypeTrait;
@@ -23,7 +29,7 @@ class FSFlag implements FSFlagInterface
     private ?VisitorAbstract $visitorDelegate;
 
     /**
-     * @var array|bool|float|int|string
+     * @var array<mixed>|bool|float|int|string|null $defaultValue
      */
     private string|array|bool|int|null|float $defaultValue;
 
@@ -36,7 +42,7 @@ class FSFlag implements FSFlagInterface
      */
     public function __construct(
         string $key,
-        VisitorAbstract $visitorDelegate = null
+        ?VisitorAbstract $visitorDelegate = null
     ) {
         $this->key = $key;
         $this->visitorDelegate = $visitorDelegate;
@@ -65,6 +71,9 @@ class FSFlag implements FSFlagInterface
 
     /**
      * @inheritDoc
+     * @phpstan-template T of scalar|array<mixed>|null
+     * @param T $defaultValue
+     * @return T
      */
     public function getValue(
         float|array|bool|int|string|null $defaultValue,

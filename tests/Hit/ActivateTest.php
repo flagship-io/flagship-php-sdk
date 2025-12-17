@@ -2,13 +2,15 @@
 
 namespace Flagship\Hit;
 
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Flag\FSFlagMetadata;
+use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
+use Flagship\Flag\FSFlagMetadata;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\DecisionApiConfig;
 
 class ActivateTest extends TestCase
 {
+    use PHPMock;
     public function testTestConstruct()
     {
         $variationId = "varId";
@@ -35,8 +37,12 @@ class ActivateTest extends TestCase
 
         $config = new DecisionApiConfig($envId);
 
-        $activate = new Activate($variationGroupId, $variationId);
-        $activate->setConfig($config)->setDs(FlagshipConstant::SDK_APP)->setVisitorId($visitorId);
+        $round = $this->getFunctionMock("Flagship\Traits", 'round');
+        $round->expects($this->any())->willReturn(123456789);
+
+        $activate = new Activate($variationGroupId, $variationId, $flagKey, $flagMetadata);
+        $activate->setConfig($config)->setDs(FlagshipConstant::SDK_APP)
+        ->setVisitorId($visitorId);
 
         $this->assertSame($variationId, $activate->getVariationId());
         $this->assertSame($variationGroupId, $activate->getVariationGroupId());
@@ -50,13 +56,13 @@ class ActivateTest extends TestCase
         $this->assertSame($variationGroupId, $activate->getVariationGroupId());
 
         $apiKeys = [
-                    FlagshipConstant::VISITOR_ID_API_ITEM         => $visitorId,
-                    FlagshipConstant::VARIATION_ID_API_ITEM       => $variationId,
-                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
-                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM    => $envId,
-                    FlagshipConstant::ANONYMOUS_ID                => null,
-                    FlagshipConstant::QT_API_ITEM                 => 0,
-                   ];
+            FlagshipConstant::VISITOR_ID_API_ITEM         => $visitorId,
+            FlagshipConstant::VARIATION_ID_API_ITEM       => $variationId,
+            FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM    => $envId,
+            FlagshipConstant::ANONYMOUS_ID                => null,
+            FlagshipConstant::QT_API_ITEM                 => 0.0,
+        ];
 
         $this->assertSame($apiKeys, $activate->toApiKeys());
 
@@ -64,13 +70,13 @@ class ActivateTest extends TestCase
         $activate->setAnonymousId($anonymousId);
 
         $apiKeys = [
-                    FlagshipConstant::VISITOR_ID_API_ITEM         => $visitorId,
-                    FlagshipConstant::VARIATION_ID_API_ITEM       => $variationId,
-                    FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
-                    FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM    => $envId,
-                    FlagshipConstant::ANONYMOUS_ID                => $anonymousId,
-                    FlagshipConstant::QT_API_ITEM                 => 0,
-                   ];
+            FlagshipConstant::VISITOR_ID_API_ITEM         => $visitorId,
+            FlagshipConstant::VARIATION_ID_API_ITEM       => $variationId,
+            FlagshipConstant::VARIATION_GROUP_ID_API_ITEM => $variationGroupId,
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM    => $envId,
+            FlagshipConstant::ANONYMOUS_ID                => $anonymousId,
+            FlagshipConstant::QT_API_ITEM                 => 0.0,
+        ];
 
         $this->assertSame($apiKeys, $activate->toApiKeys());
 

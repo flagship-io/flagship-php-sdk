@@ -2,25 +2,35 @@
 
 namespace Flagship\Utils;
 
+use CurlHandle;
 use ErrorException;
 use Exception;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Model\HttpResponse;
 
+/**
+ * HTTP Client implementation using cURL
+ * 
+ * Provides HTTP request functionality with automatic error handling,
+ * header management, and response parsing.
+ */
 class HttpClient implements HttpClientInterface
 {
     /**
-     * @var ?array
+     * cURL handle
+     * @var CurlHandle|null
      */
-    private mixed $curl = null;
+    private ?CurlHandle $curl = null;
 
     /**
-     * @var array
+     * cURL options cache
+     * @var array<int, mixed>
      */
     private array $options = [];
 
     /**
-     * @var array
+     * HTTP headers
+     * @var array<string, string>
      */
     private array $headers = [];
 
@@ -37,44 +47,61 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
+     * Initialize cURL handle with default options
+     *
      * @return void
+     * @throws ErrorException
      */
     private function curlInit(): void
     {
-        $this->curl = curl_init();
+        $curl = curl_init();
+
+        if (!$curl) {
+            throw new ErrorException('Failed to initialize cURL');
+        }
+
+        $this->curl = $curl;
         $this->setTimeout();
         $this->setOpt(CURLOPT_RETURNTRANSFER, true);
         $this->setOpt(CURLOPT_FILETIME, true);
     }
 
     /**
-     * Set Opt
+     * Set cURL option
      *
-     * @param $option
-     * @param $value
+     * @param int $option cURL option constant
+     * @param mixed $value Option value
      *
-     * @return boolean
+     * @return bool Success status
+     * @throws ErrorException
      */
-    public function setOpt($option, $value): bool
+    public function setOpt(int $option, mixed $value): bool
     {
-        if (!$this->curl) {
+        if ($this->curl === null) {
             $this->curlInit();
         }
-        $success = curl_setopt($this->curl, $option, $value);
+
+        /** @var CurlHandle $curl */
+        $curl = $this->curl;
+
+        $success = curl_setopt($curl, $option, $value);
+
         if ($success) {
             $this->options[$option] = $value;
         }
+
         return $success;
     }
 
     /**
-     * @return array
+     * Get all configured cURL options
+     *
+     * @return array<int, mixed>
      */
     public function getOptions(): array
     {
         return $this->options;
     }
-
 
     /**
      * @inheritDoc
@@ -82,21 +109,25 @@ class HttpClient implements HttpClientInterface
     public function setHeaders(array $headers): HttpClientInterface
     {
         foreach ($headers as $key => $value) {
-            $key = trim($key);
-            $value = trim($value);
+            $key = trim((string)$key);
+            $value = trim((string)$value);
             $this->headers[$key] = $value;
         }
 
-        $headers = [];
+        $formattedHeaders = [];
         foreach ($this->headers as $key => $value) {
-            $headers[] = $key . ': ' . $value;
+            $formattedHeaders[] = $key . ': ' . $value;
         }
-        $this->setOpt(CURLOPT_HTTPHEADER, $headers);
+
+        $this->setOpt(CURLOPT_HTTPHEADER, $formattedHeaders);
+
         return $this;
     }
 
     /**
-     * @return array
+     * Get all configured headers
+     *
+     * @return array<string, string>
      */
     public function getHeaders(): array
     {
@@ -106,7 +137,7 @@ class HttpClient implements HttpClientInterface
     /**
      * @inheritDoc
      */
-    public function setTimeout(int $seconds = FlagshipConstant::REQUEST_TIME_OUT): HttpClientInterface
+    public function setTimeout(float $seconds = FlagshipConstant::REQUEST_TIME_OUT): HttpClientInterface
     {
         $this->setOpt(CURLOPT_TIMEOUT, $seconds);
         $this->setOpt(CURLOPT_CONNECTTIMEOUT, $seconds);
@@ -114,13 +145,13 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * Set Url
+     * Set request URL with optional query parameters
      *
-     * @param  $url
-     * @param string|array $data
+     * @param string $url Base URL
+     * @param string|array<string, scalar> $data Query parameters
      * @return HttpClientInterface
      */
-    private function setUrl($url, string|array $data = ''): HttpClientInterface
+    private function setUrl(string $url, string|array $data = ''): HttpClientInterface
     {
         $builtUrl = $this->buildUrl($url, $data);
         $this->setOpt(CURLOPT_URL, $builtUrl);
@@ -128,55 +159,75 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * Exec
+     * Execute cURL request and parse response
      *
-     * @return HttpResponse Returns the value provided by parseResponse.
-     * @throws Exception
+     * @return HttpResponse Parsed HTTP response
+     * @throws Exception On HTTP error or cURL error
      */
     private function exec(): HttpResponse
     {
+        if ($this->curl === null) {
+            throw new Exception('cURL handle not initialized');
+        }
+
         $rawResponse = curl_exec($this->curl);
         $curlErrorCode = curl_errno($this->curl);
         $curlErrorMessage = curl_error($this->curl);
 
+        /** @var int $httpStatusCode */
         $httpStatusCode = $this->getInfo(CURLINFO_HTTP_CODE);
-        $httpError = in_array(floor($httpStatusCode / 100), [4, 5]);
+
+        $httpError = in_array((int)floor($httpStatusCode / 100), [4, 5], true);
+
         $httpContentType = $this->getInfo(CURLINFO_CONTENT_TYPE);
         $lastModified = $this->getInfo(CURLINFO_FILETIME);
 
-        curl_close($this->curl);
-
-        $this->curl = null;
+        $this->closeCurl();
 
         if ($httpError || $curlErrorCode) {
-            $message = [
-                        'curlCode'    => $curlErrorCode,
-                        'curlMessage' => $curlErrorMessage,
-                        'httpCode'    => $httpStatusCode,
-                        'httpMessage' => $rawResponse,
-                       ];
-            throw new Exception(json_encode($message), $curlErrorCode);
-        }
-        $response = $rawResponse;
-        if ($httpContentType == "application/json") {
-            $response = $this->parseResponse($rawResponse);
+            $errorData = [
+                'curlCode'    => $curlErrorCode,
+                'curlMessage' => $curlErrorMessage,
+                'httpCode'    => $httpStatusCode,
+                'httpMessage' => $rawResponse,
+            ];
+            $errorMessage = json_encode($errorData) ?: 'Failed to encode error data';
+            throw new Exception($errorMessage, $curlErrorCode);
         }
 
+        $response = $rawResponse;
+        if ($httpContentType === 'application/json' && is_string($rawResponse)) {
+            $parsed = $this->parseResponse($rawResponse);
+            if ($parsed !== null) {
+                $response = $parsed;
+            }
+        }
 
         $responseHeaders = [];
-        if ($lastModified !== - 1) {
-            $responseHeaders["last-modified"] = date('Y-m-d H:i:s', $lastModified);
+        if (is_int($lastModified) && $lastModified !== -1) {
+            $responseHeaders['last-modified'] = date('Y-m-d H:i:s', $lastModified);
         }
+
         return new HttpResponse($httpStatusCode, $response, $responseHeaders);
     }
 
     /**
-     * Get
+     * Close cURL handle
+     * 
+     * @return void
+     */
+    private function closeCurl(): void
+    {
+        $this->curl = null;
+    }
+
+    /**
+     * Perform GET request
      *
-     * @param string $url
-     * @param array $params
+     * @param string $url Request URL
+     * @param array<string, scalar> $params Query parameters
      *
-     * @return HttpResponse value provided by exec.
+     * @return HttpResponse HTTP response
      * @throws Exception
      */
     public function get(string $url, array $params = []): HttpResponse
@@ -188,10 +239,12 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * @param string $url
-     * @param  array $query
-     * @param  array $data
-     * @return HttpResponse
+     * Perform POST request
+     *
+     * @param string $url Request URL
+     * @param array<string, scalar> $query Query parameters
+     * @param array<string, mixed> $data POST body data
+     * @return HttpResponse HTTP response
      * @throws Exception
      */
     public function post(string $url, array $query = [], array $data = []): HttpResponse
@@ -204,31 +257,39 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * Get Info
+     * Get cURL information
      *
-     * @access public
-     * @param  $opt
+     * @param int|null $opt cURL info option
      *
-     * @return int|string
+     * @return mixed cURL info value
      */
-    private function getInfo($opt = null): int|string
+    private function getInfo(?int $opt = null): mixed
     {
+        if ($this->curl === null) {
+            return null;
+        }
+
         return curl_getinfo($this->curl, $opt);
     }
 
-    private function parseResponse($rawResponse): mixed
+    /**
+     * Parse JSON response
+     *
+     * @param string $rawResponse Raw response string
+     * @return mixed Parsed response or null on failure
+     */
+    private function parseResponse(string $rawResponse): mixed
     {
         return json_decode($rawResponse, true);
     }
 
     /**
-     * Build Url
+     * Build URL with query parameters
      *
-     * @access public
-     * @param string $url
-     * @param array|string $data
+     * @param string $url Base URL
+     * @param array<string, string|int|float|bool>|string $data Query parameters
      *
-     * @return string
+     * @return string Complete URL with query string
      */
     private function buildUrl(string $url, array|string $data = ''): string
     {
@@ -240,10 +301,20 @@ class HttpClient implements HttpClientInterface
 
         $queryString = match (true) {
             is_string($data) => $queryMark . $data,
-            is_array($data) => $queryMark . http_build_query($data, '', '&'),
-            default => ''
+            default => $queryMark . http_build_query($data, '', '&'),
         };
 
         return $url . $queryString;
+    }
+
+    /**
+     * Clean up cURL handle on destruction
+     * 
+     * PHP 8.0+ automatically closes CurlHandle objects when they go out of scope.
+     * This destructor explicitly unsets the handle for clarity.
+     */
+    public function __destruct()
+    {
+        $this->closeCurl();
     }
 }

@@ -45,12 +45,12 @@ trait ValidatorTrait
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      * @param FlagshipConfig $config
      * @return bool|null
      */
-    protected function checkFlagshipContext($key, $value, FlagshipConfig $config): ?bool
+    protected function checkFlagshipContext(string $key, mixed $value, FlagshipConfig $config): ?bool
     {
         $type = FlagshipContext::getType($key);
 
@@ -71,46 +71,5 @@ trait ValidatorTrait
             );
         }
         return $check;
-    }
-
-    /**
-     * Return true if key is not empty and is a string, otherwise return false
-     *
-     * @param  mixed $key Context key
-     * @return bool
-     */
-    protected function isKeyValid(mixed $key): bool
-    {
-        return !empty($key) && is_string($key);
-    }
-
-    /**
-     * Return true if value is not empty and is a number or a boolean or a string,
-     * otherwise return false
-     *
-     * @param  $value
-     * @return bool
-     */
-    protected function isValueValid($value): bool
-    {
-        return (is_numeric($value) || is_bool($value) || is_string($value) || is_null($value));
-    }
-
-    /**
-     * @param $value
-     * @param $itemName
-     * @param FlagshipConfig $config
-     * @return bool
-     */
-    protected function isNumeric($value, $itemName, FlagshipConfig $config): bool
-    {
-        if (!is_numeric($value)) {
-            $this->logError(
-                $config,
-                sprintf(FlagshipConstant::TYPE_ERROR, $itemName, 'numeric')
-            );
-            return false;
-        }
-        return true;
-    }
+    } 
 }

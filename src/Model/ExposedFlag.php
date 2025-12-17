@@ -12,7 +12,7 @@ class ExposedFlag implements ExposedFlagInterface
     private string $key;
 
     /**
-     * @var bool|numeric|string|array
+     * @var scalar|array<mixed>|null
      */
     private string|array|bool|int|float|null $value;
 
@@ -22,14 +22,14 @@ class ExposedFlag implements ExposedFlagInterface
     private FSFlagMetadataInterface $metadata;
 
     /**
-     * @var bool|numeric|string|array
+     * @var scalar|array<mixed>|null
      */
     private string|array|bool|int|float|null $defaultValue;
 
     /**
      * @param string $key
-     * @param array|bool|string|numeric $value
-     * @param array|bool|string|numeric $defaultValue
+     * @param scalar|array<mixed>|null $value
+     * @param scalar|array<mixed>|null $defaultValue
      * @param FSFlagMetadataInterface $metadata
      */
     public function __construct(
@@ -53,9 +53,9 @@ class ExposedFlag implements ExposedFlagInterface
     }
 
     /**
-     * @return bool|numeric|string|array
+     * @inheritDoc
      */
-    public function getValue(): float|int|bool|array|string
+    public function getValue(): float|int|bool|array|string|null
     {
         return $this->value;
     }
@@ -71,7 +71,7 @@ class ExposedFlag implements ExposedFlagInterface
     /**
      * @inheritDoc
      */
-    public function getDefaultValue(): float|array|bool|int|string
+    public function getDefaultValue(): float|array|bool|int|string|null
     {
         return $this->defaultValue;
     }

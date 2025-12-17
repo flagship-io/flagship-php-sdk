@@ -27,7 +27,7 @@ class NoConsentStrategy extends DefaultStrategy
     public function visitorExposed(
         $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
     ): void {
         $this->log(__FUNCTION__);

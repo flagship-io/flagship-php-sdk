@@ -27,6 +27,9 @@ trait Helper
     public function valueToHex(mixed $value): string
     {
         $jsonString = json_encode($value);
+        if ($jsonString === false) {
+            return '';
+        }
         $hex = '';
         for ($i = 0; $i < strlen($jsonString); $i++) {
             $hex .= dechex(ord($jsonString[$i]));
@@ -34,6 +37,13 @@ trait Helper
         return $hex;
     }
 
+    /**
+     * Compare two arrays for equality, including nested arrays.
+     *
+     * @param array<mixed> $array1
+     * @param array<mixed> $array2
+     * @return bool
+     */
     function arraysAreEqual(array $array1, array $array2): bool
     {
         if (count($array1) !== count($array2)) {
@@ -57,5 +67,53 @@ trait Helper
         }
 
         return true;
+    }
+
+    /**
+     * 
+     * @param array<mixed> $array
+     * @param callable $callback
+     * @return bool
+     */
+    protected function array_all(array $array, callable $callback): bool
+    {
+        foreach ($array as $key => $value) {
+            if (!$callback($value, $key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 
+     * @param array<mixed> $array
+     * @param callable $callback
+     * @return bool
+     */
+    protected function array_any(array $array, callable $callback): bool
+    {
+        foreach ($array as $key => $value) {
+            if ($callback($value, $key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @phpstan-template T of mixed
+     * @param array<T> $array
+     * @param callable $callback
+     * @return T|null
+     */
+    protected function array_find(array $array, callable $callback): mixed
+    {
+        foreach ($array as $key => $value) {
+            if ($callback($value, $key)) {
+                return $value;
+            }
+        }
+        return null;
     }
 }

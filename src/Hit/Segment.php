@@ -11,11 +11,6 @@ class Segment extends HitAbstract
     public const SL_MESSAGE_ERROR = "Sl value must be an associative array";
     public const ERROR_MESSAGE  = 'sl is required';
 
-    public static function getClassName(): string
-    {
-        return __CLASS__;
-    }
-
     /**
      * @var array<string, mixed>
      */
@@ -30,10 +25,10 @@ class Segment extends HitAbstract
     }
 
     /**
-     * @param array<string, mixed> $sl
+     * @param array<string, scalar> $sl
      * @return Segment
      */
-    public function setSl(array $sl): static
+    public function setSl(array $sl): self
     {
         if (!$this->isAssoc($sl)) {
             $this->logError($this->getConfig(), self::SL_MESSAGE_ERROR, [FlagshipConstant::TAG => __FUNCTION__]);
@@ -44,7 +39,7 @@ class Segment extends HitAbstract
     }
 
     /**
-     * @param array $sl
+     * @param array<string, scalar> $sl
      */
     public function __construct(array $sl, FlagshipConfig $config)
     {
@@ -54,7 +49,7 @@ class Segment extends HitAbstract
     }
 
     /**
-     * @param array<string, mixed> $array
+     * @param array<mixed> $array
      * @return bool
      */
     protected function isAssoc(array $array): bool
@@ -75,7 +70,10 @@ class Segment extends HitAbstract
             if (is_bool($value)) {
                 return $value ? 'true' : 'false';
             }
-            return strval($value);
+            if (is_scalar($value)) {
+                return strval($value);
+            }
+            return '';
         }, $this->getSl());
 
         $arrayParent[FlagshipConstant::SL_API_ITEM] = $apiContext;
@@ -87,7 +85,7 @@ class Segment extends HitAbstract
      */
     public function isReady(): bool
     {
-        return parent::isReady() && $this->getSl() && count($this->getSl()) > 0;
+        return parent::isReady() && !empty($this->getSl());
     }
 
     /**

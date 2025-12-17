@@ -25,9 +25,6 @@
         <include>
             <directory suffix=".php">src</directory>
         </include>
-        <exclude>
-            <file>src/Utils/FlagshipLogManager.php</file>
-        </exclude>
         <report>
             <clover outputFile="clover.xml" />
             <html outputDirectory="reports/coverage"/>

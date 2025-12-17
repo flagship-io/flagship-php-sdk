@@ -39,7 +39,7 @@ class NotReadyStrategy extends DefaultStrategy
     public function getFlagValue(
         string $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $userExposed = true
     ): float|array|bool|int|string|null {
         $this->log(__FUNCTION__);
@@ -52,7 +52,7 @@ class NotReadyStrategy extends DefaultStrategy
     public function visitorExposed(
         $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
     ): void {
         $this->log(__FUNCTION__);
@@ -61,7 +61,7 @@ class NotReadyStrategy extends DefaultStrategy
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
+    public function getFlagMetadata(string $key, ?FlagDTO $flag = null): FSFlagMetadata
     {
         $this->log(__FUNCTION__);
         return FSFlagMetadata::getEmpty();

@@ -14,7 +14,7 @@ interface ExposedFlagInterface
 
     /**
      * Return the value of flag
-     * @return float|array|bool|int|string|null
+     * @return scalar|array<mixed>|null
      */
     public function getValue(): float|array|bool|int|string|null;
 
@@ -26,7 +26,7 @@ interface ExposedFlagInterface
 
     /**
      * Return the default value of flag
-     * @return float|array|bool|int|string|null
+     * @return scalar|array<mixed>|null
      */
     public function getDefaultValue(): float|array|bool|int|string|null;
 }

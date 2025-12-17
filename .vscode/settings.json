@@ -8,4 +8,5 @@
   },
   "php-cs-fixer.executablePath": "./vendor/bin/php-cs-fixer",
   "php-cs-fixer.onsave": true,
+  "intelephense.environment.phpVersion": "8.1.0",
 }

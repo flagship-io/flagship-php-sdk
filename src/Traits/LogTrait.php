@@ -9,31 +9,122 @@ use Flagship\Enum\LogLevel;
 trait LogTrait
 {
     /**
-     * @param array $args
-     * @return array
+     * Format arguments for logging by converting them to scalar values
+     * 
+     * @param array<mixed> $args Arguments to format
+     * @return array<scalar|null> Formatted arguments safe for logging
      */
-    protected function formatArgs($args = []): array
+    protected function formatArgs(array $args = []): array
     {
-        $formatArgs = [];
+        $formatted = [];
+
         foreach ($args as $arg) {
-            if (is_array($arg)) {
-                $arg = json_encode($arg);
-            }
-            $formatArgs[] = $arg;
+            $formatted[] = $this->convertToScalar($arg);
         }
-        return $formatArgs;
+
+        return $formatted;
     }
 
     /**
-     * @param FlagshipConfig $config
+     * Convert any value to a scalar or null for safe logging
+     * 
+     * @param mixed $value The value to convert
+     * @return scalar|null Scalar representation of the value
+     */
+    private function convertToScalar(mixed $value): string|int|float|bool|null
+    {
+
+        return match (true) {
+            $value === null => null,
+            is_bool($value) => $value,
+            is_int($value) => $value,
+            is_float($value) => $value,
+            is_string($value) => $value,
+            is_array($value) => $this->serializeToJson($value),
+            is_object($value) => $this->convertObjectToString($value),
+            is_resource($value) => $this->formatResource($value),
+            default => $this->serializeToJson($value),
+        };
+    }
+
+    /**
+     * Convert an object to its string representation
+     * 
+     * @param object $object The object to convert
+     * @return string String representation
+     */
+    private function convertObjectToString(object $object): string
+    {
+
+
+        if (method_exists($object, '__toString')) {
+            return (string) $object;
+        }
+
+        if ($object instanceof \JsonSerializable) {
+            return $this->serializeToJson($object);
+        }
+
+
+        return get_class($object);
+    }
+
+    /**
+     * Serialize a value to JSON with error handling
+     * 
+     * @param mixed $value Value to serialize
+     * @return string JSON string or error message
+     */
+    private function serializeToJson(mixed $value): string
+    {
+        try {
+            $json = json_encode(
+                $value
+            );
+            return $json ?: '{}';
+            // @phpstan-ignore catch.neverThrown
+        } catch (\JsonException $e) {
+            return sprintf('[JSON Error: %s]', $e->getMessage());
+        }
+    }
+
+    /**
+     * Format a resource for logging
+     * 
+     * @param resource $resource The resource to format
+     * @return string Resource description
+     */
+    private function formatResource($resource): string
+    {
+        $type = get_resource_type($resource);
+        return sprintf('[Resource: %s]', $type);
+    }
+
+    /**
+     * Format error when __toString fails
+     * 
+     * @param object $object The object that failed
+     * @return string Error description
+     */
+    private function formatToStringError(object $object, \Throwable $error): string
+    {
+        $class = get_class($object);
+        return sprintf('[%s __toString error: %s]', $class, $error->getMessage());
+    }
+
+    /**
+     * @param ?FlagshipConfig $config
      * @param string $tag
      * @param string $message
-     * @param array $args
+     * @param array<mixed> $args
      * @return void
      */
-    protected function logDebugSprintf(FlagshipConfig $config, string $tag, string $message, array $args = []): void
+    protected function logDebugSprintf(?FlagshipConfig $config, string $tag, string $message, array $args = []): void
     {
-        if ($config->getLogLevel()->value < LogLevel::DEBUG->value || is_null($config->getLogManager())) {
+        if (
+            $config?->getLogLevel()->value < LogLevel::DEBUG->value ||
+            is_null($config->getLogManager())
+        ) {
             return;
         }
         $customMessage = vsprintf($message, $this->formatArgs($args));
@@ -43,7 +134,7 @@ trait LogTrait
     /**
      * @param FlagshipConfig $config
      * @param string $message
-     * @param array $context
+     * @param array<mixed> $context
      *@return void
      */
     protected function logDebug(FlagshipConfig $config, string $message, array $context = []): void
@@ -58,7 +149,7 @@ trait LogTrait
      * @param FlagshipConfig $config
      * @param string $tag
      * @param string $message
-     * @param array ...$args
+     * @param array<mixed> $args
      * @return void
      */
     protected function logErrorSprintf(FlagshipConfig $config, string $tag, string $message, array $args = []): void
@@ -70,14 +161,14 @@ trait LogTrait
         $this->logError($config, $customMessage, [FlagshipConstant::TAG => $tag]);
     }
     /**
-     * @param FlagshipConfig $config
+     * @param ?FlagshipConfig $config
      * @param string $message
-     * @param array $context
+     * @param array<mixed> $context
      * @return void
      */
-    protected function logError(FlagshipConfig $config, string $message, array $context = []): void
+    protected function logError(?FlagshipConfig $config, string $message, array $context = []): void
     {
-        if ($config->getLogLevel()->value < LogLevel::ERROR->value || is_null($config->getLogManager())) {
+        if ($config?->getLogLevel()->value < LogLevel::ERROR->value || is_null($config->getLogManager())) {
             return;
         }
         $config->getLogManager()->error($message, $context);
@@ -87,7 +178,7 @@ trait LogTrait
      * @param FlagshipConfig $config
      * @param string $tag
      * @param string $message
-     * @param array $args
+     * @param array<mixed> $args
      * @return void
      */
     protected function logInfoSprintf(FlagshipConfig $config, string $tag, string $message, array $args = []): void
@@ -101,7 +192,7 @@ trait LogTrait
     /**
      * @param FlagshipConfig $config
      * @param string $message
-     * @param array $context
+     * @param  array<mixed> $context
      * @return void
      */
     protected function logInfo(FlagshipConfig $config, string $message, array $context = []): void
@@ -113,15 +204,15 @@ trait LogTrait
     }
 
     /**
-     * @param FlagshipConfig $config
+     * @param FlagshipConfig|null $config
      * @param string $tag
      * @param string $message
-     * @param array $args
+     * @param array< mixed> $args
      * @return void
      */
-    protected function logWarningSprintf(FlagshipConfig $config, string $tag, string $message, array $args = []): void
+    protected function logWarningSprintf(FlagshipConfig|null $config, string $tag, string $message, array $args = []): void
     {
-        if ($config->getLogLevel()->value < LogLevel::WARNING->value || is_null($config->getLogManager())) {
+        if ($config?->getLogLevel()->value < LogLevel::WARNING->value || is_null($config->getLogManager())) {
             return;
         }
         $customMessage = vsprintf($message, $this->formatArgs($args));
@@ -131,7 +222,7 @@ trait LogTrait
     /**
      * @param FlagshipConfig $config
      * @param string $message
-     * @param array $context
+     * @param array<string, mixed> $context
      * @return void
      */
     protected function logWarning(FlagshipConfig $config, string $message, array $context = []): void
@@ -143,22 +234,22 @@ trait LogTrait
     }
 
     /**
-     * @param string $message
+     * @param string|null $message
      * @param string $url
-     * @param array $requestBody
-     * @param array $headers
-     * @param string $duration
+     * @param ?array<mixed> $requestBody
+     * @param ?array<string, string> $headers
+     * @param float|int|null $duration
      * @param mixed $responseHeader
      * @param mixed $responseBody
      * @param mixed $responseStatus
-     * @return array
+     * @return array<string, mixed>
      */
     protected function getLogFormat(
-        $message,
-        $url,
-        $requestBody,
-        $headers,
-        $duration,
+        string|null $message,
+        string $url,
+        ?array $requestBody,
+        ?array $headers,
+        float|int|null $duration,
         $responseHeader = null,
         $responseBody = null,
         $responseStatus = null

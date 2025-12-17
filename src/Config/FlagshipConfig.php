@@ -38,9 +38,9 @@ abstract class FlagshipConfig implements JsonSerializable
      */
     private DecisionMode $decisionMode = DecisionMode::DECISION_API;
     /**
-     * @var int
+     * @var float
      */
-    private int $timeout = FlagshipConstant::REQUEST_TIME_OUT;
+    private float $timeout = FlagshipConstant::REQUEST_TIME_OUT;
     /**
      * @var ?LoggerInterface
      */
@@ -108,7 +108,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param string $envId environment id.
      * @return $this
      */
-    public function setEnvId(string $envId): static
+    public function setEnvId(string $envId): self
     {
         $this->envId = $envId;
         return $this;
@@ -128,7 +128,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param string $apiKey secure api key.
      * @return $this
      */
-    public function setApiKey(string $apiKey): static
+    public function setApiKey(string $apiKey): self
     {
         $this->apiKey = $apiKey;
         return $this;
@@ -148,16 +148,16 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param DecisionMode $decisionMode decision mode value e.g DecisionMode::DECISION_API
      * @return $this
      */
-    protected function setDecisionMode(DecisionMode $decisionMode): static
+    protected function setDecisionMode(DecisionMode $decisionMode): self
     {
         $this->decisionMode = $decisionMode;
         return $this;
     }
 
     /**
-     * @return int
+     * @return float
      */
-    public function getTimeout(): int
+    public function getTimeout(): float
     {
         return $this->timeout * 1000;
     }
@@ -168,7 +168,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param int $timeout Milliseconds for connect and read timeouts. Default is 2000ms.
      * @return $this
      */
-    public function setTimeout(int $timeout): static
+    public function setTimeout(int $timeout): self
     {
         if ($timeout <= 0) {
             $this->logError($this, FlagshipConstant::TIMEOUT_TYPE_ERROR);
@@ -192,7 +192,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param LoggerInterface $logManager custom implementation of LogManager.
      * @return $this
      */
-    public function setLogManager(LoggerInterface $logManager): static
+    public function setLogManager(LoggerInterface $logManager): self
     {
         $this->logManager = $logManager;
         return $this;
@@ -211,7 +211,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param LogLevel $logLevel
      * @return $this
      */
-    public function setLogLevel(LogLevel $logLevel): static
+    public function setLogLevel(LogLevel $logLevel): self
     {
         $this->logLevel = $logLevel;
         return $this;
@@ -231,7 +231,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param CacheStrategy $cacheStrategy
      * @return FlagshipConfig
      */
-    public function setCacheStrategy(CacheStrategy $cacheStrategy): static
+    public function setCacheStrategy(CacheStrategy $cacheStrategy): self
     {
         $this->cacheStrategy = $cacheStrategy;
         return $this;
@@ -250,7 +250,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param callable(FSSdkStatus $status): void $onSdkStatusChanged
      * @return $this
      */
-    public function setOnSdkStatusChanged(callable $onSdkStatusChanged): static
+    public function setOnSdkStatusChanged(callable $onSdkStatusChanged): self
     {
         $this->onSdkStatusChanged = $onSdkStatusChanged;
         return $this;
@@ -269,7 +269,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param IVisitorCacheImplementation $visitorCacheImplementation
      * @return FlagshipConfig
      */
-    public function setVisitorCacheImplementation(IVisitorCacheImplementation $visitorCacheImplementation): static
+    public function setVisitorCacheImplementation(IVisitorCacheImplementation $visitorCacheImplementation): self
     {
         $this->visitorCacheImplementation = $visitorCacheImplementation;
         return $this;
@@ -287,7 +287,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param ?IHitCacheImplementation $hitCacheImplementation
      * @return FlagshipConfig
      */
-    public function setHitCacheImplementation(?IHitCacheImplementation $hitCacheImplementation): static
+    public function setHitCacheImplementation(?IHitCacheImplementation $hitCacheImplementation): self
     {
         $this->hitCacheImplementation = $hitCacheImplementation;
         return $this;
@@ -305,7 +305,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param callable(ExposedVisitor $exposedUser, ExposedFlag $exposedFlag): void $onVisitorExposed
      * @return FlagshipConfig
      */
-    public function setOnVisitorExposed(callable $onVisitorExposed): static
+    public function setOnVisitorExposed(callable $onVisitorExposed): self
     {
         $this->onVisitorExposed = $onVisitorExposed;
         return $this;
@@ -323,7 +323,7 @@ abstract class FlagshipConfig implements JsonSerializable
      * @param bool $disableDeveloperUsageTracking
      * @return FlagshipConfig
      */
-    public function setDisableDeveloperUsageTracking(bool $disableDeveloperUsageTracking): static
+    public function setDisableDeveloperUsageTracking(bool $disableDeveloperUsageTracking): self
     {
         $this->disableDeveloperUsageTracking = $disableDeveloperUsageTracking;
         return $this;

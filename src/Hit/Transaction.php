@@ -15,13 +15,7 @@ class Transaction extends HitAbstract
     public const CURRENCY_ERROR = "'%s' must be a string and have exactly 3 letters";
     public const ERROR_MESSAGE  = 'Transaction Id and Transaction affiliation are required';
 
-    /**
-     * @return string
-     */
-    public static function getClassName(): string
-    {
-        return __CLASS__;
-    }
+
 
     /**
      * @var string
@@ -93,7 +87,7 @@ class Transaction extends HitAbstract
      * @param string $transactionId
      * @return Transaction
      */
-    public function setTransactionId(string $transactionId): static
+    public function setTransactionId(string $transactionId): self
     {
         $this->transactionId = $transactionId;
         return $this;
@@ -115,7 +109,7 @@ class Transaction extends HitAbstract
      * @param string $affiliation
      * @return Transaction
      */
-    public function setAffiliation(string $affiliation): static
+    public function setAffiliation(string $affiliation): self
     {
         $this->affiliation = $affiliation;
         return $this;
@@ -137,7 +131,7 @@ class Transaction extends HitAbstract
      * @param ?float $taxes
      * @return Transaction
      */
-    public function setTaxes(?float $taxes): static
+    public function setTaxes(?float $taxes): self
     {
         $this->taxes = $taxes;
         return $this;
@@ -158,7 +152,7 @@ class Transaction extends HitAbstract
      * @param ?string $currency
      * @return Transaction
      */
-    public function setCurrency(?string $currency): static
+    public function setCurrency(?string $currency): self
     {
         $this->currency = $currency;
         return $this;
@@ -180,7 +174,7 @@ class Transaction extends HitAbstract
      * @param ?string $couponCode
      * @return Transaction
      */
-    public function setCouponCode(?string $couponCode): static
+    public function setCouponCode(?string $couponCode): self
     {
         $this->couponCode = $couponCode;
         return $this;
@@ -202,7 +196,7 @@ class Transaction extends HitAbstract
      * @param ?integer $itemsCount
      * @return Transaction
      */
-    public function setItemCount(?int $itemsCount): static
+    public function setItemCount(?int $itemsCount): self
     {
         $this->itemCount = $itemsCount;
         return $this;
@@ -224,7 +218,7 @@ class Transaction extends HitAbstract
      * @param ?string $shippingMethod
      * @return Transaction
      */
-    public function setShippingMethod(?string $shippingMethod): static
+    public function setShippingMethod(?string $shippingMethod): self
     {
         $this->shippingMethod = $shippingMethod;
         return $this;
@@ -246,7 +240,7 @@ class Transaction extends HitAbstract
      * @param ?string $paymentMethod
      * @return Transaction
      */
-    public function setPaymentMethod(?string $paymentMethod): static
+    public function setPaymentMethod(?string $paymentMethod): self
     {
         $this->paymentMethod = $paymentMethod;
         return $this;
@@ -269,7 +263,7 @@ class Transaction extends HitAbstract
      * @param ?float $totalRevenue
      * @return Transaction
      */
-    public function setTotalRevenue(?float $totalRevenue): static
+    public function setTotalRevenue(?float $totalRevenue): self
     {
         $this->totalRevenue = $totalRevenue;
         return $this;
@@ -291,7 +285,7 @@ class Transaction extends HitAbstract
      * @param ?float $shippingCosts
      * @return Transaction
      */
-    public function setShippingCosts(?float $shippingCosts): static
+    public function setShippingCosts(?float $shippingCosts): self
     {
         $this->shippingCosts = $shippingCosts;
         return $this;

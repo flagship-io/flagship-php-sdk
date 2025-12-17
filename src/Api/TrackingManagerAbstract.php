@@ -23,6 +23,7 @@ use Flagship\Utils\HttpClientInterface;
 /**
  * Class TrackingManagerAbstract
  * @package Flagship\Api
+ * @phpstan-import-type HitCacheDataArray from \Flagship\Model\Types
  */
 abstract class TrackingManagerAbstract implements TrackingManagerInterface
 {
@@ -124,28 +125,41 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
         };
     }
 
+    /**
+     * @param array<mixed> $item
+     * @return bool
+     */
     protected function checkLookupHitData(array $item): bool
     {
-        if (
-            isset($item[HitCacheFields::DATA][HitCacheFields::CONTENT]) &&
-            isset($item[HitCacheFields::DATA][HitCacheFields::TYPE]) &&
-            isset($item[HitCacheFields::VERSION]) && $item[HitCacheFields::VERSION] == 1
-        ) {
-            return true;
+        $data = $item[HitCacheFields::DATA] ?? null;
+        if (is_null($data) || !is_array($data)) {
+            $this->logErrorSprintf(
+                $this->config,
+                FlagshipConstant::PROCESS_CACHE,
+                FlagshipConstant::HIT_CACHE_FORMAT_ERROR,
+                [$item]
+            );
+            return false;
         }
-        $this->logErrorSprintf(
-            $this->config,
-            FlagshipConstant::PROCESS_CACHE,
-            FlagshipConstant::HIT_CACHE_FORMAT_ERROR,
-            [$item]
-        );
-        return  false;
+        $content = $data[HitCacheFields::CONTENT] ?? null;
+        $type = $data[HitCacheFields::TYPE] ?? null;
+        $version = $item[HitCacheFields::VERSION] ?? null;
+        if (is_null($content) || is_null($type) || is_null($version) || !is_array($content)) {
+            $this->logErrorSprintf(
+                $this->config,
+                FlagshipConstant::PROCESS_CACHE,
+                FlagshipConstant::HIT_CACHE_FORMAT_ERROR,
+                [$item]
+            );
+            return false;
+        }
+        return true;
     }
 
-    protected function checkHitTime($time): bool
+    protected function checkHitTime(float $time): bool
     {
         $now = round(microtime(true) * 1000);
-        return ($now - $time) >= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
+        return ($now - $time) <= FlagshipConstant::DEFAULT_HIT_CACHE_TIME_MS;
     }
     public function lookupHits(): void
     {
@@ -163,51 +177,51 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                 [$hitsCache]
             );
 
-            if (!is_array($hitsCache) || !count($hitsCache)) {
+            if (empty($hitsCache)) {
                 return;
             }
 
             $hitKeysToRemove = [];
 
+
             foreach ($hitsCache as $key => $item) {
-                $hitKeysToRemove [] = $key;
-                if (
-                    !$this->checkLookupHitData($item) ||
-                    $this->checkHitTime($item[HitCacheFields::DATA][HitCacheFields::TIME])
-                ) {
+                $hitKeysToRemove[] = $key;
+
+                if (!$this->checkLookupHitData($item)) {
+                    continue;
+                }
+
+                $hitCacheData = $item[HitCacheFields::DATA];
+                $hitTime = $hitCacheData[HitCacheFields::TIME] ?? 0;
+
+                if (!$this->checkHitTime($hitTime)) {
                     continue;
                 }
 
                 $type = $item[HitCacheFields::DATA][HitCacheFields::TYPE];
                 $content = $item[HitCacheFields::DATA][HitCacheFields::CONTENT];
 
-                switch ($type) {
-                    case HitType::EVENT->value:
-                        $hit = HitAbstract::hydrate(Event::getClassName(), $content);
-                        break;
-                    case HitType::ITEM->value:
-                        $hit = HitAbstract::hydrate(Item::getClassName(), $content);
-                        break;
-                    case HitType::PAGE_VIEW->value:
-                        $hit = HitAbstract::hydrate(Page::getClassName(), $content);
-                        break;
-                    case HitType::SCREEN_VIEW->value:
-                        $hit = HitAbstract::hydrate(Screen::getClassName(), $content);
-                        break;
-                    case HitType::SEGMENT->value:
-                        $hit = HitAbstract::hydrate(Segment::getClassName(), $content);
-                        break;
-                    case HitType::ACTIVATE->value:
-                        $hit = HitAbstract::hydrate(Activate::getClassName(), $content);
-                        $hit->setConfig($this->config);
-                        $this->getStrategy()->hydrateActivatePoolQueue($hit->getKey(), $hit);
-                        continue 2;
-                    case HitType::TRANSACTION->value:
-                        $hit = HitAbstract::hydrate(Transaction::getClassName(), $content);
-                        break;
-                    default:
-                        continue 2;
+                if (HitType::tryFrom($type) === HitType::ACTIVATE) {
+                    $hit = HitAbstract::hydrate(Activate::class, $content);
+                    $hit->setConfig($this->config);
+                    $this->getStrategy()->hydrateActivatePoolQueue($hit->getKey(), $hit);
+                    continue;
                 }
+
+                $hit = match (HitType::tryFrom($type)) {
+                    HitType::EVENT => HitAbstract::hydrate(Event::class, $content),
+                    HitType::ITEM => HitAbstract::hydrate(Item::class, $content),
+                    HitType::PAGE_VIEW => HitAbstract::hydrate(Page::class, $content),
+                    HitType::SCREEN_VIEW => HitAbstract::hydrate(Screen::class, $content),
+                    HitType::SEGMENT => HitAbstract::hydrate(Segment::class, $content),
+                    HitType::TRANSACTION => HitAbstract::hydrate(Transaction::class, $content),
+                    default => null,
+                };
+
+                if (is_null($hit)) {
+                    continue;
+                }
+
 
                 $hit->setConfig($this->config);
                 $this->getStrategy()->hydrateHitsPoolQueue($hit->getKey(), $hit);
@@ -220,8 +234,8 @@ abstract class TrackingManagerAbstract implements TrackingManagerInterface
                 FlagshipConstant::PROCESS_CACHE,
                 FlagshipConstant::HIT_CACHE_ERROR,
                 [
-                 "lookupHits",
-                 $exception->getMessage(),
+                    "lookupHits",
+                    $exception->getMessage(),
                 ]
             );
         }

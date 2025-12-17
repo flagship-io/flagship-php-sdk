@@ -14,7 +14,9 @@ class UsageHitTest extends TestCase
     {
         $config = new DecisionApiConfig();
         $analyticHit = new UsageHit();
-        $analyticHit->setVisitorId("visitor")->setLogLevel(LogLevel::INFO)->setLabel(TroubleshootingLabel::FLAG_VALUE_NOT_CALLED)->setConfig($config);
+        $analyticHit->setLogLevel(LogLevel::INFO)
+            ->setLabel(TroubleshootingLabel::FLAG_VALUE_NOT_CALLED)
+            ->setConfig($config)->setVisitorId("visitor");
 
         $this->assertSame('USAGE', $analyticHit->toApiKeys()['t']);
     }

@@ -93,9 +93,9 @@ class Diagnostic extends HitAbstract
     private ?bool $sdkConfigStatusListener = null;
 
     /**
-     * @var int|float|null
+     * @var int|float|null|string
      */
-    private int|float|null $sdkConfigTimeout = null;
+    private int|float|null|string $sdkConfigTimeout = null;
 
 
     /**
@@ -139,7 +139,7 @@ class Diagnostic extends HitAbstract
     private ?string $httpRequestMethod  = null;
 
     /**
-     * @var ?array
+     * @var ?array<mixed>
      */
     private ?array $httpRequestHeaders = null;
 
@@ -159,14 +159,14 @@ class Diagnostic extends HitAbstract
     private ?string $httpResponseMethod = null;
 
     /**
-     * @var ?array
+     * @var ?array<mixed>
      */
     private ?array $httpResponseHeaders = null;
 
     /**
-     * @var ?int
+     * @var int|string|null
      */
-    private ?int $httpResponseCode = null;
+    private string|int|null $httpResponseCode = null;
 
     /**
      * @var mixed
@@ -176,10 +176,10 @@ class Diagnostic extends HitAbstract
     /**
      * @var ?int
      */
-    private ?int $httpResponseTime = null;
+    private int|float|null $httpResponseTime = null;
 
     /**
-     * @var ?array
+     * @var ?array<mixed>
      */
     private ?array $visitorContext  = null;
 
@@ -189,7 +189,7 @@ class Diagnostic extends HitAbstract
     private ?bool $visitorConsent = null;
 
     /**
-     * @var ?array
+     * @var ?array<mixed>
      */
     private ?array $visitorAssignmentHistory = null;
 
@@ -199,7 +199,7 @@ class Diagnostic extends HitAbstract
     private ?array $visitorFlags = null;
 
     /**
-     * @var ?array
+     * @var ?array<mixed>
      */
     private ?array $visitorCampaigns = null;
 
@@ -275,9 +275,9 @@ class Diagnostic extends HitAbstract
 
 
     /**
-     * @var mixed
+     * @var array<string, mixed>
      */
-    private mixed $hitContent = null;
+    private ?array $hitContent = null;
 
     /**
      * @var ?string
@@ -312,7 +312,7 @@ class Diagnostic extends HitAbstract
      * @param ?string $flagshipInstanceId
      * @return Diagnostic
      */
-    public function setFlagshipInstanceId(?string $flagshipInstanceId): static
+    public function setFlagshipInstanceId(?string $flagshipInstanceId): self
     {
         $this->flagshipInstanceId = $flagshipInstanceId;
         return $this;
@@ -330,7 +330,7 @@ class Diagnostic extends HitAbstract
      * @param string $visitorSessionId
      * @return Diagnostic
      */
-    public function setVisitorSessionId(string $visitorSessionId): static
+    public function setVisitorSessionId(string $visitorSessionId): self
     {
         $this->visitorSessionId = $visitorSessionId;
         return $this;
@@ -348,7 +348,7 @@ class Diagnostic extends HitAbstract
      * @param float|int|null $traffic
      * @return Diagnostic
      */
-    public function setTraffic(float|int|null $traffic): static
+    public function setTraffic(float|int|null $traffic): self
     {
         $this->traffic = $traffic;
         return $this;
@@ -366,7 +366,7 @@ class Diagnostic extends HitAbstract
      * @param string $version
      * @return Diagnostic
      */
-    public function setVersion(string $version): static
+    public function setVersion(string $version): self
     {
         $this->version = $version;
         return $this;
@@ -384,7 +384,7 @@ class Diagnostic extends HitAbstract
      * @param LogLevel $logLevel
      * @return Diagnostic
      */
-    public function setLogLevel(LogLevel $logLevel): static
+    public function setLogLevel(LogLevel $logLevel): self
     {
         $this->logLevel = $logLevel;
         return $this;
@@ -402,7 +402,7 @@ class Diagnostic extends HitAbstract
      * @param string $timestamp
      * @return Diagnostic
      */
-    public function setTimestamp(string $timestamp): static
+    public function setTimestamp(string $timestamp): self
     {
         $this->timestamp = $timestamp;
         return $this;
@@ -420,7 +420,7 @@ class Diagnostic extends HitAbstract
      * @param string $timeZone
      * @return Diagnostic
      */
-    public function setTimeZone(string $timeZone): static
+    public function setTimeZone(string $timeZone): self
     {
         $this->timeZone = $timeZone;
         return $this;
@@ -438,7 +438,7 @@ class Diagnostic extends HitAbstract
      * @param TroubleshootingLabel $label
      * @return Diagnostic
      */
-    public function setLabel(TroubleshootingLabel $label): static
+    public function setLabel(TroubleshootingLabel $label): self
     {
         $this->label = $label;
         return $this;
@@ -456,7 +456,7 @@ class Diagnostic extends HitAbstract
      * @param string $stackType
      * @return Diagnostic
      */
-    public function setStackType(string $stackType): static
+    public function setStackType(string $stackType): self
     {
         $this->stackType = $stackType;
         return $this;
@@ -474,7 +474,7 @@ class Diagnostic extends HitAbstract
      * @param string $stackName
      * @return Diagnostic
      */
-    public function setStackName(string $stackName): static
+    public function setStackName(string $stackName): self
     {
         $this->stackName = $stackName;
         return $this;
@@ -492,7 +492,7 @@ class Diagnostic extends HitAbstract
      * @param string $stackVersion
      * @return Diagnostic
      */
-    public function setStackVersion(string $stackVersion): static
+    public function setStackVersion(string $stackVersion): self
     {
         $this->stackVersion = $stackVersion;
         return $this;
@@ -510,7 +510,7 @@ class Diagnostic extends HitAbstract
      * @param string $stackOriginName
      * @return Diagnostic
      */
-    public function setStackOriginName(string $stackOriginName): static
+    public function setStackOriginName(string $stackOriginName): self
     {
         $this->stackOriginName = $stackOriginName;
         return $this;
@@ -528,7 +528,7 @@ class Diagnostic extends HitAbstract
      * @param string $stackOriginVersion
      * @return Diagnostic
      */
-    public function setStackOriginVersion(string $stackOriginVersion): static
+    public function setStackOriginVersion(string $stackOriginVersion): self
     {
         $this->stackOriginVersion = $stackOriginVersion;
         return $this;
@@ -546,7 +546,7 @@ class Diagnostic extends HitAbstract
      * @param ?FSSdkStatus $sdkStatus
      * @return Diagnostic
      */
-    public function setSdkStatus(?FSSdkStatus $sdkStatus): static
+    public function setSdkStatus(?FSSdkStatus $sdkStatus): self
     {
         $this->sdkStatus = $sdkStatus;
         return $this;
@@ -564,7 +564,7 @@ class Diagnostic extends HitAbstract
      * @param DecisionMode $sdkConfigMode
      * @return Diagnostic
      */
-    public function setSdkConfigMode(DecisionMode $sdkConfigMode): static
+    public function setSdkConfigMode(DecisionMode $sdkConfigMode): self
     {
         $this->sdkConfigMode = $sdkConfigMode;
         return $this;
@@ -582,7 +582,7 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigCustomLogManager
      * @return Diagnostic
      */
-    public function setSdkConfigCustomLogManager(bool $sdkConfigCustomLogManager): static
+    public function setSdkConfigCustomLogManager(bool $sdkConfigCustomLogManager): self
     {
         $this->sdkConfigCustomLogManager = $sdkConfigCustomLogManager;
         return $this;
@@ -600,7 +600,7 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigCustomCacheManager
      * @return Diagnostic
      */
-    public function setSdkConfigCustomCacheManager(bool $sdkConfigCustomCacheManager): static
+    public function setSdkConfigCustomCacheManager(bool $sdkConfigCustomCacheManager): self
     {
         $this->sdkConfigCustomCacheManager = $sdkConfigCustomCacheManager;
         return $this;
@@ -618,7 +618,7 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigStatusListener
      * @return Diagnostic
      */
-    public function setSdkConfigStatusListener(bool $sdkConfigStatusListener): static
+    public function setSdkConfigStatusListener(bool $sdkConfigStatusListener): self
     {
         $this->sdkConfigStatusListener = $sdkConfigStatusListener;
         return $this;
@@ -636,7 +636,7 @@ class Diagnostic extends HitAbstract
      * @param ?string $sdkConfigBucketingUrl
      * @return Diagnostic
      */
-    public function setSdkConfigBucketingUrl(?string $sdkConfigBucketingUrl): static
+    public function setSdkConfigBucketingUrl(?string $sdkConfigBucketingUrl): self
     {
         $this->sdkConfigBucketingUrl = $sdkConfigBucketingUrl;
         return $this;
@@ -651,10 +651,10 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param ?string $sdkConfigFetchThirdPartyData
+     * @param ?bool $sdkConfigFetchThirdPartyData
      * @return Diagnostic
      */
-    public function setSdkConfigFetchThirdPartyData(?string $sdkConfigFetchThirdPartyData): static
+    public function setSdkConfigFetchThirdPartyData(?bool $sdkConfigFetchThirdPartyData): self
     {
         $this->sdkConfigFetchThirdPartyData = $sdkConfigFetchThirdPartyData;
         return $this;
@@ -672,7 +672,7 @@ class Diagnostic extends HitAbstract
      * @param numeric $sdkConfigTimeout
      * @return Diagnostic
      */
-    public function setSdkConfigTimeout(float|int|string $sdkConfigTimeout): static
+    public function setSdkConfigTimeout(float|int|string $sdkConfigTimeout): self
     {
         $this->sdkConfigTimeout = $sdkConfigTimeout;
         return $this;
@@ -693,7 +693,7 @@ class Diagnostic extends HitAbstract
      */
     public function setSdkConfigTrackingManagerConfigStrategy(
         CacheStrategy $sdkConfigTrackingManagerConfigStrategy
-    ): static {
+    ): self {
         $this->sdkConfigTrackingManagerConfigStrategy = $sdkConfigTrackingManagerConfigStrategy;
         return $this;
     }
@@ -710,7 +710,7 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigUsingCustomHitCache
      * @return Diagnostic
      */
-    public function setSdkConfigUsingCustomHitCache(bool $sdkConfigUsingCustomHitCache): static
+    public function setSdkConfigUsingCustomHitCache(bool $sdkConfigUsingCustomHitCache): self
     {
         $this->sdkConfigUsingCustomHitCache = $sdkConfigUsingCustomHitCache;
         return $this;
@@ -728,7 +728,7 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigUsingCustomVisitorCache
      * @return Diagnostic
      */
-    public function setSdkConfigUsingCustomVisitorCache(bool $sdkConfigUsingCustomVisitorCache): static
+    public function setSdkConfigUsingCustomVisitorCache(bool $sdkConfigUsingCustomVisitorCache): self
     {
         $this->sdkConfigUsingCustomVisitorCache = $sdkConfigUsingCustomVisitorCache;
         return $this;
@@ -746,7 +746,7 @@ class Diagnostic extends HitAbstract
      * @param bool $sdkConfigUsingOnVisitorExposed
      * @return Diagnostic
      */
-    public function setSdkConfigUsingOnVisitorExposed(bool $sdkConfigUsingOnVisitorExposed): static
+    public function setSdkConfigUsingOnVisitorExposed(bool $sdkConfigUsingOnVisitorExposed): self
     {
         $this->sdkConfigUsingOnVisitorExposed = $sdkConfigUsingOnVisitorExposed;
         return $this;
@@ -764,7 +764,7 @@ class Diagnostic extends HitAbstract
      * @param string $httpRequestUrl
      * @return Diagnostic
      */
-    public function setHttpRequestUrl(string $httpRequestUrl): static
+    public function setHttpRequestUrl(string $httpRequestUrl): self
     {
         $this->httpRequestUrl = $httpRequestUrl;
         return $this;
@@ -782,14 +782,14 @@ class Diagnostic extends HitAbstract
      * @param string $httpRequestMethod
      * @return Diagnostic
      */
-    public function setHttpRequestMethod(string $httpRequestMethod): static
+    public function setHttpRequestMethod(string $httpRequestMethod): self
     {
         $this->httpRequestMethod = $httpRequestMethod;
         return $this;
     }
 
     /**
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getHttpRequestHeaders(): ?array
     {
@@ -797,10 +797,10 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param array $httpRequestHeaders
+     * @param array<mixed> $httpRequestHeaders
      * @return Diagnostic
      */
-    public function setHttpRequestHeaders(array $httpRequestHeaders): static
+    public function setHttpRequestHeaders(array $httpRequestHeaders): self
     {
         $this->httpRequestHeaders = $httpRequestHeaders;
         return $this;
@@ -818,7 +818,7 @@ class Diagnostic extends HitAbstract
      * @param mixed $httpRequestBody
      * @return Diagnostic
      */
-    public function setHttpRequestBody(mixed $httpRequestBody): static
+    public function setHttpRequestBody(mixed $httpRequestBody): self
     {
         $this->httpRequestBody = $httpRequestBody;
         return $this;
@@ -836,7 +836,7 @@ class Diagnostic extends HitAbstract
      * @param string $httpResponseUrl
      * @return Diagnostic
      */
-    public function setHttpResponseUrl(string $httpResponseUrl): static
+    public function setHttpResponseUrl(string $httpResponseUrl): self
     {
         $this->httpResponseUrl = $httpResponseUrl;
         return $this;
@@ -854,14 +854,14 @@ class Diagnostic extends HitAbstract
      * @param string $httpResponseMethod
      * @return Diagnostic
      */
-    public function setHttpResponseMethod(string $httpResponseMethod): static
+    public function setHttpResponseMethod(string $httpResponseMethod): self
     {
         $this->httpResponseMethod = $httpResponseMethod;
         return $this;
     }
 
     /**
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getHttpResponseHeaders(): ?array
     {
@@ -869,28 +869,28 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param array $httpResponseHeaders
+     * @param array<mixed> $httpResponseHeaders
      * @return Diagnostic
      */
-    public function setHttpResponseHeaders(array $httpResponseHeaders): static
+    public function setHttpResponseHeaders(array $httpResponseHeaders): self
     {
         $this->httpResponseHeaders = $httpResponseHeaders;
         return $this;
     }
 
     /**
-     * @return int|null
+     * @return int|null|string
      */
-    public function getHttpResponseCode(): ?int
+    public function getHttpResponseCode(): int|null|string
     {
         return $this->httpResponseCode;
     }
 
     /**
-     * @param int $httpResponseCode
+     * @param int|null|string $httpResponseCode
      * @return Diagnostic
      */
-    public function setHttpResponseCode(int $httpResponseCode): static
+    public function setHttpResponseCode(int|null|string $httpResponseCode): self
     {
         $this->httpResponseCode = $httpResponseCode;
         return $this;
@@ -908,32 +908,32 @@ class Diagnostic extends HitAbstract
      * @param mixed $httpResponseBody
      * @return Diagnostic
      */
-    public function setHttpResponseBody(mixed $httpResponseBody): static
+    public function setHttpResponseBody(mixed $httpResponseBody): self
     {
         $this->httpResponseBody = $httpResponseBody;
         return $this;
     }
 
     /**
-     * @return int|null
+     * @return int|float|string|null
      */
-    public function getHttpResponseTime(): ?int
+    public function getHttpResponseTime(): int|float|null|string
     {
         return $this->httpResponseTime;
     }
 
     /**
-     * @param int $httpResponseTime
+     * @param int|float $httpResponseTime
      * @return Diagnostic
      */
-    public function setHttpResponseTime(int $httpResponseTime): static
+    public function setHttpResponseTime(int|float $httpResponseTime): self
     {
         $this->httpResponseTime = $httpResponseTime;
         return $this;
     }
 
     /**
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getVisitorContext(): ?array
     {
@@ -941,10 +941,10 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param array $visitorContext
+     * @param array<mixed> $visitorContext
      * @return Diagnostic
      */
-    public function setVisitorContext(array $visitorContext): static
+    public function setVisitorContext(array $visitorContext): self
     {
         $this->visitorContext = $visitorContext;
         return $this;
@@ -962,14 +962,14 @@ class Diagnostic extends HitAbstract
      * @param bool $visitorConsent
      * @return Diagnostic
      */
-    public function setVisitorConsent(bool $visitorConsent): static
+    public function setVisitorConsent(bool $visitorConsent): self
     {
         $this->visitorConsent = $visitorConsent;
         return $this;
     }
 
     /**
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getVisitorAssignmentHistory(): ?array
     {
@@ -977,17 +977,17 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param array $visitorAssignmentHistory
+     * @param array<mixed> $visitorAssignmentHistory
      * @return Diagnostic
      */
-    public function setVisitorAssignmentHistory(array $visitorAssignmentHistory): static
+    public function setVisitorAssignmentHistory(array $visitorAssignmentHistory): self
     {
         $this->visitorAssignmentHistory = $visitorAssignmentHistory;
         return $this;
     }
 
     /**
-     * @return array|null
+     * @return FlagDTO[]|null
      */
     public function getVisitorFlags(): ?array
     {
@@ -998,14 +998,14 @@ class Diagnostic extends HitAbstract
      * @param FlagDTO[] $visitorFlags
      * @return Diagnostic
      */
-    public function setVisitorFlags(array $visitorFlags): static
+    public function setVisitorFlags(array $visitorFlags): self
     {
         $this->visitorFlags = $visitorFlags;
         return $this;
     }
 
     /**
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getVisitorCampaigns(): ?array
     {
@@ -1013,10 +1013,10 @@ class Diagnostic extends HitAbstract
     }
 
     /**
-     * @param array $visitorCampaigns
+     * @param array<mixed> $visitorCampaigns
      * @return Diagnostic
      */
-    public function setVisitorCampaigns(array $visitorCampaigns): static
+    public function setVisitorCampaigns(array $visitorCampaigns): self
     {
         $this->visitorCampaigns = $visitorCampaigns;
         return $this;
@@ -1034,7 +1034,7 @@ class Diagnostic extends HitAbstract
      * @param bool $visitorIsAuthenticated
      * @return Diagnostic
      */
-    public function setVisitorIsAuthenticated(bool $visitorIsAuthenticated): static
+    public function setVisitorIsAuthenticated(bool $visitorIsAuthenticated): self
     {
         $this->visitorIsAuthenticated = $visitorIsAuthenticated;
         return $this;
@@ -1052,7 +1052,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagKey
      * @return Diagnostic
      */
-    public function setFlagKey(string $flagKey): static
+    public function setFlagKey(string $flagKey): self
     {
         $this->flagKey = $flagKey;
         return $this;
@@ -1070,7 +1070,7 @@ class Diagnostic extends HitAbstract
      * @param mixed $flagValue
      * @return Diagnostic
      */
-    public function setFlagValue(mixed $flagValue): static
+    public function setFlagValue(mixed $flagValue): self
     {
         $this->flagValue = $flagValue;
         return $this;
@@ -1088,7 +1088,7 @@ class Diagnostic extends HitAbstract
      * @param mixed $flagDefault
      * @return Diagnostic
      */
-    public function setFlagDefault(mixed $flagDefault): static
+    public function setFlagDefault(mixed $flagDefault): self
     {
         $this->flagDefault = $flagDefault;
         return $this;
@@ -1106,7 +1106,7 @@ class Diagnostic extends HitAbstract
      * @param bool $visitorExposed
      * @return Diagnostic
      */
-    public function setVisitorExposed(bool $visitorExposed): static
+    public function setVisitorExposed(bool $visitorExposed): self
     {
         $this->visitorExposed = $visitorExposed;
         return $this;
@@ -1124,7 +1124,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataCampaignId
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignId(string $flagMetadataCampaignId): static
+    public function setFlagMetadataCampaignId(string $flagMetadataCampaignId): self
     {
         $this->flagMetadataCampaignId = $flagMetadataCampaignId;
         return $this;
@@ -1142,7 +1142,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataVariationGroupId
      * @return Diagnostic
      */
-    public function setFlagMetadataVariationGroupId(string $flagMetadataVariationGroupId): static
+    public function setFlagMetadataVariationGroupId(string $flagMetadataVariationGroupId): self
     {
         $this->flagMetadataVariationGroupId = $flagMetadataVariationGroupId;
         return $this;
@@ -1160,7 +1160,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataVariationId
      * @return Diagnostic
      */
-    public function setFlagMetadataVariationId(string $flagMetadataVariationId): static
+    public function setFlagMetadataVariationId(string $flagMetadataVariationId): self
     {
         $this->flagMetadataVariationId = $flagMetadataVariationId;
         return $this;
@@ -1178,7 +1178,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataCampaignSlug
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignSlug(string $flagMetadataCampaignSlug): static
+    public function setFlagMetadataCampaignSlug(string $flagMetadataCampaignSlug): self
     {
         $this->flagMetadataCampaignSlug = $flagMetadataCampaignSlug;
         return $this;
@@ -1196,7 +1196,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataCampaignType
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignType(string $flagMetadataCampaignType): static
+    public function setFlagMetadataCampaignType(string $flagMetadataCampaignType): self
     {
         $this->flagMetadataCampaignType = $flagMetadataCampaignType;
         return $this;
@@ -1214,7 +1214,7 @@ class Diagnostic extends HitAbstract
      * @param bool $flagMetadataCampaignIsReference
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignIsReference(bool $flagMetadataCampaignIsReference): static
+    public function setFlagMetadataCampaignIsReference(bool $flagMetadataCampaignIsReference): self
     {
         $this->flagMetadataCampaignIsReference = $flagMetadataCampaignIsReference;
         return $this;
@@ -1232,7 +1232,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataCampaignName
      * @return Diagnostic
      */
-    public function setFlagMetadataCampaignName(string $flagMetadataCampaignName): static
+    public function setFlagMetadataCampaignName(string $flagMetadataCampaignName): self
     {
         $this->flagMetadataCampaignName = $flagMetadataCampaignName;
         return $this;
@@ -1250,7 +1250,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataVariationGroupName
      * @return Diagnostic
      */
-    public function setFlagMetadataVariationGroupName(string $flagMetadataVariationGroupName): static
+    public function setFlagMetadataVariationGroupName(string $flagMetadataVariationGroupName): self
     {
         $this->flagMetadataVariationGroupName = $flagMetadataVariationGroupName;
         return $this;
@@ -1268,7 +1268,7 @@ class Diagnostic extends HitAbstract
      * @param string $flagMetadataVariationName
      * @return Diagnostic
      */
-    public function setFlagMetadataVariationName(string $flagMetadataVariationName): static
+    public function setFlagMetadataVariationName(string $flagMetadataVariationName): self
     {
         $this->flagMetadataVariationName = $flagMetadataVariationName;
         return $this;
@@ -1276,18 +1276,18 @@ class Diagnostic extends HitAbstract
 
 
     /**
-     * @return mixed
+     * @return array<string, mixed>|null
      */
-    public function getHitContent(): mixed
+    public function getHitContent(): ?array
     {
         return $this->hitContent;
     }
 
     /**
-     * @param mixed $hitContent
+     * @param array<string, mixed> $hitContent
      * @return Diagnostic
      */
-    public function setHitContent(mixed $hitContent): static
+    public function setHitContent(array $hitContent): self
     {
         $this->hitContent = $hitContent;
         return $this;
@@ -1305,7 +1305,7 @@ class Diagnostic extends HitAbstract
      * @param LogLevel $sdkConfigLogLeve
      * @return Diagnostic
      */
-    public function setSdkConfigLogLevel(LogLevel $sdkConfigLogLeve): static
+    public function setSdkConfigLogLevel(LogLevel $sdkConfigLogLeve): self
     {
         $this->sdkConfigLogLeve = $sdkConfigLogLeve;
         return $this;
@@ -1313,20 +1313,24 @@ class Diagnostic extends HitAbstract
 
 
 
+    /**
+     * 
+     * @return array<mixed>
+     */
     public function toApiKeys(): array
     {
         $customVariable = [
-                           'version'       => $this->getVersion(),
-                           'logLevel'      => $this->getLogLevel()->name,
-                           'envId'         => $this->getConfig()->getEnvId(),
-                           "timestamp"     => $this->getTimestamp(),
-                           'timeZone'      => $this->getTimeZone(),
-                           'label'         => $this->getLabel()->value,
-                           'stack.type'    => $this->getStackType(),
-                           'stack.name'    => $this->getStackName(),
-                           'stack.version' => $this->getStackVersion(),
-                          ];
-        if ($this->getVisitorId() !== null) {
+            'version'       => $this->getVersion(),
+            'logLevel'      => $this->getLogLevel()->name,
+            'envId'         => $this->getConfig()?->getEnvId(),
+            "timestamp"     => $this->getTimestamp(),
+            'timeZone'      => $this->getTimeZone(),
+            'label'         => $this->getLabel()->value,
+            'stack.type'    => $this->getStackType(),
+            'stack.name'    => $this->getStackName(),
+            'stack.version' => $this->getStackVersion(),
+        ];
+        if (!empty($this->getVisitorId())) {
             $customVariable["visitor.visitorId"] = $this->getVisitorId();
         }
 
@@ -1522,12 +1526,12 @@ class Diagnostic extends HitAbstract
         }
 
         return [
-                FlagshipConstant::VISITOR_ID_API_ITEM      => $this->visitorId,
-                FlagshipConstant::DS_API_ITEM              => $this->getDs(),
-                FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()->getEnvId(),
-                FlagshipConstant::T_API_ITEM               => $this->getType()->value,
-                'cv'                                       => $customVariable,
-               ];
+            FlagshipConstant::VISITOR_ID_API_ITEM      => $this->visitorId,
+            FlagshipConstant::DS_API_ITEM              => $this->getDs(),
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $this->getConfig()?->getEnvId(),
+            FlagshipConstant::T_API_ITEM               => $this->getType()->value,
+            'cv'                                       => $customVariable,
+        ];
     }
 
     /**

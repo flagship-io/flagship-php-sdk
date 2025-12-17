@@ -3,26 +3,29 @@
 namespace Flagship;
 
 use Exception;
-use Flagship\Api\TrackingManager;
-use Flagship\Config\BucketingConfig;
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Config\FlagshipConfig;
-use Flagship\Decision\ApiManager;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FSSdkStatus;
+use ReflectionException;
+use Flagship\Utils\Utils;
 use Flagship\Enum\LogLevel;
-use Flagship\Model\HttpResponse;
-use Flagship\Utils\ConfigManager;
+use Psr\Log\LoggerInterface;
 use Flagship\Utils\Container;
 use Flagship\Visitor\Visitor;
+use Flagship\Enum\FSSdkStatus;
+use Flagship\Utils\HttpClient;
+use PHPUnit\Framework\TestCase;
+use Flagship\Model\HttpResponse;
+use Flagship\Api\TrackingManager;
+use Flagship\Decision\ApiManager;
+use Flagship\Utils\ConfigManager;
+use Flagship\Config\FlagshipConfig;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\BucketingConfig;
 use Flagship\Visitor\VisitorBuilder;
 use Flagship\Visitor\VisitorDelegate;
-use Psr\Log\LoggerInterface;
-use Flagship\Utils\Utils;
-use PHPUnit\Framework\TestCase;
-use ReflectionException;
+use Flagship\Config\DecisionApiConfig;
+use Flagship\Utils\FlagshipLogManager;
+use Flagship\Utils\HttpClientInterface;
 
-class FlagshipTest extends TestCase
+class FlagshipTest extends BaseTestCase
 {
     /**
      * @var LoggerInterface
@@ -41,8 +44,8 @@ class FlagshipTest extends TestCase
             true,
             true,
             [
-             'error',
-             'info',
+                'error',
+                'info',
             ]
         );
     }
@@ -54,21 +57,14 @@ class FlagshipTest extends TestCase
     {
         $container = new Container();
 
-        $container->bind(
-            'Flagship\Utils\HttpClientInterface',
-            'Flagship\Utils\HttpClient'
-        );
-        if (version_compare(phpversion(), '8', '>=')) {
-            $container->bind(
-                'Psr\Log\LoggerInterface',
-                'Flagship\Utils\FlagshipLogManager8'
+        $container
+            ->bind(
+                HttpClientInterface::class,
+                HttpClient::class
+            )->bind(
+                LoggerInterface::class,
+                FlagshipLogManager::class
             );
-        } else {
-            $container->bind(
-                'Psr\Log\LoggerInterface',
-                'Flagship\Utils\FlagshipLogManager'
-            );
-        }
         return $container;
     }
 
@@ -130,6 +126,8 @@ class FlagshipTest extends TestCase
     {
         //Test Start Flagship without config argument
 
+        $this->mockErrorLog($this->any());
+
         $instanceMethod = Utils::getMethod("Flagship\Flagship", 'getInstance');
         $instance = $instanceMethod->invoke(null);
 
@@ -166,6 +164,8 @@ class FlagshipTest extends TestCase
      */
     public function testStartWithLog()
     {
+
+        $this->mockErrorLog($this->any());
         //Test Start Flagship
         $envId = "end_id";
         $apiKey = "apiKey";
@@ -342,8 +342,20 @@ class FlagshipTest extends TestCase
         $this->assertInstanceOf(VisitorBuilder::class, $visitor1);
     }
 
+    public function testNewVisitorWithoutStartFlagship()
+    {
+        $this->mockErrorLog($this->once());
+
+        $visitorId = "visitorId";
+
+        $visitor1 = Flagship::newVisitor($visitorId, true);
+        $this->assertInstanceOf(VisitorBuilder::class, $visitor1);
+    }
+
     public function testStatusCallback()
     {
+        $this->mockErrorLog($this->any());
+
         $config = $this->getMockForAbstractClass(
             FlagshipConfig::class,
             [],
@@ -351,7 +363,7 @@ class FlagshipTest extends TestCase
             true,
             false,
             true,
-            [ "getOnSdkStatusChanged"]
+            ["getOnSdkStatusChanged"]
         );
 
         $callable = function ($status) {
@@ -369,6 +381,8 @@ class FlagshipTest extends TestCase
      */
     public function testGetPanicModeStatus()
     {
+        $this->mockErrorLog($this->any());
+
         $config = new DecisionApiConfig();
 
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
@@ -376,17 +390,17 @@ class FlagshipTest extends TestCase
         $visitorId = "visitorId";
 
         $body = [
-                 "visitorId" => $visitorId,
-                 "campaigns" => [],
-                 "panic"     => true,
-                ];
+            "visitorId" => $visitorId,
+            "campaigns" => [],
+            "panic"     => true,
+        ];
 
         $httpClientMock->expects($this->exactly(2))->method('post')->willReturnOnConsecutiveCalls(
             new HttpResponse(204, $body),
             new HttpResponse(204, [
-                                   "visitorId" => $visitorId,
-                                   "campaigns" => [],
-                                  ])
+                "visitorId" => $visitorId,
+                "campaigns" => [],
+            ])
         );
 
         $apiManager = new ApiManager($httpClientMock, $config);
@@ -397,7 +411,7 @@ class FlagshipTest extends TestCase
 
         $visitorId = 'Visitor_1';
 
-        $containerGetMethod = function () use ($config, $apiManager, $trackingManager, $configManager, $visitorId) {
+        $containerGetMethod = function () use ($config, $apiManager, $httpClientMock, $trackingManager, $configManager, $visitorId) {
             $args = func_get_args();
             return match ($args[0]) {
                 'Flagship\DecisionApiConfig' => $config,
@@ -405,15 +419,22 @@ class FlagshipTest extends TestCase
                 'Flagship\Decision\ApiManager' => $apiManager,
                 'Flagship\Api\TrackingManager' => $trackingManager,
                 'Flagship\Utils\ConfigManager' => $configManager,
-                'Flagship\Visitor\VisitorDelegate' => new VisitorDelegate(new Container(), $configManager, $visitorId,
-                    false, [], true),
+                'Flagship\Visitor\VisitorDelegate' => new VisitorDelegate(
+                    new Container(),
+                    $configManager,
+                    $visitorId,
+                    false,
+                    [],
+                    true
+                ),
                 'Flagship\Visitor\Visitor' => new Visitor($args[1][0]),
+                HttpClientInterface::class => $httpClientMock,
                 default => null,
             };
         };
 
         $containerMock = $this->getMockBuilder(
-            'Flagship\Utils\Container'
+            Container::class
         )->onlyMethods(['get'])->disableOriginalConstructor()->getMock();
 
         $containerMock->method('get')->will($this->returnCallback($containerGetMethod));
@@ -490,6 +511,7 @@ class FlagshipTest extends TestCase
 
         Flagship::Close();
     }
+
 
     /**
      * @throws ReflectionException

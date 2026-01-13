@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 namespace Flagship\Hit;
 
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Enum\FlagshipConstant;
 use Flagship\Enum\HitType;
+use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\DecisionApiConfig;
+
 
 class TransactionTest extends TestCase
 {
+    use PHPMock;
+
     public function testConstruct()
     {
+        $round = $this->getFunctionMock("Flagship\Traits", 'round');
+        $round->expects($this->any())->willReturn(0);
+
         $logManagerMock = $this->getMockForAbstractClass(
             'Psr\Log\LoggerInterface',
             [],
@@ -35,15 +42,15 @@ class TransactionTest extends TestCase
         $transaction->setVisitorId($visitorId)->setDs($ds)->setConfig($config);
 
         $transactionArray = [
-                             FlagshipConstant::VISITOR_ID_API_ITEM      => $visitorId,
-                             FlagshipConstant::DS_API_ITEM              => $ds,
-                             FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
-                             FlagshipConstant::T_API_ITEM               => HitType::TRANSACTION->value,
-                             FlagshipConstant::CUSTOMER_UID             => null,
-                             FlagshipConstant::QT_API_ITEM              => 0.0,
-                             FlagshipConstant::TID_API_ITEM             => $transactionId,
-                             FlagshipConstant::TA_API_ITEM              => $transactionAffiliation,
-                            ];
+            FlagshipConstant::VISITOR_ID_API_ITEM      => $visitorId,
+            FlagshipConstant::DS_API_ITEM              => $ds,
+            FlagshipConstant::CUSTOMER_ENV_ID_API_ITEM => $envId,
+            FlagshipConstant::T_API_ITEM               => HitType::TRANSACTION->value,
+            FlagshipConstant::CUSTOMER_UID             => null,
+            FlagshipConstant::QT_API_ITEM              => 0.0,
+            FlagshipConstant::TID_API_ITEM             => $transactionId,
+            FlagshipConstant::TA_API_ITEM              => $transactionAffiliation,
+        ];
 
         $taxesAmount = 76.0;
         $transaction->setTaxes($taxesAmount);

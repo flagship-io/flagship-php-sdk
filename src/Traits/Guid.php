@@ -9,7 +9,7 @@ trait Guid
      */
     protected function newGuid(): string
     {
-        $rand = function ($min, $max) {
+        $rand = function (int $min, int $max): int {
             return rand($min, $max);
         };
 

@@ -36,14 +36,14 @@ class ApiManagerTest extends TestCase
     public function testGetCampaignModifications()
     {
         $httpClientMock = $this->getMockForAbstractClass(
-            'Flagship\Utils\HttpClientInterface',
+            HttpClientInterface::class,
             ['post'],
             "",
             false
         );
 
         $trackingManager = $this->getMockForAbstractClass(
-            'Flagship\Api\TrackingManagerAbstract',
+            TrackingManagerAbstract::class,
             ['sendConsentHit'],
             "",
             false
@@ -57,72 +57,87 @@ class ApiManagerTest extends TestCase
         );
 
         $modificationValue1 = [
-                               "background"   => "bleu ciel",
-                               "btnColor"     => "#EE3300",
-                               "borderColor"  => null, //test modification null
-                               'isVip'        => false, //test modification false
-                               'firstConnect' => true,
-                              ];
+            "background"   => "bleu ciel",
+            "btnColor"     => "#EE3300",
+            "borderColor"  => null, //test modification null
+            'isVip'        => false, //test modification false
+            'firstConnect' => true,
+        ];
         $modificationValue2 = [
-                               "key"  => "variation 2",
-                               "key2" => 1,
-                               "key3" => 3,
-                               "key4" => 4,
-                               "key5" => '',//test modification empty
-                              ];
+            "key"  => "variation 2",
+            "key2" => 1,
+            "key3" => 3,
+            "key4" => 4,
+            "key5" => '', //test modification empty
+        ];
         $modificationValue3 = [
-                               'key'  => 'variation 3',
-                               'key2' => 3,
-                              ];
+            'key'  => 'variation 3',
+            'key2' => 3,
+        ];
 
         $mergeModification = array_merge($modificationValue1, $modificationValue2);
 
         $campaigns = [
-                      [
-                       "id"               => "c1e3t1nvfu1ncqfcdco0",
-                       "variationGroupId" => "c1e3t1nvfu1ncqfcdcp0",
-                       "variation"        => [
-                                              "id"            => "c1e3t1nvfu1ncqfcdcq0",
-                                              "modifications" => [
-                                                                  "type"  => "FLAG",
-                                                                  "value" => $modificationValue1,
-                                                                 ],
-                                              "reference"     => false,
-                                             ],
-                      ],
-                      [
-                       "id"               => "c20j8bk3fk9hdphqtd1g",
-                       "variationGroupId" => "c20j8bk3fk9hdphqtd2g",
-                       "variation"        => [
-                                              "id"            => "c20j9lgbcahhf2mvhbf0",
-                                              "modifications" => [
-                                                                  "type"  => "JSON",
-                                                                  "value" => $modificationValue2,
-                                                                 ],
-                                              "reference"     => true,
-                                             ],
-                      ],
-                      [
-                       "id"               => "c20j8bksdfk9hdphqtd1g",
-                       "variationGroupId" => "c2sf8bk3fk9hdphqtd2g",
-                       "variation"        => [
-                                              "id"            => "c20j9lrfcahhf2mvhbf0",
-                                              "modifications" => [
-                                                                  "type"  => "JSON",
-                                                                  "value" => $modificationValue3,
-                                                                 ],
-                                              "reference"     => true,
-                                             ],
-                      ],
-                     ];
+            [
+                "id"               => "c1e3t1nvfu1ncqfcdco0",
+                "name"             => "Campaign 1",
+                "type"             => "A/B Test",
+                "slug"             => "campaign-1",
+                "variationGroupId" => "c1e3t1nvfu1ncqfcdcp0",
+                "variationGroupName" => "Variation Group 1",
+                "variation"        => [
+                    "id"            => "c1e3t1nvfu1ncqfcdcq0",
+                    "name"          => "Variation 1",
+                    "modifications" => [
+                        "type"  => "FLAG",
+                        "value" => $modificationValue1,
+                    ],
+                    "reference"     => false,
+                ],
+            ],
+            [
+                "id"               => "c20j8bk3fk9hdphqtd1g",
+                "type"             => "A/B Test",
+                "variationGroupId" => "c20j8bk3fk9hdphqtd2g",
+                "variation"        => [
+                    "id"            => "c20j9lgbcahhf2mvhbf0",
+                    "modifications" => [
+                        "type"  => "JSON",
+                        "value" => $modificationValue2,
+                    ],
+                    "reference"     => true,
+                ],
+            ],
+            [
+                "id"               => "c20j8bksdfk9hdphqtd1g",
+                "type"             => "A/B Test",
+                "variationGroupId" => "c2sf8bk3fk9hdphqtd2g",
+                "variationGroupName" => "Variation Group 2",
+                "variation"        => [
+                    "name"          => "Variation 3",
+                    "id"            => "c20j9lrfcahhf2mvhbf0",
+                    "modifications" => [
+                        "type"  => "JSON",
+                        "value" => $modificationValue3,
+                    ],
+                    "reference"     => true,
+                ],
+            ]
+        ];
 
         $visitorId = "visitorId";
         $body = [
-                 "visitorId" => $visitorId,
-                 "campaigns" => $campaigns,
-                ];
+            "visitorId" => $visitorId,
+            "campaigns" => $campaigns,
+        ];
 
-        $httpPost = $httpClientMock->expects($this->exactly(2))->method('post')->willReturn(new HttpResponse(204, $body));
+        $httpPost = $httpClientMock->expects($this->exactly(3))
+            ->method('post')
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(204, $body),
+                new HttpResponse(204, $body),
+                new HttpResponse(204, [])
+            );;
 
         $config = new DecisionApiConfig("env_id", "apiKey");
         $manager = new ApiManager($httpClientMock, $config);
@@ -138,12 +153,12 @@ class ApiManagerTest extends TestCase
         $visitor = new VisitorDelegate(new Container(), $configManager, $visitorId, false, [], true);
 
         $postData = [
-                     "visitorId"       => $visitor->getVisitorId(),
-                     "anonymousId"     => $visitor->getAnonymousId(),
-                     "trigger_hit"     => false,
-                     "context"         => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
-                     "visitor_consent" => $visitor->hasConsented(),
-                    ];
+            "visitorId"       => $visitor->getVisitorId(),
+            "anonymousId"     => $visitor->getAnonymousId(),
+            "trigger_hit"     => false,
+            "context"         => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
+            "visitor_consent" => $visitor->hasConsented(),
+        ];
 
         $url = FlagshipConstant::BASE_API_URL . '/' . $config->getEnvId() . '/' .
             FlagshipConstant::URL_CAMPAIGNS . '?' .
@@ -161,12 +176,12 @@ class ApiManagerTest extends TestCase
             $this->logicalOr(
                 $this->equalTo($postData),
                 $this->equalTo([
-                                "visitorId"       => $visitor->getVisitorId(),
-                                "anonymousId"     => $visitor->getAnonymousId(),
-                                "trigger_hit"     => false,
-                                "context"         => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
-                                "visitor_consent" => false,
-                               ])
+                    "visitorId"       => $visitor->getVisitorId(),
+                    "anonymousId"     => $visitor->getAnonymousId(),
+                    "trigger_hit"     => false,
+                    "context"         => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
+                    "visitor_consent" => false,
+                ])
             )
         );
 
@@ -182,11 +197,26 @@ class ApiManagerTest extends TestCase
         //Test campaignId
         $this->assertSame($campaigns[0]['id'], $modifications[2]->getCampaignId());
 
+        //Test campaign name
+        $this->assertSame($campaigns[0]['name'], $modifications[3]->getCampaignName());
+
+        //Test campaign type
+        $this->assertSame($campaigns[0]['type'], $modifications[4]->getCampaignType());
+
+        //Test campaign slug
+        $this->assertSame($campaigns[0]['slug'], $modifications[4]->getSlug());
+
         //Test Variation group
         $this->assertSame($campaigns[2]['variationGroupId'], $modifications[5]->getVariationGroupId());
 
+        //Test Variation group name
+        $this->assertSame($campaigns[2]['variationGroupName'], $modifications[5]->getVariationGroupName());
+
         //Test Variation
         $this->assertSame($campaigns[2]['variation']['id'], $modifications[6]->getVariationId());
+
+        //Test Variation name
+        $this->assertSame($campaigns[2]['variation']['name'], $modifications[6]->getVariationName());
 
         //Test reference
         $this->assertSame($campaigns[2]['variation']['reference'], $modifications[6]->getIsReference());
@@ -194,6 +224,10 @@ class ApiManagerTest extends TestCase
         // Test with consent = false
         $visitor->setConsent(false);
         $manager->getCampaignFlags($visitor);
+
+        // Test with empty campaigns
+        $modifications = $manager->getCampaignFlags($visitor);
+        $this->assertSame([], $modifications);
     }
 
     public function testGetCampaignModificationsWithPanicMode()
@@ -202,10 +236,10 @@ class ApiManagerTest extends TestCase
 
         $visitorId = "visitorId";
         $body = [
-                 "visitorId" => $visitorId,
-                 "campaigns" => [],
-                 "panic"     => true,
-                ];
+            "visitorId" => $visitorId,
+            "campaigns" => [],
+            "panic"     => true,
+        ];
 
         $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
 
@@ -250,63 +284,80 @@ class ApiManagerTest extends TestCase
         $httpClientMock = $this->getMockForAbstractClass('Flagship\Utils\HttpClientInterface', ['post'], "", false);
 
         $modificationValue = [
-                              "background"   => "bleu ciel",
-                              "btnColor"     => "#EE3300",
-                              "borderColor"  => null,
-                              'isVip'        => false,
-                              'firstConnect' => true,
-                              ''             => 'hello world',//Test with invalid key
-                             ];
+            "background"   => "bleu ciel",
+            "btnColor"     => "#EE3300",
+            "borderColor"  => null,
+            'isVip'        => false,
+            'firstConnect' => true,
+            ''             => 'hello world', //Test with invalid key
+        ];
 
         $campaigns = [
-                      [
-                       "id"               => "c1e3t1nvfu1ncqfcdco0",
-                       "variationGroupId" => "c1e3t1nvfu1ncqfcdcp0",
-                       "variation"        => [
-                                              "id"            => "c1e3t1nvfu1ncqfcdcq0",
-                                              "modifications" => [ //Test modification without Value
+            [
+                "id"               => "c1e3t1nvfu1ncqfcdco0",
+                "variationGroupId" => "c1e3t1nvfu1ncqfcdcp0",
+                "variation"        => [
+                    "id"            => "c1e3t1nvfu1ncqfcdcq0",
+                    "modifications" => [ //Test modification without Value
                         "type" => "FLAG",
-                                                                 ],
-                                              "reference"     => false,
-                                             ],
-                      ],
-                      [
-                       "id"               => "c20j8bk3fk9hdphqtd1g",
-                       "variationGroupId" => "c20j8bk3fk9hdphqtd2g",
-                       "variation"        => [ //Test Variation without modification
-                                              "id"        => "c20j9lgbcahhf2mvhbf0",
-                                              "reference" => true,
-                                             ],
-                      ],
-                      [ // Test Campaign without variation
-                       "id"               => "c20j8bksdfk9hdphqtd1g",
-                       "variationGroupId" => "c2sf8bk3fk9hdphqtd2g",
+                    ],
+                    "reference"     => false,
+                ],
+            ],
+            [
+                "id"               => "c20j8bk3fk9hdphqtd1g",
+                "variationGroupId" => "c20j8bk3fk9hdphqtd2g",
+                "variation"        => [ //Test Variation without modification
+                    "id"        => "c20j9lgbcahhf2mvhbf0",
+                    "reference" => true,
+                ],
+            ],
+            [ // Test Campaign without variation
+                "id"               => "c20j8bksdfk9hdphqtd1g",
+                "variationGroupId" => "c2sf8bk3fk9hdphqtd2g",
 
-                      ],
-                      [
-                       "id"               => "c20j8bksdfk9hdphqtd1g",
-                       "variationGroupId" => "c2sf8bk3fk9hdphqtd2g",
-                       "variation"        => [
-                                              "id"            => "c20j9lrfcahhf2mvhbf0",
-                                              "modifications" => [
-                                                                  "type"  => "JSON",
-                                                                  "value" => $modificationValue,
-                                                                 ],
-                                              "reference"     => true,
-                                             ],
-                      ],
-                     ];
+            ],
+            [
+                "id"               => "c20j8bksdfk9hdphqtd1g",
+                "variationGroupId" => "c2sf8bk3fk9hdphqtd2g",
+                "variation"        => [
+                    "id"            => "c20j9lrfcahhf2mvhbf0",
+                    "modifications" => [
+                        "type"  => "JSON",
+                        "value" => $modificationValue,
+                    ],
+                    "reference"     => true,
+                ],
+            ],
+            [ // Test Campaign without variationGroupId
+                "id"               => "c20j8bksdfk9hdphqtd1g",
+                "variation"        => [
+                    "id"            => "c20j9lrfcahhf2mvhbf0",
+                    "modifications" => [
+                        "type"  => "JSON",
+                        "value" => [
+                            "key"  => "variation 3",
+                            "key2" => 3,
+                        ],
+                    ],
+                    "reference"     => true,
+                ],
+            ],
+        ];
 
         $visitorId = "visitorId";
         $body = [
-                 "visitorId" => $visitorId,
-                 "campaigns" => $campaigns,
-                ];
+            "visitorId" => $visitorId,
+            "campaigns" => $campaigns,
+        ];
 
-        $httpClientMock->method('post')->willReturn(new HttpResponse(204, $body));
+        $httpClientMock->method('post')
+            ->willReturn(new HttpResponse(204, $body));
 
         $config = new DecisionApiConfig("env_id", "apiKey");
+
         $manager = new ApiManager($httpClientMock, $config);
+
         $trackingManager = $this->getMockForAbstractClass(
             TrackingManagerAbstract::class,
             ['sendConsentHit'],

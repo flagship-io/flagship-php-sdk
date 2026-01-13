@@ -11,7 +11,7 @@ class HttpResponse
     private string|int $statusCode;
     private mixed $body;
     /**
-     * @var array
+     * @var array<string, string> $headers
      */
     private array $headers;
 
@@ -19,7 +19,7 @@ class HttpResponse
      * HttpResponse constructor.
      * @param string|int $statusCode
      * @param mixed $body
-     * @param array $headers
+     * @param array<string, string> $headers
      */
     public function __construct(
         string|int $statusCode,
@@ -40,10 +40,10 @@ class HttpResponse
     }
 
     /**
-     * @param  mixed $statusCode
+     * @param  string|int $statusCode
      * @return HttpResponse
      */
-    public function setStatusCode(mixed $statusCode): static
+    public function setStatusCode(string|int $statusCode): self
     {
         $this->statusCode = $statusCode;
         return $this;
@@ -61,14 +61,14 @@ class HttpResponse
      * @param  mixed $body
      * @return HttpResponse
      */
-    public function setBody(mixed $body): static
+    public function setBody(mixed $body): self
     {
         $this->body = $body;
         return $this;
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
     public function getHeaders(): array
     {

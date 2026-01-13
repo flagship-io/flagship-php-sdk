@@ -14,13 +14,7 @@ class Screen extends HitAbstract
 {
     public const ERROR_MESSAGE = 'Screen name is required';
 
-    /**
-     * @return string
-     */
-    public static function getClassName(): string
-    {
-        return __CLASS__;
-    }
+
 
     /**
      * @var string
@@ -55,7 +49,7 @@ class Screen extends HitAbstract
      * @param string $screenName : Interface seen.
      * @return Screen
      */
-    public function setScreenName(string $screenName): static
+    public function setScreenName(string $screenName): self
     {
         $this->screenName = $screenName;
         return $this;

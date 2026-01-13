@@ -2,49 +2,50 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Api\TrackingManagerAbstract;
-use Flagship\Config\BucketingConfig;
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Decision\ApiManager;
+use Flagship\Hit\Page;
+use Flagship\Hit\Event;
+use ReflectionException;
+use Flagship\Utils\Utils;
+use Flagship\BaseTestCase;
+use Flagship\Model\FlagDTO;
+use Flagship\Utils\Container;
+use Flagship\Enum\FSSdkStatus;
 use Flagship\Enum\EventCategory;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FSFetchReason;
 use Flagship\Enum\FSFetchStatus;
-use Flagship\Enum\FSSdkStatus;
-use Flagship\Flag\FSFlagMetadata;
-use Flagship\Hit\Event;
-use Flagship\Hit\Page;
-use Flagship\Model\FetchFlagsStatus;
-use Flagship\Model\FlagDTO;
+use Flagship\Decision\ApiManager;
 use Flagship\Utils\ConfigManager;
-use Flagship\Utils\Container;
+use Flagship\Enum\FlagshipContext;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Config\BucketingConfig;
+use Flagship\Model\FetchFlagsStatus;
+use Flagship\Config\DecisionApiConfig;
 use Flagship\Utils\ContainerInterface;
-use Flagship\Utils\Utils;
-use PHPUnit\Framework\TestCase;
-use ReflectionException;
+use Flagship\Api\TrackingManagerAbstract;
 
-class VisitorDelegateTest extends TestCase
+class VisitorDelegateTest extends BaseTestCase
 {
     public function testVisitorDelegateConstruct()
     {
+        $this->mockRoundFunction();
+
         $configData = [
-                       'envId'  => 'env_value',
-                       'apiKey' => 'key_value',
-                      ];
+            'envId'  => 'env_value',
+            'apiKey' => 'key_value',
+        ];
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
         $newVisitorId = 'new_visitor_id';
         $ageKey = 'age';
         $visitorContext = [
-                           'name'                       => 'visitor_name',
-                           'age'                        => 25,
-                           "sdk_osName"                 => PHP_OS,
-                           "sdk_deviceType"             => "server",
-                           FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
-                           FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-                           FlagshipConstant::FS_USERS   => $visitorId,
-                          ];
+            'name'                       => 'visitor_name',
+            'age'                        => 25,
+            "sdk_osName"                 => PHP_OS,
+            "sdk_deviceType"             => "server",
+            FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS   => $visitorId,
+        ];
 
         $trackerManager = $this->getMockForAbstractClass(
             TrackingManagerAbstract::class,
@@ -130,9 +131,9 @@ class VisitorDelegateTest extends TestCase
     public function testSetAnonymous()
     {
         $configData = [
-                       'envId'  => 'env_value',
-                       'apiKey' => 'key_value',
-                      ];
+            'envId'  => 'env_value',
+            'apiKey' => 'key_value',
+        ];
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
 
@@ -175,18 +176,18 @@ class VisitorDelegateTest extends TestCase
         );
 
         $configData = [
-                       'envId'  => 'env_value',
-                       'apiKey' => 'key_value',
-                      ];
+            'envId'  => 'env_value',
+            'apiKey' => 'key_value',
+        ];
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
 
         $config->setLogManager($logManagerStub);
 
         $visitorId = "visitor_id";
         $visitorContext = [
-                           'name' => 'visitor_name',
-                           'age'  => 25,
-                          ];
+            'name' => 'visitor_name',
+            'age'  => 25,
+        ];
 
         $trackerManager = $this->getMockForAbstractClass(
             TrackingManagerAbstract::class,
@@ -227,16 +228,16 @@ class VisitorDelegateTest extends TestCase
             ['error']
         );
         $configData = [
-                       'envId'  => 'env_value',
-                       'apiKey' => 'key_value',
-                      ];
+            'envId'  => 'env_value',
+            'apiKey' => 'key_value',
+        ];
         $config = new DecisionApiConfig($configData['envId'], $configData['apiKey']);
         $visitorId = "visitor_id";
 
         $visitorContext = [
-                           'name' => 'visitor_name',
-                           'age'  => 25,
-                          ];
+            'name' => 'visitor_name',
+            'age'  => 25,
+        ];
 
         $trackerManager = $this->getMockForAbstractClass(
             TrackingManagerAbstract::class,
@@ -254,21 +255,21 @@ class VisitorDelegateTest extends TestCase
         )->onlyMethods(['get'])->disableOriginalConstructor()->getMock();
 
         $defaultStrategy = $this->getMockBuilder('Flagship\Visitor\DefaultStrategy')->onlyMethods([
-                                                                                                   'initialContext',
-                                                                                                   'updateContext',
-                                                                                                   'updateContextCollection',
-                                                                                                   "cacheVisitor",
-                                                                                                   'clearContext',
-                                                                                                   'authenticate',
-                                                                                                   'unauthenticate',
-                                                                                                   'setConsent',
-                                                                                                   'sendHit',
-                                                                                                   'fetchFlags',
-                                                                                                   'visitorExposed',
-                                                                                                   'getFlagValue',
-                                                                                                   'getFlagMetadata',
-                                                                                                   'lookupVisitor',
-                                                                                                  ])->disableOriginalConstructor()->getMock();
+            'initialContext',
+            'updateContext',
+            'updateContextCollection',
+            "cacheVisitor",
+            'clearContext',
+            'authenticate',
+            'unauthenticate',
+            'setConsent',
+            'sendHit',
+            'fetchFlags',
+            'visitorExposed',
+            'getFlagValue',
+            'getFlagMetadata',
+            'lookupVisitor',
+        ])->disableOriginalConstructor()->getMock();
 
         $containerMock->method('get')->willReturn($defaultStrategy);
 
@@ -382,13 +383,13 @@ class VisitorDelegateTest extends TestCase
         $config = new DecisionApiConfig();
         $visitorId = "visitor_id";
         $context = [
-                    "age"                        => 20,
-                    "sdk_osName"                 => PHP_OS,
-                    "sdk_deviceType"             => "server",
-                    FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
-                    FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-                    FlagshipConstant::FS_USERS   => $visitorId,
-                   ];
+            "age"                        => 20,
+            "sdk_osName"                 => PHP_OS,
+            "sdk_deviceType"             => "server",
+            FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS   => $visitorId,
+        ];
         $trackerManager = $this->getMockForAbstractClass(
             TrackingManagerAbstract::class,
             [],
@@ -403,10 +404,10 @@ class VisitorDelegateTest extends TestCase
 
         $this->assertJsonStringEqualsJsonString(
             json_encode([
-                         'visitorId'  => $visitorId,
-                         'context'    => $context,
-                         'hasConsent' => true,
-                        ]),
+                'visitorId'  => $visitorId,
+                'context'    => $context,
+                'hasConsent' => true,
+            ]),
             json_encode($visitorDelegate)
         );
     }

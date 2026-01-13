@@ -29,7 +29,7 @@ class VisitorDelegate extends VisitorAbstract
      * @param ConfigManager      $configManager
      * @param ?string $visitorId             visitor unique identifier.
      * @param boolean $isAuthenticated
-     * @param array              $context     visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
+     * @param array<string, mixed> $context     visitor context. e.g: ["age"=>42, "isVip"=>true, "country"=>"UK"]
      * @param boolean $hasConsented
      * @param string|null $flagshipInstanceId
      * @param callable|null $onFetchFlagsStatusChanged
@@ -41,8 +41,8 @@ class VisitorDelegate extends VisitorAbstract
         bool $isAuthenticated = false,
         array $context = [],
         bool $hasConsented = false,
-        string $flagshipInstanceId = null,
-        callable $onFetchFlagsStatusChanged = null
+        ?string $flagshipInstanceId = null,
+        ?callable $onFetchFlagsStatusChanged = null
     ) {
         parent::__construct();
         $this->onFetchFlagsStatusChanged = $onFetchFlagsStatusChanged;
@@ -78,7 +78,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function updateContext(string $key, float|bool|int|string|null $value): void
+    public function updateContext(string $key, float|bool|int|string $value): void
     {
         $this->getStrategy()->updateContext($key, $value);
     }
@@ -139,7 +139,7 @@ class VisitorDelegate extends VisitorAbstract
     public function visitorExposed(
         string $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
     ): void {
         $this->getStrategy()->visitorExposed($key, $defaultValue, $flag, $hasGetValueBeenCalled);
@@ -148,11 +148,14 @@ class VisitorDelegate extends VisitorAbstract
 
     /**
      * @inheritDoc
+     * @phpstan-template T of scalar|array<mixed>|null
+     * @param T $defaultValue
+     * @return T
      */
     public function getFlagValue(
         string $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $userExposed = true
     ): float|array|bool|int|string|null {
         return $this->getStrategy()->getFlagValue($key, $defaultValue, $flag, $userExposed);
@@ -162,7 +165,7 @@ class VisitorDelegate extends VisitorAbstract
     /**
      * @inheritDoc
      */
-    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
+    public function getFlagMetadata(string $key, ?FlagDTO $flag = null): FSFlagMetadata
     {
         return $this->getStrategy()->getFlagMetadata($key, $flag);
     }
@@ -182,8 +185,8 @@ class VisitorDelegate extends VisitorAbstract
                 FlagshipConstant::GET_FLAG,
                 $this->flagSyncStatusMessage($fetchFlagsStatus->getReason()),
                 [
-                 $this->getVisitorId(),
-                 $key,
+                    $this->getVisitorId(),
+                    $key,
                 ]
             );
         }

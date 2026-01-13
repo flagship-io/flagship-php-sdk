@@ -2,21 +2,23 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Enum\FlagshipContext;
 use Flagship\Hit\Event;
 use Flagship\Hit\Activate;
 use Flagship\Enum\LogLevel;
 use Flagship\Model\FlagDTO;
 use Flagship\Hit\HitAbstract;
 use Flagship\Enum\DecisionMode;
-use Flagship\Flag\FSFlagMetadata;
+use Flagship\Model\CampaignDTO;
 use Flagship\Enum\EventCategory;
-use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FSFetchStatus;
 use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
+use Flagship\Model\VariationDTO;
+use Flagship\Flag\FSFlagMetadata;
 use Flagship\Hit\Troubleshooting;
+use Flagship\Enum\FlagshipContext;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Model\FetchFlagsStatus;
+use Flagship\Model\ModificationsDTO;
 use Flagship\Enum\TroubleshootingLabel;
 
 /**
@@ -48,7 +50,7 @@ class DefaultStrategy extends StrategyAbstract
         $troubleshooting = new Troubleshooting();
         $troubleshooting->setLabel(TroubleshootingLabel::VISITOR_SEND_HIT)->setLogLevel(LogLevel::INFO)->setTraffic($visitor->getTraffic())->setFlagshipInstanceId($visitor->getFlagshipInstanceId())->setVisitorSessionId($visitor->getInstanceId())->setHitContent($consentHit->toApiKeys())->setVisitorId($visitor->getVisitorId())->setConfig($this->getConfig())->setAnonymousId($visitor->getAnonymousId());
 
-        if ($this->getDecisionManager() && $this->getDecisionManager()->getTroubleshootingData()) {
+        if ($this->getDecisionManager()->getTroubleshootingData()) {
             $this->sendTroubleshootingHit($troubleshooting);
             return;
         }
@@ -57,20 +59,11 @@ class DefaultStrategy extends StrategyAbstract
 
     /**
      * @param string $key  context key.
-     * @param bool|string|numeric $value : context value.
+     * @param scalar $value : context value.
      * @return void
      */
-    protected function updateContextKeyValue(string $key, mixed $value): void
+    protected function updateContextKeyValue(string $key, float|bool|int|string $value): void
     {
-        if (!$this->isKeyValid($key) || !$this->isValueValid($value)) {
-            $this->logError(
-                $this->getVisitor()->getConfig(),
-                FlagshipConstant::CONTEXT_PARAM_ERROR,
-                [FlagshipConstant::TAG => FlagshipConstant::TAG_UPDATE_CONTEXT]
-            );
-            return;
-        }
-
         if (
             $key === FlagshipContext::FLAGSHIP_CLIENT
             || $key === FlagshipContext::FLAGSHIP_VERSION || $key === FlagshipContext::FLAGSHIP_VISITOR
@@ -105,8 +98,17 @@ class DefaultStrategy extends StrategyAbstract
     /**
      * @inheritDoc
      */
-    public function updateContext(string $key, float|bool|int|string|null $value): void
+    public function updateContext(string $key, float|bool|int|string $value): void
     {
+        if (empty($key)) {
+            $this->logError(
+                $this->getVisitor()->getConfig(),
+                FlagshipConstant::CONTEXT_PARAM_ERROR,
+                [FlagshipConstant::TAG => __FUNCTION__]
+            );
+            return;
+        }
+
         $oldContext = $this->getVisitor()->getContext();
 
         $this->updateContextKeyValue($key, $value);
@@ -253,55 +255,58 @@ class DefaultStrategy extends StrategyAbstract
 
     /**
      * @param  VisitorAbstract $visitor
-     * @return array
+     * @return CampaignDTO[]
      */
     protected function fetchVisitorCampaigns(VisitorAbstract $visitor): array
     {
         $now = $this->getNow();
         $visitorCache = $visitor->visitorCache;
-        if (
-            !isset(
-                $visitorCache,
-                $visitorCache[self::DATA],
-                $visitorCache[self::DATA][self::CAMPAIGNS]
-            ) ||
-            !is_array($visitorCache[self::DATA][self::CAMPAIGNS])
-        ) {
+
+        if ($visitorCache === null) {
             return [];
         }
 
-        $data = $visitorCache[self::DATA];
-        $visitor->updateContextCollection($data[self::CONTEXT]);
-        $campaigns = [];
-        foreach ($data[self::CAMPAIGNS] as $item) {
-            $campaigns[] = [
-                FlagshipField::FIELD_ID                 => $item[FlagshipField::FIELD_CAMPAIGN_ID],
-                FlagshipField::FIELD_VARIATION_GROUP_ID => $item[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                FlagshipField::FIELD_VARIATION          => [
-                    FlagshipField::FIELD_ID            => $item[self::CAMPAIGN_ID],
-                    FlagshipField::FIELD_REFERENCE     => $item[FlagshipField::FIELD_IS_REFERENCE],
-                    FlagshipField::FIELD_MODIFICATIONS => [
-                        FlagshipField::FIELD_CAMPAIGN_TYPE => $item[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                        FlagshipField::FIELD_VALUE         => $item[self::FLAGS],
-                    ],
-                ],
-            ];
+        if (empty($visitorCache->getData()->getCampaigns())) {
+            return [];
         }
 
-        if (count($campaigns)) {
-            $this->logDebugSprintf(
-                $this->getConfig(),
-                FlagshipConstant::PROCESS_FETCHING_FLAGS,
-                FlagshipConstant::FETCH_CAMPAIGNS_FROM_CACHE,
-                [
-                    $this->getVisitor()->getVisitorId(),
-                    $this->getVisitor()->getAnonymousId(),
-                    $this->getVisitor()->getContext(),
-                    $campaigns,
-                    ($this->getNow() - $now),
-                ]
-            );
+        $data = $visitorCache->getData();
+
+        $campaignsCache = $data->getCampaigns();
+
+        if (empty($campaignsCache)) {
+            return [];
         }
+
+        $campaigns = array_map(function ($item) {
+            $modifications = new ModificationsDTO(
+                $item->getFlags()->getType(),
+                $item->getFlags()->getValue()
+            );
+            $variation = new VariationDTO(
+                $item->getVariationId(),
+                $modifications
+            );
+            $variation->setReference($item->getIsReference());
+            return new CampaignDTO(
+                $item->getCampaignId(),
+                $item->getVariationGroupId(),
+                $variation
+            );
+        }, $campaignsCache);
+
+        $this->logDebugSprintf(
+            $this->getConfig(),
+            FlagshipConstant::PROCESS_FETCHING_FLAGS,
+            FlagshipConstant::FETCH_CAMPAIGNS_FROM_CACHE,
+            [
+                $this->getVisitor()->getVisitorId(),
+                $this->getVisitor()->getAnonymousId(),
+                $this->getVisitor()->getContext(),
+                $campaigns,
+                ($this->getNow() - $now),
+            ]
+        );
 
         return $campaigns;
     }
@@ -316,7 +321,14 @@ class DefaultStrategy extends StrategyAbstract
         );
     }
 
-    protected function logFetchCampaignsSuccess($functionName, $campaigns, $now): void
+    /**
+     * 
+     * @param string $functionName
+     * @param CampaignDTO[]|null $campaigns
+     * @param float $now
+     * @return void
+     */
+    protected function logFetchCampaignsSuccess(string $functionName, ?array $campaigns, float $now): void
     {
         $this->logDebugSprintf(
             $this->getConfig(),
@@ -326,13 +338,19 @@ class DefaultStrategy extends StrategyAbstract
                 $this->getVisitor()->getVisitorId(),
                 $this->getVisitor()->getAnonymousId(),
                 $this->getVisitor()->getContext(),
-                $campaigns,
+                $campaigns ?? [],
                 ($this->getNow() - $now),
             ]
         );
     }
 
-    protected function logFetchFlagsFromCampaigns($functionName, $flagsDTO): void
+    /**
+     * 
+     * @param string $functionName
+     * @param FlagDTO[] $flagsDTO
+     * @return void
+     */
+    protected function logFetchFlagsFromCampaigns(string $functionName, array $flagsDTO): void
     {
         $this->logDebugSprintf(
             $this->getConfig(),
@@ -347,7 +365,14 @@ class DefaultStrategy extends StrategyAbstract
         );
     }
 
-    protected function sendTroubleshootingAndAnalyticHits($flagsDTO, $campaigns, $now): void
+    /**
+     *
+     * @param FlagDTO[] $flagsDTO
+     * @param CampaignDTO[] $campaigns
+     * @param float $now
+     * @return void
+     */
+    protected function sendTroubleshootingAndAnalyticHits(array $flagsDTO, array $campaigns, float $now): void
     {
         $troubleshootingData = $this->getDecisionManager()->getTroubleshootingData();
         $this->getTrackingManager()->setTroubleshootingData($troubleshootingData);
@@ -361,7 +386,12 @@ class DefaultStrategy extends StrategyAbstract
     }
 
 
-    protected function getCampaignsFromCacheIfNotArray($campaigns): array
+    /**
+     * 
+     * @param CampaignDTO[]|null $campaigns
+     * @return CampaignDTO[]
+     */
+    protected function getCampaignsFromCacheIfNotArray(?array $campaigns): array
     {
         if (!is_array($campaigns)) {
             $campaigns = $this->fetchVisitorCampaigns($this->getVisitor());
@@ -398,9 +428,11 @@ class DefaultStrategy extends StrategyAbstract
         $this->logFetchCampaignsSuccess($functionName, $campaigns, $now);
 
         $campaigns = $this->getCampaignsFromCacheIfNotArray($campaigns);
+
         $this->getVisitor()->campaigns = $campaigns;
 
         $flagsDTO = $decisionManager->getFlagsData($campaigns);
+
         $this->getVisitor()->setFlagsDTO($flagsDTO);
 
         if ($this->getVisitor()->getFetchStatus()->getStatus() == FSFetchStatus::FETCHING) {
@@ -440,7 +472,7 @@ class DefaultStrategy extends StrategyAbstract
 
     /**
      * @param FlagDTO $flag
-     * @param mixed|null $defaultValue
+     * @param scalar|array<mixed>|null $defaultValue
      * @return void
      */
     protected function activateFlag(FlagDTO $flag, mixed $defaultValue = null): void
@@ -452,15 +484,26 @@ class DefaultStrategy extends StrategyAbstract
             $flag->getIsReference(),
             $flag->getCampaignType(),
             $flag->getSlug(),
-            $flag->getCampaignName(),
-            $flag->getVariationGroupName(),
-            $flag->getVariationName()
+            $flag->getCampaignName() ?? '',
+            $flag->getVariationGroupName() ?? '',
+            $flag->getVariationName() ?? ''
         );
 
         $visitor = $this->getVisitor();
-        $activateHit = new Activate($flag->getVariationGroupId(), $flag->getVariationId());
+        $activateHit = new Activate(
+            $flag->getVariationGroupId(),
+            $flag->getVariationId(),
+            $flag->getKey(),
+            $flagMetadata
+        );
 
-        $activateHit->setFlagKey($flag->getKey())->setFlagValue($flag->getValue())->setFlagDefaultValue($defaultValue)->setVisitorContext($visitor->getContext())->setFlagMetadata($flagMetadata)->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId())->setConfig($this->getConfig());
+        $activateHit
+            ->setFlagValue($flag->getValue())
+            ->setFlagDefaultValue($defaultValue)
+            ->setVisitorContext($visitor->getContext())
+            ->setVisitorId($visitor->getVisitorId())
+            ->setAnonymousId($visitor->getAnonymousId())
+            ->setConfig($this->getConfig());
 
         $this->getTrackingManager()->activateFlag($activateHit);
 
@@ -469,18 +512,22 @@ class DefaultStrategy extends StrategyAbstract
         $this->sendTroubleshootingHit($troubleshooting);
     }
 
-    private function sendFlagTroubleshooting($label, $key, $defaultValue, $visitorExposed): void
+    private function sendFlagTroubleshooting(TroubleshootingLabel $label, string $key, mixed $defaultValue, bool $visitorExposed): void
     {
         $visitor = $this->getVisitor();
         $troubleshooting = new Troubleshooting();
-        $troubleshooting->setLabel($label)->setLogLevel(LogLevel::WARNING)->setVisitorSessionId($visitor->getInstanceId())->setFlagshipInstanceId($this->getFlagshipInstanceId())->setTraffic($visitor->getTraffic())->setVisitorContext($visitor->getContext())->setFlagKey($key)->setFlagDefault($defaultValue)->setVisitorExposed($visitorExposed)->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId())->setConfig($this->getConfig());
+        $troubleshooting->setLabel($label)
+            ->setLogLevel(LogLevel::WARNING)
+            ->setVisitorSessionId($visitor->getInstanceId())
+            ->setFlagshipInstanceId($this->getFlagshipInstanceId())
+            ->setTraffic($visitor->getTraffic())->setVisitorContext($visitor->getContext())->setFlagKey($key)->setFlagDefault($defaultValue)->setVisitorExposed($visitorExposed)->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId())->setConfig($this->getConfig());
 
         $this->sendTroubleshootingHit($troubleshooting);
     }
 
     /**
      * @param string $key
-     * @param float|array|bool|int|string $defaultValue
+     * @param float|array<mixed>|bool|int|string $defaultValue
      * @param FlagDTO|null $flag
      * @param bool $hasGetValueBeenCalled
      * @return void
@@ -488,7 +535,7 @@ class DefaultStrategy extends StrategyAbstract
     public function visitorExposed(
         string $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
     ): void {
         if (!$flag) {
@@ -559,16 +606,17 @@ class DefaultStrategy extends StrategyAbstract
 
 
     /**
+     * 
      * @param string $key
-     * @param float|array|bool|int|string $defaultValue
+     * @param scalar|array<mixed>|null $defaultValue
      * @param FlagDTO|null $flag
      * @param boolean $userExposed
-     * @return float|array|bool|int|string|null
+     * @return scalar|array<mixed>|null
      */
     public function getFlagValue(
         string $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $userExposed = true
     ): float|array|bool|int|string|null {
         if (!$flag) {
@@ -642,7 +690,7 @@ class DefaultStrategy extends StrategyAbstract
      * @param  FlagDTO|null $flag
      * @return FSFlagMetadata
      */
-    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata
+    public function getFlagMetadata(string $key, ?FlagDTO $flag = null): FSFlagMetadata
     {
         $flagMetadataFuncName = 'flag.metadata';
         if (!$flag) {
@@ -661,9 +709,9 @@ class DefaultStrategy extends StrategyAbstract
             $flag->getIsReference(),
             $flag->getCampaignType(),
             $flag->getSlug(),
-            $flag->getCampaignName(),
-            $flag->getVariationGroupName(),
-            $flag->getVariationName()
+            $flag->getCampaignName() ?? '',
+            $flag->getVariationGroupName() ?? '',
+            $flag->getVariationName() ?? ''
         );
     }
 }

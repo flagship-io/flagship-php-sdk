@@ -5,9 +5,10 @@ namespace Flagship\Decision;
 use DateTime;
 use Exception;
 use Flagship\Enum\LogLevel;
+use Flagship\Model\CampaignDTO;
 use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FSFetchStatus;
 use Flagship\Enum\FSFetchReason;
+use Flagship\Enum\FSFetchStatus;
 use Flagship\Hit\Troubleshooting;
 use Flagship\Enum\FlagshipConstant;
 use Flagship\Model\FetchFlagsStatus;
@@ -23,20 +24,47 @@ use Flagship\Model\TroubleshootingData;
 class ApiManager extends DecisionManagerAbstract
 {
     /**
+     * @param array<mixed>|null $body
      * @throws Exception
      */
     protected function setTroubleshootingData(?array $body): void
     {
         $this->troubleshootingData = null;
+        if (empty($body) || !isset($body[FlagshipField::EXTRAS])) {
+            return;
+        }
+
+        /** @var mixed[]|null $extras*/
+        $extras = $body[FlagshipField::EXTRAS];
+
+        if (!is_array($extras) || empty($extras)) {
+            return;
+        }
+
+        if (!isset($extras[FlagshipField::ACCOUNT_SETTINGS])) {
+            return;
+        }
+        $accountSettings = $extras[FlagshipField::ACCOUNT_SETTINGS];
+        if (!is_array($accountSettings) || empty($accountSettings)) {
+            return;
+        }
+
+
         if (
-            $body === null || !isset($body[FlagshipField::EXTRAS]) ||
-            !isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS]) ||
-            !isset($body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS][FlagshipField::TROUBLESHOOTING])
+            !isset($accountSettings[FlagshipField::TROUBLESHOOTING])
         ) {
             return;
         }
-        $troubleshooting = $body[FlagshipField::EXTRAS][FlagshipField::ACCOUNT_SETTINGS]
-        [FlagshipField::TROUBLESHOOTING];
+
+        /**
+         * @var array{startDate: string, endDate: string, timezone: string, traffic: int}|null $troubleshooting
+         */
+        $troubleshooting = $accountSettings[FlagshipField::TROUBLESHOOTING];
+
+        if (!is_array($troubleshooting)) {
+            return;
+        }
+
         $startDate = new DateTime($troubleshooting[FlagshipField::START_DATE]);
         $endDate = new DateTime($troubleshooting[FlagshipField::END_DATE]);
         $troubleshootingData = new TroubleshootingData();
@@ -44,15 +72,18 @@ class ApiManager extends DecisionManagerAbstract
         $this->troubleshootingData = $troubleshootingData;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCampaigns(VisitorAbstract $visitor): array|null
     {
         $postData = [
-                     "visitorId"       => $visitor->getVisitorId(),
-                     "anonymousId"     => $visitor->getAnonymousId(),
-                     "trigger_hit"     => false,
-                     "context"         => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
-                     "visitor_consent" => $visitor->hasConsented(),
-                    ];
+            "visitorId"       => $visitor->getVisitorId(),
+            "anonymousId"     => $visitor->getAnonymousId(),
+            "trigger_hit"     => false,
+            "context"         => count($visitor->getContext()) > 0 ? $visitor->getContext() : null,
+            "visitor_consent" => $visitor->hasConsented(),
+        ];
         $headers = $this->buildHeader($this->getConfig()->getApiKey());
         $url = $this->buildDecisionApiUrl($this->getConfig()->getEnvId() . '/' .
             FlagshipConstant::URL_CAMPAIGNS . '?' .
@@ -63,6 +94,8 @@ class ApiManager extends DecisionManagerAbstract
             $this->httpClient->setTimeout($this->getConfig()->getTimeout() / 1000);
 
             $response = $this->httpClient->post($url, [], $postData);
+
+            /** @var array<mixed> $body*/
             $body = $response->getBody();
             $hasPanicMode = !empty($body["panic"]);
 
@@ -70,24 +103,33 @@ class ApiManager extends DecisionManagerAbstract
 
             $this->setTroubleshootingData($body);
 
-            return $body[FlagshipField::FIELD_CAMPAIGNS] ?? null;
+            /**
+             * @var array<mixed[]>|null 
+             */
+            $campaigns = $body[FlagshipField::FIELD_CAMPAIGNS] ?? null;
+
+            if (!is_array($campaigns)) {
+                return null;
+            }
+
+            return array_map(CampaignDTO::fromArray(...), $campaigns);
         } catch (Exception $exception) {
             $visitor->setFetchStatus(new FetchFlagsStatus(FSFetchStatus::FETCH_REQUIRED, FSFetchReason::FETCH_ERROR));
             $this->logError($this->getConfig(), $exception->getMessage(), [FlagshipConstant::TAG => __FUNCTION__]);
 
             $troubleshooting = new Troubleshooting();
-            $troubleshooting->setLabel(TroubleshootingLabel::GET_CAMPAIGNS_ROUTE_RESPONSE_ERROR)->setHttpRequestBody($postData)->setHttpRequestHeaders($headers)->setHttpRequestMethod("POST")->setHttpRequestUrl($url)->setHttpResponseBody($exception->getMessage())->setHttpResponseTime($this->getNow() - $now)->setVisitorContext($visitor->getContext())->setLogLevel(LogLevel::ERROR)->setVisitorSessionId($visitor->getInstanceId())->setFlagshipInstanceId($visitor->getFlagshipInstanceId())->setTraffic(100)->setConfig($this->getConfig())->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId());
+            $troubleshooting->setLabel(TroubleshootingLabel::GET_CAMPAIGNS_ROUTE_RESPONSE_ERROR)
+                ->setHttpRequestBody($postData)
+                ->setHttpRequestHeaders($headers)
+                ->setHttpRequestMethod("POST")
+                ->setHttpRequestUrl($url)
+                ->setHttpResponseBody($exception->getMessage())
+                ->setHttpResponseTime($this->getNow() - $now)
+                ->setVisitorContext($visitor->getContext())
+                ->setLogLevel(LogLevel::ERROR)
+                ->setVisitorSessionId($visitor->getInstanceId())->setFlagshipInstanceId($visitor->getFlagshipInstanceId())->setTraffic(100)->setConfig($this->getConfig())->setVisitorId($visitor->getVisitorId())->setAnonymousId($visitor->getAnonymousId());
             $visitor->sendTroubleshootingHit($troubleshooting);
             return null;
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCampaignFlags(VisitorAbstract $visitor): array
-    {
-        $campaigns = $this->getCampaigns($visitor);
-        return $this->getFlagsData($campaigns);
     }
 }

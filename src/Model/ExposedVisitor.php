@@ -18,14 +18,14 @@ class ExposedVisitor implements ExposedVisitorInterface
     private ?string $anonymousId;
 
     /**
-     * @var array
+     * @var array<string, scalar>
      */
     private array $context;
 
     /**
      * @param string $id
      * @param ?string $anonymousId
-     * @param array $context
+     * @param array<string, scalar> $context
      */
     public function __construct(string $id, ?string $anonymousId, array $context)
     {
@@ -51,7 +51,7 @@ class ExposedVisitor implements ExposedVisitorInterface
     }
 
     /**
-     * @return array
+     * @return array<string, scalar>
      */
     public function getContext(): array
     {

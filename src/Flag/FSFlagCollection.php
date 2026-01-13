@@ -27,13 +27,13 @@ class FSFlagCollection implements FSFlagCollectionInterface
      */
     private array $flags;
 
-    private int $index = 0;
+    private int $index = 0; 
 
     /**
      * @param VisitorAbstract|null $visitor
      * @param array<string, FSFlag> $flags
      */
-    public function __construct(VisitorAbstract $visitor = null, array $flags = [])
+    public function __construct(?VisitorAbstract $visitor = null, array $flags = [])
     {
         $this->visitor = $visitor;
         $this->flags = $flags;
@@ -56,17 +56,20 @@ class FSFlagCollection implements FSFlagCollectionInterface
         return count($this->keys);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get(string $key): FSFlagInterface
     {
         if (!isset($this->flags[$key])) {
             $this->logWarningSprintf(
-                $this->visitor->getConfig(),
+                $this->visitor?->getConfig(),
                 FlagshipConstant::GET_FLAG,
                 FlagshipConstant::GET_FLAG_NOT_FOUND,
                 [
-                 $this->visitor->getVisitorId(),
-                 $key,
-                ]
+                    $this->visitor?->getVisitorId(),
+                    $key,
+                ] 
             );
             return new FSFlag($key);
         }
@@ -124,20 +127,21 @@ class FSFlagCollection implements FSFlagCollectionInterface
         foreach ($this->flags as $key => $flag) {
             $metadata = $flag->getMetadata();
             $serializedData[] = [
-                                 'key'                => $key,
-                                 'campaignId'         => $metadata->getCampaignId(),
-                                 'campaignName'       => $metadata->getCampaignName(),
-                                 'variationGroupId'   => $metadata->getVariationGroupId(),
-                                 'variationGroupName' => $metadata->getVariationGroupName(),
-                                 'variationId'        => $metadata->getVariationId(),
-                                 'variationName'      => $metadata->getVariationName(),
-                                 'isReference'        => $metadata->isReference(),
-                                 'campaignType'       => $metadata->getCampaignType(),
-                                 'slug'               => $metadata->getSlug(),
-                                 'hex'                => $this->valueToHex(['v' => $flag->getValue(null, false)]),
-                                ];
+                'key'                => $key,
+                'campaignId'         => $metadata->getCampaignId(),
+                'campaignName'       => $metadata->getCampaignName(),
+                'variationGroupId'   => $metadata->getVariationGroupId(),
+                'variationGroupName' => $metadata->getVariationGroupName(),
+                'variationId'        => $metadata->getVariationId(),
+                'variationName'      => $metadata->getVariationName(),
+                'isReference'        => $metadata->isReference(),
+                'campaignType'       => $metadata->getCampaignType(),
+                'slug'               => $metadata->getSlug(),
+                'hex'                => $this->valueToHex(['v' => $flag->getValue(null, false)]),
+            ];
         }
-        return json_encode($serializedData);
+        $json = json_encode($serializedData);
+        return $json !== false ? $json : '[]';
     }
 
     /**

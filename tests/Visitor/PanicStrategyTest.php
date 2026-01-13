@@ -2,16 +2,17 @@
 
 namespace Flagship\Visitor;
 
-use Flagship\Config\DecisionApiConfig;
-use Flagship\Decision\ApiManager;
-use Flagship\Enum\FlagshipConstant;
-use Flagship\Enum\FlagshipField;
-use Flagship\Enum\FSSdkStatus;
 use Flagship\Hit\Page;
-use Flagship\Model\HttpResponse;
-use Flagship\Utils\ConfigManager;
 use Flagship\Utils\Container;
+use Flagship\Enum\FSSdkStatus;
 use PHPUnit\Framework\TestCase;
+use Flagship\Enum\FlagshipField;
+use Flagship\Model\HttpResponse;
+use Flagship\Decision\ApiManager;
+use Flagship\Utils\ConfigManager;
+use Flagship\Enum\FlagshipConstant;
+use Flagship\Model\VisitorCacheDTO;
+use Flagship\Config\DecisionApiConfig;
 
 class PanicStrategyTest extends TestCase
 {
@@ -142,27 +143,29 @@ class PanicStrategyTest extends TestCase
             $assignmentsHistory[$campaign[FlagshipField::FIELD_ID]] = $variation[FlagshipField::FIELD_ID];
 
             $campaigns[] = [
-                            FlagshipField::FIELD_CAMPAIGN_ID        => $campaign[FlagshipField::FIELD_ID],
-                            FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
-                            FlagshipField::FIELD_VARIATION_ID       => $variation[FlagshipField::FIELD_ID],
-                            FlagshipField::FIELD_IS_REFERENCE       => $variation[FlagshipField::FIELD_REFERENCE],
-                            FlagshipField::FIELD_CAMPAIGN_TYPE      => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
-                            StrategyAbstract::ACTIVATED             => false,
-                            StrategyAbstract::FLAGS                 => $modifications[FlagshipField::FIELD_VALUE],
-                           ];
+                FlagshipField::FIELD_CAMPAIGN_ID        => $campaign[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_VARIATION_GROUP_ID => $campaign[FlagshipField::FIELD_VARIATION_GROUP_ID],
+                FlagshipField::FIELD_VARIATION_ID       => $variation[FlagshipField::FIELD_ID],
+                FlagshipField::FIELD_IS_REFERENCE       => $variation[FlagshipField::FIELD_REFERENCE],
+                FlagshipField::FIELD_CAMPAIGN_TYPE      => $modifications[FlagshipField::FIELD_CAMPAIGN_TYPE],
+                StrategyAbstract::ACTIVATED             => false,
+                StrategyAbstract::FLAGS                 => $modifications,
+            ];
         }
 
         $visitorCache = [
-                         StrategyAbstract::VERSION => 1,
-                         StrategyAbstract::DATA    => [
-                                                       StrategyAbstract::VISITOR_ID          => $visitor->getVisitorId(),
-                                                       StrategyAbstract::ANONYMOUS_ID        => $visitor->getAnonymousId(),
-                                                       StrategyAbstract::CONSENT             => $visitor->hasConsented(),
-                                                       StrategyAbstract::CONTEXT             => $visitor->getContext(),
-                                                       StrategyAbstract::CAMPAIGNS           => $campaigns,
-                                                       StrategyAbstract::ASSIGNMENTS_HISTORY => $assignmentsHistory,
-                                                      ],
-                        ];
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA    => [
+                StrategyAbstract::VISITOR_ID          => $visitor->getVisitorId(),
+                StrategyAbstract::ANONYMOUS_ID        => $visitor->getAnonymousId(),
+                StrategyAbstract::CONSENT             => $visitor->hasConsented(),
+                StrategyAbstract::CONTEXT             => $visitor->getContext(),
+                StrategyAbstract::CAMPAIGNS           => $campaigns,
+                StrategyAbstract::ASSIGNMENTS_HISTORY => $assignmentsHistory,
+            ],
+        ];
+
+        $visitorCache = VisitorCacheDTO::fromArray($visitorCache);
 
         //Test fetchVisitorCampaigns
         $visitor->visitorCache = $visitorCache;
@@ -178,8 +181,8 @@ class PanicStrategyTest extends TestCase
             true,
             true,
             [
-             'lookupVisitor',
-             'cacheVisitor',
+                'lookupVisitor',
+                'cacheVisitor',
             ]
         );
 

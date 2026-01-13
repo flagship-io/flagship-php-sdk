@@ -38,13 +38,13 @@ class FlagshipContext
 
     /**
      * Current visitor latitude
-     * @var float
+     * @var string
      */
     public const LOCATION_LAT = 'sdk_lat';
 
     /**
      * Current visitor longitude
-     * @var float
+     * @var string
      */
     public const LOCATION_LONG = 'sdk_long';
 
@@ -68,7 +68,7 @@ class FlagshipContext
 
     /**
      * OS version code
-     * @var float
+     * @var string
      */
     public const OS_VERSION_CODE = 'sdk_osVersionCode';
 
@@ -92,7 +92,7 @@ class FlagshipContext
 
     /**
      * Customer app version code
-     * @var float
+     * @var string
      */
     public const APP_VERSION_CODE = 'sdk_versionCode';
 
@@ -120,28 +120,29 @@ class FlagshipContext
      */
     public const FLAGSHIP_VISITOR = 'fs_users';
 
+    /** @var array<string, string> */
     private static array $predefinedContext = [
-                                               self::DEVICE_LOCALE       => "string",
-                                               self::DEVICE_TYPE         => "string",
-                                               self::DEVICE_MODEL        => "string",
-                                               self::LOCATION_CITY       => "string",
-                                               self::LOCATION_REGION     => "string",
-                                               self::LOCATION_COUNTRY    => "string",
-                                               self::LOCATION_LAT        => "float",
-                                               self::LOCATION_LONG       => "float",
-                                               self::IP                  => "string",
-                                               self::OS_NAME             => "string",
-                                               self::OS_VERSION_NAME     => "string",
-                                               self::OS_VERSION_CODE     => "float",
-                                               self::CARRIER_NAME        => "string",
-                                               self::INTERNET_CONNECTION => "string",
-                                               self::APP_VERSION_NAME    => "string",
-                                               self::APP_VERSION_CODE    => "float",
-                                               self::INTERFACE_NAME      => "string",
-                                               self::FLAGSHIP_CLIENT     => "string",
-                                               self::FLAGSHIP_VERSION    => "string",
-                                               self::FLAGSHIP_VISITOR    => "string",
-                                              ];
+        self::DEVICE_LOCALE       => "string",
+        self::DEVICE_TYPE         => "string",
+        self::DEVICE_MODEL        => "string",
+        self::LOCATION_CITY       => "string",
+        self::LOCATION_REGION     => "string",
+        self::LOCATION_COUNTRY    => "string",
+        self::LOCATION_LAT        => "float",
+        self::LOCATION_LONG       => "float",
+        self::IP                  => "string",
+        self::OS_NAME             => "string",
+        self::OS_VERSION_NAME     => "string",
+        self::OS_VERSION_CODE     => "float",
+        self::CARRIER_NAME        => "string",
+        self::INTERNET_CONNECTION => "string",
+        self::APP_VERSION_NAME    => "string",
+        self::APP_VERSION_CODE    => "float",
+        self::INTERFACE_NAME      => "string",
+        self::FLAGSHIP_CLIENT     => "string",
+        self::FLAGSHIP_VERSION    => "string",
+        self::FLAGSHIP_VISITOR    => "string",
+    ];
 
     /**
      * @param $context string

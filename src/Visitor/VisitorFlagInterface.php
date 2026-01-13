@@ -11,7 +11,7 @@ interface VisitorFlagInterface
      * Returns the value from the assigned campaign variation or the Flag default value if the Flag does not exist,
      * or if types are different.
      * @param string $key
-     * @param array|bool|string|numeric $defaultValue
+     * @param mixed[]|bool|string|numeric $defaultValue
      * @param FlagDTO|null $flag
      * @param bool $hasGetValueBeenCalled
      * @return void
@@ -19,21 +19,23 @@ interface VisitorFlagInterface
     public function visitorExposed(
         string $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $hasGetValueBeenCalled = false
     ): void;
 
     /**
+     * 
+     * @phpstan-template T of scalar|array<mixed>|null
      * @param string $key
-     * @param array|bool|string|numeric $defaultValue
+     * @param T $defaultValue
      * @param FlagDTO|null $flag
      * @param bool $userExposed
-     * @return float|array|bool|int|string|null
+     * @return T
      */
     public function getFlagValue(
         string $key,
         float|array|bool|int|string|null $defaultValue,
-        FlagDTO $flag = null,
+        ?FlagDTO $flag = null,
         bool $userExposed = true
     ): float|array|bool|int|string|null;
 
@@ -42,5 +44,5 @@ interface VisitorFlagInterface
      * @param FlagDTO|null $flag
      * @return FSFlagMetadata
      */
-    public function getFlagMetadata(string $key, FlagDTO $flag = null): FSFlagMetadata;
+    public function getFlagMetadata(string $key, ?FlagDTO $flag = null): FSFlagMetadata;
 }

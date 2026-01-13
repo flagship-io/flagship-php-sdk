@@ -54,7 +54,7 @@ class FlagshipConstant
     /**
      * SDK version
      */
-    public const SDK_VERSION = "4.1.2";
+    public const SDK_VERSION = "4.2.0";
 
     public const GET_FLAG = 'GET_FLAG';
 
@@ -67,7 +67,7 @@ class FlagshipConstant
     public const USER_EXPOSED_NO_FLAG_ERROR = "For the visitor '%s', no flags were found with the key '%s'.
      As a result, user exposure will not be sent.";
     public const VISITOR_EXPOSED_VALUE_NOT_CALLED =
-        "For the visitor `%s`, assuming the getValue() method has not previously been invoked for the flag `%s`. Therefore, the exposure is canceled";
+    "For the visitor `%s`, assuming the getValue() method has not previously been invoked for the flag `%s`. Therefore, the exposure is canceled";
     public const GET_FLAG_MISSING_ERROR =
     "For the visitor '%s', no flags were found with the key '%s'. 
         Therefore, the default value '%s' has been returned.";
@@ -80,7 +80,7 @@ class FlagshipConstant
     "For the visitor '%s', the flag with key '%s' has a different type compared to the default value. 
         Therefore, the default value '%s' has been returned.";
     public const USER_EXPOSED_CAST_ERROR =
-        "For the visitor `%s`, the flag with the key `%s` has a different type compared to the default value. Therefore, the exposure is interrupted";
+    "For the visitor `%s`, the flag with the key `%s` has a different type compared to the default value. Therefore, the exposure is interrupted";
     public const DECISION_MANAGER_MISSING_ERROR = "decisionManager must not be null.";
     public const TRACKER_MANAGER_MISSING_ERROR = "trackerManager must not be null.";
     public const CURL_LIBRARY_IS_NOT_LOADED = 'curl library is not loaded';
@@ -200,4 +200,9 @@ class FlagshipConstant
     public const ANALYTIC_HIT_ALLOCATION = 1;
     public const FLAGSHIP_VISITOR_ALREADY_AUTHENTICATE =
     "Visitor is already authenticated";
+
+    public const NEW_VISITOR_WARNING =
+    "You are creating a new visitor without starting Flagship SDK. Please make sure to start Flagship before creating visitors to avoid misconfiguration.";
+
+    public const TAG_NEW_VISITOR = 'NEW_VISITOR';
 }

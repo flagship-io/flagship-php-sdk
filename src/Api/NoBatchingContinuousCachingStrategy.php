@@ -94,7 +94,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 ->setHttpResponseBody($exception->getMessage())
                 ->setHttpResponseTime($this->getNow() - $now)
                 ->setTraffic(100)->setConfig($this->config)
-                ->setVisitorId($this->flagshipInstanceId)
+                ->setVisitorId($this->flagshipInstanceId ?? "")
             ;
             $this->addTroubleshootingHit($troubleshooting);
             $this->sendTroubleshootingQueue();
@@ -155,7 +155,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
                 ->setHttpResponseTime($this->getNow() - $now)
                 ->setLogLevel(LogLevel::ERROR)
                 ->setTraffic(100)->setConfig($this->config)
-                ->setVisitorId($this->flagshipInstanceId);
+                ->setVisitorId($this->flagshipInstanceId ?? "");
             $this->addTroubleshootingHit($troubleshooting);
             $this->sendTroubleshootingQueue();
         }
@@ -165,7 +165,7 @@ class NoBatchingContinuousCachingStrategy extends BatchingCachingStrategyAbstrac
     protected function notConsent(string $visitorId): void
     {
         $keysToFlush = $this->commonNotConsent($visitorId);
-        $mergedQueue = array_merge($keysToFlush, $this->cacheHitKeys);
+        $mergedQueue = array_merge($keysToFlush, $this->cacheHitKeys); 
         if (count($mergedQueue) === 0) {
             return;
         }

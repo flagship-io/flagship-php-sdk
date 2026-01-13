@@ -44,7 +44,7 @@ class BucketingConfig extends FlagshipConfig
      * @param string $syncAgentUrl
      * @return BucketingConfig
      */
-    public function setSyncAgentUrl(string $syncAgentUrl): static
+    public function setSyncAgentUrl(string $syncAgentUrl): self
     {
         $this->syncAgentUrl = $syncAgentUrl;
         return $this;
@@ -68,7 +68,7 @@ class BucketingConfig extends FlagshipConfig
      * @param bool $fetchThirdPartyData
      * @return BucketingConfig
      */
-    public function setFetchThirdPartyData(bool $fetchThirdPartyData): static
+    public function setFetchThirdPartyData(bool $fetchThirdPartyData): self
     {
         $this->fetchThirdPartyData = $fetchThirdPartyData;
         return $this;
@@ -79,6 +79,9 @@ class BucketingConfig extends FlagshipConfig
      */
     public function jsonSerialize(): mixed
     {
+        /**
+         * @var array<mixed> $parent
+         */
         $parent = parent::jsonSerialize();
         $parent[FlagshipField::FIELD_BUCKETING_URL] = $this->syncAgentUrl;
         return $parent;

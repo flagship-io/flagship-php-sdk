@@ -39,7 +39,7 @@ interface VisitorInterface extends VisitorCoreInterface
   /**
    * Get the current context
    *
-   * @return array<string, mixed>
+   * @return array<bool|float|int|string>
    */
     public function getContext(): array;
 

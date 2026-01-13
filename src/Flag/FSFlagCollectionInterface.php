@@ -4,6 +4,9 @@ namespace Flagship\Flag;
 
 use Iterator;
 
+/**
+ * @extends Iterator<string, FSFlagInterface>
+ */
 interface FSFlagCollectionInterface extends Iterator
 {
     /**
@@ -74,5 +77,5 @@ interface FSFlagCollectionInterface extends Iterator
      *                             2. string $key - The key of the current flag.
      *                             3. FSFlagCollectionInterface $collection - The collection the flag belongs to.
      */
-    public function each(callable $callbackFn);
+    public function each(callable $callbackFn):void;
 }

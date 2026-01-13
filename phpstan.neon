@@ -1,0 +1,18 @@
+includes:
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    # - vendor/phpstan/phpstan-phpunit/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+    phpVersion: 80100
+
+    # Treat PHPDoc types as certain for better inference
+    treatPhpDocTypesAsCertain: false
+
+    # Ignore vendor and optional files
+    excludePaths:
+        - tests/bootstrap.php (?)
+        - vendor/
+

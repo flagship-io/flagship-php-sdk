@@ -17,10 +17,7 @@ class Event extends HitAbstract
     public const CATEGORY_ERROR = "The category value must be either EventCategory::ACTION_TRACKING or EventCategory::ACTION_TRACKING";
     public const VALUE_FIELD_ERROR = 'value must be an integer and be >= 0';
 
-    public static function getClassName(): string
-    {
-        return __CLASS__;
-    }
+
 
     /**
      * @var EventCategory
@@ -71,7 +68,7 @@ class Event extends HitAbstract
      * @param  EventCategory $category
      * @return Event
      */
-    public function setCategory(EventCategory $category): static
+    public function setCategory(EventCategory $category): self
     {
         $this->category = $category;
         return $this;
@@ -94,7 +91,7 @@ class Event extends HitAbstract
      * @param string $action : Event name.
      * @return Event
      */
-    public function setAction(string $action): static
+    public function setAction(string $action): self
     {
         $this->action = $action;
         return $this;
@@ -116,7 +113,7 @@ class Event extends HitAbstract
      * @param ?string $label : event label.
      * @return Event
      */
-    public function setLabel(?string $label): static
+    public function setLabel(?string $label): self
     {
         $this->label = $label;
         return $this;
@@ -140,7 +137,7 @@ class Event extends HitAbstract
      * @param float|null $value : event value
      * @return Event
      */
-    public function setValue(?float $value): static
+    public function setValue(?float $value): self
     {
         if (is_numeric($value) && $value < 0) {
             $this->logError(
@@ -179,7 +176,8 @@ class Event extends HitAbstract
      */
     public function isReady(): bool
     {
-        return parent::isReady() && $this->getCategory() && $this->getAction();
+        return parent::isReady() &&
+            $this->getAction();
     }
 
     /**

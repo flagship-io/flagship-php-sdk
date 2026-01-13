@@ -6,6 +6,8 @@ use DateTime;
 use Exception;
 use ReflectionException;
 use Flagship\Utils\Utils;
+use Flagship\Enum\LogLevel;
+use Flagship\Model\FlagDTO;
 use Psr\Log\LoggerInterface;
 use Flagship\Utils\Container;
 use Flagship\Utils\HttpClient;
@@ -13,13 +15,20 @@ use Flagship\Utils\MurmurHash;
 use PHPUnit\Framework\TestCase;
 use Flagship\Enum\FlagshipField;
 use Flagship\Model\HttpResponse;
+use Flagship\Model\TargetingDTO;
+use Flagship\Model\VariationDTO;
+use Flagship\Model\TargetingsDTO;
 use Flagship\Utils\ConfigManager;
 use Flagship\Enum\FlagshipConstant;
+use Flagship\Model\VisitorCacheDTO;
 use Flagship\Config\BucketingConfig;
+use Flagship\Enum\TargetingOperator;
+use Flagship\Model\VariationGroupDTO;
 use Flagship\Visitor\DefaultStrategy;
 use Flagship\Visitor\VisitorDelegate;
 use Flagship\Visitor\StrategyAbstract;
 use Flagship\Enum\TroubleshootingLabel;
+use Flagship\Api\TrackingManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class BucketingManagerTest extends TestCase
@@ -45,53 +54,81 @@ class BucketingManagerTest extends TestCase
         $visitor = $this->getMockBuilder(VisitorDelegate::class)->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])->onlyMethods(["sendHit"])->getMock();
 
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
-        $httpClientMock->expects($this->exactly(6))->method('get')->with($bucketingUrl)->willReturnOnConsecutiveCalls(
-            new HttpResponse(204, null),
-            new HttpResponse(204, json_decode('{"panic": true}', true)),
-            new HttpResponse(204, json_decode('{}', true)),
-            new HttpResponse(204, json_decode('{"campaigns":[{}]}', true)),
-            new HttpResponse(204, json_decode('{"notExistKey": false}', true)),
-            new HttpResponse(204, json_decode($bucketingFile, true))
-        );
+        $httpClientMock->expects($this->exactly(6))->method('get')
+            ->with($bucketingUrl)
+            ->willReturnOnConsecutiveCalls(
+                new HttpResponse(204, null),
+                new HttpResponse(204, json_decode('{"panic": true}', true)),
+                new HttpResponse(204, json_decode('{}', true)),
+                new HttpResponse(204, json_decode('{"campaigns":[{}]}', true)),
+                new HttpResponse(204, json_decode('{"notExistKey": false}', true)),
+                new HttpResponse(204, json_decode($bucketingFile, true))
+            );
 
         //Test File not exist
-        $campaigns = $bucketingManager->getCampaignFlags($visitor);
+        $flags = $bucketingManager->getCampaignFlags($visitor);
 
-        $this->assertCount(0, $campaigns);
+        $this->assertCount(0, $flags);
 
         //Test Panic Mode
-        $campaigns = $bucketingManager->getCampaignFlags($visitor);
+        $flags = $bucketingManager->getCampaignFlags($visitor);
 
-        $this->assertCount(0, $campaigns);
+        $this->assertCount(0, $flags);
 
         //Test campaign property
-        $campaigns = $bucketingManager->getCampaignFlags($visitor);
+        $flags = $bucketingManager->getCampaignFlags($visitor);
 
-        $this->assertCount(0, $campaigns);
+        $this->assertCount(0, $flags);
 
         //Test campaign[FIELD_VARIATION_GROUPS]
 
-        $campaigns = $bucketingManager->getCampaignFlags($visitor);
+        $flags = $bucketingManager->getCampaignFlags($visitor);
 
-        $this->assertCount(0, $campaigns);
-
-        //
-
-        $campaigns = $bucketingManager->getCampaignFlags($visitor);
-
-        $this->assertCount(0, $campaigns);
+        $this->assertCount(0, $flags);
 
         //
-        $campaigns = $bucketingManager->getCampaignFlags($visitor);
 
-        $this->assertCount(6, $campaigns);
+        $flags = $bucketingManager->getCampaignFlags($visitor);
+
+        $this->assertCount(0, $flags);
+
+        // Test valid bucketing file
+        $flags = $bucketingManager->getCampaignFlags($visitor);
+        $this->assertIsArray($flags);
+
+        foreach ($flags as $flag) {
+            $this->assertNotEmpty($flag->getKey());
+            $this->assertNotEmpty($flag->getCampaignId());
+            $this->assertNotEmpty($flag->getVariationGroupId());
+            $this->assertNotEmpty($flag->getVariationId());
+            $this->assertNotEmpty($flag->getCampaignType());
+            if ($flag->getCampaignId() === "c1ndsu87m030114t8uu0") {
+                $this->assertEquals('toggle', $flag->getCampaignType());
+                $this->assertEquals("campaign1", $flag->getCampaignName());
+                $this->assertEquals("variationGroups1", $flag->getVariationGroupName());
+                $this->assertEquals("c1ndsu87m030114t8uv0", $flag->getVariationGroupId());
+                $this->assertEquals("c1ndsu87m030114t8uvg", $flag->getVariationId());
+                $this->assertEquals("variation1", $flag->getVariationName());
+
+                $flagValue = match ($flag->getKey()) {
+                    'background' => 'bleu ciel',
+                    'btnColor' => '#EE3300',
+                    'keyBoolean' => false,
+                    "keyNumber" => 5660,
+                    default => null
+                };
+                $this->assertEquals($flagValue, $flag->getValue());
+            }
+        }
+
+        $this->assertCount(6, $flags);
 
         //test invalid bucketing file url
 
         $config->setSyncAgentUrl("");
-        $campaigns = $bucketingManager->getCampaignFlags($visitor);
+        $flags = $bucketingManager->getCampaignFlags($visitor);
 
-        $this->assertCount(0, $campaigns);
+        $this->assertCount(0, $flags);
     }
 
     /**
@@ -119,16 +156,16 @@ class BucketingManagerTest extends TestCase
         $bucketingFile = \file_get_contents(__DIR__ . '/bucketing.json');
         $bucketingContent = json_decode($bucketingFile, true);
         $troubleshooting = [
-                            "startDate" => "2023-04-13T09:33:38.049Z",
-                            "endDate"   => "2023-04-13T10:03:38.049Z",
-                            "timezone"  => "Europe/Paris",
-                            "traffic"   => 40,
-                           ];
+            "startDate" => "2023-04-13T09:33:38.049Z",
+            "endDate"   => "2023-04-13T10:03:38.049Z",
+            "timezone"  => "Europe/Paris",
+            "traffic"   => 40.0,
+        ];
         $bucketingContent["accountSettings"] = ["troubleshooting" => $troubleshooting];
 
         $matcher = $this->exactly(1);
         $trackingManagerMock->expects($matcher)->method('addTroubleshootingHit')->with($this->callback(function ($param) use ($matcher) {
-                return $param->getLabel() === TroubleshootingLabel::SDK_BUCKETING_FILE;
+            return $param->getLabel() === TroubleshootingLabel::SDK_BUCKETING_FILE;
         }));
 
         $httpClientMock->expects($this->exactly(1))->method('get')->with($bucketingUrl)->willReturnOnConsecutiveCalls(
@@ -158,8 +195,8 @@ class BucketingManagerTest extends TestCase
         $httpClientMock = $this->getMockForAbstractClass(
             'Flagship\Utils\HttpClientInterface',
             [
-             'post',
-             'get',
+                'post',
+                'get',
             ],
             "",
             false
@@ -189,13 +226,13 @@ class BucketingManagerTest extends TestCase
 
         $visitorId = "visitor_1";
         $visitorContext = [
-                           "age"                        => 20,
-                           "sdk_osName"                 => PHP_OS,
-                           "sdk_deviceType"             => "server",
-                           FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
-                           FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
-                           FlagshipConstant::FS_USERS   => $visitorId,
-                          ];
+            "age"                        => 20,
+            "sdk_osName"                 => PHP_OS,
+            "sdk_deviceType"             => "server",
+            FlagshipConstant::FS_CLIENT  => FlagshipConstant::SDK_LANGUAGE,
+            FlagshipConstant::FS_VERSION => FlagshipConstant::SDK_VERSION,
+            FlagshipConstant::FS_USERS   => $visitorId,
+        ];
 
 
         $bucketingUrl  = "http:127.0.0.1:3000";
@@ -265,144 +302,169 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, [], true);
 
+
         $getVariationMethod = Utils::getMethod(BucketingManager::class, "getVariation");
 
         //Test key id  in variationGroup
-        $variationGroups = [];
+        $variationGroups = new VariationGroupDTO(
+            "",
+            new TargetingDTO([]),
+            []
+        );
+
+        /**
+         * @var VariationDTO|null
+         */
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
-        $this->assertCount(0, $variation);
+        $this->assertNull($variation);
 
         //Test key id  in variationGroup
         $variations = [
-                       [
-                        "id"            => "c20j8bk3fk9hdphqtd30",
-                        "name"          => "variation1",
-                        "modifications" => [
-                                            "type"  => "HTML",
-                                            "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
-                                           ],
-                        "allocation"    => 34,
-                        "reference"     => true,
-                       ],
-                       [
-                        "id"            => "c20j8bk3fk9hdphqtd3g",
-                        "name"          => "variation2",
-                        "modifications" => [
-                                            "type"  => "HTML",
-                                            "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
-                                           ],
-                        "allocation"    => 33,
-                       ],
-                       [
-                        "id"            => "c20j9lgbcahhf2mvhbf0",
-                        "name"          => "variation3",
-                        "modifications" => [
-                                            "type"  => "HTML",
-                                            "value" => ["my_html" => "<div>\n  <p>variation 2</p>\n</div>"],
-                                           ],
-                        "allocation"    => 33,
-                       ],
-                      ];
+            [
+                "id"            => "c20j8bk3fk9hdphqtd30",
+                "name"          => "variation1",
+                "modifications" => [
+                    "type"  => "HTML",
+                    "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
+                ],
+                "allocation"    => 34,
+                "reference"     => true,
+            ],
+            [
+                "id"            => "c20j8bk3fk9hdphqtd3g",
+                "name"          => "variation2",
+                "modifications" => [
+                    "type"  => "HTML",
+                    "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
+                ],
+                "allocation"    => 33,
+            ],
+            [
+                "id"            => "c20j9lgbcahhf2mvhbf0",
+                "name"          => "variation3",
+                "modifications" => [
+                    "type"  => "HTML",
+                    "value" => ["my_html" => "<div>\n  <p>variation 2</p>\n</div>"],
+                ],
+                "allocation"    => 33,
+            ],
+        ];
         $variationGroups = [
-                            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
-                            FlagshipField::FIELD_VARIATIONS => $variations,
-                            FlagshipField::FIELD_NANE       => "varGroupName",
-                           ];
+            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
+            FlagshipField::FIELD_VARIATIONS => $variations,
+            FlagshipField::FIELD_NANE       => "varGroupName",
+        ];
+        $variationGroups = VariationGroupDTO::fromArray($variationGroups);
+
+        /**
+         * @var VariationDTO|null
+         */
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
-        $this->assertSame($variations[0]['id'], $variation['id']);
+
+        $this->assertSame($variations[0]['id'], $variation->getId());
 
         $variationGroups = [
-                            FlagshipField::FIELD_ID         => "vgidéééà",
-                            FlagshipField::FIELD_VARIATIONS => $variations,
-                           ];
+            FlagshipField::FIELD_ID         => "vgidéééà",
+            FlagshipField::FIELD_VARIATIONS => $variations,
+        ];
+        $variationGroups = VariationGroupDTO::fromArray($variationGroups);
         $visitorId = 'ëééééé';
         $visitor->setVisitorId($visitorId);
+        /**
+         * @var VariationDTO|null
+         */
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
-        $this->assertSame($variations[2]['id'], $variation['id']);
+        $this->assertSame($variations[2]['id'], $variation->getId());
 
         //Test realloc
         $realloCvariations = [
-                              [
-                               "id"            => "c20j8bk3fk9hdphqtd30",
-                               "name"          => "variation1",
-                               "modifications" => [
-                                                   "type"  => "HTML",
-                                                   "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
-                                                  ],
-                               "allocation"    => 100,
-                               "reference"     => true,
-                              ],
-                              [
-                               "id"            => "c20j8bk3fk9hdphqtd3g",
-                               "name"          => "variation2",
-                               "modifications" => [
-                                                   "type"  => "HTML",
-                                                   "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
-                                                  ],
-                               "allocation"    => 0,
-                              ],
-                              [
-                               "id"            => "c20j9lgbcahhf2mvhbf0",
-                               "name"          => "variation2",
-                               "modifications" => [
-                                                   "type"  => "HTML",
-                                                   "value" => ["my_html" => "<div>\n  <p>variation 2</p>\n</div>"],
-                                                  ],
-                               "allocation"    => 0,
-                              ],
-                             ];
+            [
+                "id"            => "c20j8bk3fk9hdphqtd30",
+                "name"          => "variation1",
+                "modifications" => [
+                    "type"  => "HTML",
+                    "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
+                ],
+                "allocation"    => 100,
+                "reference"     => true,
+            ],
+            [
+                "id"            => "c20j8bk3fk9hdphqtd3g",
+                "name"          => "variation2",
+                "modifications" => [
+                    "type"  => "HTML",
+                    "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
+                ],
+                "allocation"    => 0,
+            ],
+            [
+                "id"            => "c20j9lgbcahhf2mvhbf0",
+                "name"          => "variation2",
+                "modifications" => [
+                    "type"  => "HTML",
+                    "value" => ["my_html" => "<div>\n  <p>variation 2</p>\n</div>"],
+                ],
+                "allocation"    => 0,
+            ],
+        ];
 
 
         $variationGroups = [
-                            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
-                            FlagshipField::FIELD_VARIATIONS => $realloCvariations,
-                           ];
+            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
+            FlagshipField::FIELD_VARIATIONS => $realloCvariations,
+        ];
+
+        $variationGroups = VariationGroupDTO::fromArray($variationGroups);
+
         $assignmentsHistory = ["9273BKSDJtoto" => "c20j9lgbcahhf2mvhbf0"];
         $visitorCache = [
-                         StrategyAbstract::VERSION => 1,
-                         StrategyAbstract::DATA    => [StrategyAbstract::ASSIGNMENTS_HISTORY => $assignmentsHistory],
-                        ];
+            StrategyAbstract::VERSION => 1,
+            StrategyAbstract::DATA    => [StrategyAbstract::ASSIGNMENTS_HISTORY => $assignmentsHistory],
+        ];
+
+        $visitorCache = VisitorCacheDTO::fromArray($visitorCache);
 
         $visitor->visitorCache = $visitorCache;
 
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
 
-        $this->assertSame($realloCvariations[2]['id'], $variation['id']);
+        $this->assertSame($realloCvariations[2]['id'], $variation->getId());
 
         //Test deleted variation
 
         $reallovariations = [
-                             [
-                              "id"            => "c20j8bk3fk9hdphqtd30",
-                              "modifications" => [
-                                                  "type"  => "HTML",
-                                                  "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
-                                                 ],
-                              "allocation"    => 50,
-                              "reference"     => true,
-                             ],
-                             [
-                              "id"            => "c20j8bk3fk9hdphqtd3g",
-                              "modifications" => [
-                                                  "type"  => "HTML",
-                                                  "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
-                                                 ],
-                              "allocation"    => 50,
-                             ],
-                            ];
+            [
+                "id"            => "c20j8bk3fk9hdphqtd30",
+                "modifications" => [
+                    "type"  => "HTML",
+                    "value" => ["my_html" => "<div>\n  <p>Original</p>\n</div>"],
+                ],
+                "allocation"    => 50,
+                "reference"     => true,
+            ],
+            [
+                "id"            => "c20j8bk3fk9hdphqtd3g",
+                "modifications" => [
+                    "type"  => "HTML",
+                    "value" => ["my_html" => "<div>\n  <p>variation 1</p>\n</div>"],
+                ],
+                "allocation"    => 50,
+            ],
+        ];
 
 
         $variationGroups = [
-                            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
-                            FlagshipField::FIELD_VARIATIONS => $reallovariations,
-                           ];
+            FlagshipField::FIELD_ID         => "9273BKSDJtoto",
+            FlagshipField::FIELD_VARIATIONS => $reallovariations,
+        ];
 
+        $variationGroups = VariationGroupDTO::fromArray($variationGroups);
 
         $visitor->visitorCache = $visitorCache;
 
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
 
-        $this->assertCount(0, $variation);
+        $this->assertNull($variation);
 
         //
         $realloCvariations = [
@@ -447,6 +509,8 @@ class BucketingManagerTest extends TestCase
             FlagshipField::FIELD_ID => "9273BKSDJtoto",
             FlagshipField::FIELD_VARIATIONS => $realloCvariations
         ];
+        $variationGroups = VariationGroupDTO::fromArray($variationGroups);
+
         $assignmentsHistory = [];
         $visitorCache = [
             StrategyAbstract::VERSION => 1,
@@ -455,19 +519,21 @@ class BucketingManagerTest extends TestCase
             ]
         ];
 
+        $visitorCache = VisitorCacheDTO::fromArray($visitorCache);
+
         $visitor->visitorCache = $visitorCache;
 
         $variation = $getVariationMethod->invoke($bucketingManager, $variationGroups, $visitor);
 
-        $this->assertNotSame($realloCvariations[0]['id'], $variation['id']);
-        $this->assertNotSame($realloCvariations[1]['id'], $variation['id']);
-        $this->assertSame($realloCvariations[2]['id'], $variation['id']);
+        $this->assertNotSame($realloCvariations[0]['id'], $variation->getId());
+        $this->assertNotSame($realloCvariations[1]['id'], $variation->getId());
+        $this->assertSame($realloCvariations[2]['id'], $variation->getId());
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testIsMatchTargeting()
+    public function testCheckVisitorMatchesTargeting()
     {
         $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
@@ -480,133 +546,139 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        $isMatchTargetingMethod = Utils::getMethod(BucketingManager::class, "isMatchTargeting");
+        $checkVisitorMatchesTargeting = Utils::getMethod(BucketingManager::class, "checkVisitorMatchesTargeting");
 
-        $variationGroup = [];
+        $variationGroup = new VariationGroupDTO(
+            "",
+            new TargetingDTO([]),
+            []
+        );
 
         //Test key targeting variationGroup
-        $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
+        $output = $checkVisitorMatchesTargeting->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
 
         //Test key targetingGroups in targeting
-        $variationGroup = [
+        $variationGroup = VariationGroupDTO::fromArray([
             FlagshipField::FIELD_TARGETING => []
-        ];
-        $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
+        ]);
+
+        $output = $checkVisitorMatchesTargeting->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
 
         //Test key targetings in targetingGroups
-        $variationGroup = [
-                           FlagshipField::FIELD_TARGETING => [
-                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
-                                                                                                        [],
-                                                                                                       ],
-                                                             ],
-                          ];
-        $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
+        $variationGroup = VariationGroupDTO::fromArray([
+            FlagshipField::FIELD_TARGETING => [
+                FlagshipField::FIELD_TARGETING_GROUPS => [
+                    [],
+                ],
+            ],
+        ]);
+
+        $output = $checkVisitorMatchesTargeting->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
 
         //Test not matching targetings
 
         $targetings = [
-                       "key"      => "age",
-                       "operator" => "EQUALS",
-                       'value'    => 21,
-                      ];
-        $variationGroup = [
-                           FlagshipField::FIELD_TARGETING => [
-                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
-                                                                                                        [
-                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings],
-                                                                                                        ],
-                                                                                                       ],
-                                                             ],
-                          ];
+            "key"      => "age",
+            "operator" => "EQUALS",
+            'value'    => 21,
+        ];
+        $variationGroup = VariationGroupDTO::fromArray([
+            FlagshipField::FIELD_TARGETING => [
+                FlagshipField::FIELD_TARGETING_GROUPS => [
+                    [
+                        FlagshipField::FIELD_TARGETINGS => [$targetings],
+                    ],
+                ],
+            ],
+        ]);
 
-        $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
+        $output = $checkVisitorMatchesTargeting->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
 
         //Test matching targetings
 
         $targetings2 = [
-                        "key"      => "age",
-                        "operator" => "EQUALS",
-                        'value'    => 20,
-                       ];
+            "key"      => "age",
+            "operator" => "EQUALS",
+            'value'    => 20,
+        ];
 
-        $variationGroup = [
-                           FlagshipField::FIELD_TARGETING => [
-                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
-                                                                                                        [
-                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings2],
-                                                                                                        ],
-                                                                                                       ],
-                                                             ],
-                          ];
+        $variationGroup = VariationGroupDTO::fromArray([
+            FlagshipField::FIELD_TARGETING => [
+                FlagshipField::FIELD_TARGETING_GROUPS => [
+                    [
+                        FlagshipField::FIELD_TARGETINGS => [$targetings2],
+                    ],
+                ],
+            ],
+        ]);
 
-        $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
+        $output = $checkVisitorMatchesTargeting->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertTrue($output);
 
 
         //Test Many targetingGroups with one match
 
         $targetings2 = [
-                        "key"      => "age",
-                        "operator" => "EQUALS",
-                        'value'    => 22,
-                       ];
+            "key"      => "age",
+            "operator" => "EQUALS",
+            'value'    => 22,
+        ];
 
         $targetingAllUsers = [
-                              "key"      => "fs_all_users",
-                              "operator" => "EQUALS",
-                              'value'    => '',
-                             ];
+            "key"      => "fs_all_users",
+            "operator" => "EQUALS",
+            'value'    => '',
+        ];
 
-        $variationGroup = [
-                           FlagshipField::FIELD_TARGETING => [
-                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
-                                                                                                        [
-                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings],
-                                                                                                        ],
-                                                                                                        [
-                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings2],
-                                                                                                        ],
-                                                                                                        [
-                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetingAllUsers],
-                                                                                                        ],
-                                                                                                       ],
-                                                             ],
-                          ];
+        $variationGroup = VariationGroupDTO::fromArray([
+            FlagshipField::FIELD_TARGETING => [
+                FlagshipField::FIELD_TARGETING_GROUPS => [
+                    [
+                        FlagshipField::FIELD_TARGETINGS => [$targetings],
+                    ],
+                    [
+                        FlagshipField::FIELD_TARGETINGS => [$targetings2],
+                    ],
+                    [
+                        FlagshipField::FIELD_TARGETINGS => [$targetingAllUsers],
+                    ],
+                ],
+            ],
+        ]);
 
-        $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
+        $output = $checkVisitorMatchesTargeting->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertTrue($output);
 
         //Test Many targetingGroups with all false
 
-        $variationGroup = [
-                           FlagshipField::FIELD_TARGETING => [
-                                                              FlagshipField::FIELD_TARGETING_GROUPS => [
-                                                                                                        [
-                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings],
-                                                                                                        ],
-                                                                                                        [
-                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings2],
-                                                                                                        ],
-                                                                                                        [
-                                                                                                         FlagshipField::FIELD_TARGETINGS => [$targetings2],
-                                                                                                        ],
-                                                                                                       ],
-                                                             ],
-                          ];
+        $variationGroup = VariationGroupDTO::fromArray([
+            FlagshipField::FIELD_TARGETING => [
+                FlagshipField::FIELD_TARGETING_GROUPS => [
+                    [
+                        FlagshipField::FIELD_TARGETINGS => [$targetings],
+                    ],
+                    [
+                        FlagshipField::FIELD_TARGETINGS => [$targetings2],
+                    ],
+                    [
+                        FlagshipField::FIELD_TARGETINGS => [$targetings2],
+                    ],
+                ],
+            ],
+        ]);
 
-        $output = $isMatchTargetingMethod->invoke($bucketingManager, $variationGroup, $visitor);
+        $output = $checkVisitorMatchesTargeting->invoke($bucketingManager, $variationGroup, $visitor);
         $this->assertFalse($output);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testCheckAndTargeting()
+    public function testCheckAllTargetingRulesMatch()
     {
         $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
@@ -619,136 +691,267 @@ class BucketingManagerTest extends TestCase
         $configManager->setConfig($config);
         $visitor = new VisitorDelegate($container, $configManager, $visitorId, false, $visitorContext, true);
 
-        $checkAndTargetingMethod = Utils::getMethod(BucketingManager::class, "checkAndTargeting");
+        $checkAllTargetingRulesMatchMethod = Utils::getMethod(BucketingManager::class, "checkAllTargetingRulesMatch");
+
+        //Test empty targetings
+        $innerTargetings = [];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertFalse($output);
 
         //test key = fs_all_users
-        $targetingAllUsers = [
-                              "key"      => "fs_all_users",
-                              "operator" => "EQUALS",
-                              'value'    => '',
-                             ];
+        $targetingAllUsers = TargetingsDTO::fromArray([
+            "key"      => "fs_all_users",
+            "operator" => "EQUALS",
+            'value'    => '',
+        ]);
 
         $innerTargetings = [$targetingAllUsers];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertTrue($output);
 
         //test key = fs_all_users and not match key
-        $innerTargetings = [$targetingAllUsers, [
+        $innerTargetings = [$targetingAllUsers, TargetingsDTO::fromArray([
             "key" => "anyValue",
             "operator" => "EQUALS",
             'value' => ''
-        ]];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        ])];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertFalse($output);
 
         //Test operator EXISTS when context doesn't exist
 
-        $innerTargetingsExists = [$targetingAllUsers, [
+        $innerTargetingsExists = [$targetingAllUsers, TargetingsDTO::fromArray([
             "operator" => "EXISTS",
             "key" => "mixpanel::city",
             "value" => true,
             "provider" => "mixpanel"
-        ]];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        ])];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
         $this->assertFalse($output);
 
         //Test operator EXISTS when context  exists
 
         $visitor->updateContext("mixpanel::city", false);
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
         $this->assertTrue($output);
 
         //Test operator NOT_EXISTS when context  exists
 
-        $innerTargetingsExists = [$targetingAllUsers, [
+        $innerTargetingsExists = [$targetingAllUsers, TargetingsDTO::fromArray([
             "operator" => "NOT_EXISTS",
             "key" => "mixpanel::city",
             "value" => true,
             "provider" => "mixpanel"
-        ]];
+        ])];
 
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
         $this->assertFalse($output);
 
         //Test operator NOT_EXISTS when context doesn't exist
 
-        $innerTargetingsExists = [$targetingAllUsers, [
+        $innerTargetingsExists = [$targetingAllUsers, TargetingsDTO::fromArray([
             "operator" => "NOT_EXISTS",
             "key" => "mixpanel::genre",
             "value" => true,
             "provider" => "mixpanel"
-        ]];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
+        ])];
+
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetingsExists, $visitor);
         $this->assertTrue($output);
 
         //test key = fs_users
-        $targetingFsUsers = [
-                             "key"      => "fs_users",
-                             "operator" => "EQUALS",
-                             'value'    => $visitorId,
-                            ];
+        $targetingFsUsers = TargetingsDTO::fromArray([
+            "key"      => "fs_users",
+            "operator" => "EQUALS",
+            'value'    => $visitorId,
+        ]);
 
         $innerTargetings = [$targetingFsUsers];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertTrue($output);
 
         //test key not match context
-        $targetingKeyContext = [
-                                "key"      => "anyKey",
-                                "operator" => "EQUALS",
-                                'value'    => "anyValue",
-                               ];
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "anyKey",
+            "operator" => "EQUALS",
+            'value'    => "anyValue",
+        ]);
 
         $innerTargetings = [$targetingKeyContext];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertFalse($output);
 
         //test key match context
-        $targetingKeyContext = [
-                                "key"      => "age",
-                                "operator" => "EQUALS",
-                                'value'    => 20,
-                               ];
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "age",
+            "operator" => "EQUALS",
+            'value'    => 20,
+        ]);
 
         $innerTargetings = [$targetingKeyContext];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertTrue($output);
 
         //test key match context with different value
-        $targetingKeyContext2 = [
-                                 "key"      => "age",
-                                 "operator" => "EQUALS",
-                                 'value'    => 21,
-                                ];
+        $targetingKeyContext2 = TargetingsDTO::fromArray([
+            "key"      => "age",
+            "operator" => "EQUALS",
+            'value'    => 21,
+        ]);
 
         $innerTargetings = [$targetingKeyContext2];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertFalse($output);
 
         //And logic
         //All true
         $innerTargetings = [
-                            $targetingAllUsers,
-                            $targetingFsUsers,
-                            $targetingKeyContext,
-                           ];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+            $targetingAllUsers,
+            $targetingFsUsers,
+            $targetingKeyContext,
+        ];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertTrue($output);
 
         //Test one false
         $innerTargetings = [
-                            $targetingAllUsers,
-                            $targetingFsUsers,
-                            $targetingKeyContext2,
-                           ];
-        $output = $checkAndTargetingMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+            $targetingAllUsers,
+            $targetingFsUsers,
+            $targetingKeyContext2,
+        ];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertFalse($output);
+
+        //Test targeting with array value
+
+        // Match value in array
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "age",
+            "operator" => "EQUALS",
+            'value'    => [20, 25, 30],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertTrue($output);
+
+        // Not match value in array
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "age",
+            "operator" => "EQUALS",
+            'value'    => [21, 25, 30],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertFalse($output);
+
+        // Match value in array for NOT_EQUALS
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "age",
+            "operator" => "NOT_EQUALS",
+            'value'    => [21, 25, 30],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertTrue($output);
+
+        // Not match value in array for NOT_EQUALS
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "age",
+            "operator" => "NOT_EQUALS",
+            'value'    => [20, 25, 30],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertFalse($output);
+
+        // Test CONTAINS operator
+        $visitor->updateContext("interests", "sports");
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "interests",
+            "operator" => "CONTAINS",
+            'value'    => ["sports", "music", "movies"],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertTrue($output);
+
+        // Test CONTAINS operator with non-matching value
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "interests",
+            "operator" => "CONTAINS",
+            'value'    => ["travel", "cooking", "reading"],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertFalse($output);
+
+        // Test CONTAINS operator with substring match
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "keyword",
+            "operator" => "CONTAINS",
+            'value'    => ["abc", "dfg", "hij"],
+        ]);
+        $visitor->updateContext("keyword", "nopq_hij");
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertTrue($output);
+
+        // Test CONTAINS operator with non-matching substring
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "keyword",
+            "operator" => "CONTAINS",
+            'value'    => ["abc", "dfg", "xyz"],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertFalse($output);
+
+
+        // Test NOT_CONTAINS operator
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "interests",
+            "operator" => "NOT_CONTAINS",
+            'value'    => ["travel", "cooking", "reading"],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertTrue($output);
+
+        // Test NOT_CONTAINS operator with matching value
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "interests",
+            "operator" => "NOT_CONTAINS",
+            'value'    => ["sports", "music", "movies"],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertFalse($output);
+
+        // Test NOT_CONTAINS operator with non-matching substring
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "keyword",
+            "operator" => "NOT_CONTAINS",
+            'value'    => ["abc", "dfg", "xyz"],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
+        $this->assertTrue($output);
+
+        // Test NOT_CONTAINS operator with matching substring
+        $targetingKeyContext = TargetingsDTO::fromArray([
+            "key"      => "keyword",
+            "operator" => "NOT_CONTAINS",
+            'value'    => ["abc", "dfg", "hij"],
+        ]);
+        $innerTargetings = [$targetingKeyContext];
+        $output = $checkAllTargetingRulesMatchMethod->invoke($bucketingManager, $innerTargetings, $visitor);
         $this->assertFalse($output);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testOperator()
+    public function testEvaluateOperator()
     {
         $bucketingUrl  = "http:127.0.0.1:3000";
         $murmurhash = new MurmurHash();
@@ -758,31 +961,26 @@ class BucketingManagerTest extends TestCase
         $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->setConfig($config);
 
-        $testOperatorMethod = Utils::getMethod(BucketingManager::class, "testOperator");
+        $evaluateOperatorMethod = Utils::getMethod(BucketingManager::class, "evaluateOperator");
 
         /*Test EQUALS*/
 
         //Test different values
         $contextValue = 5;
         $targetingValue = 6;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::EQUALS, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test different type
 
         $targetingValue = "5";
-        $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::EQUALS, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test same type
 
         $targetingValue = 5;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
-        $this->assertTrue($output);
-
-
-        $targetingValue = [5, 1, 2, 3];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'EQUALS', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::EQUALS, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         /* Test NOT_EQUALS */
@@ -790,148 +988,59 @@ class BucketingManagerTest extends TestCase
         //Test different values
 
         $targetingValue = 6;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
-        $this->assertTrue($output);
-
-
-        $targetingValue = [6, 1, 2, 3];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::NOT_EQUALS, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test different type
 
         $targetingValue = "5";
-        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::NOT_EQUALS, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test same type
 
         $targetingValue = 5;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::NOT_EQUALS, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
-        $targetingValue = [1, 2, 3, 5, 6];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_EQUALS', $contextValue, $targetingValue);
-        $this->assertFalse($output);
 
-        /* Test CONTAINS */
-
-        //Test contextValue not contains targetingValue
-
-        $targetingValue = [
-                           8,
-                           7,
-                           4,
-                           1,
-                          ];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
-        $this->assertFalse($output);
-
-        //Test contextValue contains targetingValue
-
-        $targetingValue = [
-                           8,
-                           7,
-                           5,
-                           1,
-                          ];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
-        $this->assertTrue($output);
-
-        //Test contextValue contains targetingValue
-        $contextValue = "nopq_hij";
-        $targetingValue = [
-                           "abc",
-                           "dfg",
-                           "hij",
-                           "klm",
-                          ];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
-        $this->assertTrue($output);
-
-        //Test contextValue contains targetingValue
-
-        $targetingValue = "hij";
-        $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
-        $this->assertTrue($output);
-
-        //Test contextValue contains targetingValue
-
-        $targetingValue = "hidf";
-        $output = $testOperatorMethod->invoke($bucketingManager, 'CONTAINS', $contextValue, $targetingValue);
-        $this->assertFalse($output);
-
-        /* Test NOT_CONTAINS */
-
-        //Test contextValue not contains targetingValue
-        $contextValue = 5;
-        $targetingValue = [
-                           8,
-                           7,
-                           4,
-                           1,
-                          ];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_CONTAINS', $contextValue, $targetingValue);
-        $this->assertTrue($output);
-
-        //Test contextValue contains targetingValue
-
-        $targetingValue = [
-                           8,
-                           7,
-                           5,
-                           1,
-                          ];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_CONTAINS', $contextValue, $targetingValue);
-        $this->assertFalse($output);
-
-        //Test contextValue contains targetingValue
-        $contextValue = "nopq_hij";
-        $targetingValue = [
-                           "abc",
-                           "dfg",
-                           "hij",
-                           "klm",
-                          ];
-        $output = $testOperatorMethod->invoke($bucketingManager, 'NOT_CONTAINS', $contextValue, $targetingValue);
-        $this->assertFalse($output);
 
         /* Test GREATER_THAN */
 
         //Test contextValue not GREATER_THAN targetingValue
         $contextValue = 5;
         $targetingValue = 6;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'GREATER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::GREATER_THAN, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue not GREATER_THAN targetingValue
 
         $targetingValue = 5;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'GREATER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::GREATER_THAN, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue not GREATER_THAN targetingValue
         $contextValue = 'a';
         $targetingValue = 'b';
-        $output = $testOperatorMethod->invoke($bucketingManager, 'GREATER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::GREATER_THAN, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue not GREATER_THAN targetingValue
         $contextValue = 'abz';
         $targetingValue = 'bcg';
-        $output = $testOperatorMethod->invoke($bucketingManager, 'GREATER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::GREATER_THAN, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue GREATER_THAN targetingValue
         $contextValue = 8;
         $targetingValue = 2;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'GREATER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::GREATER_THAN, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue GREATER_THAN targetingValue
         $contextValue = "9dlk";
         $targetingValue = 8;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'GREATER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::GREATER_THAN, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         /* Test LOWER_THAN */
@@ -939,37 +1048,37 @@ class BucketingManagerTest extends TestCase
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 5;
         $targetingValue = 6;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'LOWER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::LOWER_THAN, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue not GREATER_THAN targetingValue
 
         $targetingValue = 5;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'LOWER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::LOWER_THAN, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 'a';
         $targetingValue = 'b';
-        $output = $testOperatorMethod->invoke($bucketingManager, 'LOWER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::LOWER_THAN, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 'abz';
         $targetingValue = 'bcg';
-        $output = $testOperatorMethod->invoke($bucketingManager, 'LOWER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::LOWER_THAN, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue not LOWER_THAN targetingValue
         $contextValue = 8;
         $targetingValue = 2;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'LOWER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::LOWER_THAN, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         //Test contextValue not LOWER_THAN targetingValue
         $contextValue = "9dlk";
         $targetingValue = 8;
-        $output = $testOperatorMethod->invoke($bucketingManager, 'LOWER_THAN', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::LOWER_THAN, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         /* Test GREATER_THAN_OR_EQUALS */
@@ -977,9 +1086,9 @@ class BucketingManagerTest extends TestCase
         //Test contextValue GREATER_THAN targetingValue
         $contextValue = 8;
         $targetingValue = 6;
-        $output = $testOperatorMethod->invoke(
+        $output = $evaluateOperatorMethod->invoke(
             $bucketingManager,
-            'GREATER_THAN_OR_EQUALS',
+            TargetingOperator::GREATER_THAN_OR_EQUALS,
             $contextValue,
             $targetingValue
         );
@@ -988,9 +1097,9 @@ class BucketingManagerTest extends TestCase
         //Test contextValue EQUALS targetingValue
 
         $targetingValue = 8;
-        $output = $testOperatorMethod->invoke(
+        $output = $evaluateOperatorMethod->invoke(
             $bucketingManager,
-            'GREATER_THAN_OR_EQUALS',
+            TargetingOperator::GREATER_THAN_OR_EQUALS,
             $contextValue,
             $targetingValue
         );
@@ -998,9 +1107,9 @@ class BucketingManagerTest extends TestCase
 
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 7;
-        $output = $testOperatorMethod->invoke(
+        $output = $evaluateOperatorMethod->invoke(
             $bucketingManager,
-            'GREATER_THAN_OR_EQUALS',
+            TargetingOperator::GREATER_THAN_OR_EQUALS,
             $contextValue,
             $targetingValue
         );
@@ -1009,9 +1118,9 @@ class BucketingManagerTest extends TestCase
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 'a';
         $targetingValue = 'b';
-        $output = $testOperatorMethod->invoke(
+        $output = $evaluateOperatorMethod->invoke(
             $bucketingManager,
-            'GREATER_THAN_OR_EQUALS',
+            TargetingOperator::GREATER_THAN_OR_EQUALS,
             $contextValue,
             $targetingValue
         );
@@ -1022,9 +1131,9 @@ class BucketingManagerTest extends TestCase
         //Test contextValue GREATER_THAN targetingValue
         $contextValue = 8;
         $targetingValue = 6;
-        $output = $testOperatorMethod->invoke(
+        $output = $evaluateOperatorMethod->invoke(
             $bucketingManager,
-            'LOWER_THAN_OR_EQUALS',
+            TargetingOperator::LOWER_THAN_OR_EQUALS,
             $contextValue,
             $targetingValue
         );
@@ -1033,9 +1142,9 @@ class BucketingManagerTest extends TestCase
         //Test contextValue EQUALS targetingValue
 
         $targetingValue = 8;
-        $output = $testOperatorMethod->invoke(
+        $output = $evaluateOperatorMethod->invoke(
             $bucketingManager,
-            'LOWER_THAN_OR_EQUALS',
+            TargetingOperator::LOWER_THAN_OR_EQUALS,
             $contextValue,
             $targetingValue
         );
@@ -1043,9 +1152,9 @@ class BucketingManagerTest extends TestCase
 
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 7;
-        $output = $testOperatorMethod->invoke(
+        $output = $evaluateOperatorMethod->invoke(
             $bucketingManager,
-            'LOWER_THAN_OR_EQUALS',
+            TargetingOperator::LOWER_THAN_OR_EQUALS,
             $contextValue,
             $targetingValue
         );
@@ -1054,9 +1163,9 @@ class BucketingManagerTest extends TestCase
         //Test contextValue LOWER_THAN targetingValue
         $contextValue = 'a';
         $targetingValue = 'b';
-        $output = $testOperatorMethod->invoke(
+        $output = $evaluateOperatorMethod->invoke(
             $bucketingManager,
-            'LOWER_THAN_OR_EQUALS',
+            TargetingOperator::LOWER_THAN_OR_EQUALS,
             $contextValue,
             $targetingValue
         );
@@ -1067,13 +1176,13 @@ class BucketingManagerTest extends TestCase
         //Test contextValue STARTS_WITH targetingValue
         $contextValue = "abcd";
         $targetingValue = "ab";
-        $output = $testOperatorMethod->invoke($bucketingManager, 'STARTS_WITH', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::STARTS_WITH, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue not STARTS_WITH targetingValue
 
         $targetingValue = "bc";
-        $output = $testOperatorMethod->invoke($bucketingManager, 'STARTS_WITH', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::STARTS_WITH, $contextValue, $targetingValue);
         $this->assertFalse($output);
 
         /* Test ENDS_WITH */
@@ -1081,18 +1190,13 @@ class BucketingManagerTest extends TestCase
         //Test contextValue ENDS_WITH targetingValue
 
         $targetingValue = "d";
-        $output = $testOperatorMethod->invoke($bucketingManager, 'ENDS_WITH', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::ENDS_WITH, $contextValue, $targetingValue);
         $this->assertTrue($output);
 
         //Test contextValue not ENDS_WITH targetingValue
 
         $targetingValue = "ab";
-        $output = $testOperatorMethod->invoke($bucketingManager, 'ENDS_WITH', $contextValue, $targetingValue);
-        $this->assertFalse($output);
-
-        //Test Any operator else
-
-        $output = $testOperatorMethod->invoke($bucketingManager, 'ANY', $contextValue, $targetingValue);
+        $output = $evaluateOperatorMethod->invoke($bucketingManager, TargetingOperator::ENDS_WITH, $contextValue, $targetingValue);
         $this->assertFalse($output);
     }
 
@@ -1106,27 +1210,21 @@ class BucketingManagerTest extends TestCase
             false,
             true,
             [
-             'post',
-             'get',
+                'post',
+                'get',
             ]
         );
 
-        $logManagerStub = $this->getMockForAbstractClass(
-            'Psr\Log\LoggerInterface',
-            [],
-            "",
-            true,
-            true,
-            true,
-            ['error']
-        );
 
-        $trackingManagerMock = $this->getMockForAbstractClass("Flagship\Api\TrackingManagerInterface");
+        $trackingManagerMock = $this->getMockForAbstractClass(TrackingManagerInterface::class);
 
         $bucketingUrl = "127.0.0.1:3000";
         $murmurhash = new MurmurHash();
+
         $config = new BucketingConfig($bucketingUrl);
-        $config->setEnvId("env_id")->setFetchThirdPartyData(true)->setLogManager($logManagerStub);
+        $config->setEnvId("env_id")
+            ->setLogLevel(LogLevel::DEBUG)
+            ->setFetchThirdPartyData(true);
 
         $bucketingManager = new BucketingManager($httpClientMock, $config, $murmurhash);
         $bucketingManager->setFlagshipInstanceId("instance_id");
@@ -1136,58 +1234,69 @@ class BucketingManagerTest extends TestCase
         $visitorContext = ["age" => 20];
 
         $container = new Container();
-        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()->getMock();
+
         $configManager->setConfig($config);
 
-        $visitor = $this->getMockBuilder(VisitorDelegate::class)->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])->onlyMethods(["sendHit"])->getMock();
+        $visitor = $this->getMockBuilder(VisitorDelegate::class)
+            ->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])
+            ->onlyMethods(["sendHit", "getConfig"])->getMock();
+
+        $visitor->method("getConfig")->willReturn($config);
 
         $segments = [
-                     [
-                      'visitor_id' => 'wonderful_visitor_1',
-                      'segment'    => 'gender',
-                      'value'      => '',
-                      'expiration' => 1689771307,
-                      'partner'    => 'facebook',
-                     ],
-                     [
-                      'visitor_id' => 'wonderful_visitor_1',
-                      'segment'    => 'generation',
-                      'value'      => '',
-                      'expiration' => 1689771307,
-                      'partner'    => 'facebook',
-                     ],
-                     [
-                      'visitor_id' => 'wonderful_visitor_1',
-                      'segment'    => 'city',
-                      'value'      => 'london',
-                      'expiration' => 1689771117,
-                      'partner'    => 'mixpanel',
-                     ],
-                     [
-                      'visitor_id' => 'wonderful_visitor_1',
-                      'segment'    => 'device',
-                      'value'      => 'firefox',
-                      'expiration' => 1689771117,
-                      'partner'    => 'mixpanel',
-                     ],
-                     [
-                      'visitor_id' => 'wonderful_visitor_1',
-                      'segment'    => 'gender',
-                      'value'      => 'female',
-                      'expiration' => 1689771007,
-                      'partner'    => 'segmentio',
-                     ],
-                     [
-                      'visitor_id' => 'wonderful_visitor_1',
-                      'segment'    => 'generation',
-                      'value'      => 'gen-z',
-                      'expiration' => 1689771007,
-                      'partner'    => 'segmentio',
-                     ],
-                    ];
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment'    => 'gender',
+                'value'      => '',
+                'expiration' => 1689771307,
+                'partner'    => 'facebook',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment'    => 'generation',
+                'value'      => '',
+                'expiration' => 1689771307,
+                'partner'    => 'facebook',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment'    => 'city',
+                'value'      => 'london',
+                'expiration' => 1689771117,
+                'partner'    => 'mixpanel',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment'    => 'device',
+                'value'      => 'firefox',
+                'expiration' => 1689771117,
+                'partner'    => 'mixpanel',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment'    => 'gender',
+                'value'      => 'female',
+                'expiration' => 1689771007,
+                'partner'    => 'segmentio',
+            ],
+            [
+                'visitor_id' => 'wonderful_visitor_1',
+                'segment'    => 'generation',
+                'value'      => 'gen-z',
+                'expiration' => 1689771007,
+                'partner'    => 'segmentio',
+            ],
+        ];
 
         $segmentUrl = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $config->getEnvId(), $visitorId);
-        $campaigns = ["campaigns" => []];
+        $campaigns = ["campaigns" => [
+            [
+                "id" => "campaign_1",
+                "variation_groups" => []
+            ]
+        ]];
 
         $matcher = $this->exactly(2);
         $httpClientMock->expects($matcher)->method("get")->with(
@@ -1196,7 +1305,10 @@ class BucketingManagerTest extends TestCase
                 $this->equalTo($segmentUrl)
             ),
             $this->equalTo([])
-        )->willReturnOnConsecutiveCalls(new HttpResponse(200, $campaigns, []), new HttpResponse(200, $segments, []));
+        )->willReturnOnConsecutiveCalls(
+            new HttpResponse(200, $campaigns, []),
+            new HttpResponse(200, $segments, [])
+        );
 
         $bucketingManager->getCampaigns($visitor);
         $context = $visitor->getContext();
@@ -1218,8 +1330,8 @@ class BucketingManagerTest extends TestCase
             false,
             true,
             [
-             'post',
-             'get',
+                'post',
+                'get',
             ]
         );
 
@@ -1255,7 +1367,12 @@ class BucketingManagerTest extends TestCase
         $visitor = $this->getMockBuilder(VisitorDelegate::class)->setConstructorArgs([$container, $configManager, $visitorId, false, $visitorContext, true])->onlyMethods(["sendHit"])->getMock();
 
         $segmentUrl = sprintf(FlagshipConstant::THIRD_PARTY_SEGMENT_URL, $config->getEnvId(), $visitorId);
-        $campaigns = ["campaigns" => []];
+        $campaigns = ["campaigns" => [
+            [
+                "id" => "campaign_1",
+                "variation_groups" => []
+            ]
+        ]];
 
         $matcher = $this->exactly(2);
         $httpClientMock->expects($matcher)->method("get")->with(

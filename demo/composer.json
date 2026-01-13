@@ -7,7 +7,7 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "flagship-io/flagship-php-sdk": "^4.0",
+        "flagship-io/flagship-php-sdk": "^4.2",
         "nelmio/api-doc-bundle": "^4.29",
         "symfony/asset": "7.1.*",
         "symfony/console": "7.1.*",

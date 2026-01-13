@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d2f592eefb70235dfb10cc30196aaacc",
+    "content-hash": "f7d20cc2994072ef2445f2d5b10cf00e",
     "packages": [
         {
             "name": "doctrine/deprecations",
@@ -55,16 +55,16 @@
         },
         {
             "name": "flagship-io/flagship-php-sdk",
-            "version": "4.0.0",
+            "version": "4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flagship-io/flagship-php-sdk.git",
-                "reference": "497cb09c6fd05090d4fe61def38af743d72ff210"
+                "reference": "a4162e7e3101bc0aeaf7593094773228503f75a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flagship-io/flagship-php-sdk/zipball/497cb09c6fd05090d4fe61def38af743d72ff210",
-                "reference": "497cb09c6fd05090d4fe61def38af743d72ff210",
+                "url": "https://api.github.com/repos/flagship-io/flagship-php-sdk/zipball/a4162e7e3101bc0aeaf7593094773228503f75a5",
+                "reference": "a4162e7e3101bc0aeaf7593094773228503f75a5",
                 "shasum": ""
             },
             "require": {
@@ -74,6 +74,11 @@
                 "psr/log": "^3.0"
             },
             "require-dev": {
+                "php-mock/php-mock-phpunit": "^2.14",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
                 "phpunit/phpunit": "^9.6",
                 "squizlabs/php_codesniffer": "^3.10"
             },
@@ -101,9 +106,9 @@
             ],
             "support": {
                 "issues": "https://github.com/flagship-io/flagship-php-sdk/issues",
-                "source": "https://github.com/flagship-io/flagship-php-sdk/tree/4.0.0"
+                "source": "https://github.com/flagship-io/flagship-php-sdk/tree/4.2.0"
             },
-            "time": "2024-07-09T16:12:55+00:00"
+            "time": "2026-01-13T14:58:17+00:00"
         },
         {
             "name": "nelmio/api-doc-bundle",
@@ -3721,7 +3726,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -3729,6 +3734,6 @@
         "ext-ctype": "*",
         "ext-iconv": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

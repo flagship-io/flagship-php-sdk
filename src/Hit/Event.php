@@ -35,9 +35,9 @@ class Event extends HitAbstract
     private ?string $label = null;
 
     /**
-     * @var float|null
+     * @var int|null
      */
-    private ?float $value = null;
+    private ?int $value = null;
 
     /**
      * Event constructor.
@@ -122,9 +122,9 @@ class Event extends HitAbstract
     /**
      * Monetary value associated with an event
      *
-     * @return float|null
+     * @return int|null
      */
-    public function getValue(): ?float
+    public function getValue(): ?int
     {
         return $this->value;
     }
@@ -134,10 +134,10 @@ class Event extends HitAbstract
      *      (e.g. you earn 10 to 100 euros depending on the quality of lead generated).
      *      NOTE: this value must be non-negative.
      *
-     * @param float|null $value : event value
+     * @param int|null $value : event value
      * @return Event
      */
-    public function setValue(?float $value): self
+    public function setValue(?int $value): self
     {
         if (is_numeric($value) && $value < 0) {
             $this->logError(

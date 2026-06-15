@@ -25,7 +25,7 @@ class EventTest extends TestCase
         $eventAction = "eventAction";
         $eventCategory = EventCategory::USER_ENGAGEMENT;
         $eventLabel = "eventLabel";
-        $eventValue = 458.0;
+        $eventValue = 458;
         $userIp = "127.0.0.1";
         $screenResolution = "200X200";
         $userLanguage = "Fr";
@@ -61,7 +61,7 @@ class EventTest extends TestCase
         $event->setValue($eventValue);
         $eventArray[FlagshipConstant::EVENT_VALUE_API_ITEM] = $eventValue;
 
-        $event->setValue(-1.0);
+        $event->setValue(-1);
 
         $this->assertSame($eventArray, $event->toApiKeys());
 
